@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/pzhta.iml" filepath="$PROJECT_DIR$/pzhta.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../src/Pzhta.iml" filepath="$PROJECT_DIR$/../../src/Pzhta.iml" />
     </modules>
   </component>
 </project>
