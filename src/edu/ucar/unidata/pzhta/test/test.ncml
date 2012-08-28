@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" location="O-Buoy1_2009_MET.nc">
+<!--netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" location="O-Buoy1_2009_MET.nc"-->
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2">
   <attribute name="title" value="Soil temperature  at different depths" />
   <attribute name="data_author" value="Vladimir E. Romanovsky" />
   <attribute name="project_title" value="The Collaborative O-Buoy Project: Deployment of a Network of Arctic Ocean Chemical Sensors for the IPY and beyond" />
   <attribute name="platform_type" value="Station Data" />
   <attribute name="featureType" value="timeSeries" />
   <attribute name="description" value="Results of continuous temperature measurements in the Greenland boreholes" />
-  <attribute name="location_keyword" value="North America &gt; Greenland/>
+  <attribute name="location_keyword" value="North America &gt; Greenland"/>
   <attribute name="missing_value" value="---" />
   <!-- Note that we skip col 0, as it's just the year, so it does not show up here -->
+  <dimension name="time" length="10" isUnlimited="true" />
   <variable name="time" shape="time" type="double">
     <attribute name="_colNum" value="1" />
     <attribute name="standard_name" value="time" />
