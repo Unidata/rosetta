@@ -9,10 +9,10 @@ build/
 #
 # IntelliJ files
 #
-ide/intellij/.idea/workspace.xml
-ide/intellij/.idea/tasks.xml
-ide/intellij/.idea/misc.xml
-ide/intellij/.idea/vcs.xml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/misc.xml
+.idea/vcs.xml
 #
 # Eclipse files
 #
