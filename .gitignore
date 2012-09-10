@@ -2,6 +2,7 @@
 # PZHTA files #
 ###############
 build/
+build.properties
 
 #############
 # IDE files #
