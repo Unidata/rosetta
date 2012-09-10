@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='utf-8'?>
+<metadata>
+      <entry id="axis">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="time, calendar">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="climatology">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="compress">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="formula_terms">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="time, leap_month">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="time, leap_year">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="time, month_lengths">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="positive">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="_FillValue">
+         <type>both</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="long_name">
+         <type>both</type>
+         <necessity>required</necessity>
+      </entry>
+      <entry id="missing_value">
+         <type>both</type>
+         <necessity>required</necessity>
+      </entry>
+      <entry id="standard_name">
+         <type>both</type>
+         <necessity>recommended</necessity>
+      </entry>
+      <entry id="station_description">
+         <type>both</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="units">
+         <type>both</type>
+         <necessity>required</necessity>
+      </entry>
+      <entry id="valid_max">
+         <type>both</type>
+         <necessity>recommended</necessity>
+      </entry>
+      <entry id="valid_min">
+         <type>both</type>
+         <necessity>recommended</necessity>
+      </entry>
+      <entry id="valid_range">
+         <type>both</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="add_offset">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="ancillary_variables">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="comment">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="flag_masks">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="flag_meanings">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="flag_values">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="grid_mapping">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="references">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="sample_dimension">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="scale_factor">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="source">
+         <type>non-coordinate</type>
+         <necessity>required</necessity>
+      </entry>
+      <entry id="standard_error_multiplier">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="comment">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="description">
+         <type>global</type>
+         <necessity>required</necessity>
+      </entry>
+      <entry id="history">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="institution">
+         <type>global</type>
+         <necessity>required</necessity>
+      </entry>
+      <entry id="processor">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="references">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="source">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="title">
+         <type>global</type>
+         <necessity>title</necessity>
+      </entry>
+      <entry id="version">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+</metadata>
