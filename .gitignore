@@ -26,3 +26,4 @@ ide/intellij/.idea/vcs.xml
 ehthumbs.db
 Icon?
 Thumbs.db
+*.swp
