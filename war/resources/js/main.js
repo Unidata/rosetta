@@ -244,19 +244,14 @@ $(document).ready(function($) {
                     }, 
                 "text");
 
-$("#faux").remove();
-                $(".jw-button-next").removeClass("hideMe");
                 break;          
 
             case 7:  // Specify global Metadata
-                $("#faux").remove();
-                $(".jw-button-next").removeClass("hideMe");
+
             break;
 
             case 8:  // submit!!!!
 
-                $("#faux").remove();
-                $(".jw-button-next").removeClass("hideMe");
             break;
         }
 

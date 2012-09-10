@@ -67,7 +67,7 @@
 
 
   .jw-menu .jw-active {
-    background: #FFFFFF url('resources/img/tick.png') 0 5px no-repeat !important; 
+    background: #FFFFFF url('resources/img/step.png') 0 5px no-repeat !important; 
     padding-left: 20px; 
   }
 
@@ -78,72 +78,90 @@
   }
 
   .jw-menu .jw-inactive {
-    background: #FFFFFF url('resources/img/todo.png') 0 5px no-repeat !important; 
+    background: #FFFFFF url('resources/img/step.png') 0 5px no-repeat !important; 
     padding-left: 20px; 
   }
 
 
 
-.slick-header-button {
-  background: transparent url('resources/img/todo.png') 0 2px no-repeat !important; 
-  margin: 0 0 0 2px;
-  padding: 0;
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 16px;
-  height: 20px;
-  cursor: pointer;
-  display: inline-block;
-}
+  .slick-header-button {
+    background: transparent url('resources/img/todo.png') 0 2px no-repeat !important; 
+    margin: 0 0 0 2px;
+    padding: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 16px;
+    height: 20px;
+    cursor: pointer;
+    display: inline-block;
+    cursor: pointer;
+  }
 
-.metadata span.slick-column-name {
-  position: absolute !important;
-  left: 20px;
-}
+  .metadata span.slick-column-name {
+    position: absolute !important;
+    left: 20px;
+  }
 
 
-#dialog {
-  font-size: 9pt;
-}
+  #dialog {
+    font-size: 9pt;
+  }
 
-#dialog label {
-  font-size: 8pt;
-  margin: 0;
-  padding: 0 10px 0 0; 
-}
+  #dialog label {
+    font-size: 8pt;
+    margin: 0;
+    padding: 0 10px 0 0; 
+  }
 
-#dialog ol {
- width: 100%;
- list-style: none;
- margin: 0 0 10px 0;
- padding: 0;
- float: left;
- position: relative; 
-}
+  #dialog ul {
+    width: 100%;
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    float: left;
+    position: relative; 
+  }
 
-#dialog li {
- width: 90%;
- display: block;
- margin: 2px 0 0 0;
- padding: 0;   
- float: left; 
-}
+  #dialog ul li {
+    width: 33%;
+    display: inline;
+    margin: 2px 0 0 0;
+    padding: 0;   
+    float: left; 
+  }
 
-#dialog li input{
-  float: right; 
-  width: 175px;
-}
+  #dialog ol {
+    width: 100%;
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    float: left;
+    position: relative; 
+  }
 
-#dialog img {
- margin: 0 10px 0 0;
- padding: 0;   
-}
+  #dialog ol li {
+    width: 90%;
+    display: block;
+    margin: 2px 0 0 0;
+    padding: 0;   
+    float: left; 
+  }
 
-#dialog .error {
- display: block;   
-}
+  #dialog ol li input{
+     float: right; 
+     width: 175px;
+  }
+
+  #dialog img {
+    margin: 0 10px 0 0;
+    padding: 0;   
+  }
+
+  #dialog .error {
+    display: block;   
+  }
 
 </style> 
 

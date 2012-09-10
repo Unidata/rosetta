@@ -28,6 +28,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import edu.ucar.unidata.pzhta.domain.AsciiFile;
 
+import edu.ucar.unidata.pzhta.Pzhta;
+
 /**
  * Controller to parse ASCII file data.
  *
@@ -50,7 +52,8 @@ public class AsciiParserController {
             int delimiterRunningTotal = 0;
             boolean dataLine = false;
             List <String> delimiterList = file.getDelimiterList(); 
-            String selectedDelimiter = "";      
+            String selectedDelimiter = "";    
+            ArrayList<ArrayList> outerList = new ArrayList<ArrayList>();  
             if (!file.getDelimiterList().isEmpty()) {
                 selectedDelimiter = delimiterList.get(0);  
             }             
@@ -82,11 +85,15 @@ public class AsciiParserController {
                             if (delimiterList.size() != 1) {
                                 String[] delimiters = (String[])delimiterList.toArray(new String[delimiterList.size()]);
                                 for(int i = 1; i< delimiters.length; i++){ 
-		                     String updatedLineData = sCurrentLine.replaceAll(delimiters[i],  selectedDelimiter);
+		                             String updatedLineData = sCurrentLine.replaceAll(delimiters[i],  selectedDelimiter);
                                      sBuffer.append(updatedLineData + "\n");   
+                                     String[] lineComponents = sBuffer.toString().split("selectedDelimiter");
                                 }                            
                             } else {
-                                sBuffer.append(sCurrentLine + "\n");   
+                                sBuffer.append(sCurrentLine + "\n");  
+                                String[] lineComponents = sBuffer.toString().split("selectedDelimiter"); 
+                                ArrayList<String> innerList = new ArrayList<String>(Arrays.asList(lineComponents));
+                                outerList.add(innerList);
                             }
                         }
                     }
@@ -96,10 +103,24 @@ public class AsciiParserController {
             if (!file.getDelimiterList().isEmpty()) {
                 selectedDelimiter = selectedDelimiter + "\n";
             }
-            return selectedDelimiter + sBuffer.toString();
+            if (file.getDone() != null) {          
+                Pzhta ncWriter = new Pzhta();
+                String ncmlFile = System.getProperty("java.io.tmpdir") + "/" + file.getUniqueId() + "/" + "file.getUniqueId().ncml";
+                String fileOutName = System.getProperty("java.io.tmpdir") + "/" + file.getUniqueId() + "/" + "file.getUniqueId().nc";
+                if (ncWriter.convert(ncmlFile, fileOutName, outerList)) {
+                    return fileOutName;
+                } else {
+                    log.error("netCDF file not created.");
+                    return null;
+                }
+            } else {
+                return selectedDelimiter + sBuffer.toString();
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
             return null;
-	}
+	    }
     }
 }
+
+

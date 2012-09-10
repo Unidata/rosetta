@@ -285,9 +285,9 @@ function drawGrid(data, step) {
                         
                         $(".slick-headerrow-columns").removeClass("hideMe");
                         $("#" + attributeValue).autocomplete({
-			    source: cfStandards, 
-                                    delay: 0
-		        });
+			                source: cfStandards, 
+                            delay: 0
+		                });
 
                         $("#" + attributeValue).bind('autocompletechange', function() {
                             if (validateVariableNames (colNumber, $(this).val())) {
@@ -388,30 +388,42 @@ function drawGrid(data, step) {
                     var variableUnits = sessionStorage.getItem(variableValue + "Unit");
                     if (args.command == "setVariableMetadata") {
                         $(function() {
-		            $( "#dialog" ).dialog({
+		                    $( "#dialog" ).dialog({
                                 height: 600,
-         			width: 400,
-			        modal: true,
+         			            width: 400,
+			                    modal: true,
                                 buttons: {
-				    "done": function() {
+				                    "done": function() {
                                         validateVariableMetadata (variableName, $(this));                                      
                                     }, 
                                     "cancel": function() {
-					$(this).dialog("close");
-				    }
+                               		    $(this).dialog("close");
+		                            }
                                 }
-		            });
+		                    });
                             $("#dialog").empty();
-                             var dialogForm =  "<form id=\"dialog\"><fieldset>" +
-                            "<p>Metadata for: <b>" + variableName + "</b></p>" + 
-                            "<p>Is this variable a coordinate variable? &nbsp;" + 
-		            "<label>Yes<input type=\"radio\" name=\"" + variableName + "CoordVar\" id=\"coordVar\" value=\"yes\"/></label>" +
-                            "<label>No<input type=\"radio\" name=\"" + variableName + "CoordVar\" id=\"coordVar\" value=\"no\"/></label> </p>" +
-                            "<p>Specify data type: &nbsp;" + 
-		            "<label>integer<input type=\"radio\" name=\"" + variableName + "VarDataType\" id=\"varDataType\" value=\"integer\"/></label>" +
-		            "<label>float<input type=\"radio\" name=\"" + variableName + "VarDataType\" id=\"varDataType\" value=\"float\"/></label>" +
-		            "<label>text<input type=\"radio\" name=\"" + variableName + "VarDataType\" id=\"varDataType\" value=\"text\"/></label> </p>" +
-                            "</fieldset></form>";
+                            var dialogForm =  "<form id=\"dialog\">\n" +
+                            "<fieldset>\n" +
+                            "<p>Metadata for: <b>" + variableName + "</b></p>\n" + 
+                            "<div class=\"coordVarElements\">\n" +
+                            "<p>Is this variable a coordinate variable? </p>\n" + 
+                            "<label for=\"coordVarElements\" class=\"error\"></label>\n" +
+                            "<ul>" + 
+		                    "<li><label>Yes<input type=\"radio\" name=\"" + variableName + "-coordVar\" id=\"coordVar\" value=\"yes\"/></label></li>" +
+                            "<li><label>No<input type=\"radio\" name=\"" + variableName + "-coordVar\" id=\"coordVar\" value=\"no\"/></label></li>" +
+                            "</ul>" + 
+                            "</div>" +
+                            "<div class=\"dataTypeElements\">\n" +
+                            "<p>Specify data type: </p>\n" + 
+                            "<label for=\"dataTypeElements\" class=\"error\"></label>\n" +
+                            "<ul>" + 
+     		                "<li><label>Integer<input type=\"radio\" name=\"" + variableName + "-dataType\" id=\"dataType\" value=\"integer\"/></label></li>\n" +
+	     	                "<li><label>Float<input type=\"radio\" name=\"" + variableName + "-dataType\" id=\"dataType\" value=\"float\"/></label></li>\n" +
+		                    "<li><label>Text<input type=\"radio\" name=\"" + variableName + "-dataType\" id=\"dataType\" value=\"text\"/></label> </li>\n" +
+                            "</ul>" + 
+                            "</div>" + 
+                            "</fieldset>\n" + 
+                            "</form>\n";
                             $("#dialog").append(dialogForm);
 
 
@@ -717,7 +729,7 @@ function populateAdditionalMetadata (varType, variableName, variableUnits) {
         }
     } 
     var error = "<label for=\"additionalMetadata\" class=\"error\"></label>\n";
-    var additionalMetadataChooser = "<img src=\"resources/img/expand.png\" id=\"additionalMetadataChooser\" alt=\"Add Metadata\"/>" + "<img src=\"resources/img/collapse.png\" id=\"additionalMetadataChooser\" alt=\"Remove Metadata\"> ";
+    var additionalMetadataChooser = "<img src=\"resources/img/add.png\" id=\"additionalMetadataChooser\" alt=\"Add Metadata\"/>" + "<img src=\"resources/img/remove.png\" id=\"additionalMetadataChooser\" alt=\"Remove Metadata\"> ";
     additional = additional + "</select>\n";
     return additionalMetadataChooser + additional + error ;
 }
@@ -836,8 +848,22 @@ function addMetadataOptionsToDialog (coordVarChoice, variableName, variableUnits
 }
 
 function validateVariableMetadata (variableName, dialog) {
-    var required = $($(dialog) + ".requiredElements :input").serializeArray();
     var error = false;
+    var required = $($(dialog) + ".requiredElements :input").serializeArray();
+    var coordVar = $($(dialog) + "input[id='coordVar']").serializeArray();
+    var varType = $($(dialog) + "input[id='dataType']").serializeArray();
+    if (coordVar.length == 0){
+        $(".coordVarElements").find("label.error").text("Please denote if this variable is a coordinate variable."); 
+        error = true;
+    } else {
+        $(".coordVarElements").find("label.error").text(""); 
+    }
+    if (varType.length == 0){
+        $(".dataTypeElements").find("label.error").text("Please specify the data type for this variable."); 
+        error = true;
+    } else {
+        $(".dataTypeElements").find("label.error").text(""); 
+    }
     for (var i = 0; i < required.length; i++) {    
         if (required[i].value == "") {
             $(".requiredElements").find("label[for=\"" + required[i].name + "\"]").text("This field is required:"); 
@@ -847,8 +873,7 @@ function validateVariableMetadata (variableName, dialog) {
         }
         if (!error) {
             if (i == (required.length - 1)) {      
-                saveVariableMetadata(variableName, dialog);          
-                $(this).dialog("close");
+                saveVariableMetadata(variableName, dialog);   
             }
         }
     } 
@@ -857,18 +882,23 @@ function validateVariableMetadata (variableName, dialog) {
 
 function saveVariableMetadata (variableName, dialog) {
     var coordVar = $($(dialog) + "input[id='coordVar']").serializeArray();
-    var varType = $($(dialog) + "input[id='varDataType']").serializeArray();
+    var varType = $($(dialog) + "input[id='dataType']").serializeArray();
     var required = $($(dialog) + ".requiredElements :input").serializeArray();
     var recommended = $($(dialog) + ".recommendedElements :input").serializeArray();
     var additional = $($(dialog) + ".additionalElements ol :input").serializeArray();
-    var input = coordVar.concat(coordVar, varType, required, recommended, additional);
-    console.log(input);
-    var metadata;
-    for (var i = 0; i < required.length; i++) {    
-        name = required[i].name.replace(variableName + "-", "");
-        metadata = metadata + name + ":" + required[i].value;
+    var input = coordVar.concat(varType, required, recommended, additional);
+    var metadata = "";
+           console.log(metadata);
+    for (var i = 0; i < input.length; i++) {
+        var name = input[i].name.replace(variableName + "-", "");
+        var value = input[i].value;
+        if (value != "") {        
+            metadata = metadata + "," + name + ":" + value; 
+        }   
     } 
+    metadata = metadata.replace(",", ""); 
     addToSession(variableName, metadata);
+    $(dialog).dialog("close");
 }
 
 
