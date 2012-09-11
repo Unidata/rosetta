@@ -112,6 +112,26 @@ $(document).ready(function($) {
                     }   
                     break;
 
+                case 7:  // Specify Global Metadata
+                     // Validation: must have the title specified 
+                     if (ui.type == "next") {
+                        if (!sessionStorage.getItem("title")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=title]").text("You need to provide a title for this dataset.");
+                            return false;
+                        } 
+                        // Validation: must have the title specified 
+                        if (!sessionStorage.getItem("institution")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=institution]").text("You need to provide a institution for this dataset.");
+                            return false;
+                        } 
+                        // Validation: must have the title specified 
+                        if (!sessionStorage.getItem("description")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=description]").text("You need to provide a description for this dataset.");
+                            return false;
+                        }  
+                    } 
+                    break;
+
             }          
         
 
@@ -199,13 +219,6 @@ $(document).ready(function($) {
                 break;
 
             case 4:  // Specify Variable Names
-                // Get the delimiters specified in step 4 and display
-                if (sessionStorage.otherDelimiter) {                        
-                    $("#step5 #delimiters").html("Delimiters used: " + sessionStorage.delimiters.replace(/,/g, ", ").replace("Other", "Other: ") + sessionStorage.getItem('otherDelimiter'));
-                } else {
-                    $("#step5 #delimiters").html("Delimiters used: " + sessionStorage.delimiters.replace(/,/g, ", "));
-                }
-                
                 $.post("parse", { uniqueId: sessionStorage.getItem('uniqueId'), fileName: sessionStorage.getItem('fileName'), otherDelimiter:  sessionStorage.getItem('otherDelimiter'), headerLineNumbers:  sessionStorage.getItem('headerLineNumbers'), delimiters:  sessionStorage.getItem('delimiters')},  
                     function(data) {
                        drawGrid(data, "5")
@@ -214,14 +227,6 @@ $(document).ready(function($) {
                 break;
 
             case 5:  // Specify Variable Units
-                // Get the delimiters specified in step 4 and display
-                if (sessionStorage.otherDelimiter) {                        
-                    $("#step6 #delimiters").html("Delimiters used: " + sessionStorage.delimiters.replace(/,/g, ", ").replace("Other", "Other: ") + sessionStorage.getItem('otherDelimiter'));
-                } else {
-                    $("#step6 #delimiters").html("Delimiters used: " + sessionStorage.delimiters.replace(/,/g, ", "));
-                }
-                
-
                 $.post("parse", { uniqueId: sessionStorage.getItem('uniqueId'), fileName: sessionStorage.getItem('fileName'), otherDelimiter:  sessionStorage.getItem('otherDelimiter'), headerLineNumbers:  sessionStorage.getItem('headerLineNumbers'), delimiters:  sessionStorage.getItem('delimiters')},  
                     function(data) {
                        drawGrid(data, "6")
@@ -230,14 +235,6 @@ $(document).ready(function($) {
                 break;
 
             case 6:  // Specify Variable Metadata
-
-                // Get the delimiters specified in step 4 and display
-                if (sessionStorage.otherDelimiter) {                        
-                    $("#step7 #delimiters").html("Delimiters used: " + sessionStorage.delimiters.replace(/,/g, ", ").replace("Other", "Other: ") + sessionStorage.getItem('otherDelimiter'));
-                } else {
-                    $("#step7 #delimiters").html("Delimiters used: " + sessionStorage.delimiters.replace(/,/g, ", "));
-                }
-                
                 $.post("parse", { uniqueId: sessionStorage.getItem('uniqueId'), fileName: sessionStorage.getItem('fileName'), otherDelimiter:  sessionStorage.getItem('otherDelimiter'), headerLineNumbers:  sessionStorage.getItem('headerLineNumbers'), delimiters:  sessionStorage.getItem('delimiters')},  
                     function(data) {
                        drawGrid(data, "7")
@@ -246,13 +243,50 @@ $(document).ready(function($) {
 
                 break;          
 
-            case 7:  // Specify global Metadata
+            case 7:  // Specify Global Metadata
 
-            break;
+                // If we land on this page and user has already enter something 
+                // (e.g., clicked previous or used the menu to navigate)    
+                // Don't hide the 'Next' button           
+                if ((ui.type == "previous") || (ui.type == "next")) {
+                    if (sessionStorage.getItem("title")) {
+                        if (sessionStorage.getItem("institution")) {                            
+                           if (sessionStorage.getItem("description")){ 
+                               $("#faux").remove();
+                               $(".jw-button-next").removeClass("hideMe");
+                           }
+                        }
+                    }
+                    if (sessionStorage.getItem("title")) {
+                        $('input[name=title]').val(sessionStorage.getItem("title"));
+                    }
+                    if (sessionStorage.getItem("institution")) {
+                        $('input[name=institution]').val(sessionStorage.getItem("institution"));
+                    }
+                    if (sessionStorage.getItem("processor")) {
+                        $('input[name=processor]').val(sessionStorage.getItem("processor"));                       
+                    }
+                    if (sessionStorage.getItem("version")) {
+                        $('input[name=version]').val(sessionStorage.getItem("version"));                       
+                    }
+                    if (sessionStorage.getItem("source")) {
+                        $('input[name=source]').val(sessionStorage.getItem("source"));                       
+                    }
+                    if (sessionStorage.getItem("description")){ 
+                        $('textarea[name=description]').val(sessionStorage.getItem("description"));
+                    }
+                    if (sessionStorage.getItem("comment")){ 
+                        $('textarea[name=comment]').val(sessionStorage.getItem("comment"));
+                    }
+                    if (sessionStorage.getItem("history")){ 
+                        $('textarea[name=history]').val(sessionStorage.getItem("history"));
+                    }
+                    if (sessionStorage.getItem("references")){ 
+                        $('textarea[name=references]').val(sessionStorage.getItem("references"));
+                    }
+                }
+                break;      
 
-            case 8:  // submit!!!!
-
-            break;
         }
 
         
@@ -333,10 +367,14 @@ $(document).ready(function($) {
         $(".jw-button-next").addClass("hideMe").after(faux);
     });
 
+    // Show upload button after user launches file chooser
+    $('#showHeaders').bind('click', function() {
+        $("#upload").removeClass("hideMe");        
+    });
+
     /* 
      STEP 4
      */
-
     // Show 'Next' button after user makes a selection
     $('#step4 input:checkbox').bind('click', function() {
         var checkedDelimiters = $('input:checkbox').serializeArray();
@@ -371,14 +409,36 @@ $(document).ready(function($) {
     });
 
     /* 
-     STEP 5
+     STEP 8
      */
-    // Show upload button after user launches file chooser
-    $('#showHeaders').bind('click', function() {
-        $("#upload").removeClass("hideMe");        
+    // Show 'Next' button after user makes a selection
+    $('#step8 input').focusout(function() {
+        if ($(this).attr('value') != "") {
+            addToSession($(this).attr('name'), $(this).attr('value'));
+            if (sessionStorage.getItem("title")) {
+                if (sessionStorage.getItem("institution")) {                            
+                    if (sessionStorage.getItem("description")){ 
+                        $("#faux").remove();
+                        $(".jw-button-next").removeClass("hideMe");
+                    }
+                }
+            }
+        }
     });
 
-
+    $('#step8 textarea').focusout(function() {
+        if ($(this).attr('value') != "") {
+            addToSession($(this).attr('name'), $(this).attr('value'));
+            if (sessionStorage.getItem("title")) {
+                if (sessionStorage.getItem("institution")) {                            
+                    if (sessionStorage.getItem("description")){ 
+                        $("#faux").remove();
+                        $(".jw-button-next").removeClass("hideMe");
+                    }
+                }
+            }
+        }
+    });
  
 });
 

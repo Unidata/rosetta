@@ -85,7 +85,7 @@
 
 
   .slick-header-button {
-    background: transparent url('resources/img/todo.png') 0 2px no-repeat !important; 
+    background-image: none !important; 
     margin: 0 0 0 2px;
     padding: 0;
     position: absolute;
@@ -99,9 +99,55 @@
     cursor: pointer;
   }
 
+  .todo {
+    background: transparent url('resources/img/todo.png') 0 2px no-repeat !important; 
+  }
+
+  .done {
+    background: transparent url('resources/img/tick.png') 0 2px no-repeat !important; 
+  }
   .metadata span.slick-column-name {
     position: absolute !important;
     left: 20px;
+  }
+
+   ol.formEl {
+    width: 350px;
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    float: left;
+    position: relative; 
+  }
+
+   ol.formEl li {
+    width: 90%;
+    display: block;
+    margin: 2px 0 0 0;
+    padding: 0;   
+    float: left; 
+  }
+
+  ol.formEl li input{
+     float: right; 
+     width: 175px;
+  }
+
+  ol.formEl li textarea{
+     float: right; 
+     width: 200px;
+  }
+
+  .max {
+     width: 750px;
+  }
+
+  .left {
+     float: left; 
+  }
+
+  .right {
+     float: right; 
   }
 
 
@@ -244,6 +290,26 @@ $.metadata.setType("attr", "validate");
 
     <div id="step8" title="Specify Global Metadata">
      <h5>Specify global metadata:</h5>
+     <p>* = required</p>
+<div class="max">
+     <div class="left">
+     <ol class="formEl">
+      <li><label for="title" class="error"></label><label>Title* <input type="text" name="title" value="" validate="required:true"/></label></li>
+      <li><label for="insitution" class="error"></label><label>Institution* <input type="text" name="institution" value="" validate="required:true"/></label></li>
+      <li><label>Processor <input type="text" name="processor" value=""/></label></li>
+      <li><label>Version <input type="text" name="version" value=""/></label></li>
+      <li><label>Source <input type="text" name="source" value=""/></label></li>
+     </ol>
+    </div>
+     <div class="right">
+     <ol class="formEl">
+      <li><label for="description" class="error"></label><label>Description* <textarea rows="2" cols="20" name="description" validate="required:true"></textarea></label></li>
+      <li><label>Comment <textarea rows="2" cols="20" name="comment"></textarea></label></li>
+      <li><label>History <textarea rows="2" cols="20" name="history"></textarea></label></li>
+      <li><label>References <textarea rows="2" cols="20" name="references"></textarea></label></li>
+     </ol>
+    </div>
+</div>
     </div> 
 
     <div id="step9" title="Download Template">

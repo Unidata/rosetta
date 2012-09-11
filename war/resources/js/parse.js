@@ -285,9 +285,9 @@ function drawGrid(data, step) {
                         
                         $(".slick-headerrow-columns").removeClass("hideMe");
                         $("#" + attributeValue).autocomplete({
-			                source: cfStandards, 
+                            source: cfStandards, 
                             delay: 0
-		                });
+		        });
 
                         $("#" + attributeValue).bind('autocompletechange', function() {
                             if (validateVariableNames (colNumber, $(this).val())) {
@@ -379,6 +379,7 @@ function drawGrid(data, step) {
             }
 
             if (inputSought == "Metadata") {
+                handleDoNotUseMetadata (colNumber); 
                 var headerButtonsPlugin = new Slick.Plugins.HeaderButtons();
                 $(".slick-headerrow-columns").addClass("hideMe");
                 headerButtonsPlugin.onCommand.subscribe(function(e, args) {
@@ -388,68 +389,89 @@ function drawGrid(data, step) {
                     var variableUnits = sessionStorage.getItem(variableValue + "Unit");
                     if (args.command == "setVariableMetadata") {
                         $(function() {
-		                    $( "#dialog" ).dialog({
+	                        $( "#dialog" ).dialog({
                                 height: 600,
-         			            width: 400,
+                                width: 400,
 			                    modal: true,
                                 buttons: {
-				                    "done": function() {
-                                        validateVariableMetadata (variableName, $(this));                                      
+                                    "done": function() {
+                                        validateVariableMetadata (variableName, $(this), variableValue + "Metadata", colNumber, inputSought); 
+                                        grid.updateColumnHeader(id, variableName, variableName);
+                                        var buttonElement = $('div.metadata[title=\"' + variableName + '\"] div.todo');
+                                        $(buttonElement).removeClass("todo").addClass("done");
+                                        testIfComplete (colNumber, inputSought);
                                     }, 
                                     "cancel": function() {
-                               		    $(this).dialog("close");
-		                            }
+                               	        $(this).dialog("close");
+                                    }
                                 }
-		                    });
+	                        });
                             $("#dialog").empty();
                             var dialogForm =  "<form id=\"dialog\">\n" +
-                            "<fieldset>\n" +
-                            "<p>Metadata for: <b>" + variableName + "</b></p>\n" + 
-                            "<div class=\"coordVarElements\">\n" +
-                            "<p>Is this variable a coordinate variable? </p>\n" + 
-                            "<label for=\"coordVarElements\" class=\"error\"></label>\n" +
-                            "<ul>" + 
-		                    "<li><label>Yes<input type=\"radio\" name=\"" + variableName + "-coordVar\" id=\"coordVar\" value=\"yes\"/></label></li>" +
-                            "<li><label>No<input type=\"radio\" name=\"" + variableName + "-coordVar\" id=\"coordVar\" value=\"no\"/></label></li>" +
-                            "</ul>" + 
-                            "</div>" +
-                            "<div class=\"dataTypeElements\">\n" +
-                            "<p>Specify data type: </p>\n" + 
-                            "<label for=\"dataTypeElements\" class=\"error\"></label>\n" +
-                            "<ul>" + 
-     		                "<li><label>Integer<input type=\"radio\" name=\"" + variableName + "-dataType\" id=\"dataType\" value=\"integer\"/></label></li>\n" +
-	     	                "<li><label>Float<input type=\"radio\" name=\"" + variableName + "-dataType\" id=\"dataType\" value=\"float\"/></label></li>\n" +
-		                    "<li><label>Text<input type=\"radio\" name=\"" + variableName + "-dataType\" id=\"dataType\" value=\"text\"/></label> </li>\n" +
-                            "</ul>" + 
-                            "</div>" + 
-                            "</fieldset>\n" + 
-                            "</form>\n";
+                                "<fieldset>\n" +
+                                "<p>Metadata for: <b>" + variableName + "</b></p>\n" + 
+                                "<div class=\"coordVarElements\">\n" +
+                                "<p>Is this variable a coordinate variable? </p>\n" + 
+                                "<label for=\"coordVarElements\" class=\"error\"></label>\n" +
+                                "<ul>" + 
+		                        "<li><label>Yes<input type=\"radio\" name=\"" + variableName + "-coordVar\" id=\"coordVar\" value=\"yes\"/></label></li>" +
+                                "<li><label>No<input type=\"radio\" name=\"" + variableName + "-coordVar\" id=\"coordVar\" value=\"no\"/></label></li>" +
+                                "</ul>" + 
+                                "</div>" +
+                                "<div class=\"dataTypeElements\">\n" +
+                                "<p>Specify data type: </p>\n" + 
+                                "<label for=\"dataTypeElements\" class=\"error\"></label>\n" +
+                                "<ul>" + 
+         		                "<li><label>Integer<input type=\"radio\" name=\"" + variableName + "-dataType\" id=\"dataType\" value=\"integer\"/></label></li>\n" +
+	         	                "<li><label>Float<input type=\"radio\" name=\"" + variableName + "-dataType\" id=\"dataType\" value=\"float\"/></label></li>\n" +
+		                        "<li><label>Text<input type=\"radio\" name=\"" + variableName + "-dataType\" id=\"dataType\" value=\"text\"/></label> </li>\n" +
+                                "</ul>" + 
+                                "</div>" + 
+                                "</fieldset>\n" + 
+                                "</form>\n";
                             $("#dialog").append(dialogForm);
 
-
-                            var coordinateVariables = ["time", "latitude", "longitude", "altitude"];
-                            for (var i = 0; i < coordinateVariables.length; i++) { 
-                                if (variableName == coordinateVariables[i]) {
+                            var coordVarMetadataEntered = getMetadataItemEntered (variableName, variableValue, "coordVar");
+                            if (coordVarMetadataEntered != null) {
+                                if (coordVarMetadataEntered == "yes") {
                                     $('input[id="coordVar"][value="yes"]').attr('checked', true);
-                                    addMetadataOptionsToDialog ("coordinate", variableName, variableUnits);
+                                    addMetadataOptionsToDialog ("coordinate", variableName, variableUnits, variableValue);
+                                } else {
+                                    $('input[id="coordVar"][value="no"]').attr('checked', true);
+                                    addMetadataOptionsToDialog ("non-coordinate", variableName, variableUnits, variableValue);
                                 } 
+                            } else {
+                                var coordinateVariables = ["time", "latitude", "longitude", "altitude"];
+                                for (var i = 0; i < coordinateVariables.length; i++) { 
+                                    if (variableName == coordinateVariables[i]) {
+                                        $('input[id="coordVar"][value="yes"]').attr('checked', true);
+                                        addMetadataOptionsToDialog ("coordinate", variableName, variableUnits, variableValue);
+                                    } 
+                                }
                             }
-                            
+
+                            var dataTypeMetadataEntered = getMetadataItemEntered (variableName, variableValue, "dataType");
+                            if (dataTypeMetadataEntered != null) {
+                                if (dataTypeMetadataEntered == "integer") {
+                                    $('input[id="dataType"][value="integer"]').attr('checked', true);
+                                } else if (dataTypeMetadataEntered == "float") {
+                                    $('input[id="dataType"][value="float"]').attr('checked', true);
+                                } else {
+                                    $('input[id="dataType"][value="text"]').attr('checked', true);
+                                } 
+                            } 
                             $('input#coordVar').bind('click', function() {
                                 var coordVarChoice = "non-coordinate";
                                 if ($(this).val() == "yes") {
                                     coordVarChoice = "coordinate";
                                 } 
-                                addMetadataOptionsToDialog (coordVarChoice, variableName, variableUnits);
+                                addMetadataOptionsToDialog (coordVarChoice, variableName, variableUnits, variableValue);
                             });
 	                });
                     }
                 });
-
-
                 grid.registerPlugin(headerButtonsPlugin);
             }
-
 
             populateInput (colNumber, inputSought, grid);      
             checkIfColumnIsDisabled (colNumber, inputSought, grid);     
@@ -548,14 +570,29 @@ function makeColumns(columns, columnCount, inputSought) {
 
         if (inputSought == "Metadata") {
             colObject["headerCssClass"] = "metadata";
-            colObject["header"] = {
-                buttons: [
-                    {
-                        command: "setVariableMetadata",
-                        tooltip: "Specify variable " + inputSought.toLowerCase()
-                    }
-                ]
-            }
+            var metadataAlreadyEntered = sessionStorage.getItem("variable" + x + "Metadata");
+            if (metadataAlreadyEntered != null) {
+                colObject["header"] = {
+                    buttons: [
+                        {
+                            cssClass: "done",
+                            command: "setVariableMetadata",
+                            tooltip: sessionStorage.getItem("variable" + x)
+                        }
+                    ]
+                }
+            } else {
+                colObject["header"] = {
+                    buttons: [
+                        {
+                            cssClass: "todo",
+                            command: "setVariableMetadata",
+                            tooltip: "Specify variable " + inputSought.toLowerCase()
+                        }
+                    ]
+                }
+            }           
+
         }
         columns.push(colObject);
     }
@@ -580,7 +617,6 @@ function headerLineFilter(item, rows) {
 function testIfComplete (colNumber, inputSought) {
     for (var i = 0; i < colNumber; i++) {  
         if (inputSought == "Name") {    
-
             if (sessionStorage.getItem("variable" + i)) {
                 if (i == (colNumber - 1)) {
                     $("#faux").remove();
@@ -603,6 +639,16 @@ function testIfComplete (colNumber, inputSought) {
                 break;         
             }  
         } else {
+            if (sessionStorage.getItem("variable" + i + "Metadata")) {
+                if (i == (colNumber - 1)) {
+                    $("#faux").remove();
+                    $(".jw-button-next").removeClass("hideMe");
+                } else {
+                    continue;
+                } 
+            } else { 
+                break;         
+            }  
         }         
     } 
 }
@@ -829,25 +875,60 @@ function createTagElement (metadata, name, value, id, validate) {
 
 
 
-function addMetadataOptionsToDialog (coordVarChoice, variableName, variableUnits) {
+function addMetadataOptionsToDialog (coordVarChoice, variableName, variableUnits, variableValue) {
    $(".requiredElements").remove();
    var requiredTitle = "<p>Required metadata:</p>\n";
    var required = populateRequiredMetadata (coordVarChoice, variableName, variableUnits);
    $("#dialog fieldset").append("<div class=\"requiredElements\">" + requiredTitle + required + "</div>");
+
+   var requiredElements = $($(required) + 'input[id="required"]');
+   for (var i = 0; i < requiredElements.length; i++) {  
+       var name = $(requiredElements[i]).attr('name');
+       var requiredMetadataEntered = getMetadataItemEntered (variableName, variableValue, name.replace(variableName + "-", ""));
+       if (requiredMetadataEntered != null) {
+           $(requiredElements[i]).attr('value', requiredMetadataEntered);
+       }
+   }
+
 
    $(".recommendedElements").remove();
    var recommendedTitle = "<p>Recommended metadata:</p>\n";
    var recommended = populateRecommendedMetadata (coordVarChoice, variableName, variableUnits);
    $("#dialog fieldset").append("<div class=\"recommendedElements\">" + recommendedTitle + recommended + "</div>");
 
+   var recommendedElements = $($(recommended) + 'input[id="recommended"]');
+   for (var i = 0; i < recommendedElements.length; i++) {  
+       var name = $(recommendedElements[i]).attr('name');
+       var recommendedMetadataEntered = getMetadataItemEntered (variableName, variableValue, name.replace(variableName + "-", ""));
+       if (recommendedMetadataEntered != null) {
+           $(recommendedElements[i]).attr('value', recommendedMetadataEntered);
+       }
+   }
+
    $(".additionalElements").remove();
    var additionalTitle = "<p>Additional metadata:</p>\n";
    var additional = populateAdditionalMetadata (coordVarChoice, variableName, variableUnits);
    $("#dialog fieldset").append("<div class=\"additionalElements\">" + additionalTitle + additional + "</div>");
    bindAdditionalMetadataChooser(coordVarChoice, variableName, variableUnits); 
+
+   var metadataChoices = $('form#dialog .additionalElements ol');   
+   for (var i = 0; i < metadata.length; i++) {                          
+       var metadataItem = metadata[i]; 
+       if (metadataItem.necessity == "additional") {
+           var additionalMetadataEntered = getMetadataItemEntered (variableName, variableValue, metadataItem.entry);
+           if (additionalMetadataEntered != null) {
+               var tag =  "<li><label>" + metadataItem.entry + "<input type=\"text\" name=\"" + variableName + "-" + metadataItem.entry  + "\" value=\"" + additionalMetadataEntered + "\" id=\"additional\"/></label></li>\n";   
+               if ($(metadataChoices).length == 0) {
+                   $('form#dialog .additionalElements').append("<ol>" + tag + "</ol>");
+               } else {
+                   $(metadataChoices).append(tag);
+               }     
+           }
+       }      
+   }
 }
 
-function validateVariableMetadata (variableName, dialog) {
+function validateVariableMetadata (variableName, dialog, variableMetadata, colNumber, inputSought) {
     var error = false;
     var required = $($(dialog) + ".requiredElements :input").serializeArray();
     var coordVar = $($(dialog) + "input[id='coordVar']").serializeArray();
@@ -873,14 +954,14 @@ function validateVariableMetadata (variableName, dialog) {
         }
         if (!error) {
             if (i == (required.length - 1)) {      
-                saveVariableMetadata(variableName, dialog);   
+                saveVariableMetadata(variableName, dialog, variableMetadata);   
             }
         }
     } 
 }
 
 
-function saveVariableMetadata (variableName, dialog) {
+function saveVariableMetadata (variableName, dialog, variableMetadata, colNumber, inputSought) {
     var coordVar = $($(dialog) + "input[id='coordVar']").serializeArray();
     var varType = $($(dialog) + "input[id='dataType']").serializeArray();
     var required = $($(dialog) + ".requiredElements :input").serializeArray();
@@ -888,7 +969,6 @@ function saveVariableMetadata (variableName, dialog) {
     var additional = $($(dialog) + ".additionalElements ol :input").serializeArray();
     var input = coordVar.concat(varType, required, recommended, additional);
     var metadata = "";
-           console.log(metadata);
     for (var i = 0; i < input.length; i++) {
         var name = input[i].name.replace(variableName + "-", "");
         var value = input[i].value;
@@ -897,8 +977,39 @@ function saveVariableMetadata (variableName, dialog) {
         }   
     } 
     metadata = metadata.replace(",", ""); 
-    addToSession(variableName, metadata);
+    addToSession(variableMetadata, metadata);
     $(dialog).dialog("close");
+    testIfComplete (colNumber, inputSought);
 }
 
+function handleDoNotUseMetadata (colNumber) {
+    for (var i = 0; i < colNumber; i++) {  
+        var variableValue = sessionStorage.getItem("variable" + i);
+        if (variableValue == "Do Not Use") {
+            addToSession("variable" + i + "Metadata", "Do Not Use");
+        }
+    } 
+}
+
+function getMetadataItemEntered (variableName, variableValue, valueSought) {
+    var variableSought = variableValue + "Metadata";
+    var metadataEntered = sessionStorage.getItem(variableValue + "Metadata");
+    if (metadataEntered) {
+        var metadataPairs = metadataEntered.split(/,/g);
+        for (var i = 0; i < metadataPairs.length; i++) {  
+            var metadataKeyValuePair = metadataPairs[i].split(/:/);
+            if (metadataKeyValuePair[0] == valueSought) {
+                return metadataKeyValuePair[1];
+            } else {
+                if (i == (metadataPairs.length - 1 )) {
+                    return null;
+                } else {
+                    continue;
+                }
+            }
+        }
+    } else { 
+        return null;
+    }  
+}
 
