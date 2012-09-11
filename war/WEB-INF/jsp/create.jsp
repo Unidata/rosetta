@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
  <html>
   <head>
-   <title>pzhta</title>
+   <title>pzhta &rho;&zeta;&eta;&tau;&alpha; &Rho;&zeta;&eta;&tau;&alpha; &Rho;&Zeta;&Eta;&Tau;&Alpha;</title>
    <link type="text/css" rel="stylesheet" href="resources/css/jquery-ui.css" />
    <link type="text/css" rel="stylesheet" href="resources/css/jWizard.base.css" />
    <link type="text/css" rel="stylesheet" href="resources/css/upload.css" />
