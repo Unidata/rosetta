@@ -243,7 +243,7 @@
 .jw-footer {
     position: absolute;
     left: 0px;
-    bottom: 200px;
+    top: 350px;
    padding: 0;
    margin: 0 0 0 10px;
    background: none;
@@ -315,6 +315,7 @@ $.metadata.setType("attr", "validate");
     <div id="step4" title="Specify Delimiters">
      <p><span id="uniqueId"></span></p>
      <h5>Please specify delimiters used:</h5>
+        <label for="delimiter" class="error"></label>
         <label>Tab <input type="checkbox" name="delimiter" id="delimiter" value="Tab" validate="required:true"/></label>
         <label>Comma <input type="checkbox" name="delimiter" id="delimiter" value="Comma" validate="required:true"/></label>
         <label>Space <input type="checkbox" name="delimiter" id="delimiter" value="Space" validate="required:true"/></label>    
@@ -323,30 +324,26 @@ $.metadata.setType("attr", "validate");
         <label>Single Quote <input type="checkbox" name="delimiter" id="delimiter" value="Single Quote" validate="required:true"/></label>
         <label>Other <input type="checkbox" name="delimiter" id="delimiter" value="Other" validate="required:true"/> </label> <input type="text" id="otherDelimiter" name="otherDelimiter" size="1" maxlength="1" class="hideMe"/><br />
 
-     <label for="delimiter" class="error"></label>
+     
     </div> 
 
     <div id="step5" title="Specify Variable Names">
-     <h5>Specify variable names:</h5>
      <label for="myGrid" class="error"></label>    
      <div id="myGrid"></div>
     </div> 
 
     <div id="step6" title="Specify Variable Units">
-     <h5>Specify units:</h5>
      <label for="myGrid" class="error"></label>    
      <div id="myGrid"></div>
     </div> 
 
     <div id="step7" title="Specify Variable Metadata">
-     <h5>Specify variable metadata:</h5>
      <label for="myGrid" class="error"></label>    
      <div id="myGrid"></div>
      <div id="dialog"></div>
     </div> 
 
     <div id="step8" title="Specify Global Metadata">
-     <h5>Specify global metadata:</h5>
      <p>* = required</p>
       <div class="max">
        <div class="left">
@@ -371,7 +368,7 @@ $.metadata.setType("attr", "validate");
 
     <div id="step9" title="Download Template">
      <h5>Download!</h5>
-
+       <div class="download"></div>
     </div>
    </form>
 
