@@ -6,8 +6,9 @@
   border: 1px solid #CFCFCF;
   font-family:"Courier New", Courier, monospace;
   font-size: 9pt;
-  width: 1045px;
+  width: auto;
   height: 300px;
+  margin: 0 20px 0 0; 
 }
 
 .grid-header {

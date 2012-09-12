@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
  <html>
   <head>
-   <title>pzhta &rho;&zeta;&eta;&tau;&alpha; &Rho;&zeta;&eta;&tau;&alpha; &Rho;&Zeta;&Eta;&Tau;&Alpha;</title>
+   <title>&rho;&zeta;&eta;&tau;&alpha;</title>
    <link type="text/css" rel="stylesheet" href="resources/css/jquery-ui.css" />
    <link type="text/css" rel="stylesheet" href="resources/css/jWizard.base.css" />
    <link type="text/css" rel="stylesheet" href="resources/css/upload.css" />
@@ -111,7 +111,27 @@
     left: 20px;
   }
 
-   ol.formEl {
+  ul {
+    width: 100%;
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    float: left;
+    position: relative; 
+  }
+
+  ul li {
+    width: 33%;
+    display: inline;
+    margin: 2px 0 0 0;
+    padding: 0;   
+    float: left; 
+  }
+
+
+
+
+  .max ol{
     width: 350px;
     list-style: none;
     margin: 0 0 10px 0;
@@ -120,7 +140,7 @@
     position: relative; 
   }
 
-   ol.formEl li {
+   .max ol li {
     width: 90%;
     display: block;
     margin: 2px 0 0 0;
@@ -128,12 +148,12 @@
     float: left; 
   }
 
-  ol.formEl li input{
+  .max ol li input{
      float: right; 
      width: 175px;
   }
 
-  ol.formEl li textarea{
+  .max ol li textarea{
      float: right; 
      width: 200px;
   }
@@ -209,6 +229,44 @@
     display: block;   
   }
 
+.jw-header {
+    position: absolute;
+    left: 240px;
+    top: 75px;
+	height: 20px;
+   padding: 0;
+   margin: 0;
+   background: none;
+   border: none;
+}
+
+.jw-footer {
+    position: absolute;
+    left: 0px;
+    bottom: 200px;
+   padding: 0;
+   margin: 0 0 0 10px;
+   background: none;
+   border: none;
+}
+
+.jw-header h2 {
+		margin: 0;
+		padding: .3em 0;
+   font-size: 11pt;
+}
+
+	.jw-menu {
+		border-right: 1px solid #CFCFCF;
+	}
+
+.jw-steps-wrap {
+   overflow: auto;
+   padding: 0 0 0 20px;
+   margin: 40px 0 0 0;
+  
+}
+
 </style> 
 
 <script type="text/javascript">
@@ -220,25 +278,24 @@ $.metadata.setType("attr", "validate");
 
   </head>
   <body> 
+   <h1>&rho;&zeta;&eta;&tau;&alpha;</h1>
    <form id="FORM" action="/pzhta/upload" method="POST" enctype="multipart/form-data">
 
 
-    <div id="step1" title="Select CF Type">  
-     <h5>Select CF Type</h5>
-        <label>Point Data <input type="radio" name="cfType" value="Point Data" validate="required:true"/></label>        
-        <br />
-        <label>Time Series Data <input type="radio" name="cfType" value="Time Series Data" validate="required:true"/></label>
-        <br />
-        <label>Profile Data <input type="radio" name="cfType" value="Profile Data" validate="required:true"/></label>    
-        <br />
-        <label>Trajectory Data <input type="radio" name="cfType" value="Trajectory Data" validate="required:true"/></label>
-        <br />
-        <label>Time Series of Profiles <input type="radio" name="cfType" value="Time Series of Profiles" validate="required:true"/></label>    
-        <br />
-        <label>Trajectories of Profiles <input type="radio" name="cfType" value="Trajectories of Profiles" validate="required:true"/></label>
-        <br />
-       <label for="cfType" class="error"></label>
-
+    <div id="step1" title="Select Data Source"> 
+     <label for="cfType" class="error"></label> 
+     <div class="max">
+      <ul>
+       <li><label>Station<input type="radio" name="cfType" value="Station" validate="required:true"/></label></li>
+       <li><label>Moored Buoy<input type="radio" name="cfType" value="Moored Buoy" validate="required:true"/></label></li>
+       <li><label>Radiosonde<input type="radio" name="cfType" value="Radiosonde" validate="required:true"/></label></li>
+       <li><label>Wind Profiler<input type="radio" name="cfType" value="Wind Profile" validate="required:true"/></label></li>
+       <li><label>Aircraft<input type="radio" name="cfType" value="Aircraft" validate="required:true"/></label></li>
+       <li><label>Ship<input type="radio" name="cfType" value="Ship" validate="required:true"/></label></li>
+       <li><label>Vehicle<input type="radio" name="cfType" value="Vehicle" validate="required:true"/></label></li>
+       <li><label>Dropsonde<input type="radio" name="cfType" value="Dropsonde" validate="required:true"/></label></li>
+      </ul>
+     </div>
     </div>
 
     <div id="step2" title="Upload ASCII File">
@@ -275,7 +332,7 @@ $.metadata.setType("attr", "validate");
      <div id="myGrid"></div>
     </div> 
 
-    <div id="step6" title="Specify Units">
+    <div id="step6" title="Specify Variable Units">
      <h5>Specify units:</h5>
      <label for="myGrid" class="error"></label>    
      <div id="myGrid"></div>
@@ -291,25 +348,25 @@ $.metadata.setType("attr", "validate");
     <div id="step8" title="Specify Global Metadata">
      <h5>Specify global metadata:</h5>
      <p>* = required</p>
-<div class="max">
-     <div class="left">
-     <ol class="formEl">
-      <li><label for="title" class="error"></label><label>Title* <input type="text" name="title" value="" validate="required:true"/></label></li>
-      <li><label for="insitution" class="error"></label><label>Institution* <input type="text" name="institution" value="" validate="required:true"/></label></li>
-      <li><label>Processor <input type="text" name="processor" value=""/></label></li>
-      <li><label>Version <input type="text" name="version" value=""/></label></li>
-      <li><label>Source <input type="text" name="source" value=""/></label></li>
-     </ol>
-    </div>
-     <div class="right">
-     <ol class="formEl">
-      <li><label for="description" class="error"></label><label>Description* <textarea rows="2" cols="20" name="description" validate="required:true"></textarea></label></li>
-      <li><label>Comment <textarea rows="2" cols="20" name="comment"></textarea></label></li>
-      <li><label>History <textarea rows="2" cols="20" name="history"></textarea></label></li>
-      <li><label>References <textarea rows="2" cols="20" name="references"></textarea></label></li>
-     </ol>
-    </div>
-</div>
+      <div class="max">
+       <div class="left">
+        <ol>
+         <li><label for="title" class="error"></label><label>Title* <input type="text" name="title" value="" validate="required:true"/></label></li>
+         <li><label for="insitution" class="error"></label><label>Institution* <input type="text" name="institution" value="" validate="required:true"/></label></li>
+         <li><label>Processor <input type="text" name="processor" value=""/></label></li>
+         <li><label>Version <input type="text" name="version" value=""/></label></li>
+         <li><label>Source <input type="text" name="source" value=""/></label></li>
+        </ol>
+       </div>
+       <div class="right">
+        <ol>
+         <li><label for="description" class="error"></label><label>Description* <textarea rows="2" cols="20" name="description" validate="required:true"></textarea></label></li>
+         <li><label>Comment <textarea rows="2" cols="20" name="comment"></textarea></label></li>
+         <li><label>History <textarea rows="2" cols="20" name="history"></textarea></label></li>
+         <li><label>References <textarea rows="2" cols="20" name="references"></textarea></label></li>
+        </ol>
+       </div>
+      </div>
     </div> 
 
     <div id="step9" title="Download Template">

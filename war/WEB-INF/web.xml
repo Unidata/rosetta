@@ -23,7 +23,7 @@
          version="3.0"
          metadata-complete="true"> 
 
-    <display-name>badASCII</display-name>
+    <display-name>pzhta</display-name>
     <description>
         badASCII
     </description>
@@ -33,13 +33,13 @@
     </welcome-file-list>
 
     <servlet>
-        <servlet-name>badascii</servlet-name>
+        <servlet-name>pzhta</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>badascii</servlet-name>
+        <servlet-name>pzhta</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 <!--

@@ -1,5 +1,5 @@
 $(document).ready(function($) {
-    var faux = '<div id="faux" class="ui-corner-all disabled" style="display: inline-block;">Faux Next</div>';
+    var faux = '<div id="faux" class="ui-corner-all disabled" style="display: inline-block;">Next</div>';
 
     var $p = $('#progress'),
         $e = $('#step2'),
@@ -150,6 +150,8 @@ $(document).ready(function($) {
                         $(".jw-button-next").removeClass("hideMe");
                     }
                 }
+
+
                 break;
 
 
@@ -257,40 +259,64 @@ $(document).ready(function($) {
                            }
                         }
                     }
-                    if (sessionStorage.getItem("title")) {
-                        $('input[name=title]').val(sessionStorage.getItem("title"));
+                   
+                    // populate input elements from sessionStorage
+                    var inputElements = $("#step8 input");
+                    for (var i = 0; i < inputElements.length; i++) {  
+                        var name = $(inputElements[i]).attr('name');
+                        if (sessionStorage.getItem(name)) {
+                            $("input[name=\"" + name + "\"]").val(sessionStorage.getItem(name));
+                         } else {
+                            $("input[name=\"" + name + "\"]").val("");
+                         }
                     }
-                    if (sessionStorage.getItem("institution")) {
-                        $('input[name=institution]').val(sessionStorage.getItem("institution"));
-                    }
-                    if (sessionStorage.getItem("processor")) {
-                        $('input[name=processor]').val(sessionStorage.getItem("processor"));                       
-                    }
-                    if (sessionStorage.getItem("version")) {
-                        $('input[name=version]').val(sessionStorage.getItem("version"));                       
-                    }
-                    if (sessionStorage.getItem("source")) {
-                        $('input[name=source]').val(sessionStorage.getItem("source"));                       
-                    }
-                    if (sessionStorage.getItem("description")){ 
-                        $('textarea[name=description]').val(sessionStorage.getItem("description"));
-                    }
-                    if (sessionStorage.getItem("comment")){ 
-                        $('textarea[name=comment]').val(sessionStorage.getItem("comment"));
-                    }
-                    if (sessionStorage.getItem("history")){ 
-                        $('textarea[name=history]').val(sessionStorage.getItem("history"));
-                    }
-                    if (sessionStorage.getItem("references")){ 
-                        $('textarea[name=references]').val(sessionStorage.getItem("references"));
+                    // populate textarea elements from sessionStorage
+                    var textareaElements = $("#step8 textarea");
+                    for (var i = 0; i < textareaElements.length; i++) {  
+                        var name = $(textareaElements[i]).attr('name');
+                        if (sessionStorage.getItem(name)) {
+                            $("textarea[name=\"" + name + "\"]").val(sessionStorage.getItem(name));
+                         } else {
+                            $("textarea[name=\"" + name + "\"]").val("");
+                         }
                     }
                 }
+                break;   
+
+            case 8:  // Download!!!
+                var data = {};
+                var variableNames = "";
+                var variableUnits = "";
+                var variableMetadata = "";
+                for (var i = 0; i < sessionStorage.length; i++) {  
+                    var key = sessionStorage.key(i);
+                    var value = sessionStorage.getItem(key);
+                    if (key.match(/[variable]{1}\d+/)) {
+                        if (key.match(/Unit/)) {
+                            variableUnits = variableUnits + "," + key + ":" + value;
+                        } else if (key.match(/Metadata/)) {                            
+                            variableMetadata = variableMetadata + "," + key + "=" + value.replace(/,/g, "+");
+                        } else {
+                            variableNames = variableNames + "," + key + ":" + value;
+                        }
+                        
+                    } else {
+                        data[key] = value;
+                    }
+                }
+                data["variableNames"] = variableNames.replace(/,/, "");
+                data["variableUnits"] = variableUnits.replace(/,/, "");
+                data["variableMetadata"] = variableMetadata.replace(/,/, "");
+                $.post("parse", data,  
+                    function(data) {                       
+                       console.log(data);
+                    }, 
+                "text");
+                $jQuery.ajaxError(function() {
+                      console.log("error");
+                });
                 break;      
-
         }
-
-        
-
     })
 
 

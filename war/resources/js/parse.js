@@ -99,7 +99,8 @@ function drawGrid(data, step) {
                 field: "line_data",
                 width: 1000,
                 resizable: false,
-                sortable: false
+                sortable: false,
+
             }
         );
         $(function () {           
