@@ -118,7 +118,9 @@ public class Pzhta {
             ncfile.close();
 
             File file = new File(fileOutName);
+
             if(file.exists()) { 
+                log.error("I'm here!!!");
                 return true;
             } else {
                 log.error("Error!  NetCDF file " + fileOutName + "was not created.");
