@@ -369,8 +369,7 @@ $.metadata.setType("attr", "validate");
     <div id="step9" title="Download Template">
      <h5>Download!</h5>
        <div class="download">
-      
-         <a href="/pzhtaDownload/borehole_logger_data.ncml">borehole_logger_data.ncml</a> <br/><br/>
+         <a href="/pzhtaDownload/borehole_logger_data.ncml">borehole_logger_data.ncml</a>
          <a href="/pzhtaDownload/borehole_logger_data.nc">borehole_logger_data.nc</a>
        </div>
     </div>

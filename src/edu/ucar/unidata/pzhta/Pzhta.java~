@@ -31,29 +31,29 @@ public class Pzhta {
     private static final SimpleLogger log = new SimpleLogger(Pzhta.class);  
 
     public boolean convert(String ncmlFile, String fileOut, ArrayList outerList) {
-        log.error( "*** Reading NCML\n");
+        log.info( "*** Reading NCML\n");
         try{
             NetcdfDataset ncd = NcMLReader.readNcML(ncmlFile, null);
             List globalAttributes = ncd.getGlobalAttributes();
-            log.error("Global Attributes in file:\n");
+            log.info("Global Attributes in file:\n");
             Iterator itr = globalAttributes.iterator();
             while(itr.hasNext()) {
                 Object element = itr.next();
-                log.error("  " + element + "\n");
+                log.info("  " + element + "\n");
             }
-            log.error("\n");
-            log.error("Variables in file:\n");
+            log.info("\n");
+            log.info("Variables in file:\n");
             List vars = ncd.getVariables();
             for (int var = 0; var < vars.size(); var = var + 1){
-                log.error("  " + vars.get(var)  + "\n");
+                log.info("  " + vars.get(var)  + "\n");
 
             }
-            log.error(" ");
-            log.error( "*** Writing netCDF file");
+            log.info(" ");
+            log.info( "*** Writing netCDF file");
             NetcdfFile ncdnew = ucar.nc2.FileWriter.writeToFile(ncd, fileOut, true);
             ncd.close();
             ncdnew.close();
-            log.error( "*** Done");
+            log.info( "*** Done");
 
             NetcdfFileWriteable ncfile_add_attr = NetcdfFileWriteable.openExisting(fileOut);
             ncfile_add_attr.setRedefineMode(true);

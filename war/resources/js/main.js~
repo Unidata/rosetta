@@ -284,7 +284,6 @@ $(document).ready(function($) {
                 break;   
 
             case 8:  // Download!!!
-/*
                 var data = {};
                 var variableNames = "";
                 var variableUnits = "";
@@ -316,7 +315,6 @@ $(document).ready(function($) {
                 $jQuery.ajaxError(function() {
                       console.log("error");
                 });
-*/
                 break;      
         }
     })
