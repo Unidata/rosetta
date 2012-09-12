@@ -126,9 +126,9 @@ public class AsciiParserController {
             if (!file.getVariableNameMap().isEmpty()) {     
                 String ncmlFile = createNcmlFile(file);     
                 Pzhta ncWriter = new Pzhta();
-                String fileOut = downloadDir + "/" + file.getUniqueId() + "/" + "file.getFileName().nc";
+                String fileOut = downloadDir + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
                 if (ncWriter.convert(ncmlFile, fileOut, outerList)) {
-                    return fileOut;
+                    return fileOut + "\n" + ncmlFile;
                 } else {
                     log.error("netCDF file not created.");
                     return null;
