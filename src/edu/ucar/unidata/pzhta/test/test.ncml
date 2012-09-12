@@ -23,13 +23,13 @@
     <attribute name="_CoordinateAxisType" value="longitude" />
     <attribute name="units" value="degrees_north" />
   </variable>
-  <variable name="alt" type="float">
+  <!--variable name="alt" type="float">
     <attribute name="standard_name" value="altitude" />
     <attribute name="long_name" value="Height above sea-level" />
     <attribute name="_CoordinateAxisType" value="Height" />
     <attribute name="_CoordinateZisPositive" value="up" />
     <attribute name="units" value="m" />
-  </variable>
+  </variable-->
   <variable name="time" shape="time" type="float">
     <attribute name="_colNum" value="1" />
     <attribute name="standard_name" value="time" />
