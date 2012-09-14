@@ -28,6 +28,8 @@ ehthumbs.db
 Icon?
 Thumbs.db
 *.swp
+*.*~
+._*
 
 ######################
 # class files        #
