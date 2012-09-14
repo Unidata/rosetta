@@ -30,32 +30,37 @@ public class Pzhta {
 
     private static final SimpleLogger log = new SimpleLogger(Pzhta.class);  
 
+    public Pzhta () {
+        log.error( "Pzhta object created.\n");
+    }
+
     public boolean convert(String ncmlFile, String fileOut, ArrayList outerList) {
-        System.out.print( "*** Reading NCML\n");
+        log.error( "*** Reading NCML\n");
         try{
-            System.out.print("in pz.convert " + ncmlFile);
+            log.error("in pz.convert " + "file://"+ncmlFile);
+
             NetcdfDataset ncd = NcMLReader.readNcML("file://"+ncmlFile, null);
-            System.out.print("in pz.convert");
+            log.error("in pz.convert");
             List globalAttributes = ncd.getGlobalAttributes();
-            System.out.print("Global Attributes in file:\n");
+            log.error("Global Attributes in file:\n");
             Iterator itr = globalAttributes.iterator();
             while(itr.hasNext()) {
                 Object element = itr.next();
-                System.out.print("  " + element + "\n");
+                log.error("  " + element + "\n");
             }
-            System.out.print("\n");
-            System.out.print("Variables in file:\n");
+            log.error("\n");
+            log.error("Variables in file:\n");
             List vars = ncd.getVariables();
             for (int var = 0; var < vars.size(); var = var + 1){
-                System.out.print("  " + vars.get(var)  + "\n");
+                log.error("  " + vars.get(var)  + "\n");
 
             }
-            System.out.print(" ");
-            System.out.print( "*** Writing netCDF file");
+            log.error(" ");
+            log.error( "*** Writing netCDF file");
             NetcdfFile ncdnew = ucar.nc2.FileWriter.writeToFile(ncd, fileOut, true);
             ncd.close();
             ncdnew.close();
-            System.out.print( "*** Done");
+            log.error( "*** Done");
 
             NetcdfFileWriteable ncfile_add_attr = NetcdfFileWriteable.openExisting(fileOut);
             ncfile_add_attr.setRedefineMode(true);
@@ -106,12 +111,12 @@ public class Pzhta {
                     for (int i = 0; i < timeDim.getLength(); i++) {
                         List row = (List) outerList.get(i);
                         vals.set(i,Float.valueOf((String) row.get(varIndex)).floatValue());
-                        System.out.print("  " + (String) row.get(varIndex) + "\n");
+                        log.error("  " + (String) row.get(varIndex) + "\n");
                     }
                     //try {
                     ncfile.write(varName, vals);
                     //} catch (ucar.ma2.InvalidRangeException e) {
-                    //    System.out.print(e.getStackTrace().toString());
+                    //    log.error(e.getStackTrace().toString());
                     //    return false;
                     //}
                 }
@@ -122,23 +127,22 @@ public class Pzhta {
             File file = new File(fileOut);
 
             if(file.exists()) { 
-                System.out.print("I'm here!!!");
+                log.error("I'm here!!!");
                 return true;
             } else {
-                System.out.print("Error!  NetCDF file " + fileOut + "was not created.");
+                log.error("Error!  NetCDF file " + fileOut + "was not created.");
                 return false;
             }
         } catch (IOException e) {
-            System.out.print(e.getMessage());
-            System.out.print(e.getStackTrace().toString());
+            log.error(e.getMessage());
             return false;
         } catch (InvalidRangeException e) {
-            System.out.print(e.getMessage());
-            System.out.print(e.getStackTrace().toString());
+            log.error(e.getMessage());
             return false;
         }
     }
 
+/*
     public static void main(String[] args) {
         String ncmlFile =    "/Users/lesserwhirls/dev/unidata/pzhta/src/edu/ucar/unidata/pzhta/test/test.ncml";
         String fileOutName = "/Users/lesserwhirls/dev/unidata/pzhta/src/edu/ucar/unidata/pzhta/test/pzhta_test.nc";
@@ -153,4 +157,6 @@ public class Pzhta {
         }
         pz.convert(ncmlFile, fileOutName, outerList);
     }
+
+*/
 }

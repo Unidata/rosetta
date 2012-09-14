@@ -22,18 +22,26 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import org.xml.sax.SAXException;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -124,12 +132,13 @@ public class AsciiParserController {
                 selectedDelimiter = selectedDelimiter + "\n";
             }
             if (!file.getVariableNameMap().isEmpty()) {     
-                String ncmlFile = createNcmlFile(file);     
+                String ncmlFile = createNcmlFile(file);  
+log.error("the ncmlFile: " + ncmlFile);   
                 Pzhta ncWriter = new Pzhta();
-log.error("00000000000000000");
+log.error("here!!!");
                 String fileOut = downloadDir + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
                 if (ncWriter.convert(ncmlFile, fileOut, outerList)) {
-log.error("sdsdsad");
+
                     return fileOut + "\n" + ncmlFile;
                 } else {
                     log.error("netCDF file not created.");
@@ -152,8 +161,16 @@ log.error("sdsdsad");
 
             // root element
             Document doc = docBuilder.newDocument();
-            Element netcdf = doc.createElement("netcdf");
-            netcdf.setAttribute("xmlns", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
+
+            Element schema = doc.createElement("xsd:schema");
+            schema.setAttribute("targetNamespace", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
+            schema.setAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
+            schema.setAttribute("xmlns", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
+            schema.setAttribute("elementFormDefault", "qualified");
+
+
+            Element netcdf = doc.createElement("netcdf");      
+            netcdf.setAttribute("xmlns", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");      
             doc.appendChild(netcdf);
 
             // attribute elements
@@ -225,7 +242,7 @@ log.error("sdsdsad");
                     variable.setAttribute("name", value);
                     HashMap <String, String> variableMetadata = variableMetadataMap.get(key + "Metadata");
                     String type = variableMetadata.get("dataType");
-                    variable.setAttribute("dataType", type);
+                    variable.setAttribute("type", type);
 
                     Set<String> variableMetadataKeys = variableMetadata.keySet();
                     Iterator<String> variableMetadataKeysIterator = variableMetadataKeys.iterator();
@@ -261,15 +278,28 @@ log.error("sdsdsad");
             StreamResult result = new StreamResult(ncmlFile);
  
             transformer.transform(source, result);
- 
-            
+
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);  
+            // load a WXS schema, represented by a Schema instance
+            Source schemaFile = new StreamSource(new File (System.getProperty("catalina.base") + "/webapps/pzhta/resources/ncml-2.2.xsd"));
+            Schema ncmlSchema = factory.newSchema(schemaFile);
+
+            // create a Validator instance, which can be used to validate an instance document
+            Validator validator = ncmlSchema.newValidator();
+            validator.validate(new DOMSource(doc));
+
             if(ncmlFile.exists()) { 
                 return ncmlFilePath;
             } else {
                 log.error("Error!  ncml file " + ncmlFilePath + "was not created.");
                 return null;
             }
-
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return null;
+        } catch (SAXException e) {
+            log.error(e.getMessage());
+            return null;
         } catch (ParserConfigurationException e) {
             log.error(e.getMessage());
             return null;
