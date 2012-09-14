@@ -31,29 +31,31 @@ public class Pzhta {
     private static final SimpleLogger log = new SimpleLogger(Pzhta.class);  
 
     public boolean convert(String ncmlFile, String fileOut, ArrayList outerList) {
-        log.error( "*** Reading NCML\n");
+        System.out.print( "*** Reading NCML\n");
         try{
-            NetcdfDataset ncd = NcMLReader.readNcML(ncmlFile, null);
+            System.out.print("in pz.convert " + ncmlFile);
+            NetcdfDataset ncd = NcMLReader.readNcML("file://"+ncmlFile, null);
+            System.out.print("in pz.convert");
             List globalAttributes = ncd.getGlobalAttributes();
-            log.error("Global Attributes in file:\n");
+            System.out.print("Global Attributes in file:\n");
             Iterator itr = globalAttributes.iterator();
             while(itr.hasNext()) {
                 Object element = itr.next();
-                log.error("  " + element + "\n");
+                System.out.print("  " + element + "\n");
             }
-            log.error("\n");
-            log.error("Variables in file:\n");
+            System.out.print("\n");
+            System.out.print("Variables in file:\n");
             List vars = ncd.getVariables();
             for (int var = 0; var < vars.size(); var = var + 1){
-                log.error("  " + vars.get(var)  + "\n");
+                System.out.print("  " + vars.get(var)  + "\n");
 
             }
-            log.error(" ");
-            log.error( "*** Writing netCDF file");
+            System.out.print(" ");
+            System.out.print( "*** Writing netCDF file");
             NetcdfFile ncdnew = ucar.nc2.FileWriter.writeToFile(ncd, fileOut, true);
             ncd.close();
             ncdnew.close();
-            log.error( "*** Done");
+            System.out.print( "*** Done");
 
             NetcdfFileWriteable ncfile_add_attr = NetcdfFileWriteable.openExisting(fileOut);
             ncfile_add_attr.setRedefineMode(true);
@@ -62,7 +64,7 @@ public class Pzhta {
             for (int var = 0; var < vars.size(); var = var + 1){
                 Variable tmp_var = (Variable) vars.get(var);
                 String varName = tmp_var.getName();
-                Attribute attr = tmp_var.findAttribute("_colNum");
+                Attribute attr = tmp_var.findAttribute("_columnId");
                 //String thing = attr.getStringValue();
                 if ((attr != null) && (!varName.equals("time"))) {
                     ncfile_add_attr.addVariableAttribute(varName, "coordinates", "time lat lon");
@@ -91,7 +93,7 @@ public class Pzhta {
             for (int var = 0; var < vars.size(); var = var + 1){
                 Variable tmp_var = (Variable) vars.get(var);
                 String varName = tmp_var.getName();
-                Attribute attr = tmp_var.findAttribute("_colNum");
+                Attribute attr = tmp_var.findAttribute("_columnId");
                 DataType dt = tmp_var.getDataType();
                 //String thing = attr.getStringValue();
                 if (attr != null) {
@@ -109,7 +111,7 @@ public class Pzhta {
                     //try {
                     ncfile.write(varName, vals);
                     //} catch (ucar.ma2.InvalidRangeException e) {
-                    //    log.error(e.getStackTrace().toString());
+                    //    System.out.print(e.getStackTrace().toString());
                     //    return false;
                     //}
                 }
@@ -120,24 +122,25 @@ public class Pzhta {
             File file = new File(fileOut);
 
             if(file.exists()) { 
-                log.error("I'm here!!!");
+                System.out.print("I'm here!!!");
                 return true;
             } else {
-                log.error("Error!  NetCDF file " + fileOut + "was not created.");
+                System.out.print("Error!  NetCDF file " + fileOut + "was not created.");
                 return false;
             }
         } catch (IOException e) {
-            log.error(e.getStackTrace().toString());
+            System.out.print(e.getMessage());
+            System.out.print(e.getStackTrace().toString());
             return false;
         } catch (InvalidRangeException e) {
-            log.error(e.getStackTrace().toString());
+            System.out.print(e.getMessage());
+            System.out.print(e.getStackTrace().toString());
             return false;
         }
     }
 
-/*
     public static void main(String[] args) {
-        String ncmlFile = "file:///Users/lesserwhirls/dev/unidata/pzhta/src/edu/ucar/unidata/pzhta/test/test.ncml";
+        String ncmlFile =    "/Users/lesserwhirls/dev/unidata/pzhta/src/edu/ucar/unidata/pzhta/test/test.ncml";
         String fileOutName = "/Users/lesserwhirls/dev/unidata/pzhta/src/edu/ucar/unidata/pzhta/test/pzhta_test.nc";
         Pzhta pz = new Pzhta();
         ArrayList<List<String>> outerList = new ArrayList<List<String>>();
@@ -150,6 +153,4 @@ public class Pzhta {
         }
         pz.convert(ncmlFile, fileOutName, outerList);
     }
-*/
-
 }

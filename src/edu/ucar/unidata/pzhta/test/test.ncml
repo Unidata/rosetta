@@ -3,14 +3,19 @@
 <netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2">
   <attribute name="title" value="Soil temperature  at different depths" />
   <attribute name="data_author" value="Vladimir E. Romanovsky" />
-  <attribute name="project_title" value="The Collaborative O-Buoy Project: Deployment of a Network of Arctic Ocean Chemical Sensors for the IPY and beyond" />
+  <attribute name="project_title" value="Results of continuous temperature measurements in the Greenland boreholes." />
   <attribute name="platform_type" value="Station Data" />
+  <attribute name="Conventions" value="CF-1.6" />
   <attribute name="featureType" value="timeSeries" />
   <attribute name="description" value="Results of continuous temperature measurements in the Greenland boreholes" />
   <attribute name="location_keyword" value="North America &gt; Greenland"/>
   <attribute name="missing_value" value="---" />
   <!-- Note that we skip col 0, as it's just the year, so it does not show up here -->
   <dimension name="time" length="10" isUnlimited="true" />
+  <variable name="station_name" type="string">
+    <attribute name="standard_name" value="station_id" />
+    <values>"sta_id"</values>
+  </variable>
   <variable name="lat" type="float">
     <attribute name="standard_name" value="latitude" />
     <attribute name="long_name" value="station latitude" />
@@ -31,7 +36,7 @@
     <attribute name="units" value="m" />
   </variable-->
   <variable name="time" shape="time" type="float">
-    <attribute name="_colNum" value="1" />
+    <attribute name="_columnId" value="1" />
     <attribute name="standard_name" value="time" />
     <attribute name="long_name" value="time recorded by the datalogger" />
     <attribute name="_CoordinateAxisType" value="Time" />
@@ -39,56 +44,56 @@
     <attribute name="missing_data" type="float" value="-999." />
   </variable>
   <variable name="temperature_0" shape="time" type="float">
-    <attribute name="_colNum" value="2" />
+    <attribute name="_columnId" value="2" />
     <attribute name="standard_name" value="temperature" />
     <attribute name="long_name" value="temperature at 0 cm depth" />
     <attribute name="units" value="Celsius" />
     <attribute name="missing_data" type="float" value="-999." />
   </variable>
   <variable name="temperature_0_25" shape="time" type="float">
-    <attribute name="_colNum" value="3" />
+    <attribute name="_columnId" value="3" />
     <attribute name="standard_name" value="temperature" />
     <attribute name="long_name" value="temperature at 0.25 cm depth" />
     <attribute name="units" value="Celsius" />
     <attribute name="missing_data" type="float" value="-999." />
   </variable>
   <variable name="temperature_0_5" shape="time" type="float">
-    <attribute name="_colNum" value="4" />
+    <attribute name="_columnId" value="4" />
     <attribute name="standard_name" value="temperature" />
     <attribute name="long_name" value="temperature at 0.5 cm depth" />
     <attribute name="units" value="Celsius" />
     <attribute name="missing_data" type="float" value="-999." />
   </variable>
   <variable name="temperature_0_75" shape="time" type="float">
-    <attribute name="_colNum" value="5" />
+    <attribute name="_columnId" value="5" />
     <attribute name="standard_name" value="temperature" />
     <attribute name="long_name" value="temperature at 0.75 cm depth" />
     <attribute name="units" value="Celsius" />
     <attribute name="missing_data" type="float" value="-999." />
   </variable>
   <variable name="temperature_1" shape="time" type="float">
-    <attribute name="_colNum" value="6" />
+    <attribute name="_columnId" value="6" />
     <attribute name="standard_name" value="temperature" />
     <attribute name="long_name" value="temperature at 1 cm depth" />
     <attribute name="units" value="Celsius" />
     <attribute name="missing_data" type="float" value="-999." />
   </variable>
     <variable name="temperature_2" shape="time" type="float">
-    <attribute name="_colNum" value="7" />
+    <attribute name="_columnId" value="7" />
     <attribute name="standard_name" value="temperature" />
     <attribute name="long_name" value="temperature at 2 cm depth" />
     <attribute name="units" value="Celsius" />
     <attribute name="missing_data" type="float" value="-999." />
   </variable>
   <variable name="temperature_3" shape="time" type="float">
-    <attribute name="_colNum" value="8" />
+    <attribute name="_columnId" value="8" />
     <attribute name="standard_name" value="temperature" />
     <attribute name="long_name" value="temperature at 3 cm depth" />
     <attribute name="units" value="Celsius" />
     <attribute name="missing_data" type="float" value="-999." />
   </variable>
   <variable name="temperature_4" shape="time" type="float">
-    <attribute name="_colNum" value="9" />
+    <attribute name="_columnId" value="9" />
     <attribute name="standard_name" value="temperature" />
     <attribute name="long_name" value="temperature at 4 cm depth" />
     <attribute name="units" value="Celsius" />
