@@ -70,6 +70,20 @@ public class Pzhta {
                     ncfile_add_attr.addVariableAttribute(varName, "coordinates", "time lat lon");
                 }
             }
+            // add lat/lon dimensions, varaibles, just in case not included in
+            // in the ncml file (DEMO ONLY)
+            /*
+            Dimension latDim = ncfile_add_attr.addDimension("lat", 1);
+            Dimension lonDim = ncfile_add_attr.addDimension("lon", 1);
+            ArrayList dims = new ArrayList();
+            dims.add(latDim);
+            ncfile_add_attr.addVariable("lat", DataType.FLOAT, dims );
+
+            ArrayList dims =ArrayList();
+            dims.add(lonDim);
+            ncfile_add_attr.addVariable("lon", DataType.FLOAT, dims );
+            */
+ 
             ncfile_add_attr.setRedefineMode(false);
             ncfile_add_attr.close();
 
@@ -79,6 +93,7 @@ public class Pzhta {
             NetcdfFileWriteable ncfile = NetcdfFileWriteable.openExisting(fileOut);
             // add lat/lon dimensions, varaibles, just in case not included in
             // in the ncml file (DEMO ONLY)
+            /*
             ArrayFloat.D0 dataLat = new ArrayFloat.D0();
             ArrayFloat.D0 dataLon = new ArrayFloat.D0();
             Float latVal = 69.2390F;
@@ -88,6 +103,7 @@ public class Pzhta {
             ncfile.write("lat", dataLat);
             ncfile.write("lon", dataLon);
             // END DEMO SPECIFIC CODE
+            */            
             vars = ncfile.getVariables();
             // get time dim
             Dimension timeDim = ncfile.findDimension("time");
@@ -98,15 +114,21 @@ public class Pzhta {
                 DataType dt = tmp_var.getDataType();
                 log.error( "*** Look for _columnID in var " + vars.get(var)  + "\n");
                 if (attr != null) {
-
                     int varIndex = Integer.parseInt(attr.getStringValue());
                     int len = outerList.size();
-                    ArrayFloat.D1 vals = new ArrayFloat.D1(timeDim.getLength());
-                    for (int i = 0; i < timeDim.getLength(); i++) {
+                    log.error("\n");
+                    log.error("Read " + varName + "\n");
+                    ArrayFloat.D1 vals = new ArrayFloat.D1(40);
+                    for (int i = 20; i < 30; i++) {
                         List row = (List) outerList.get(i);
+                        log.error("here");
+                        log.error(Integer.toString(varIndex));
+                        log.error("and here");
+                        log.error((String) row.get(varIndex));
+                        log.error("annnnd here");
                         vals.set(i,Float.valueOf((String) row.get(varIndex)).floatValue());
-                        log.error("  " + (String) row.get(varIndex) + "\n");
                     }
+                    log.error("Write " + varName + "\n");
                     ncfile.write(varName, vals);
                 }
             }
