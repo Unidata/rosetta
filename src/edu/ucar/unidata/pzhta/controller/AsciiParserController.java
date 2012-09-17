@@ -132,6 +132,7 @@ public class AsciiParserController {
                 selectedDelimiter = selectedDelimiter + "\n";
             }
             if (!file.getVariableNameMap().isEmpty()) {     
+log.error("the file: " + file.getFileName());   
                 String ncmlFile = createNcmlFile(file);  
 log.error("the ncmlFile: " + ncmlFile);   
                 Pzhta ncWriter = new Pzhta();
@@ -155,6 +156,7 @@ log.error("here!!!");
 
     public String createNcmlFile(AsciiFile file) {
         String ncmlFilePath = downloadDir + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".ncml";
+        log.error("createNcmlFile ncmlFilePath " + ncmlFilePath);
         try  {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -242,6 +244,9 @@ log.error("here!!!");
                     variable.setAttribute("name", value);
                     HashMap <String, String> variableMetadata = variableMetadataMap.get(key + "Metadata");
                     String type = variableMetadata.get("dataType");
+                    if (type.equals("text")) {
+                        type = "String";
+                    }
                     variable.setAttribute("type", type);
 
                     Set<String> variableMetadataKeys = variableMetadata.keySet();
