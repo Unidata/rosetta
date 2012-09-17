@@ -134,10 +134,10 @@ public class Pzhta {
                 return false;
             }
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("IOException: " + e.getMessage());
             return false;
         } catch (InvalidRangeException e) {
-            log.error(e.getMessage());
+            log.error("InvalidRangeException: " + e.getMessage());
             return false;
         }
     }

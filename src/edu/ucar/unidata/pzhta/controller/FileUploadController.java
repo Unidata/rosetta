@@ -83,7 +83,8 @@ public class FileUploadController implements HandlerExceptionResolver {
         if (exception instanceof MaxUploadSizeExceededException){ 
            log.error("File size should be less then "+ ((MaxUploadSizeExceededException)exception).getMaxUploadSize()+" byte.");
         } else{
-           log.error("An error has occurred: " + exception.getMessage());
+           log.error("An error has occurred: " + exception.getClass().getName() + ":");
+           log.error(exception.getMessage());
         }        
         return null;
     }

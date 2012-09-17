@@ -159,21 +159,29 @@ log.error("here!!!");
         log.error("createNcmlFile ncmlFilePath " + ncmlFilePath);
         try  {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            docFactory.setValidating(true);
+            docFactory.setAttribute(
+                "http://java.sun.com/xml/jaxp/properties/schemaLanguage", 
+                "http://www.w3.org/2001/XMLSchema");
+            docFactory.setAttribute(
+                "http://java.sun.com/xml/jaxp/properties/schemaSource",
+                "http://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd");
+
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
             // root element
             Document doc = docBuilder.newDocument();
 
-            Element schema = doc.createElement("xsd:schema");
-            schema.setAttribute("targetNamespace", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
-            schema.setAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
-            schema.setAttribute("xmlns", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
-            schema.setAttribute("elementFormDefault", "qualified");
+            log.error("before netcdf");
 
-
-            Element netcdf = doc.createElement("netcdf");      
-            netcdf.setAttribute("xmlns", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");      
+            Element netcdf = doc.createElement("netcdf");  
+            netcdf.setAttribute("xmlns", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
             doc.appendChild(netcdf);
+
+            log.error("after netcdf");
+
+
+
 
             // attribute elements
             if (file.getTitle() != null) {
@@ -182,6 +190,7 @@ log.error("here!!!");
                 attribute.setAttribute("value", file.getTitle());
                 netcdf.appendChild(attribute);
             }
+
             if (file.getInstitution() != null) {
                 Element attribute = doc.createElement("attribute");
                 attribute.setAttribute("name", "institution");
@@ -232,6 +241,8 @@ log.error("here!!!");
             }
 
 
+            log.error("after attributes");
+
             HashMap <String, String> variableNameMap = file.getVariableNameMap();
             HashMap <String, HashMap> variableMetadataMap = file.getVariableMetadataMap();
             Set<String> variableNameKeys = variableNameMap.keySet();
@@ -276,22 +287,22 @@ log.error("here!!!");
             }
 
 
+            log.error("after variables");
+
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            log.error("after TransformerFactory instantiation");
             Transformer transformer = transformerFactory.newTransformer();
+            log.error("after Transformer instantiation");
             DOMSource source = new DOMSource(doc);
+            log.error("after DOMSource instantiation");
             File ncmlFile = new File(ncmlFilePath);
+            log.error("after ncmlFile instantiation");
             StreamResult result = new StreamResult(ncmlFile);
+            log.error("after StreamResult instantiation");
  
             transformer.transform(source, result);
+            log.error("after transformation!");
 
-            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);  
-            // load a WXS schema, represented by a Schema instance
-            Source schemaFile = new StreamSource(new File (System.getProperty("catalina.base") + "/webapps/pzhta/resources/ncml-2.2.xsd"));
-            Schema ncmlSchema = factory.newSchema(schemaFile);
-
-            // create a Validator instance, which can be used to validate an instance document
-            Validator validator = ncmlSchema.newValidator();
-            validator.validate(new DOMSource(doc));
 
             if(ncmlFile.exists()) { 
                 return ncmlFilePath;
@@ -299,13 +310,8 @@ log.error("here!!!");
                 log.error("Error!  ncml file " + ncmlFilePath + "was not created.");
                 return null;
             }
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return null;
-        } catch (SAXException e) {
-            log.error(e.getMessage());
-            return null;
         } catch (ParserConfigurationException e) {
+            log.error("Parser not configured: " + e.getMessage());
             log.error(e.getMessage());
             return null;
         } catch (TransformerException e) {
@@ -313,8 +319,6 @@ log.error("here!!!");
             return null;
         }
     }
-
-
 
 }
 
