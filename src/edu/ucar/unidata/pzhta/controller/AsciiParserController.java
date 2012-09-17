@@ -256,7 +256,9 @@ log.error("here!!!");
                     HashMap <String, String> variableMetadata = variableMetadataMap.get(key + "Metadata");
                     String type = variableMetadata.get("dataType");
                     if (type.equals("text")) {
-                        type = "String";
+                        type = "string";
+                    } else if (type.equals("integer")) {
+                        type = "int";
                     }
                     variable.setAttribute("type", type);
 

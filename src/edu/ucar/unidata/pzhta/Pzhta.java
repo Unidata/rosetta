@@ -35,33 +35,28 @@ public class Pzhta {
     }
 
     public boolean convert(String ncmlFile, String fileOut, ArrayList outerList) {
+        log.error( " " + outerList);
         log.error( "*** Reading NCML\n");
         try{
-            log.error("in pz.convert " + "file://"+ncmlFile);
-
             NetcdfDataset ncd = NcMLReader.readNcML("file://"+ncmlFile, null);
-            log.error("in pz.convert");
             List globalAttributes = ncd.getGlobalAttributes();
-            log.error("Global Attributes in file:\n");
             Iterator itr = globalAttributes.iterator();
             while(itr.hasNext()) {
                 Object element = itr.next();
                 log.error("  " + element + "\n");
             }
-            log.error("\n");
-            log.error("Variables in file:\n");
             List vars = ncd.getVariables();
             for (int var = 0; var < vars.size(); var = var + 1){
                 log.error("  " + vars.get(var)  + "\n");
 
             }
-            log.error(" ");
-            log.error( "*** Writing netCDF file");
+            log.error( "*** Writing skeleton netCDF file\n");
             NetcdfFile ncdnew = ucar.nc2.FileWriter.writeToFile(ncd, fileOut, true);
             ncd.close();
             ncdnew.close();
             log.error( "*** Done");
 
+            log.error( "*** Open netCDF file and add coordinates attribute\n");
             NetcdfFileWriteable ncfile_add_attr = NetcdfFileWriteable.openExisting(fileOut);
             ncfile_add_attr.setRedefineMode(true);
             vars = ncfile_add_attr.getVariables();
@@ -80,6 +75,7 @@ public class Pzhta {
 
             // open netCDF file
             //NetcdfFileWriteable ncfile = NetcdfFileWriteable.openExisting(fileOut, true);
+            log.error( "*** Open netCDF file to add 'special' variables\n");
             NetcdfFileWriteable ncfile = NetcdfFileWriteable.openExisting(fileOut);
             // add lat/lon dimensions, varaibles, just in case not included in
             // in the ncml file (DEMO ONLY)
@@ -100,28 +96,20 @@ public class Pzhta {
                 String varName = tmp_var.getName();
                 Attribute attr = tmp_var.findAttribute("_columnId");
                 DataType dt = tmp_var.getDataType();
-                //String thing = attr.getStringValue();
+                log.error( "*** Look for _columnID in var " + vars.get(var)  + "\n");
                 if (attr != null) {
 
                     int varIndex = Integer.parseInt(attr.getStringValue());
                     int len = outerList.size();
-                    //if (dt.toString() == "float") {
                     ArrayFloat.D1 vals = new ArrayFloat.D1(timeDim.getLength());
-                    //} else {
                     for (int i = 0; i < timeDim.getLength(); i++) {
                         List row = (List) outerList.get(i);
                         vals.set(i,Float.valueOf((String) row.get(varIndex)).floatValue());
                         log.error("  " + (String) row.get(varIndex) + "\n");
                     }
-                    //try {
                     ncfile.write(varName, vals);
-                    //} catch (ucar.ma2.InvalidRangeException e) {
-                    //    log.error(e.getStackTrace().toString());
-                    //    return false;
-                    //}
                 }
             }
-            ncfile.flush();
             ncfile.close();
 
             File file = new File(fileOut);
