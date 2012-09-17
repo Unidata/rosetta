@@ -150,55 +150,44 @@ $(document).ready(function($) {
                         $(".jw-button-next").removeClass("hideMe");
                     }
                 }
-
 /*
 ------------------------------------------
 */
-
-
-sessionStorage.setItem("comment", "sss");
 sessionStorage.setItem("delimiters", "Comma");
-sessionStorage.setItem("description", "sss");
-sessionStorage.setItem("headerLineNumbers", "0,1,2,3,4,5,6,7,8,9,10,11,12,13");
-sessionStorage.setItem("history", "sss");
-sessionStorage.setItem("institution", "sss");
-sessionStorage.setItem("processor", "sss");
-sessionStorage.setItem("references", "sss");
-sessionStorage.setItem("source", "sss");
-sessionStorage.setItem("title", "sss");
+sessionStorage.setItem("description", "description, bla bla bla");
+sessionStorage.setItem("institution", "Institution");
+sessionStorage.setItem("title", "title");
+sessionStorage.setItem("uniqueId", "127001-705153857");
 sessionStorage.setItem("variable0", "Do Not Use");
 sessionStorage.setItem("variable0Metadata", "Do Not Use");
 sessionStorage.setItem("variable0Unit", "Do Not Use");
-sessionStorage.setItem("variable1", "altitude");
-sessionStorage.setItem("variable1Metadata", "coordVar:yes,dataType:float,long_name:long name,missing_value:-9999,units:m,standard_name:altitude,_FillValue:bla bla bla");
-sessionStorage.setItem("variable1Unit", "m");
-sessionStorage.setItem("variable2", "foo");
-sessionStorage.setItem("variable2Metadata", "coordVar:no,dataType:float,long_name:sss,missing_value:ddd,units:foo Unit,source:lll,standard_name:ggg,valid_max:hhh,valid_min:iii,valid_range:xxx");
-sessionStorage.setItem("variable2Unit", "foo Unit");
-sessionStorage.setItem("variable3", "air_density");
-sessionStorage.setItem("variable3Metadata", "coordVar:yes,dataType:text,long_name:aaa,missing_value:sss,units:kg m-3,standard_name:air_density,axis:bnbnbnbn");
-sessionStorage.setItem("variable3Unit", "kg m-3");
-sessionStorage.setItem("variable4", "bar");
-sessionStorage.setItem("variable4Metadata", "coordVar:yes,dataType:float,long_name:aaaa,missing_value:sssss,units:bar Unit,valid_max:ddddd,axis:vbvbvbvb");
-sessionStorage.setItem("variable4Unit", "bar Unit");
+sessionStorage.setItem("variable1", "time");
+sessionStorage.setItem("variable1Metadata", "coordVar:yes,dataType:float,long_name:time from data logger,missing_value:-999,units:days since 1900-01-01,standard_name:time");
+sessionStorage.setItem("variable1Unit", "days since 1900-01-01");
+sessionStorage.setItem("variable2", "soil_temperature");
+sessionStorage.setItem("variable2Metadata", "coordVar:no,dataType:float,long_name:surface temp,missing_value:-999,units:C,source:SN 102,standard_name:soil_temperature");
+sessionStorage.setItem("variable2Unit", "C");
+sessionStorage.setItem("variable3", "soil_temperature_2");
+sessionStorage.setItem("variable3Metadata", "coordVar:no,dataType:float,long_name:surface temp to 25 centimeters,missing_value:-999,units:C,source:SN 103");
+sessionStorage.setItem("variable3Unit", "C");
+sessionStorage.setItem("variable4", "Do Not Use");
+sessionStorage.setItem("variable4Metadata", "Do Not Use");
+sessionStorage.setItem("variable4Unit", "Do Not Use");
 sessionStorage.setItem("variable5", "Do Not Use");
 sessionStorage.setItem("variable5Metadata", "Do Not Use");
 sessionStorage.setItem("variable5Unit", "Do Not Use");
-sessionStorage.setItem("variable6", "longitude");
-sessionStorage.setItem("variable6Metadata", "coordVar:yes,dataType:integer,long_name:ghghgh,missing_value:lllll,units:degree_east,standard_name:longitude");
-sessionStorage.setItem("variable6Unit", "degree_east");
-sessionStorage.setItem("variable7", "baz");
-sessionStorage.setItem("variable7Metadata", "coordVar:no,dataType:integer,long_name:aaaa,missing_value:aaaaa,units:baz Unit,source:aaaa,standard_name:ajajaj,_FillValue:fhfhfh,valid_range:sdsadsdas");
-sessionStorage.setItem("variable7Unit", "baz Unit");
+sessionStorage.setItem("variable6", "Do Not Use");
+sessionStorage.setItem("variable6Metadata", "Do Not Use");
+sessionStorage.setItem("variable6Unit", "Do Not Use");
+sessionStorage.setItem("variable7", "Do Not Use");
+sessionStorage.setItem("variable7Metadata", "Do Not Use");
+sessionStorage.setItem("variable7Unit", "Do Not Use");
 sessionStorage.setItem("variable8", "Do Not Use");
 sessionStorage.setItem("variable8Metadata", "Do Not Use");
 sessionStorage.setItem("variable8Unit", "Do Not Use");
 sessionStorage.setItem("variable9", "Do Not Use");
 sessionStorage.setItem("variable9Metadata", "Do Not Use");
 sessionStorage.setItem("variable9Unit", "Do Not Use");
-sessionStorage.setItem("version", "sss");
-
-
 /*
 ------------------------------------------
 */

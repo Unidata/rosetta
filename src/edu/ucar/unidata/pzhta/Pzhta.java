@@ -35,7 +35,7 @@ public class Pzhta {
     }
 
     public boolean convert(String ncmlFile, String fileOut, ArrayList outerList) {
-        log.error( " " + outerList);
+       // log.error( " " + outerList);
         log.error( "*** Reading NCML\n");
         try{
             NetcdfDataset ncd = NcMLReader.readNcML("file://"+ncmlFile, null);
