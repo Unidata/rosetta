@@ -640,7 +640,7 @@ function finish (data) {
     var urls = data.split(/\r\n|\r|\n/g);
     $("#step10 ol").empty();
     for (var i = 0; i < urls.length; i++) {           
-        var link = "<li><a href=\""  +  urls[i].replace("/Users/lesserwhirls/dev/unidata/java/apache-tomcat-6/webapps", "")  +  "\">" + urls[i].replace("/Users/lesserwhirls/dev/unidata/java/apache-tomcat-6/webapps/pzhtaDownload/", "")  +  "</a></li>";
+        var link = "<li><a href=\""  +  "/pzhtaDownload/" + urls[i]  +  "\">" + urls[i]  +  "</a></li>";
 	$("#step10 ol").append(link);
     }
 }

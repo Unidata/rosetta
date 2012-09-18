@@ -150,7 +150,7 @@ public class AsciiParserController {
                 Pzhta ncWriter = new Pzhta();
                 String fileOut = downloadDir + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
                 if (ncWriter.convert(ncmlFile, fileOut, outerList)) {
-                    return fileOut + "\n" + ncmlFile;
+                    return fileOut.replaceAll(downloadDir + "/", "") + "\n" + ncmlFile.replaceAll(downloadDir + "/", "");
                 } else {
                     log.error("netCDF file not created.");
                     return null;
