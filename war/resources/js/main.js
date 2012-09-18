@@ -157,7 +157,7 @@ sessionStorage.setItem("delimiters", "Comma");
 sessionStorage.setItem("description", "description, bla bla bla");
 sessionStorage.setItem("institution", "Institution");
 sessionStorage.setItem("title", "title");
-sessionStorage.setItem("uniqueId", "127001-705153857");
+sessionStorage.setItem("headerLineNumbers", "0,1,2,3,4,5,6,7,8,9,10,11,12,13");
 sessionStorage.setItem("variable0", "Do Not Use");
 sessionStorage.setItem("variable0Metadata", "Do Not Use");
 sessionStorage.setItem("variable0Unit", "Do Not Use");

@@ -113,13 +113,15 @@ public class AsciiParserController {
                             if (delimiterList.size() != 1) {
                                 String[] delimiters = (String[])delimiterList.toArray(new String[delimiterList.size()]);
                                 for(int i = 1; i< delimiters.length; i++){ 
-		                             String updatedLineData = sCurrentLine.replaceAll(delimiters[i],  selectedDelimiter);
+		                     String updatedLineData = sCurrentLine.replaceAll(delimiters[i],  selectedDelimiter);
                                      sBuffer.append(updatedLineData + "\n");   
-                                     String[] lineComponents = sBuffer.toString().split("selectedDelimiter");
+                                     String[] lineComponents = updatedLineData.split(selectedDelimiter);
+                                     ArrayList<String> innerList = new ArrayList<String>(Arrays.asList(lineComponents));
+                                     outerList.add(innerList);
                                 }                            
                             } else {
                                 sBuffer.append(sCurrentLine + "\n");  
-                                String[] lineComponents = sBuffer.toString().split("selectedDelimiter"); 
+                                String[] lineComponents = sCurrentLine.split(selectedDelimiter); 
                                 ArrayList<String> innerList = new ArrayList<String>(Arrays.asList(lineComponents));
                                 outerList.add(innerList);
                             }
@@ -132,14 +134,10 @@ public class AsciiParserController {
                 selectedDelimiter = selectedDelimiter + "\n";
             }
             if (!file.getVariableNameMap().isEmpty()) {     
-log.error("the file: " + file.getFileName());   
                 String ncmlFile = createNcmlFile(file);  
-log.error("the ncmlFile: " + ncmlFile);   
                 Pzhta ncWriter = new Pzhta();
-log.error("here!!!");
                 String fileOut = downloadDir + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
                 if (ncWriter.convert(ncmlFile, fileOut, outerList)) {
-
                     return fileOut + "\n" + ncmlFile;
                 } else {
                     log.error("netCDF file not created.");
@@ -172,16 +170,9 @@ log.error("here!!!");
             // root element
             Document doc = docBuilder.newDocument();
 
-            log.error("before netcdf");
-
             Element netcdf = doc.createElement("netcdf");  
             netcdf.setAttribute("xmlns", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
             doc.appendChild(netcdf);
-
-            log.error("after netcdf");
-
-
-
 
             // attribute elements
             if (file.getTitle() != null) {
@@ -241,7 +232,6 @@ log.error("here!!!");
             }
 
 
-            log.error("after attributes");
 
             HashMap <String, String> variableNameMap = file.getVariableNameMap();
             HashMap <String, HashMap> variableMetadataMap = file.getVariableMetadataMap();
@@ -289,21 +279,13 @@ log.error("here!!!");
             }
 
 
-            log.error("after variables");
-
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            log.error("after TransformerFactory instantiation");
             Transformer transformer = transformerFactory.newTransformer();
-            log.error("after Transformer instantiation");
             DOMSource source = new DOMSource(doc);
-            log.error("after DOMSource instantiation");
             File ncmlFile = new File(ncmlFilePath);
-            log.error("after ncmlFile instantiation");
             StreamResult result = new StreamResult(ncmlFile);
-            log.error("after StreamResult instantiation");
  
             transformer.transform(source, result);
-            log.error("after transformation!");
 
 
             if(ncmlFile.exists()) { 

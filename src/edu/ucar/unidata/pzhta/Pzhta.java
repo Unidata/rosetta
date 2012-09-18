@@ -30,25 +30,15 @@ public class Pzhta {
 
     private static final SimpleLogger log = new SimpleLogger(Pzhta.class);  
 
-    public Pzhta () {
-        log.error( "Pzhta object created.\n");
-    }
-
     public boolean convert(String ncmlFile, String fileOut, ArrayList outerList) {
-       // log.error( " " + outerList);
         log.error( "*** Reading NCML\n");
-        try{
+        try {
             NetcdfDataset ncd = NcMLReader.readNcML("file://"+ncmlFile, null);
-            List globalAttributes = ncd.getGlobalAttributes();
+            List<Attribute> globalAttributes = ncd.getGlobalAttributes();
             Iterator itr = globalAttributes.iterator();
             while(itr.hasNext()) {
-                Object element = itr.next();
-                log.error("  " + element + "\n");
-            }
-            List vars = ncd.getVariables();
-            for (int var = 0; var < vars.size(); var = var + 1){
-                log.error("  " + vars.get(var)  + "\n");
-
+                Attribute element = (Attribute) itr.next();
+                log.error("  " + element.toString() + "\n");
             }
             log.error( "*** Writing skeleton netCDF file\n");
             NetcdfFile ncdnew = ucar.nc2.FileWriter.writeToFile(ncd, fileOut, true);
@@ -57,17 +47,17 @@ public class Pzhta {
             log.error( "*** Done");
 
             log.error( "*** Open netCDF file and add coordinates attribute\n");
-            NetcdfFileWriteable ncfile_add_attr = NetcdfFileWriteable.openExisting(fileOut);
-            ncfile_add_attr.setRedefineMode(true);
-            vars = ncfile_add_attr.getVariables();
+            NetcdfFileWriteable ncFileAddAttribute = NetcdfFileWriteable.openExisting(fileOut);
+            ncFileAddAttribute.setRedefineMode(true);
+            List<Variable> variables = ncFileAddAttribute.getVariables();
             // get time dim
-            for (int var = 0; var < vars.size(); var = var + 1){
-                Variable tmp_var = (Variable) vars.get(var);
-                String varName = tmp_var.getName();
-                Attribute attr = tmp_var.findAttribute("_columnId");
-                //String thing = attr.getStringValue();
-                if ((attr != null) && (!varName.equals("time"))) {
-                    ncfile_add_attr.addVariableAttribute(varName, "coordinates", "time lat lon");
+            Iterator varIterator = variables.iterator();
+            while(varIterator.hasNext()) {
+                Variable tmpVar = (Variable) varIterator.next();
+                String tmpVarName = tmpVar.getName();
+                Attribute tmpAttr = tmpVar.findAttribute("_columnId");
+                if ((tmpAttr != null) && (!tmpVarName.equals("time"))) {
+                    ncFileAddAttribute.addVariableAttribute(tmpVarName, "coordinates", "time lat lon");
                 }
             }
             // add lat/lon dimensions, varaibles, just in case not included in
@@ -83,9 +73,9 @@ public class Pzhta {
             dims.add(lonDim);
             ncfile_add_attr.addVariable("lon", DataType.FLOAT, dims );
             */
- 
-            ncfile_add_attr.setRedefineMode(false);
-            ncfile_add_attr.close();
+
+            ncFileAddAttribute.setRedefineMode(false);
+            ncFileAddAttribute.close();
 
             // open netCDF file
             //NetcdfFileWriteable ncfile = NetcdfFileWriteable.openExisting(fileOut, true);
@@ -104,30 +94,32 @@ public class Pzhta {
             ncfile.write("lon", dataLon);
             // END DEMO SPECIFIC CODE
             */            
-            vars = ncfile.getVariables();
+            List<Variable> ncFileVariables = ncfile.getVariables();
             // get time dim
             Dimension timeDim = ncfile.findDimension("time");
-            for (int var = 0; var < vars.size(); var = var + 1){
-                Variable tmp_var = (Variable) vars.get(var);
-                String varName = tmp_var.getName();
-                Attribute attr = tmp_var.findAttribute("_columnId");
-                DataType dt = tmp_var.getDataType();
-                log.error( "*** Look for _columnID in var " + vars.get(var)  + "\n");
+            Iterator ncVarIterator = ncFileVariables.iterator();
+            while(ncVarIterator.hasNext()) {
+                Variable theVar = (Variable) ncVarIterator.next();
+                String varName = theVar.getName();
+                Attribute attr = theVar.findAttribute("_columnId");
+                DataType dt = theVar.getDataType();
+                log.error( "*** Look for _columnID in variable " + varName  + "\n");
                 if (attr != null) {
+                    log.error("===============>>" + attr.toString());
                     int varIndex = Integer.parseInt(attr.getStringValue());
                     int len = outerList.size();
                     log.error("\n");
                     log.error("Read " + varName + "\n");
-                    ArrayFloat.D1 vals = new ArrayFloat.D1(40);
-                    for (int i = 20; i < 30; i++) {
-                        List row = (List) outerList.get(i);
-                        log.error("here");
-                        log.error(Integer.toString(varIndex));
-                        log.error("and here");
-                        log.error((String) row.get(varIndex));
-                        log.error("annnnd here");
-                        vals.set(i,Float.valueOf((String) row.get(varIndex)).floatValue());
+                    ArrayFloat.D1 vals = new ArrayFloat.D1(outerList.size());
+                    Iterator outerListIterator = outerList.iterator();
+                    int i = 0;                    
+                    while(outerListIterator.hasNext()) {
+                        List<String> innerList = (List<String>) outerListIterator.next();
+                        float f = new Float((String) innerList.get(varIndex)).floatValue();
+                        vals.set(i, f);
+                        i++;
                     }
+                    log.error("vals: " + vals.toString());
                     log.error("Write " + varName + "\n");
                     ncfile.write(varName, vals);
                 }
