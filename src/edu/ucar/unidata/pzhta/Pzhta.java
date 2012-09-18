@@ -59,7 +59,7 @@ public class Pzhta {
                 String tmpVarName = tmpVar.getName();
                 Attribute tmpAttr = tmpVar.findAttribute("_columnId");
                 if ((tmpAttr != null) && (!tmpVarName.equals("time"))) {
-                    ncFileAddAttribute.addVariableAttribute(tmpVarName, "coordinates", "time lat lon");
+                    ncFileAddAttribute.addVariableAttribute(tmpVarName, "coordinates", "time lat lon alt");
                 }
             }
             // add lat/lon and station variables (demo only)
@@ -74,12 +74,20 @@ public class Pzhta {
             ncFileAddAttribute.addVariableAttribute("lon", "units", "degrees_east");
             ncFileAddAttribute.addVariableAttribute("lon", "standard_name", "longitude");
 
+            ncFileAddAttribute.addVariable("alt", DataType.FLOAT, new ArrayList());
+            ncFileAddAttribute.addVariableAttribute("alt", "long_name", "height above mean sea-level");
+            ncFileAddAttribute.addVariableAttribute("alt", "units", "m");
+            ncFileAddAttribute.addVariableAttribute("alt", "standard_name", "height");
+            ncFileAddAttribute.addVariableAttribute("alt", "positive", "up");
+            ncFileAddAttribute.addVariableAttribute("alt", "axis", "Z");
+
             String stationName = "station_1";
             ncFileAddAttribute.addDimension("station_str_len", stationName.length());
             ncFileAddAttribute.addVariable("station_id", DataType.CHAR, "station_str_len");
             ncFileAddAttribute.addVariableAttribute("station_id", "long_name", "station name");
             ncFileAddAttribute.addVariableAttribute("station_id", "cf_role", "timeseries_id");
             ncFileAddAttribute.addVariableAttribute("station_id", "standard_name", "station_id");
+            ncFileAddAttribute.addVariableAttribute("station_id", "coordinates", "time lat lon alt");
 
             ncFileAddAttribute.setRedefineMode(false);
             ncFileAddAttribute.close();
@@ -92,12 +100,16 @@ public class Pzhta {
             // in the ncml file (DEMO ONLY)
             ArrayFloat.D0 dataLat = new ArrayFloat.D0();
             ArrayFloat.D0 dataLon = new ArrayFloat.D0();
+            ArrayFloat.D0 dataAlt = new ArrayFloat.D0();
             Float latVal = 69.2390F;
             Float lonVal = -51.0623F; 
+            Float altVal = 26.3F; 
             dataLat.set(latVal);
             dataLon.set(lonVal);
+            dataAlt.set(altVal);
             ncfile.write("lat", dataLat);
             ncfile.write("lon", dataLon);
+            ncfile.write("alt", dataAlt);
 
 
             ArrayChar stationArrayChar = ArrayChar.makeFromString(stationName, stationName.length());
