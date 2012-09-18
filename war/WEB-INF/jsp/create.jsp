@@ -286,14 +286,14 @@ $.metadata.setType("attr", "validate");
      <label for="cfType" class="error"></label> 
      <div class="max">
       <ul>
-       <li><label>Station<input type="radio" name="cfType" value="Station" validate="required:true"/></label></li>
-       <li><label>Moored Buoy<input type="radio" name="cfType" value="Moored Buoy" validate="required:true"/></label></li>
-       <li><label>Radiosonde<input type="radio" name="cfType" value="Radiosonde" validate="required:true"/></label></li>
-       <li><label>Wind Profiler<input type="radio" name="cfType" value="Wind Profile" validate="required:true"/></label></li>
-       <li><label>Aircraft<input type="radio" name="cfType" value="Aircraft" validate="required:true"/></label></li>
-       <li><label>Ship<input type="radio" name="cfType" value="Ship" validate="required:true"/></label></li>
-       <li><label>Vehicle<input type="radio" name="cfType" value="Vehicle" validate="required:true"/></label></li>
-       <li><label>Dropsonde<input type="radio" name="cfType" value="Dropsonde" validate="required:true"/></label></li>
+       <li><label>Station<input type="radio" name="cfType" value="timeSeries" validate="required:true"/></label></li>
+       <li><label>Moored Buoy<input type="radio" name="cfType" value="timeSeries" validate="required:true"/></label></li>
+       <li><label>Radiosonde<input type="radio" name="cfType" value="profile" validate="required:true"/></label></li>
+       <li><label>Wind Profiler<input type="radio" name="cfType" value="profile" validate="required:true"/></label></li>
+       <li><label>Aircraft<input type="radio" name="cfType" value="trajectory" validate="required:true"/></label></li>
+       <li><label>Ship<input type="radio" name="cfType" value="trajectory" validate="required:true"/></label></li>
+       <li><label>Vehicle<input type="radio" name="cfType" value="trajectory" validate="required:true"/></label></li>
+       <li><label>Dropsonde<input type="radio" name="cfType" value="trajectoryOfProfiles" validate="required:true"/></label></li>
       </ul>
      </div>
     </div>
