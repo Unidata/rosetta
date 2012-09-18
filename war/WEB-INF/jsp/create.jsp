@@ -348,13 +348,13 @@ $.metadata.setType("attr", "validate");
       <div class="max">
        <div class="left">
         <ol>
-         <li><label for="station_name" class="error"></label><label>Station Name* <input type="text" name="station_name" value="" validate="required:true"/></label></li>             
+         <li><label for="stationName" class="error"></label><label>Station Name* <input type="text" name="stationName" value="" validate="required:true"/></label></li> 
          <li><label for="latitude" class="error"></label><label>Latitude* <input type="text" name="latitude" value="" validate="required:true"/></label></li>
-         <li><label for="lat_units" class="error"></label><label>Latitude Units* <input type="text" name="lat_units" value="" validate="required:true"/></label></li>
+         <li><label for="latitudeUnits" class="error"></label><label>Latitude Units* <input type="text" name="latitudeUnits" value="" validate="required:true"/></label></li>
          <li><label for="longitude" class="error"></label><label>Longitude* <input type="text" name="longitude" value="" validate="required:true"/></label></li>
-         <li><label for="lon_units" class="error"></label><label>Longitude Units* <input type="text" name="lon_units" value="" validate="required:true"/></label></li>
+         <li><label for="longitdeUnits" class="error"></label><label>Longitude Units* <input type="text" name="longitudeUnits" value="" validate="required:true"/></label></li>
          <li><label for="altitude" class="error"></label><label>Altitude* <input type="text" name="altitude" value="" validate="required:true"/></label></li>
-         <li><label for="alt_units" class="error"></label><label>Altitude Units* <input type="text" name="alt_units" value="" validate="required:true"/></label></li>
+         <li><label for="altitudeUnits" class="error"></label><label>Altitude Units* <input type="text" name="altitudeUnits" value="" validate="required:true"/></label></li>
         </ol>
        </div>
       </div>
