@@ -50,6 +50,7 @@ public class Pzhta {
             NetcdfFileWriteable ncFileAddAttribute = NetcdfFileWriteable.openExisting(fileOut);
             ncFileAddAttribute.setRedefineMode(true);
             List<Variable> variables = ncFileAddAttribute.getVariables();
+
             // get time dim
             Iterator varIterator = variables.iterator();
             while(varIterator.hasNext()) {
@@ -119,6 +120,8 @@ public class Pzhta {
                         vals.set(i, f);
                         i++;
                     }
+                    log.error("val len: " + Long.toString(vals.getSize()));
+                    log.error("outer len: " + Float.toString(outerList.size()));
                     log.error("vals: " + vals.toString());
                     log.error("Write " + varName + "\n");
                     ncfile.write(varName, vals);

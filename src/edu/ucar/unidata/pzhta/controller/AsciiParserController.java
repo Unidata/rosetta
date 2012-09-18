@@ -68,6 +68,16 @@ public class AsciiParserController {
     private final String tmpDir = System.getProperty("java.io.tmpdir");
     private final String downloadDir = System.getProperty("catalina.base") + "/webapps/pzhtaDownload";
 
+    private int numDataLines;
+
+    private int getNumDataLines() {
+        return this.numDataLines;
+    }
+
+    private void setNumDataLines(int x){ 
+        this.numDataLines = x; 
+    }
+
     @RequestMapping(value="/parse", method=RequestMethod.POST)
     @ResponseBody
     public String parseFile(AsciiFile file, BindingResult result) {
@@ -129,7 +139,8 @@ public class AsciiParserController {
                     }
                 }
                 lineCount++;
-            }   
+            }
+            setNumDataLines(outerList.size());   
             if (!file.getDelimiterList().isEmpty()) {
                 selectedDelimiter = selectedDelimiter + "\n";
             }
@@ -173,6 +184,14 @@ public class AsciiParserController {
             Element netcdf = doc.createElement("netcdf");  
             netcdf.setAttribute("xmlns", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
             doc.appendChild(netcdf);
+
+            log.error("create time dimension in ncml/n");
+            Element dim = doc.createElement("dimension");  
+            dim.setAttribute("name", "time");
+            log.error("numDataLines " + Integer.toString(this.getNumDataLines()));
+            dim.setAttribute("length", Integer.toString(this.getNumDataLines()));
+            log.error("append time dim\n");
+            netcdf.appendChild(dim);
 
             // attribute elements
             if (file.getTitle() != null) {
@@ -251,6 +270,7 @@ public class AsciiParserController {
                         type = "int";
                     }
                     variable.setAttribute("type", type);
+                    variable.setAttribute("shape", "time");
 
                     Set<String> variableMetadataKeys = variableMetadata.keySet();
                     Iterator<String> variableMetadataKeysIterator = variableMetadataKeys.iterator();
