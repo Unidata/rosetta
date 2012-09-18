@@ -100,8 +100,7 @@ public class Pzhta {
             ncfile.write("lon", dataLon);
 
 
-            ArrayChar.D1 stationArrayChar = new ArrayChar.D1(stationName.length());
-            stationArrayChar.makeFromString(stationName, stationName.length());
+            ArrayChar stationArrayChar = ArrayChar.makeFromString(stationName, stationName.length());
             ncfile.write("station_id", stationArrayChar);
             // END DEMO SPECIFIC CODE
             List<Variable> ncFileVariables = ncfile.getVariables();
