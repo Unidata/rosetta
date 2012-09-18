@@ -115,8 +115,8 @@ $(document).ready(function($) {
                 case 7:  // Specify Station Information
                      // Validation: must have the station name specified 
                      if (ui.type == "next") {
-                        if (!sessionStorage.getItem("station_name")) {
-                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=station_name]").text("You need to provide a station name.");
+                        if (!sessionStorage.getItem("stationName")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=stationName]").text("You need to provide a station name.");
                             return false;
                         } 
                         // Validation: must have the latitude specified 
@@ -125,8 +125,8 @@ $(document).ready(function($) {
                             return false;
                         } 
                         // Validation: must have atitude units specified 
-                        if (!sessionStorage.getItem("lat_units")) {
-                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=lat_units]").text("You need to provide latitude units.");
+                        if (!sessionStorage.getItem("latitudeUnits")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=latitudeUnits]").text("You need to provide latitude units.");
                             return false;
                         } 
                         // Validation: must have the longitude specified 
@@ -135,8 +135,8 @@ $(document).ready(function($) {
                             return false;
                         }  
                         // Validation: must have longitude units specified 
-                        if (!sessionStorage.getItem("lon_units")) {
-                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=lon_units]").text("You need to provide longitude units.");
+                        if (!sessionStorage.getItem("longitudeUnits")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=longitudeUnits]").text("You need to provide longitude units.");
                             return false;
                         }
                         // Validation: must have the altitude specified 
@@ -145,8 +145,8 @@ $(document).ready(function($) {
                             return false;
                         }  
                         // Validation: must have altitude units specified 
-                        if (!sessionStorage.getItem("alt_units")) {
-                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=alt_units]").text("You need to provide altitude units.");
+                        if (!sessionStorage.getItem("altitudeUnits")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=altitudeUnits]").text("You need to provide altitude units.");
                             return false;
                         }
                     } 
@@ -193,6 +193,7 @@ $(document).ready(function($) {
 /*
 ------------------------------------------
 */
+/*
 sessionStorage.setItem("delimiters", "Comma");
 sessionStorage.setItem("description", "description, bla bla bla");
 sessionStorage.setItem("institution", "Institution");
@@ -228,6 +229,7 @@ sessionStorage.setItem("variable8Unit", "Do Not Use");
 sessionStorage.setItem("variable9", "Do Not Use");
 sessionStorage.setItem("variable9Metadata", "Do Not Use");
 sessionStorage.setItem("variable9Unit", "Do Not Use");
+*/
 /*
 ------------------------------------------
 */
@@ -333,13 +335,13 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
                 // (e.g., clicked previous or used the menu to navigate)    
                 // Don't hide the 'Next' button           
                 if ((ui.type == "previous") || (ui.type == "next")) {
-                    if (sessionStorage.getItem("station_name")) {
+                    if (sessionStorage.getItem("stationName")) {
                         if (sessionStorage.getItem("latitude")) {                            
-                           if (sessionStorage.getItem("lat_units")){ 
+                           if (sessionStorage.getItem("latitudeUnits")){ 
                                if (sessionStorage.getItem("longitude")) {
-                                   if (sessionStorage.getItem("lon_units")) {                            
+                                   if (sessionStorage.getItem("longitudeUnits")) {                            
                                        if (sessionStorage.getItem("altitude")){ 
-                                           if (sessionStorage.getItem("alt_units")){ 
+                                           if (sessionStorage.getItem("altitudeUnits")){ 
                                                $("#faux").remove();
                                                $(".jw-button-next").removeClass("hideMe");
                                            }
@@ -562,13 +564,13 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
     $('#step8 input').focusout(function() {
         if ($(this).attr('value') != "") {
             addToSession($(this).attr('name'), $(this).attr('value'));
-            if (sessionStorage.getItem("station_name")) {
+            if (sessionStorage.getItem("stationName")) {
                 if (sessionStorage.getItem("latitude")) {  
-                    if (sessionStorage.getItem("lat_units")){ 
+                    if (sessionStorage.getItem("latitudeUnits")){ 
                         if (sessionStorage.getItem("longitude")) {
-                            if (sessionStorage.getItem("lon_units")) {
+                            if (sessionStorage.getItem("longitudeUnits")) {
                                 if (sessionStorage.getItem("altitude")){ 
-                                    if (sessionStorage.getItem("alt_units")){ 
+                                    if (sessionStorage.getItem("altitudeUnits")){ 
                                          $("#faux").remove();
                                          $(".jw-button-next").removeClass("hideMe");
                                     }
@@ -636,9 +638,10 @@ function displaySelected (node, key, text) {
 
 function finish (data) {
     var urls = data.split(/\r\n|\r|\n/g);
+    $("#step10 ol").empty();
     for (var i = 0; i < urls.length; i++) {           
-        var link = "<li><a href=\""  +  urls[i].replace("/opt/tomcat/webapps", "")  +  "\">" + urls[i].replace("/opt/tomcat/webapps/pzhtaDownload/", "")  +  "</a></li>";
-        $("#step10 ol").append(link);
+        var link = "<li><a href=\""  +  urls[i].replace("/Users/lesserwhirls/dev/unidata/java/apache-tomcat-6/webapps", "")  +  "\">" + urls[i].replace("/Users/lesserwhirls/dev/unidata/java/apache-tomcat-6/webapps/pzhtaDownload/", "")  +  "</a></li>";
+	$("#step10 ol").append(link);
     }
 }
 

@@ -32,89 +32,17 @@ public class Pzhta {
     private static final SimpleLogger log = new SimpleLogger(Pzhta.class);  
 
     public boolean convert(String ncmlFile, String fileOut, ArrayList outerList) {
-        log.error( "*** Reading NCML\n");
         try {
+            log.error( "*** Reading NCML\n");
             NetcdfDataset ncd = NcMLReader.readNcML("file://"+ncmlFile, null);
-            List<Attribute> globalAttributes = ncd.getGlobalAttributes();
-            Iterator itr = globalAttributes.iterator();
-            while(itr.hasNext()) {
-                Attribute element = (Attribute) itr.next();
-                log.error("  " + element.toString() + "\n");
-            }
-            log.error( "*** Writing skeleton netCDF file\n");
             NetcdfFile ncdnew = ucar.nc2.FileWriter.writeToFile(ncd, fileOut, true);
             ncd.close();
             ncdnew.close();
             log.error( "*** Done");
 
-            log.error( "*** Open netCDF file and add coordinates attribute\n");
-            NetcdfFileWriteable ncFileAddAttribute = NetcdfFileWriteable.openExisting(fileOut);
-            ncFileAddAttribute.setRedefineMode(true);
-            List<Variable> variables = ncFileAddAttribute.getVariables();
-
-            // get time dim
-            Iterator varIterator = variables.iterator();
-            while(varIterator.hasNext()) {
-                Variable tmpVar = (Variable) varIterator.next();
-                String tmpVarName = tmpVar.getName();
-                Attribute tmpAttr = tmpVar.findAttribute("_columnId");
-                if ((tmpAttr != null) && (!tmpVarName.equals("time"))) {
-                    ncFileAddAttribute.addVariableAttribute(tmpVarName, "coordinates", "time lat lon alt");
-                }
-            }
-            // add lat/lon and station variables (demo only)
-            // in the ncml file (DEMO ONLY)
-            ncFileAddAttribute.addVariable("lat", DataType.FLOAT, new ArrayList());
-            ncFileAddAttribute.addVariableAttribute("lat", "long_name", "latitude");
-            ncFileAddAttribute.addVariableAttribute("lat", "units", "degrees_north");
-            ncFileAddAttribute.addVariableAttribute("lat", "standard_name", "latitude");
-
-            ncFileAddAttribute.addVariable("lon", DataType.FLOAT, new ArrayList());
-            ncFileAddAttribute.addVariableAttribute("lon", "long_name", "longitude");
-            ncFileAddAttribute.addVariableAttribute("lon", "units", "degrees_east");
-            ncFileAddAttribute.addVariableAttribute("lon", "standard_name", "longitude");
-
-            ncFileAddAttribute.addVariable("alt", DataType.FLOAT, new ArrayList());
-            ncFileAddAttribute.addVariableAttribute("alt", "long_name", "height above mean sea-level");
-            ncFileAddAttribute.addVariableAttribute("alt", "units", "m");
-            ncFileAddAttribute.addVariableAttribute("alt", "standard_name", "height");
-            ncFileAddAttribute.addVariableAttribute("alt", "positive", "up");
-            ncFileAddAttribute.addVariableAttribute("alt", "axis", "Z");
-
-            String stationName = "station_1";
-            ncFileAddAttribute.addDimension("station_str_len", stationName.length());
-            ncFileAddAttribute.addVariable("station_id", DataType.CHAR, "station_str_len");
-            ncFileAddAttribute.addVariableAttribute("station_id", "long_name", "station name");
-            ncFileAddAttribute.addVariableAttribute("station_id", "cf_role", "timeseries_id");
-            ncFileAddAttribute.addVariableAttribute("station_id", "standard_name", "station_id");
-            ncFileAddAttribute.addVariableAttribute("station_id", "coordinates", "time lat lon alt");
-
-            ncFileAddAttribute.setRedefineMode(false);
-            ncFileAddAttribute.close();
-
             // open netCDF file
-            //NetcdfFileWriteable ncfile = NetcdfFileWriteable.openExisting(fileOut, true);
-            log.error( "*** Open netCDF file to add 'special' variables\n");
+            //log.error( "*** Open netCDF file to add 'special' variables\n");
             NetcdfFileWriteable ncfile = NetcdfFileWriteable.openExisting(fileOut);
-            // add lat/lon dimensions, varaibles, just in case not included in
-            // in the ncml file (DEMO ONLY)
-            ArrayFloat.D0 dataLat = new ArrayFloat.D0();
-            ArrayFloat.D0 dataLon = new ArrayFloat.D0();
-            ArrayFloat.D0 dataAlt = new ArrayFloat.D0();
-            Float latVal = 69.2390F;
-            Float lonVal = -51.0623F; 
-            Float altVal = 26.3F; 
-            dataLat.set(latVal);
-            dataLon.set(lonVal);
-            dataAlt.set(altVal);
-            ncfile.write("lat", dataLat);
-            ncfile.write("lon", dataLon);
-            ncfile.write("alt", dataAlt);
-
-
-            ArrayChar stationArrayChar = ArrayChar.makeFromString(stationName, stationName.length());
-            ncfile.write("station_id", stationArrayChar);
-            // END DEMO SPECIFIC CODE
             List<Variable> ncFileVariables = ncfile.getVariables();
             // get time dim
             Dimension timeDim = ncfile.findDimension("time");
@@ -126,7 +54,6 @@ public class Pzhta {
                 DataType dt = theVar.getDataType();
                 log.error( "*** Look for _columnID in variable " + varName  + "\n");
                 if (attr != null) {
-                    log.error("===============>>" + attr.toString());
                     int varIndex = Integer.parseInt(attr.getStringValue());
                     int len = outerList.size();
                     log.error("\n");
@@ -140,9 +67,6 @@ public class Pzhta {
                         vals.set(i, f);
                         i++;
                     }
-                    log.error("val len: " + Long.toString(vals.getSize()));
-                    log.error("outer len: " + Float.toString(outerList.size()));
-                    log.error("vals: " + vals.toString());
                     log.error("Write " + varName + "\n");
                     ncfile.write(varName, vals);
                 }

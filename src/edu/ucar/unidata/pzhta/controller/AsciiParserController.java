@@ -40,6 +40,7 @@ import javax.xml.validation.Validator;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import org.xml.sax.SAXException;
 
@@ -264,7 +265,132 @@ public class AsciiParserController {
                 netcdf.appendChild(attribute);
             }
 
+            if (file.getLatitude() != null) {
+                Element variable = doc.createElement("variable");
+                variable.setAttribute("name", "lat");
+                variable.setAttribute("type", "float");
 
+                Element attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "units");
+                attribute.setAttribute("value", file.getLatitudeUnits());
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "long_name");
+                attribute.setAttribute("value", "latitude");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "standard_name");
+                attribute.setAttribute("value", "latitude");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("values");
+                Text values = doc.createTextNode(file.getLatitude());
+                attribute.appendChild(values);
+                variable.appendChild(attribute);
+
+                netcdf.appendChild(variable);
+            }
+
+            if (file.getLongitude() != null) {
+                Element variable = doc.createElement("variable");
+                variable.setAttribute("name", "lon");
+                variable.setAttribute("type", "float");
+
+                Element attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "units");
+                attribute.setAttribute("value", file.getLongitudeUnits());
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "long_name");
+                attribute.setAttribute("value", "longitude");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "standard_name");
+                attribute.setAttribute("value", "longitude");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("values");
+                Text values = doc.createTextNode(file.getLongitude());
+                attribute.appendChild(values);
+                variable.appendChild(attribute);
+
+                netcdf.appendChild(variable);
+            }
+
+            if (file.getAltitude() != null) {
+                Element variable = doc.createElement("variable");
+                variable.setAttribute("name", "alt");
+                variable.setAttribute("type", "float");
+
+                Element attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "units");
+                attribute.setAttribute("value", file.getAltitudeUnits());
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "long_name");
+                attribute.setAttribute("value", "height above mean sea-level");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "positive");
+                attribute.setAttribute("value", "up");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "axis");
+                attribute.setAttribute("value", "Z");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "standard_name");
+                attribute.setAttribute("value", "height");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("values");
+                Text values = doc.createTextNode(file.getAltitude());
+                attribute.appendChild(values);
+                variable.appendChild(attribute);
+
+                netcdf.appendChild(variable);
+            }
+
+            if (file.getStationName() != null) {
+                Element dimension = doc.createElement("dimension");
+                dimension.setAttribute("name", "name_strlen");
+                dimension.setAttribute("length", Integer.toString(file.getStationName().length()));
+                netcdf.appendChild(dimension);
+
+                Element variable = doc.createElement("variable");
+                variable.setAttribute("name", "station_id");
+                variable.setAttribute("type", "string");
+
+                Element attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "cf_role");
+                attribute.setAttribute("value", "timeseries_id");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "long_name");
+                attribute.setAttribute("value", "station name");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "standard_name");
+                attribute.setAttribute("value", "station_id");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("values");
+                Text values = doc.createTextNode(file.getStationName());
+                attribute.appendChild(values);
+                variable.appendChild(attribute);
+
+                netcdf.appendChild(variable);
+            }
 
             HashMap <String, String> variableNameMap = file.getVariableNameMap();
             HashMap <String, HashMap> variableMetadataMap = file.getVariableMetadataMap();
@@ -306,6 +432,12 @@ public class AsciiParserController {
                     attribute.setAttribute("value", columnId);
                     variable.appendChild(attribute);
 
+                    if (!value.equals("time")) {
+                        attribute = doc.createElement("attribute");
+                        attribute.setAttribute("name", "coordinates");
+                        attribute.setAttribute("value", "time lat lon alt");
+                        variable.appendChild(attribute);
+                    }
                     netcdf.appendChild(variable);
                 } else {
                     continue;

@@ -46,6 +46,13 @@ public class AsciiFile {
     private String comment = null;
     private String history = null;
     private String references = null;
+    private String latitude = null;
+    private String longitude = null;
+    private String altitude = null;
+    private String latitudeUnits = null;
+    private String longitudeUnits = null;
+    private String altitudeUnits = null;
+    private String stationName = null;
 
     private static final SimpleLogger log = new SimpleLogger(AsciiFile.class);
 
@@ -539,5 +546,129 @@ public class AsciiFile {
         } 
     }
 
+    /*
+     * Returns the user supplied latitude value.
+     * 
+     * @return  The latitude (Station Information). 
+     */
+    public String getLatitude() {
+        return latitude;
+    }
+
+    /*
+     * Set the user supplied latitude value
+     * 
+     * @param references  The latitude (Station Information). 
+     */
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    /*
+     * Returns the user supplied longitude value.
+     * 
+     * @return  The longitude (Station Information). 
+     */
+    public String getLongitude() {
+        return longitude;
+    }
+
+    /*
+     * Set the user supplied longitude value
+     * 
+     * @param references  The longitude (Station Information). 
+     */
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    /*
+     * Returns the user supplied altitude value.
+     * 
+     * @return  The altitude (Station Information). 
+     */
+    public String getAltitude() {
+        return altitude;
+    }
+
+    /*
+     * Set the user supplied altitude value
+     * 
+     * @param references  The altitude (Station Information). 
+     */
+    public void setAltitude(String altitude) {
+        this.altitude = altitude;
+    }
+
+    /*
+     * Returns the user supplied latitude units.
+     * 
+     * @return  The latitude units (Station Information). 
+     */
+    public String getLatitudeUnits() {
+        return latitudeUnits;
+    }
+
+    /*
+     * Set the user supplied latitude units
+     * 
+     * @param references  The latitude units (Station Information). 
+     */
+    public void setLatitudeUnits(String latitudeUnits) {
+        this.latitudeUnits = latitudeUnits;
+    }
+
+    /*
+     * Returns the user supplied longitude units.
+     * 
+     * @return  The longitude units (Station Information). 
+     */
+    public String getLongitudeUnits() {
+        return longitudeUnits;
+    }
+
+    /*
+     * Set the user supplied longitude units
+     * 
+     * @param references  The longitude units (Station Information). 
+     */
+    public void setLongitudeUnits(String longitudeUnits) {
+        this.longitudeUnits = longitudeUnits;
+    }
+
+    /*
+     * Returns the user supplied altitude units.
+     * 
+     * @return  The altitude units (Station Information). 
+     */
+    public String getAltitudeUnits() {
+        return altitudeUnits;
+    }
+
+    /*
+     * Set the user supplied altitude units
+     * 
+     * @param references  The altitude units (Station Information). 
+     */
+    public void setAltitudeUnits(String altitudeUnits) {
+        this.altitudeUnits = altitudeUnits;
+    }
   
+    /*
+     * Returns the user supplied station name.
+     * 
+     * @return  The station name (Station Information). 
+     */
+    public String getStationName() {
+        return stationName;
+    }
+
+    /*
+     * Set the user supplied station name
+     * 
+     * @param references  The station name (Station Information). 
+     */
+    public void setStationName(String stationName) {
+        this.stationName = stationName;
+    }
 }
