@@ -343,13 +343,33 @@ $.metadata.setType("attr", "validate");
      <div id="dialog"></div>
     </div> 
 
-    <div id="step8" title="Specify Global Metadata">
+    <div id="step8" title="Specify Station Information">
+     <p>* = required</p>
+      <div class="max">
+       <div class="left">
+        <ol>
+         <li><label for="station_name" class="error"></label><label>Station Name* <input type="text" name="station_name" value="" validate="required:true"/></label></li>             
+         <li><label for="latitude" class="error"></label><label>Latitude* <input type="text" name="latitude" value="" validate="required:true"/></label></li>
+         <li><label for="lat_units" class="error"></label><label>Latitude Units* <input type="text" name="lat_units" value="" validate="required:true"/></label></li>
+         <li><label for="longitude" class="error"></label><label>Longitude* <input type="text" name="longitude" value="" validate="required:true"/></label></li>
+         <li><label for="lon_units" class="error"></label><label>Longitude Units* <input type="text" name="lon_units" value="" validate="required:true"/></label></li>
+         <li><label for="altitude" class="error"></label><label>Altitude* <input type="text" name="altitude" value="" validate="required:true"/></label></li>
+         <li><label for="alt_units" class="error"></label><label>Altitude Units* <input type="text" name="alt_units" value="" validate="required:true"/></label></li>
+        </ol>
+       </div>
+      </div>
+    </div> 
+
+
+
+
+    <div id="step9" title="Specify Global Metadata">
      <p>* = required</p>
       <div class="max">
        <div class="left">
         <ol>
          <li><label for="title" class="error"></label><label>Title* <input type="text" name="title" value="" validate="required:true"/></label></li>
-         <li><label for="insitution" class="error"></label><label>Institution* <input type="text" name="institution" value="" validate="required:true"/></label></li>
+         <li><label for="institution" class="error"></label><label>Institution* <input type="text" name="institution" value="" validate="required:true"/></label></li>
          <li><label>Processor <input type="text" name="processor" value=""/></label></li>
          <li><label>Version <input type="text" name="version" value=""/></label></li>
          <li><label>Source <input type="text" name="source" value=""/></label></li>
@@ -366,13 +386,10 @@ $.metadata.setType("attr", "validate");
       </div>
     </div> 
 
-    <div id="step9" title="Download Template">
-     <h5>Download!</h5>
-       <div class="download">
-      
-         <a href="/pzhtaDownload/borehole_logger_data.ncml">borehole_logger_data.ncml</a> <br/><br/>
-         <a href="/pzhtaDownload/borehole_logger_data.nc">borehole_logger_data.nc</a>
-       </div>
+    <div id="step10" title="Download Files">
+      <div class="max">
+       <ol></ol>
+      </div>
     </div>
    </form>
 

@@ -112,19 +112,59 @@ $(document).ready(function($) {
                     }   
                     break;
 
-                case 7:  // Specify Global Metadata
+                case 7:  // Specify Station Information
+                     // Validation: must have the station name specified 
+                     if (ui.type == "next") {
+                        if (!sessionStorage.getItem("station_name")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=station_name]").text("You need to provide a station name.");
+                            return false;
+                        } 
+                        // Validation: must have the latitude specified 
+                        if (!sessionStorage.getItem("latitude")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=latitude]").text("You need to provide a latitude for the station.");
+                            return false;
+                        } 
+                        // Validation: must have atitude units specified 
+                        if (!sessionStorage.getItem("lat_units")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=lat_units]").text("You need to provide latitude units.");
+                            return false;
+                        } 
+                        // Validation: must have the longitude specified 
+                        if (!sessionStorage.getItem("longitude")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=longitude]").text("You need to provide a longitude for the station.");
+                            return false;
+                        }  
+                        // Validation: must have longitude units specified 
+                        if (!sessionStorage.getItem("lon_units")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=lon_units]").text("You need to provide longitude units.");
+                            return false;
+                        }
+                        // Validation: must have the altitude specified 
+                        if (!sessionStorage.getItem("altitude")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=altitude]").text("You need to provide a altitude for the station.");
+                            return false;
+                        }  
+                        // Validation: must have altitude units specified 
+                        if (!sessionStorage.getItem("alt_units")) {
+                            $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=alt_units]").text("You need to provide altitude units.");
+                            return false;
+                        }
+                    } 
+                    break;
+
+                case 8:  // Specify Global Metadata
                      // Validation: must have the title specified 
                      if (ui.type == "next") {
                         if (!sessionStorage.getItem("title")) {
                             $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=title]").text("You need to provide a title for this dataset.");
                             return false;
                         } 
-                        // Validation: must have the title specified 
+                        // Validation: must have the institution specified 
                         if (!sessionStorage.getItem("institution")) {
                             $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=institution]").text("You need to provide a institution for this dataset.");
                             return false;
                         } 
-                        // Validation: must have the title specified 
+                        // Validation: must have the description specified 
                         if (!sessionStorage.getItem("description")) {
                             $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label[for=description]").text("You need to provide a description for this dataset.");
                             return false;
@@ -285,9 +325,50 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
                     }, 
                 "text");
 
-                break;          
+                break;       
 
-            case 7:  // Specify Global Metadata
+            case 7:  // Specify Station Information
+
+                // If we land on this page and user has already enter something 
+                // (e.g., clicked previous or used the menu to navigate)    
+                // Don't hide the 'Next' button           
+                if ((ui.type == "previous") || (ui.type == "next")) {
+                    if (sessionStorage.getItem("station_name")) {
+                        if (sessionStorage.getItem("latitude")) {                            
+                           if (sessionStorage.getItem("lat_units")){ 
+                               if (sessionStorage.getItem("longitude")) {
+                                   if (sessionStorage.getItem("lon_units")) {                            
+                                       if (sessionStorage.getItem("altitude")){ 
+                                           if (sessionStorage.getItem("alt_units")){ 
+                                               $("#faux").remove();
+                                               $(".jw-button-next").removeClass("hideMe");
+                                           }
+                                       }
+                                   }
+                               }
+                           }
+                        }
+                    }
+                  
+                    // populate input elements from sessionStorage
+                    var inputElements = $("#step8 input");
+                    for (var i = 0; i < inputElements.length; i++) {  
+                        var name = $(inputElements[i]).attr('name');
+                        if (sessionStorage.getItem(name)) {
+                            $("input[name=\"" + name + "\"]").val(sessionStorage.getItem(name));
+                         } else {
+                            $("input[name=\"" + name + "\"]").val("");
+                         }
+                    }
+
+                }
+                break;   
+
+
+
+   
+
+            case 8:  // Specify Global Metadata
 
                 // If we land on this page and user has already enter something 
                 // (e.g., clicked previous or used the menu to navigate)    
@@ -303,7 +384,7 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
                     }
                    
                     // populate input elements from sessionStorage
-                    var inputElements = $("#step8 input");
+                    var inputElements = $("#step9 input");
                     for (var i = 0; i < inputElements.length; i++) {  
                         var name = $(inputElements[i]).attr('name');
                         if (sessionStorage.getItem(name)) {
@@ -313,7 +394,7 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
                          }
                     }
                     // populate textarea elements from sessionStorage
-                    var textareaElements = $("#step8 textarea");
+                    var textareaElements = $("#step9 textarea");
                     for (var i = 0; i < textareaElements.length; i++) {  
                         var name = $(textareaElements[i]).attr('name');
                         if (sessionStorage.getItem(name)) {
@@ -325,8 +406,8 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
                 }
                 break;   
 
-            case 8:  // Download!!!
-
+            case 9:  // Download!!!
+                $(".jw-button-finish").addClass("hideMe");
                 var data = {};
                 var variableNames = "";
                 var variableUnits = "";
@@ -352,13 +433,9 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
                 data["variableMetadata"] = variableMetadata.replace(/,/, "");
                 $.post("parse", data,  
                     function(data) {                       
-                       console.log(data);
+                        finish(data)
                     }, 
                 "text");
-                $jQuery.ajaxError(function() {
-                      console.log("error");
-                });
-
                 break;      
         }
     })
@@ -485,9 +562,38 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
     $('#step8 input').focusout(function() {
         if ($(this).attr('value') != "") {
             addToSession($(this).attr('name'), $(this).attr('value'));
+            if (sessionStorage.getItem("station_name")) {
+                if (sessionStorage.getItem("latitude")) {  
+                    if (sessionStorage.getItem("lat_units")){ 
+                        if (sessionStorage.getItem("longitude")) {
+                            if (sessionStorage.getItem("lon_units")) {
+                                if (sessionStorage.getItem("altitude")){ 
+                                    if (sessionStorage.getItem("alt_units")){ 
+                                         $("#faux").remove();
+                                         $(".jw-button-next").removeClass("hideMe");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }  
+        }
+    });
+
+
+
+    /* 
+     STEP 9
+     */
+    // Show 'Next' button after user makes a selection
+    $('#step9 input').focusout(function() {
+        if ($(this).attr('value') != "") {
+            addToSession($(this).attr('name'), $(this).attr('value'));
             if (sessionStorage.getItem("title")) {
                 if (sessionStorage.getItem("institution")) {                            
                     if (sessionStorage.getItem("description")){ 
+                        console.log('sdasasdasd');
                         $("#faux").remove();
                         $(".jw-button-next").removeClass("hideMe");
                     }
@@ -496,7 +602,7 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
         }
     });
 
-    $('#step8 textarea').focusout(function() {
+    $('#step9 textarea').focusout(function() {
         if ($(this).attr('value') != "") {
             addToSession($(this).attr('name'), $(this).attr('value'));
             if (sessionStorage.getItem("title")) {
@@ -525,5 +631,14 @@ function addToSession(key, value) {
 
 function displaySelected (node, key, text) {
     $(node).text(text + ": " + sessionStorage.getItem(key));
+}
+
+
+function finish (data) {
+    var urls = data.split(/\r\n|\r|\n/g);
+    for (var i = 0; i < urls.length; i++) {           
+        var link = "<li><a href=\""  +  urls[i].replace("/opt/tomcat/webapps", "")  +  "\">" + urls[i].replace("/opt/tomcat/webapps/pzhtaDownload/", "")  +  "</a></li>";
+        $("#step10 ol").append(link);
+    }
 }
 
