@@ -193,6 +193,20 @@ public class AsciiParserController {
             log.error("append time dim\n");
             netcdf.appendChild(dim);
 
+            // CF specific attribute elements
+            if (true) {
+                Element attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "Conventions");
+                attribute.setAttribute("value", "CF-1.6");
+                netcdf.appendChild(attribute);
+            }
+
+            if (true) {
+                Element attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "featureType");
+                attribute.setAttribute("value", "timeSeries");
+                netcdf.appendChild(attribute);
+            }
             // attribute elements
             if (file.getTitle() != null) {
                 Element attribute = doc.createElement("attribute");

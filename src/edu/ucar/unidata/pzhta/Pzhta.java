@@ -13,6 +13,7 @@ import ucar.nc2.Dimension;
 import ucar.ma2.InvalidRangeException;
 import ucar.ma2.DataType;
 import ucar.ma2.ArrayFloat;
+import ucar.ma2.ArrayChar;
 
 import java.io.IOException;
 import java.util.List;
@@ -61,19 +62,24 @@ public class Pzhta {
                     ncFileAddAttribute.addVariableAttribute(tmpVarName, "coordinates", "time lat lon");
                 }
             }
-            // add lat/lon dimensions, varaibles, just in case not included in
+            // add lat/lon and station variables (demo only)
             // in the ncml file (DEMO ONLY)
-            /*
-            Dimension latDim = ncfile_add_attr.addDimension("lat", 1);
-            Dimension lonDim = ncfile_add_attr.addDimension("lon", 1);
-            ArrayList dims = new ArrayList();
-            dims.add(latDim);
-            ncfile_add_attr.addVariable("lat", DataType.FLOAT, dims );
+            ncFileAddAttribute.addVariable("lat", DataType.FLOAT, new ArrayList());
+            ncFileAddAttribute.addVariableAttribute("lat", "long_name", "latitude");
+            ncFileAddAttribute.addVariableAttribute("lat", "units", "degrees_north");
+            ncFileAddAttribute.addVariableAttribute("lat", "standard_name", "latitude");
 
-            ArrayList dims =ArrayList();
-            dims.add(lonDim);
-            ncfile_add_attr.addVariable("lon", DataType.FLOAT, dims );
-            */
+            ncFileAddAttribute.addVariable("lon", DataType.FLOAT, new ArrayList());
+            ncFileAddAttribute.addVariableAttribute("lon", "long_name", "longitude");
+            ncFileAddAttribute.addVariableAttribute("lon", "units", "degrees_east");
+            ncFileAddAttribute.addVariableAttribute("lon", "standard_name", "longitude");
+
+            String stationName = "station_1";
+            ncFileAddAttribute.addDimension("station_str_len", stationName.length());
+            ncFileAddAttribute.addVariable("station_id", DataType.CHAR, "station_str_len");
+            ncFileAddAttribute.addVariableAttribute("station_id", "long_name", "station name");
+            ncFileAddAttribute.addVariableAttribute("station_id", "cf_role", "timeseries_id");
+            ncFileAddAttribute.addVariableAttribute("station_id", "standard_name", "station_id");
 
             ncFileAddAttribute.setRedefineMode(false);
             ncFileAddAttribute.close();
@@ -84,7 +90,6 @@ public class Pzhta {
             NetcdfFileWriteable ncfile = NetcdfFileWriteable.openExisting(fileOut);
             // add lat/lon dimensions, varaibles, just in case not included in
             // in the ncml file (DEMO ONLY)
-            /*
             ArrayFloat.D0 dataLat = new ArrayFloat.D0();
             ArrayFloat.D0 dataLon = new ArrayFloat.D0();
             Float latVal = 69.2390F;
@@ -93,8 +98,12 @@ public class Pzhta {
             dataLon.set(lonVal);
             ncfile.write("lat", dataLat);
             ncfile.write("lon", dataLon);
+
+
+            ArrayChar.D1 stationArrayChar = new ArrayChar.D1(stationName.length());
+            stationArrayChar.makeFromString(stationName, stationName.length());
+            ncfile.write("station_id", stationArrayChar);
             // END DEMO SPECIFIC CODE
-            */            
             List<Variable> ncFileVariables = ncfile.getVariables();
             // get time dim
             Dimension timeDim = ncfile.findDimension("time");
