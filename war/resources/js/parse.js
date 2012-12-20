@@ -413,9 +413,9 @@ function drawGrid(data, step) {
                             $("#dialog").empty();
                             var dialogForm =  "<form id=\"dialog\">\n" +
                                 "<fieldset>\n" +
-                                "<p>Metadata for: <b>" + variableName + "</b></p>\n" + 
+                                "<p><b>Metadata for: </b><i>" + variableName + "</i></p>\n" +
                                 "<div class=\"coordVarElements\">\n" +
-                                "<p>Is this variable a coordinate variable (time, lat/lon)? </p>\n" + 
+                                "<p><b>Is this variable a coordinate variable <i><u>(time, lat/lon)?</u></i> </b></p>\n" +
                                 "<label for=\"coordVarElements\" class=\"error\"></label>\n" +
                                 "<ul>" + 
 		                        "<li><label>Yes<input type=\"radio\" name=\"" + variableName + "-coordVar\" id=\"coordVar\" value=\"yes\"/></label></li>" +
@@ -423,7 +423,7 @@ function drawGrid(data, step) {
                                 "</ul>" + 
                                 "</div>" +
                                 "<div class=\"dataTypeElements\">\n" +
-                                "<p>Specify data type: </p>\n" + 
+                                "<p><b>Specify data type: </b></p>\n" +
                                 "<label for=\"dataTypeElements\" class=\"error\"></label>\n" +
                                 "<ul>" + 
          		                "<li><label>Integer<input type=\"radio\" name=\"" + variableName + "-dataType\" id=\"dataType\" value=\"integer\"/></label></li>\n" +
@@ -499,22 +499,28 @@ function bindGridEvent(grid) {
 function bindAdditionalMetadataChooser(coordVarChoice, variableName, variableUnits) {
     $("img#additionalMetadataChooser").bind('click', function() {
         var metadataSelected = $('form#dialog .additionalElements select').val();
-        var metadataChoices = $('form#dialog .additionalElements ol');      
-        if ($(this).attr("alt") == "Add Metadata") {
-            for (var i = 0; i < metadata.length; i++) {    
-                var tag;                       
-                var metadataItem = metadata[i];
-                var displayName = metadataItem.displayName;
-                if (displayName == undefined) {
-                    displayName = metadataSelected;
-                }
-                if (metadataItem.entry == metadataSelected) {
-                    var value = getMetadataValue (metadataItem.entry, variableName, variableUnits); 
-                    tag =  "<li><label>" + displayName + "<input type=\"text\" name=\"" + variableName + "-" + metadataItem.entry  + "\" value=\"" + value + "\" id=\"" + metadataItem.necessity + "\"/></label></li>\n";
-                }
+        var metadataChoices = $('form#dialog .additionalElements ol');
+
+        displayName = null;
+        for (var i = 0; i < metadata.length; i++) {
+            var tag;
+            var metadataItem = metadata[i];
+            var displayName = metadataItem.displayName;
+            if (displayName == undefined) {
+                displayName = metadataSelected;
             }
-            if ($('li:contains(' + metadataSelected + ')').length > 0) {
-                $(".additionalElements").find("label.error").text("'" + metadataSelected + "' has already been selected.");
+            if (metadataItem.entry == metadataSelected) {
+                var selectedVarName = displayName;
+                var value = getMetadataValue (metadataItem.entry, variableName, variableUnits);
+                tag =  "<li><label>" + displayName + "<input type=\"text\" name=\"" + variableName + "-" + metadataItem.entry  + "\" value=\"" + value + "\" id=\"" + metadataItem.necessity + "\"/></label></li>\n";
+            }
+        }
+
+
+        if ($(this).attr("alt") == "Add Metadata") {
+
+            if ($('li:contains(' + selectedVarName + ')').length > 0) {
+                $(".additionalElements").find("label.error").text("'" + selectedVarName + "' has already been selected.");
             } else {
                 $(".additionalElements").find("label.error").text("");
                 if ($(metadataChoices).length == 0) {
@@ -524,11 +530,11 @@ function bindAdditionalMetadataChooser(coordVarChoice, variableName, variableUni
                 }     
             }               
         } else {
-            if ($('li:contains(' + metadataSelected + ')').length == 0) {
-               $(".additionalElements").find("label.error").text("'" + metadataSelected + "' has NOT been selected and therefore cannot be removed.");
+            if ($('li:contains(' + selectedVarName + ')').length == 0) {
+               $(".additionalElements").find("label.error").text("'" + selectedVarName + "' has NOT been selected and therefore cannot be removed.");
             } else {
                 $(".additionalElements").find("label.error").text("");
-                $('li:contains(' + metadataSelected + ')').remove();
+                $('li:contains(' + selectedVarName + ')').remove();
                 var listChildren = $('form#dialog .additionalElements ol > li');
                 if ($(listChildren).length == 0) {               
                     $(metadataChoices).remove("ol");               
@@ -888,7 +894,7 @@ function createTagElement (metadata, name, value, id, validate, displayName) {
 
 function addMetadataOptionsToDialog (coordVarChoice, variableName, variableUnits, variableValue) {
    $(".requiredElements").remove();
-   var requiredTitle = "<p>Required metadata:</p>\n";
+   var requiredTitle = "<p><b>Required metadata:</b></p>\n";
    var required = populateRequiredMetadata (coordVarChoice, variableName, variableUnits);
    $("#dialog fieldset").append("<div class=\"requiredElements\">" + requiredTitle + required + "</div>");
 
@@ -903,7 +909,7 @@ function addMetadataOptionsToDialog (coordVarChoice, variableName, variableUnits
 
 
    $(".recommendedElements").remove();
-   var recommendedTitle = "<p>Recommended metadata:</p>\n";
+   var recommendedTitle = "<p><b>Recommended metadata:</b></p>\n";
    var recommended = populateRecommendedMetadata (coordVarChoice, variableName, variableUnits);
    $("#dialog fieldset").append("<div class=\"recommendedElements\">" + recommendedTitle + recommended + "</div>");
 
@@ -917,7 +923,7 @@ function addMetadataOptionsToDialog (coordVarChoice, variableName, variableUnits
    }
 
    $(".additionalElements").remove();
-   var additionalTitle = "<p>Additional metadata:</p>\n";
+   var additionalTitle = "<p><b>Additional metadata:</b></p>\n";
    var additional = populateAdditionalMetadata (coordVarChoice, variableName, variableUnits);
    $("#dialog fieldset").append("<div class=\"additionalElements\">" + additionalTitle + additional + "</div>");
    bindAdditionalMetadataChooser(coordVarChoice, variableName, variableUnits); 

@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <metadata>
+      <!-- Coordinate Metadata -->
       <entry id="time, calendar" displayName="Calendar Type">
          <type>coordinate</type>
          <necessity>additional</necessity>
@@ -20,33 +21,23 @@
          <type>coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="long_name" displayName="Variable Description">
-         <type>both</type>
-         <necessity>required</necessity>
-      </entry>
-      <entry id="missing_value" displayName="Missing Value">
-         <type>both</type>
-         <necessity>required</necessity>
-      </entry>
-      <entry id="standard_name" displayName="CF Name">
-         <type>both</type>
-         <necessity>recommended</necessity>
-      </entry>
-      <entry id="units">
-         <type>both</type>
-         <necessity>required</necessity>
-      </entry>
+
+      <!-- Non-Coordinate Metadata -->
       <entry id="valid_max" displayName="Maximum Value (Calibrated)">
-         <type>both</type>
-         <necessity>recommended</necessity>
+        <type>non-coordinate</type>
+        <necessity>recommended</necessity>
       </entry>
       <entry id="valid_min" displayName="Minimum Value (Calibrated)">
-         <type>both</type>
-         <necessity>recommended</necessity>
+        <type>non-coordinate</type>
+        <necessity>recommended</necessity>
       </entry>
       <entry id="valid_range" displayName="Calibration Range">
-         <type>both</type>
-         <necessity>additional</necessity>
+        <type>non-coordinateh</type>
+        <necessity>additional</necessity>
+      </entry>
+      <entry id="missing_value" displayName="Missing Value">
+        <type>non-coordinate</type>
+        <necessity>required</necessity>
       </entry>
       <entry id="add_offset" displayName="Calibration Offset">
          <type>non-coordinate</type>
@@ -84,6 +75,22 @@
          <type>non-coordinate</type>
          <necessity>required</necessity>
       </entry>
+
+      <!-- Coordinate and Non-Coordinate (Shared) Metadata -->
+      <entry id="long_name" displayName="Variable Description">
+        <type>both</type>
+        <necessity>required</necessity>
+      </entry>
+      <entry id="standard_name" displayName="CF Name">
+        <type>both</type>
+        <necessity>recommended</necessity>
+      </entry>
+      <entry id="units" displayName="Units">
+        <type>both</type>
+        <necessity>required</necessity>
+      </entry>
+
+      <!-- Global Metadata -->
       <entry id="comment" displayName="Comments">
          <type>global</type>
          <necessity>additional</necessity>
