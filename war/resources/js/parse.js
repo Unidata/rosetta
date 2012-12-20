@@ -41,10 +41,12 @@ function drawGrid(data, step) {
                 var m = [];
                 $(data).find("entry").each(function() {
                     var e = {};
+
                     e["entry"] = $(this).attr("id");
+                    e["displayName"] = $(this).attr("displayName");
+
                     e["type"] = $(this).find("type").text();
                     e["necessity"] = $(this).find("necessity").text();
-                    e["display_id"] = $(this).find("alias").text();
                     m.push(e);
                 }); 
                 metadata = m;
@@ -392,8 +394,8 @@ function drawGrid(data, step) {
                     if (args.command == "setVariableMetadata") {
                         $(function() {
 	                        $( "#dialog" ).dialog({
-                                height: 600,
-                                width: 400,
+                                height: 700,
+                                width: 500,
 			                    modal: true,
                                 buttons: {
                                     "done": function() {
@@ -501,10 +503,14 @@ function bindAdditionalMetadataChooser(coordVarChoice, variableName, variableUni
         if ($(this).attr("alt") == "Add Metadata") {
             for (var i = 0; i < metadata.length; i++) {    
                 var tag;                       
-                var metadataItem = metadata[i];                        
+                var metadataItem = metadata[i];
+                var displayName = metadataItem.displayName;
+                if (displayName == undefined) {
+                    displayName = metadataSelected;
+                }
                 if (metadataItem.entry == metadataSelected) {
                     var value = getMetadataValue (metadataItem.entry, variableName, variableUnits); 
-                    tag =  "<li><label>" + metadataSelected + "<input type=\"text\" name=\"" + variableName + "-" + metadataItem.entry  + "\" value=\"" + value + "\" id=\"" + metadataItem.necessity + "\"/></label></li>\n";                
+                    tag =  "<li><label>" + displayName + "<input type=\"text\" name=\"" + variableName + "-" + metadataItem.entry  + "\" value=\"" + value + "\" id=\"" + metadataItem.necessity + "\"/></label></li>\n";
                 }
             }
             if ($('li:contains(' + metadataSelected + ')').length > 0) {
@@ -762,14 +768,14 @@ function populateAdditionalMetadata (varType, variableName, variableUnits) {
         var value = getMetadataValue (metadataItem.entry, variableName, variableUnits); 
         var tag;
         if (metadataItem.type == varType) {
-            tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate); 
+            tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate, metadataItem.displayName);
             if (metadataItem.necessity == "additional") {
                 additional = additional + tag;
             }
         }
         if (metadataItem.type != "global") {
             if (metadataItem.type == "both") {
-                tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate); 
+                tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate, metadataItem.displayName);
                 if (metadataItem.necessity == "additional") {
                     additional = additional + tag;
                 }
@@ -791,14 +797,14 @@ function populateRecommendedMetadata (varType, variableName, variableUnits) {
         var value = getMetadataValue (metadataItem.entry, variableName, variableUnits); 
         var tag;
         if (metadataItem.type == varType) {
-            tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate); 
+            tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate, metadataItem.displayName);
             if (metadataItem.necessity == "recommended") {
                 recommended = recommended + tag;
             }
         }
         if (metadataItem.type != "global") {
             if (metadataItem.type == "both") {
-                tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate); 
+                tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate, metadataItem.displayName);
                 if (metadataItem.necessity == "recommended") {
                     recommended = recommended + tag;
                 }
@@ -819,14 +825,14 @@ function populateRequiredMetadata (varType, variableName, variableUnits) {
         var value = getMetadataValue (metadataItem.entry, variableName, variableUnits); 
         var tag;
         if (metadataItem.type == varType) {
-            tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate); 
+            tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate, metadataItem.displayName);
             if (metadataItem.necessity == "required") {
                 required = required + tag;
             }
         }
         if (metadataItem.type != "global") {
             if (metadataItem.type == "both") {
-                tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate); 
+                tag = createTagElement(metadataItem.entry, variableName + "-" + metadataItem.entry, value, metadataItem.necessity, validate, metadataItem.displayName);
                 if (metadataItem.necessity == "required") {
                     required = required + tag;
                 }
@@ -865,12 +871,15 @@ function isCFStandardName (value) {
 }
 
 
-function createTagElement (metadata, name, value, id, validate) {
+function createTagElement (metadata, name, value, id, validate, displayName) {
     var tag;
+    if (displayName == undefined) {
+        displayName = metadata;
+    }
     if (id == "additional") {
-        tag =  "<option value=\"" + metadata + "\">" + metadata + "</option>\n";
+        tag =  "<option value=\"" + metadata + "\">" + displayName + "</option>\n";
     } else {
-        tag = "<li>" + "<label for=\"" + name + "\" class=\"error\"></label>\n" + "<label>" + metadata + "<input type=\"text\" name=\"" + name  + "\" value=\"" + value + "\" id=\"" + id + "\" " + validate + "/></label></li>\n";
+        tag = "<li>" + "<label for=\"" + name + "\" class=\"error\"></label>\n" + "<label>" + displayName + "<input type=\"text\" name=\"" + name  + "\" value=\"" + value + "\" id=\"" + id + "\" " + validate + "/></label></li>\n";
     }
     return tag;
 }

@@ -81,7 +81,10 @@ $(document).ready(function($) {
                         if (!sessionStorage.uniqueId) {
                             $(".jw-step:eq(" + ui.currentStepIndex + ")").find("label.error").text("You need to upload an ascii file to continue");
                             return false;
-                        } 
+                        }
+                        if ((sessionStorage.uniqueId.split('.').pop() == ".xlsx") || (sessionStorage.uniqueId.split('.').pop() == ".xls")) {
+                            alert("Any date formatted cells in your spreadsheet will be reformated in 'seconds since 1970-01-01'!");
+                        }
                     }   
                     break;
 

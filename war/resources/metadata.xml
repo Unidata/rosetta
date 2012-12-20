@@ -1,86 +1,62 @@
 <?xml version='1.0' encoding='utf-8'?>
 <metadata>
-      <entry id="axis">
+      <entry id="time, calendar" displayName="Calendar Type">
          <type>coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="time, calendar">
+      <entry id="time, leap_month" displayName="Leap Month (yes/no)">
          <type>coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="climatology">
+      <entry id="time, leap_year" displayName="Leap Year (yes/no)">
          <type>coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="compress">
+      <entry id="time, month_lengths" displayName="Length of Month (non-standard calendar)">
          <type>coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="formula_terms">
+      <entry id="positive" displayName="Vertical Positive (up/down)">
          <type>coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="time, leap_month">
-         <type>coordinate</type>
-         <necessity>additional</necessity>
-      </entry>
-      <entry id="time, leap_year">
-         <type>coordinate</type>
-         <necessity>additional</necessity>
-      </entry>
-      <entry id="time, month_lengths">
-         <type>coordinate</type>
-         <necessity>additional</necessity>
-      </entry>
-      <entry id="positive">
-         <type>coordinate</type>
-         <necessity>additional</necessity>
-      </entry>
-      <entry id="_FillValue">
-         <type>both</type>
-         <necessity>additional</necessity>
-      </entry>
-      <entry id="long_name" alias="variable description">
+      <entry id="long_name" displayName="Variable Description">
          <type>both</type>
          <necessity>required</necessity>
       </entry>
-      <entry id="missing_value">
+      <entry id="missing_value" displayName="Missing Value">
          <type>both</type>
          <necessity>required</necessity>
       </entry>
-      <entry id="standard_name">
+      <entry id="standard_name" displayName="CF Name">
          <type>both</type>
          <necessity>recommended</necessity>
-      </entry>
-      <entry id="station_description">
-         <type>both</type>
-         <necessity>additional</necessity>
       </entry>
       <entry id="units">
          <type>both</type>
          <necessity>required</necessity>
       </entry>
-      <entry id="valid_max">
+      <entry id="valid_max" displayName="Maximum Value (Calibrated)">
          <type>both</type>
          <necessity>recommended</necessity>
       </entry>
-      <entry id="valid_min">
+      <entry id="valid_min" displayName="Minimum Value (Calibrated)">
          <type>both</type>
          <necessity>recommended</necessity>
       </entry>
-      <entry id="valid_range">
+      <entry id="valid_range" displayName="Calibration Range">
          <type>both</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="add_offset">
+      <entry id="add_offset" displayName="Calibration Offset">
          <type>non-coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="ancillary_variables">
+      <entry id="ancillary_variables" displayName="Related Variables">
          <type>non-coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="comment">
+      <entry id="comment" displayName="Comment">
          <type>non-coordinate</type>
          <necessity>additional</necessity>
       </entry>
@@ -96,31 +72,19 @@
          <type>non-coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="grid_mapping">
+      <entry id="references" displayName="Instrument Documentation">
          <type>non-coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="references">
+      <entry id="scale_factor" displayName="Calibration Multiplier">
          <type>non-coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="sample_dimension">
-         <type>non-coordinate</type>
-         <necessity>additional</necessity>
-      </entry>
-      <entry id="scale_factor">
-         <type>non-coordinate</type>
-         <necessity>additional</necessity>
-      </entry>
-      <entry id="source">
+      <entry id="source" displayName="Instrument Description">
          <type>non-coordinate</type>
          <necessity>required</necessity>
       </entry>
-      <entry id="standard_error_multiplier">
-         <type>non-coordinate</type>
-         <necessity>additional</necessity>
-      </entry>
-      <entry id="comment">
+      <entry id="comment" displayName="Comments">
          <type>global</type>
          <necessity>additional</necessity>
       </entry>
