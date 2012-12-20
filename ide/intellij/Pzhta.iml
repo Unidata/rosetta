@@ -20,7 +20,7 @@
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/../../build/classes" />
+    <output url="file://$MODULE_DIR$/../../war/WEB-INF/classes" />
     <output-test url="file://$MODULE_DIR$/../../build/test" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../..">
@@ -28,18 +28,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../war/WEB-INF/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../../thredds/thredds/cdm/src/main/java" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/../../war/WEB-INF/lib" recursive="false" />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="pzhta_libs" level="project" />
+    <orderEntry type="library" name="tomcat_libs" level="project" />
   </component>
 </module>
 
