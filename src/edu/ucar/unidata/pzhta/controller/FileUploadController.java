@@ -26,6 +26,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import edu.ucar.unidata.pzhta.domain.UploadedFile;
+import edu.ucar.unidata.converters.xlsToCsv;
+
 
 /**
  * Controller to handle file uploads.
@@ -69,6 +71,18 @@ public class FileUploadController implements HandlerExceptionResolver {
             outputStream.write(file.getFile().getFileItem().get());
             outputStream.flush();
             outputStream.close();
+            if ((file.getFileName().contains(".xls")) || (file.getFileName().contains(".xlsx"))) {
+                String xlsFilePath =  filePath + "/" + file.getFileName();
+                xlsToCsv.convert(xlsFilePath, null);
+                String csvFilePath = null;
+                if (xlsFilePath.contains(".xlsx")) {
+                    csvFilePath = xlsFilePath.replace(".xlsx",".csv");
+                } else if (xlsFilePath.contains(".xls")) {
+                    csvFilePath = xlsFilePath.replace(".xls",".csv");
+                }
+
+                file.setFileName(csvFilePath);
+            }
         } catch (Exception e) {
             log.error("A file upload error has occurred: " + e.getMessage());
             return null;

@@ -61,10 +61,9 @@
     padding: .25em .5em;
     margin-bottom: .25em;
     cursor: pointer;
-    white-space:nowrap;
+    white-space:normal;
     border: none !important;
   }
-
 
   .jw-menu .jw-active {
     background: #FFFFFF url('resources/img/step.png') 0 5px no-repeat !important; 
@@ -82,7 +81,9 @@
     padding-left: 20px; 
   }
 
-
+  .slick-viewport {
+    overflow-x: show !important;
+  }
 
   .slick-header-button {
     background-image: none !important; 
@@ -282,23 +283,56 @@ $.metadata.setType("attr", "validate");
    <form id="FORM" action="/pzhta/upload" method="POST" enctype="multipart/form-data">
 
 
-    <div id="step1" title="Select Data Source"> 
+    <div id="step1" title="Select Observation Platform"> 
      <label for="cfType" class="error"></label> 
      <div class="max">
-      <ul>
-       <li><label>Station<input type="radio" name="cfType" value="timeSeries" validate="required:true"/></label></li>
-       <li><label>Moored Buoy<input type="radio" name="cfType" value="timeSeries" validate="required:true"/></label></li>
-       <li><label>Radiosonde<input type="radio" name="cfType" value="profile" validate="required:true"/></label></li>
-       <li><label>Wind Profiler<input type="radio" name="cfType" value="profile" validate="required:true"/></label></li>
-       <li><label>Aircraft<input type="radio" name="cfType" value="trajectory" validate="required:true"/></label></li>
-       <li><label>Ship<input type="radio" name="cfType" value="trajectory" validate="required:true"/></label></li>
-       <li><label>Vehicle<input type="radio" name="cfType" value="trajectory" validate="required:true"/></label></li>
-       <li><label>Dropsonde<input type="radio" name="cfType" value="trajectoryOfProfiles" validate="required:true"/></label></li>
+
+     <center><table width="75%" border="0" cellpadding="20" cellspacing="10">
+       <tr>
+       <td align=center valign=bottom>
+         <label>
+           <img src="resources/img/platforms/tower.jpeg" alt="Station (Tower)"><br>
+           <input type="radio" name="cfType" value="timeSeries" validate="required:true"/>Station (Tower)
+         </label>
+       </td>
+       <td align=center valign=bottom>
+         <label>
+           <img src="resources/img/platforms/buoy.jpeg" alt="Moored Buoy"><br>
+           <input type="radio" name="cfType" value="profile" validate="required:true"/>Moored Buoy
+         </label>
+       </td>
+       <td align=center valign=bottom>
+         <label>
+           <img src="resources/img/platforms/baloon.jpeg" alt="Radiosonde"><br>
+           <input type="radio" name="cfType" value="profile" validate="required:true"/>Radiosonde
+         </label>
+       </td>
+       </tr>
+       <tr>
+       <td align=center valign=bottom>
+         <label>
+           <img src="resources/img/platforms/aircraft.jpeg" alt="Aircraft"><br>
+           <input type="radio" name="cfType" value="trajectory" validate="required:true"/>Aircraft
+         </label>
+       </td>
+        <td align=center valign=bottom>
+         <label>
+           <img src="resources/img/platforms/windprofiler.jpeg" alt="Wind Profiler"><br>
+           <input type="radio" name="cfType" value="profile" validate="required:true"/>Wind Profiler
+         </label>
+       </td>
+       </tr>
+       <!-- <li><label>Ship<input type="radio" name="cfType" value="trajectory" validate="required:true"/></label></li> -->
+       <!-- <li><label>Vehicle<input type="radio" name="cfType" value="trajectory" validate="required:true"/></label></li> -->
+       <!-- <li><label>Dropsonde<input type="radio" name="cfType" value="trajectoryOfProfiles" validate="required:true"/></label></li> -->
+        </table>
+      </center>
+
       </ul>
      </div>
     </div>
 
-    <div id="step2" title="Upload ASCII File">
+    <div id="step2" title="Upload ASCII file or Spreadsheet (.xls, .xlsx)">
 	<input id="file" name="file" type="file" value=""/>
 	<input type="button" id="upload" value="Upload" />
 	<p><span id="progress" class="progress">0%</span>  <button id="clearFileUpload" type="button" class="hideMe">Clear file upload</button></p>
@@ -348,13 +382,48 @@ $.metadata.setType("attr", "validate");
       <div class="max">
        <div class="left">
         <ol>
-         <li><label for="stationName" class="error"></label><label>Station Name* <input type="text" name="stationName" value="" validate="required:true"/></label></li> 
-         <li><label for="latitude" class="error"></label><label>Latitude* <input type="text" name="latitude" value="" validate="required:true"/></label></li>
-         <li><label for="latitudeUnits" class="error"></label><label>Latitude Units* <input type="text" name="latitudeUnits" value="" validate="required:true"/></label></li>
-         <li><label for="longitude" class="error"></label><label>Longitude* <input type="text" name="longitude" value="" validate="required:true"/></label></li>
-         <li><label for="longitdeUnits" class="error"></label><label>Longitude Units* <input type="text" name="longitudeUnits" value="" validate="required:true"/></label></li>
-         <li><label for="altitude" class="error"></label><label>Altitude* <input type="text" name="altitude" value="" validate="required:true"/></label></li>
-         <li><label for="altitudeUnits" class="error"></label><label>Altitude Units* <input type="text" name="altitudeUnits" value="" validate="required:true"/></label></li>
+         <li>
+           <label for="stationName" class="error"></label>
+           <label>Station Name*
+             <input type="text" name="stationName" value="" validate="required:true"/>
+           </label>
+         </li> 
+         <li>
+           <label for="latitude" class="error"></label>
+           <label>Latitude* 
+             <input type="text" name="latitude" value="" validate="required:true"/>
+           </label>
+         </li>
+         <li>
+           <label for="latitudeUnits" class="error"></label>
+           <label>Latitude Units*
+             <input type="text" name="latitudeUnits" value="degrees_north" validate="required:true"/>
+           </label>
+         </li>
+         <li>
+           <label for="longitude" class="error"></label>
+           <label>Longitude*
+             <input type="text" name="longitude" value="" validate="required:true"/>
+           </label>
+         </li>
+         <li>
+           <label for="longitdeUnits" class="error"></label>
+             <label>Longitude Units*
+               <input type="text" name="longitudeUnits" value="degrees_west" validate="required:true"/>
+             </label>
+         </li>
+         <li>
+           <label for="altitude" class="error"></label>
+             <label>Altitude*
+               <input type="text" name="altitude" value="" validate="required:true"/>
+             </label>
+         </li>
+         <li>
+           <label for="altitudeUnits" class="error"></label>
+           <label>Altitude Units*
+             <input type="text" name="altitudeUnits" value="m" validate="required:true"/>
+           </label>
+         </li>
         </ol>
        </div>
       </div>
@@ -370,9 +439,9 @@ $.metadata.setType("attr", "validate");
         <ol>
          <li><label for="title" class="error"></label><label>Title* <input type="text" name="title" value="" validate="required:true"/></label></li>
          <li><label for="institution" class="error"></label><label>Institution* <input type="text" name="institution" value="" validate="required:true"/></label></li>
-         <li><label>Processor <input type="text" name="processor" value=""/></label></li>
+         <li><label>Data Author <input type="text" name="processor" value=""/></label></li>
          <li><label>Version <input type="text" name="version" value=""/></label></li>
-         <li><label>Source <input type="text" name="source" value=""/></label></li>
+         <li><label>Source (logger make/model)<input type="text" name="source" value=""/></label></li>
         </ol>
        </div>
        <div class="right">
@@ -392,9 +461,6 @@ $.metadata.setType("attr", "validate");
       </div>
     </div>
    </form>
-
-
-
 
 
    <script type="text/javascript" src="resources/js/jquery/jquery-1.7.2.min.js"></script>
@@ -436,6 +502,11 @@ $.metadata.setType("attr", "validate");
   <script type="text/javascript" src="resources/js/jquery/jquery.ui.dialog.js"></script>
   <script type="text/javascript" src="resources/js/jquery/jquery.effects.core.js"></script>
   <script type="text/javascript" src="resources/js/jquery/jquery.bgiframe-2.1.2.js"></script>
-
+  <br>
+  <br>
+  <img src="resources/img/icon/pzhta_lighter_text-50x50.png" alt="&rho;&zeta;&eta;&tau;&alpha">
+  <br>
+  <br>
+  <i>Questions or comments about &rho;&zeta;&eta;&tau;&alpha; can be sent to: support@</i>
   </body>
  </html>

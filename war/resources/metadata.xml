@@ -40,7 +40,7 @@
          <type>both</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="long_name">
+      <entry id="long_name" alias="variable description">
          <type>both</type>
          <necessity>required</necessity>
       </entry>

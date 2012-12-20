@@ -477,7 +477,8 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
             $("#upload").addClass("hideMe"); 
             return false;
         } else {
-            if ($("#file")[0].files[0].type.search("text") < 0) {
+            //if ($("#file")[0].files[0].type.search("text") < 0) {
+            if (false) {
                 $("#step2").find("label.error").text("Error! Incorrect file type selected for upload");
                 $("#upload").addClass("hideMe"); 
                 return false;
@@ -491,7 +492,7 @@ sessionStorage.setItem("variable9Unit", "Do Not Use");
     // Upload file & show 'Next' button after user uploads file
     $('#upload').bind('click', function() {
         up.send(); 
-        addToSession("fileName", $("#file").val().replace(/\\/g, '').replace(/C:/g, '').replace(/fakepath/g, ''));
+        addToSession("fileName", $("#file").val().replace(/\\/g, '').replace(/C:/g, '').replace(/fakepath/g, '').replace('.xlsx', '.csv').replace('.xls', '.csv'));
         $("#file").addClass("hideMe"); 
         $("#faux").remove();
         $(".jw-button-next").removeClass("hideMe");

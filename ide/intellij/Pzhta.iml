@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../../war/WEB-INF/web.xml" />
+        </descriptors>
+        <webroots>
+          <root url="file://$MODULE_DIR$/../../war" relative="/" />
+        </webroots>
+      </configuration>
+    </facet>
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset1" name="Xml Application Context" removed="false">
+          <file>file://$MODULE_DIR$/../../war/WEB-INF/pzhta-servlet.xml</file>
+        </fileset>
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../../build/classes" />
     <output-test url="file://$MODULE_DIR$/../../build/test" />
@@ -8,16 +27,19 @@
       <sourceFolder url="file://$MODULE_DIR$/../../src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/netcdfAll-4.3.jar!/" />
+          <root url="file://$MODULE_DIR$/../../war/WEB-INF/lib" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../../thredds/thredds/cdm/src/main/java" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/../../war/WEB-INF/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
 

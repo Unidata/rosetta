@@ -44,6 +44,7 @@ function drawGrid(data, step) {
                     e["entry"] = $(this).attr("id");
                     e["type"] = $(this).find("type").text();
                     e["necessity"] = $(this).find("necessity").text();
+                    e["display_id"] = $(this).find("alias").text();
                     m.push(e);
                 }); 
                 metadata = m;
@@ -412,7 +413,7 @@ function drawGrid(data, step) {
                                 "<fieldset>\n" +
                                 "<p>Metadata for: <b>" + variableName + "</b></p>\n" + 
                                 "<div class=\"coordVarElements\">\n" +
-                                "<p>Is this variable a coordinate variable? </p>\n" + 
+                                "<p>Is this variable a coordinate variable (time, lat/lon)? </p>\n" + 
                                 "<label for=\"coordVarElements\" class=\"error\"></label>\n" +
                                 "<ul>" + 
 		                        "<li><label>Yes<input type=\"radio\" name=\"" + variableName + "-coordVar\" id=\"coordVar\" value=\"yes\"/></label></li>" +
@@ -550,14 +551,14 @@ function makeColumns(columns, columnCount, inputSought) {
                     tooltip: "Specify Variable " + inputSought,
                     items: [
                         {
-                            title: "Use a Standard Variable "  + inputSought,
+                            title: "Standard Variable Name"  + inputSought,
                             command: "standard",
-                            tooltip: "Specify an existing standard " + inputSought.toLowerCase()
+                            tooltip: "Specify an existing standard name " + inputSought.toLowerCase()
                         },
                         {
-                            title: "Other",
+                            title: "Custom Variable Name",
                             command: "other",
-                            tooltip: "Specify a value not suggested"
+                            tooltip: "Specify a non-standard name"
                         },
                         {
                             title: "Do Not Use",
