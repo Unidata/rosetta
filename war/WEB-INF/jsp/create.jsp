@@ -432,7 +432,7 @@ $.metadata.setType("attr", "validate");
 
 
 
-    <div id="step9" title="Specify Global Metadata">
+    <div id="step9" title="Specify General Information">
      <p>* = required</p>
       <div class="max">
        <div class="left">

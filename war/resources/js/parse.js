@@ -563,9 +563,9 @@ function makeColumns(columns, columnCount, inputSought) {
                     tooltip: "Specify Variable " + inputSought,
                     items: [
                         {
-                            title: "Standard Variable Name"  + inputSought,
+                            title: "Standard Variable"  + inputSought,
                             command: "standard",
-                            tooltip: "Specify an existing standard name " + inputSought.toLowerCase()
+                            tooltip: "Specify an existing standard " + inputSought.toLowerCase()
                         },
                         {
                             title: "Custom Variable Name",

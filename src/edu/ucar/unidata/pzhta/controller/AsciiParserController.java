@@ -88,8 +88,9 @@ public class AsciiParserController {
             int delimiterRunningTotal = 0;
             boolean dataLine = false;
             List <String> delimiterList = file.getDelimiterList(); 
-            String selectedDelimiter = "";    
-            ArrayList<ArrayList> outerList = new ArrayList<ArrayList>();  
+            String selectedDelimiter = "";
+            List<List<String>> outerList = new ArrayList<List<String>>();
+            //ArrayList<ArrayList> outerList = new ArrayList<ArrayList>();
             if (!file.getDelimiterList().isEmpty()) {
                 selectedDelimiter = delimiterList.get(0);  
             }             
@@ -124,13 +125,13 @@ public class AsciiParserController {
 		                     String updatedLineData = sCurrentLine.replaceAll(delimiters[i],  selectedDelimiter);
                                      sBuffer.append(updatedLineData + "\n");   
                                      String[] lineComponents = updatedLineData.split(selectedDelimiter);
-                                     ArrayList<String> innerList = new ArrayList<String>(Arrays.asList(lineComponents));
+                                     List<String> innerList = new ArrayList<String>(Arrays.asList(lineComponents));
                                      outerList.add(innerList);
                                 }                            
                             } else {
                                 sBuffer.append(sCurrentLine + "\n");  
                                 String[] lineComponents = sCurrentLine.split(selectedDelimiter); 
-                                ArrayList<String> innerList = new ArrayList<String>(Arrays.asList(lineComponents));
+                                List<String> innerList = new ArrayList<String>(Arrays.asList(lineComponents));
                                 outerList.add(innerList);
                             }
                         }

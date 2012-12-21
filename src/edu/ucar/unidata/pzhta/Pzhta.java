@@ -25,11 +25,7 @@ import org.grlea.log.SimpleLogger;
 
 import ucar.ma2.*;
 
-import ucar.nc2.Attribute;
-import ucar.nc2.Dimension;
-import ucar.nc2.NetcdfFile;
-import ucar.nc2.NetcdfFileWriteable;
-import ucar.nc2.Variable;
+import ucar.nc2.*;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ncml.NcMLReader;
 
@@ -61,29 +57,32 @@ public class Pzhta {
      * @return _more_
      */
     public boolean convert(String ncmlFile, String fileOut,
-                           ArrayList outerList) {
+                           List<List<String>> outerList) {
 
         try {
             log.error("*** Reading NCML\n");
             NetcdfDataset ncd = NcMLReader.readNcML("file://" + ncmlFile,
                                     null);
-            NetcdfFile ncdnew = ucar.nc2.FileWriter.writeToFile(ncd, fileOut,
-                                    true);
+            FileWriter2 ncdnew = new ucar.nc2.FileWriter2(ncd, fileOut, NetcdfFileWriter.Version.netcdf3, null);
+            NetcdfFile ncout = ncdnew.write();
             ncd.close();
-            ncdnew.close();
+            ncout.close();
+
             log.error("*** Done");
 
             // open netCDF file
             //log.error( "*** Open netCDF file to add 'special' variables\n");
-            NetcdfFileWriteable ncfile =
-                NetcdfFileWriteable.openExisting(fileOut);
+            NetcdfFileWriter ncFileWriter =
+               NetcdfFileWriter.openExisting(fileOut);
+
+            NetcdfFile ncfile = ncFileWriter.getNetcdfFile();
             List<Variable> ncFileVariables = ncfile.getVariables();
             // get time dim
             Dimension timeDim       = ncfile.findDimension("time");
             Iterator  ncVarIterator = ncFileVariables.iterator();
             while (ncVarIterator.hasNext()) {
                 Variable  theVar  = (Variable) ncVarIterator.next();
-                String    varName = theVar.getName();
+                String    varName = theVar.getFullName();
                 Attribute attr    = theVar.findAttribute("_columnId");
                 DataType  dt      = theVar.getDataType();
                 log.error("*** Look for _columnID in variable " + varName
@@ -93,55 +92,46 @@ public class Pzhta {
                     int len      = outerList.size();
                     log.error("\n");
                     log.error("Read " + varName + "\n");
+                    // Array.makeArray - pass in list of strings and dt.
+                    // make sure outterList comes in as List<String>
                     if (dt.equals(DataType.FLOAT)) {
                         ArrayFloat.D1 vals =
                             new ArrayFloat.D1(outerList.size());
-                        Iterator outerListIterator = outerList.iterator();
                         int      i                 = 0;
-                        while (outerListIterator.hasNext()) {
-                            List<String> innerList =
-                                (List<String>) outerListIterator.next();
-                            float f = new Float(
-                                          (String) innerList.get(
-                                              varIndex)).floatValue();
+                        for (List<String> innerList : outerList) {
+                            float f = Float.parseFloat(
+                                          innerList.get(
+                                              varIndex));
                             vals.set(i, f);
                             i++;
                         }
-                        ncfile.write(varName, vals);
+                        ncFileWriter.write(theVar, vals);
                     } else if (dt.equals(DataType.INT)) {
-                        ArrayInt.D1 vals = new ArrayInt.D1(outerList.size());
-                        Iterator    outerListIterator = outerList.iterator();
-                        int         i                 = 0;
-                        while (outerListIterator.hasNext()) {
-                            List<String> innerList =
-                                (List<String>) outerListIterator.next();
-                            int f = new Integer(
-                                        (String) innerList.get(
-                                            varIndex)).intValue();
+                        ArrayInt.D1 vals =
+                                new ArrayInt.D1(outerList.size());
+                        int      i                 = 0;
+                        for (List<String> innerList : outerList) {
+                            int f = Integer.parseInt(
+                                    innerList.get(
+                                            varIndex));
                             vals.set(i, f);
                             i++;
                         }
-                        ncfile.write(varName, vals);
+                        ncFileWriter.write(theVar, vals);
                     } else if (dt.equals(DataType.CHAR)) {
-                        // toDo needs work, because of "FillValue" string being written to file first.
-                        int elementLength =
-                            ((ArrayList) outerList.get(0)).get(
-                                0).toString().toCharArray().length;
+                        assert theVar.getRank() == 2;
+                        int elementLength = theVar.getDimension(1).getLength();
+
                         ArrayChar.D2 vals =
                             new ArrayChar.D2(outerList.size(), elementLength);
-                        Iterator outerListIterator = outerList.iterator();
                         int      i                 = 0;
-                        while (outerListIterator.hasNext()) {
-                            List<String> innerList =
-                                (List<String>) outerListIterator.next();
-                            String f = new String(innerList.get(varIndex));
-                            char[] thisChar = f.toCharArray();
-                            for (int j = 0; j < elementLength; j++) {
-                                vals.set(i, j, thisChar[j]);
-                            }
+                        for (List<String> innerList : outerList) {
+
+                            String f = innerList.get(varIndex);
+                            vals.setString(i,f);
                             i++;
                         }
-                        ncfile.write(varName, vals);
+                        ncFileWriter.write(theVar, vals);
                     } else {
                         log.error("Unhandled DataType " + dt.toString()
                                   + "\n");
@@ -172,11 +162,6 @@ public class Pzhta {
     }
 
 
-    /**
-     * _more_
-     *
-     * @param args _more_
-     */
     public static void main(String[] args) {
         String ncmlFile =
             "/Users/lesserwhirls/dev/unidata/pzhta/pzhta/src/edu/ucar/unidata/pzhta/test/test.ncml";
