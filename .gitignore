@@ -1,9 +1,8 @@
 ###############
 # PZHTA files #
 ###############
-build/
+target/
 build.properties
-/Users/lesserwhirls/dev/unidata/pzhta/war/WEB-INF/classes/edu
 
 #############
 # IDE files #
