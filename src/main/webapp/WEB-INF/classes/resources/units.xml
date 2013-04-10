@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<units>
+   <unit>
+      <name>geoCoordinateSystem</name>
+      <value>Decimal</value>
+      <value>DMS</value>
+   </unit>
+   <unit>
+      <name>verticalDistance</name>
+      <value>Feet</value>
+      <value>Meters</value>
+   </unit>
+</units>
