@@ -8,6 +8,11 @@ build.properties
 # IDE files #
 #############
 #
+# intelliJ
+#
+ide/intellij/.idea/workspace.xml
+
+#
 # Eclipse files
 #
 .classpath
