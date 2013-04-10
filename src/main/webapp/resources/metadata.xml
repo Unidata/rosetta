@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='utf-8'?>
+<metadata>
+      <!-- Coordinate Metadata -->
+      <entry id="time_calendar" displayName="Calendar Type">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="time_leap_month" displayName="Leap Month (yes/no)">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="time_leap_year" displayName="Leap Year (yes/no)">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="time_month_lengths" displayName="Length of Month (non-standard calendar)">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="positive" displayName="Vertical Positive (up/down)">
+         <type>coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+
+      <!-- Non-Coordinate Metadata -->
+      <entry id="valid_max" displayName="Maximum Value (Calibrated)">
+        <type>non-coordinate</type>
+        <necessity>recommended</necessity>
+      </entry>
+      <entry id="valid_min" displayName="Minimum Value (Calibrated)">
+        <type>non-coordinate</type>
+        <necessity>recommended</necessity>
+      </entry>
+      <entry id="valid_range" displayName="Calibration Range">
+        <type>non-coordinate</type>
+        <necessity>additional</necessity>
+      </entry>
+      <entry id="missing_value" displayName="Missing Value">
+        <type>non-coordinate</type>
+        <necessity>required</necessity>
+      </entry>
+      <entry id="add_offset" displayName="Calibration Offset">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="ancillary_variables" displayName="Related Variables">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="comment" displayName="Comment">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="flag_masks">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="flag_meanings">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="flag_values">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="references" displayName="Instrument Documentation">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="scale_factor" displayName="Calibration Multiplier">
+         <type>non-coordinate</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="source" displayName="Instrument Description">
+         <type>non-coordinate</type>
+         <necessity>required</necessity>
+      </entry>
+
+      <!-- Coordinate and Non-Coordinate (Shared) Metadata -->
+      <entry id="long_name" displayName="Variable Description">
+        <type>both</type>
+        <necessity>required</necessity>
+      </entry>
+      <entry id="standard_name" displayName="CF Name">
+        <type>both</type>
+        <necessity>recommended</necessity>
+      </entry>
+      <entry id="units" displayName="Units">
+        <type>both</type>
+        <necessity>required</necessity>
+      </entry>
+
+      <!-- Global Metadata -->
+      <entry id="comment" displayName="Comments">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="description">
+         <type>global</type>
+         <necessity>required</necessity>
+      </entry>
+      <entry id="history">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="institution">
+         <type>global</type>
+         <necessity>required</necessity>
+      </entry>
+      <entry id="processor">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="references">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="source">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+      <entry id="title">
+         <type>global</type>
+         <necessity>title</necessity>
+      </entry>
+      <entry id="version">
+         <type>global</type>
+         <necessity>additional</necessity>
+      </entry>
+</metadata>

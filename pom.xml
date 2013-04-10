@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+		Parent Maven Configuration File for UCAR/Unidata pzhta library
+	======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <!-- ====================================================
+       Project description
+     ==================================================== -->  
+
+  <groupId>edu.ucar</groupId>
+  <artifactId>pzhta</artifactId>
+  <packaging>war</packaging>
+  <version>0.1-SNAPSHOT</version>
+  <name>pzhta</name>
+  <url>http://www.unidata.ucar.edu/software/pzhta/</url>
+
+  <organization>
+    <name>UCAR/Unidata</name>
+    <url>http://www.unidata.ucar.edu/</url>
+  </organization>
+  <inceptionYear>2011</inceptionYear>
+
+  <scm>
+    <url>https://github.com/Unidata/pzhta/</url>
+    <connection>scm:git:https://github.com/Unidata/pzhta/</connection>
+    <developerConnection>scm:git:git@github.com:Unidata/pzhta.git</developerConnection>
+  </scm>
+
+<!-- ===========================================================
+       Developers and Contributors
+     =========================================================== -->
+  <developers>
+    <developer>
+      <id>lesserwhirls</id>
+      <name>Sean Arms</name>
+      <email>sarms@unidata.ucar.edu</email>
+      <organization>UCAR/UNIDATA</organization>
+      <organizationUrl>http://www.unidata.ucar.edu/</organizationUrl>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>oxelson</id>
+      <name>Jen Oxelson</name>
+      <email>oxelson@unidata.ucar.edu</email>
+      <organization>UCAR/UNIDATA</organization>
+      <organizationUrl>http://www.unidata.ucar.edu/</organizationUrl>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+  
+<!-- ===========================================================
+       External Repositories and Dependencies
+     =========================================================== -->
+
+  <repositories>
+    <repository>
+      <id>unidata</id>
+      <name>THREDDS</name>
+      <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+    </repository>
+  </repositories>
+
+  <properties>
+    <!-- Dependency versions -->
+    <spring.version>3.2.1.RELEASE</spring.version>
+    <junit.version>4.11</junit.version>
+    <jdk.version>1.7</jdk.version>
+    <thredds.version>4.3.16</thredds.version>
+
+    <!-- Plugin versions -->
+    <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
+  </properties>
+  
+  <dependencies>
+    <!-- log4j dependencies -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+    </dependency>
+
+    <!-- commons -->
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.3</version>
+    </dependency>
+            
+    <!-- java server pages standard tag lib -->
+    <dependency>
+      <groupId>jstl</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+    </dependency>
+                        
+    <!-- Spring 3 dependencies -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.jexcelapi</groupId>
+      <artifactId>jxl</artifactId>
+      <version>2.6.12</version>
+    </dependency>
+    <!-- thredds dependencies -->
+    <dependency>
+      <groupId>edu.ucar</groupId>
+      <artifactId>netcdf</artifactId>
+      <version>${thredds.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+  </dependencies>
+  
+  <build>
+    <finalName>pzhta</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+</project>

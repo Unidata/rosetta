@@ -1,0 +1,100 @@
+/**
+ * jQuery/custom.css
+ * 
+ * Content found here are either changes to the standard CSS that comes with jWizard UI
+ * (no-theme) distribution, or custom jQuery UI-related style changes. 
+ */
+
+/* UI dialog widget */
+.ui-dialog {
+ background: #FFFFFF;
+ border: 1px solid #AAAAAA;
+}
+
+/* UI dialog widget overlay */
+.ui-widget-overlay { 
+ background: #AAAAAA url(../../img/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x ;
+ opacity: .5;
+ filter:Alpha(Opacity=50);
+}
+
+/* UI dialog widget title bar */
+.ui-dialog-titlebar {
+ margin: 5px 5px 0 5px;
+ border: 1px solid #AAAAAA;
+ background: #CCCCCC url(../../img/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x;
+ color: #222222;
+ font-weight: bold;
+}
+
+/* UI dialog widget title bar close button */
+.ui-dialog-titlebar-close {
+ background: transparent url(../../img/ui-icons_222222_256x240.png) -94px -128px no-repeat !important;
+ border: none;
+}
+
+/* UI dialog widget buttons */
+.ui-dialog-buttonset button {
+ background: #DADADA url(../../img/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x; 
+ -moz-border-radius: 4px;
+ -webkit-border-radius: 4px;
+ -khtml-border-radius: 4px;
+ border-radius: 4px;
+ border: 1px solid #D3D3D3;
+ font-weight: normal; 
+ padding: .2em 0.5em;
+ margin-left: 1em;
+ color: #555555 !important;
+}
+ 
+/* UI dialog widget expand/gripper */
+.ui-icon-gripsmall-diagonal-se {
+ padding: 0 10px 10px 0;
+ margin: 0;
+ background: transparent url(../../img/ui-icons_222222_256x240.png) -80px -224px no-repeat !important;
+}
+
+
+/* the standard name auto complete stuff for the variable name selection section */
+.ui-autocomplete {
+ border: 1px solid #AAAAAA;
+ background-color: #CFCFCF;
+ font-size: 8pt;
+ max-height: 300px;
+ overflow-y: auto;
+ overflow-x: hidden;
+ padding-right: 20px;
+}
+
+/* UI theme-like formatting for corners */
+.ui-corner-all,
+.ui-corner-top,
+.ui-corner-left,
+.ui-corner-tl {
+ border-top-left-radius: 4px;
+}
+
+.ui-corner-all,
+.ui-corner-top,
+.ui-corner-right,
+.ui-corner-tr {
+ border-top-right-radius: 4px;
+}
+
+.ui-corner-all,
+.ui-corner-bottom,
+.ui-corner-left,
+.ui-corner-bl {
+ border-bottom-left-radius: 4px;
+}
+
+.ui-corner-all,
+.ui-corner-bottom,
+.ui-corner-right,
+.ui-corner-br {
+ border-bottom-right-radius: 4px;
+}
+
+.ui-tooltip {
+ background-color: #EFEFEF;
+}

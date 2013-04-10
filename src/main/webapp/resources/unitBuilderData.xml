@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<units>
+ <entry id="pressure">
+  <unit>Pa</unit>
+  <unit>bar</unit>
+  <unit>at</unit>
+  <unit>atm</unit>
+  <unit>Torr</unit>
+  <unit>psi</unit>
+ </entry>
+
+ <entry id="temperature">
+  <use_prefix>false</use_prefix>
+  <unit>Degrees C</unit>
+  <unit>Degrees F</unit>
+  <unit>K</unit>
+ </entry>
+
+
+ <entry id="time">
+  <unit>MM/DD/YYYY HH:MM:SS</unit>
+  <unit>MM/DD/YY HH:MM:SS</unit>
+  <unit>YYYY/MM/DD HH:MM:SS</unit>
+  <unit>YYYY:MM:DD:HH:MM:SS</unit>
+ </entry>
+
+
+ <entry id="prefix">
+  <unit>centi</unit>
+  <unit>milli</unit>
+  <unit>micro</unit>
+  <unit>nano</unit>
+ </entry>
+
+
+</units>
