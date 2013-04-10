@@ -2,8 +2,10 @@
 <units>
    <unit>
       <name>geoCoordinateSystem</name>
-      <value>Decimal</value>
-      <value>DMS</value>
+      <value>degrees_north</value>
+      <value>degrees_south</value>
+      <value>degrees_east</value>
+      <value>degrees_west</value>
    </unit>
    <unit>
       <name>verticalDistance</name>

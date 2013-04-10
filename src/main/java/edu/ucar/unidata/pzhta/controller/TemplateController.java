@@ -168,7 +168,8 @@ public class TemplateController implements HandlerExceptionResolver {
                         // SCENARIO 3: we have variable data!
                         List<List<String>> parseFileData = fileParserManager.getParsedFileData();
                         // Create the NCML file using the file data
-                        String downloadDir = System.getProperty("catalina.base") + "/webapps/pzhta/download";
+                        String catalinaBase = System.getProperty("catalina.base");
+                        String downloadDir = catalinaBase + "/webapps/pzhta/download";
                         String ncmlFile = null;
                         try {
                             ncmlFile = ncmlFileManager.createNcmlFile(file, parseFileData, downloadDir);
