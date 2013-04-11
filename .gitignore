@@ -10,8 +10,8 @@ build.properties
 #
 # intelliJ
 #
-ide/intellij/.idea/workspace.xml
-ide/intellij/.idea/misc.xml
+ide/intellij/
+ide/intellij/
 
 #
 # Eclipse files

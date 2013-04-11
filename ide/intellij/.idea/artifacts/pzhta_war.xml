@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="pzhta:war">
-    <output-path>$PROJECT_DIR$/../../target</output-path>
-    <root id="archive" name="pzhta.war">
-      <element id="artifact" artifact-name="pzhta:war exploded" />
-    </root>
-  </artifact>
-</component>
