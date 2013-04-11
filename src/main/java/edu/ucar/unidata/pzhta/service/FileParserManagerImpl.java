@@ -2,7 +2,7 @@ package edu.ucar.unidata.pzhta.service;
 
 import org.apache.log4j.Logger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

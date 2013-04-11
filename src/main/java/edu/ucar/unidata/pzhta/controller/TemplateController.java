@@ -3,7 +3,7 @@ package edu.ucar.unidata.pzhta.controller;
 import org.apache.log4j.Logger;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 import java.io.BufferedReader;
@@ -237,9 +237,9 @@ public class TemplateController implements HandlerExceptionResolver {
     * This method gracefully handles any uncaught exception that are fatal 
     * in nature and unresolvable by the user.
     * 
-    * @param request   The current HttpServletRequest request.
-    * @param response  The current HttpServletRequest response.
-    * @param handler  The executed handler, or null if none chosen at the time of the exception.  
+    * @param arg0   The current HttpServletRequest request.
+    * @param arg1  The current HttpServletRequest response.
+    * @param arg2  The executed handler, or null if none chosen at the time of the exception.
     * @param exception  The  exception that got thrown during handler execution.
     * @return  The error page containing the appropriate message to the user. 
     */

@@ -1,6 +1,6 @@
 package edu.ucar.unidata.pzhta.service;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -52,7 +52,7 @@ public class FileValidator implements Validator  {
     public void validateList(List<String> list, Errors errors) {
         Iterator<String> iterator = list.iterator();
 	    while (iterator.hasNext()) {
-		    String input = (String)iterator.next();
+		    String input = iterator.next();
             validateInput(input, errors);  
 	    }
     }
