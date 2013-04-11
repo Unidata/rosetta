@@ -71,6 +71,16 @@ function validateItemExistsInSession(currentStep, dataToExamine, errorMessage) {
 function validateUploadedFile(file, currentStep) {
     var boolean = true;
     var errorLabel = $(".jw-step:eq(" + currentStep + ")").find("label.error");
+    // RegEx patters for valid files (extensions, "type" from input variable `file`)
+    var excelPattern = /^\.(xls|xlsx)$/i;
+    var filePattern = /(text)/i;
+
+    // get file extension
+    var fileExt = file.name.match(/\.[a-zA-Z]{3,4}$/);
+
+    // test valid regex patterns
+    var isExcel = excelPattern.test(fileExt[0]);
+    var isFile = filePattern.test(file.type);
 
     if ((file.size / 1024) > 1024) {
         $(errorLabel).text("Error! File size should be less then 1MB");
@@ -81,14 +91,13 @@ function validateUploadedFile(file, currentStep) {
         $("#upload").addClass("hideMe"); 
         boolean = false;
     } else {
-        if (file.type.search(/(text|excel)/i) < 0) {
+        // handle special cases first, then as last check see if it of type "file:
+        if (isExcel) {
+          $(".jw-step:eq(" + currentStep + ")").find("#notice").empty().append("Notice: Any date formatted cells in your spreadsheet will be reformatted in 'seconds since 1970-01-01'!");
+        } else if (!isFile) {
             $(errorLabel).text("Error! Incorrect file type selected for upload");
-            $("#upload").addClass("hideMe"); 
+            $("#upload").addClass("hideMe");
             boolean = false;
-        } else {
-            if (file.type.search(/(excel)/i) >= 0) {
-                $(".jw-step:eq(" + currentStep + ")").find("#notice").empty().append("Notice: Any date formatted cells in your spreadsheet will be reformatted in 'seconds since 1970-01-01'!");
-            }
         }
     }
     return boolean;
