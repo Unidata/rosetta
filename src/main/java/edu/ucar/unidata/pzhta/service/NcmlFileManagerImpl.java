@@ -256,7 +256,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                     }
                     String columnId = key.replace("variableName", "");
                     Element attribute = doc.createElement("attribute");
-                    attribute.setAttribute("name", "_colu{mnId");
+                    attribute.setAttribute("name", "_columnId");
                     attribute.setAttribute("value", columnId);
                     variable.appendChild(attribute);
 
