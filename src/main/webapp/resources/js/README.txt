@@ -1,6 +1,6 @@
 This directory contains all the client-side scripts used by this web application.  
 
-3rd-party (not developered here) scripts are contained in their own individual folders.  Any 
+3rd-party (not developed here) scripts are contained in their own individual folders.  Any
 add-on or custom functions/scripts associated with the 3rd-party packages are located in the 
 respective directories and denoted as custom.js or in a custom subdirectory.
 

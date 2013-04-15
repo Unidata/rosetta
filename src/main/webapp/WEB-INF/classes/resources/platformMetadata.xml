@@ -22,7 +22,7 @@
          <tagName>latitude</tagName> 
          <isRequired>true</isRequired>
          <description>The north-south coordinates of the location where the data was collected.</description>
-         <units>geoCoordinateSystem</units>
+         <units>geoCoordinateSystemLatitude</units>
       </platformMetadataItem>
 
 
@@ -31,7 +31,7 @@
          <tagName>longitude</tagName>   
          <isRequired>true</isRequired>
          <description>The east-west coordinates of the location where the data was collected.</description>
-         <units>geoCoordinateSystem</units>
+         <units>geoCoordinateSystemLongitude</units>
       </platformMetadataItem>
 
 
