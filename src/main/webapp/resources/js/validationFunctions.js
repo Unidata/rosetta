@@ -200,7 +200,7 @@ function validateVariableData(sessionKey, finalCheck) {
 
                     if (variableMetadataInSession) { // if we have metadata in the session, grab it and populate the input tags
                         // coordinate variable
-                        var coordinateVariableSelected = getItemEntered(sessionKey + "Metadata", "coordinateVariable");
+                        var coordinateVariableSelected = getItemEntered(sessionKey + "Metadata", "_coordinateVariable");
                         if (coordinateVariableSelected != null) {
  
                             // data type
@@ -209,7 +209,7 @@ function validateVariableData(sessionKey, finalCheck) {
                                 
                                 // metadata
                                 // get the metadata from the session string, minus the coordinateVariable and dataType entries
-                                var metadataProvided = getAllButTheseFromSessionString(sessionKey + "Metadata", ["coordinateVariable", "dataType"]);
+                                var metadataProvided = getAllButTheseFromSessionString(sessionKey + "Metadata", ["_coordinateVariable", "dataType"]);
                                 if (metadataProvided.length > 0) {
                                     // make sure chars are correct and no blank entries
                                     for (var i = 0; i < metadataProvided.length; i++) {

@@ -73,8 +73,7 @@ public class AsciiFile {
      * uploaded.  The uniqueId is created by the controller while writing 
      * the file to the local file system.    
      * 
-     * @param uniqueId  The AsciiFile uniqueId (directory name). 
-     * @see   FileUploadController 
+     * @param uniqueId  The AsciiFile uniqueId (directory name).
      */
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
@@ -373,9 +372,9 @@ public class AsciiFile {
     }
 
     /**
-     * Creates a Map containing the variable metadata as specified by the user.
+     * Creates a List containing the delimiter strings.
      * 
-     * @param variableMetadata  The String of variable metadata. 
+     * @param delimiterList  The list of delimiter strings.
      */
     public List <String> convertDelimiters(List <String> delimiterList) {
         HashMap <String, String> delimiterMapping = new HashMap<String, String> (); 

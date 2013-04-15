@@ -367,11 +367,11 @@ function bindDialogEvents(sessionKey) {
         $("#dialog #coordinateVariableAssignment").find("label.error").text(""); // get rid of any error messages
 
         // concatenation the entered value to any existing Metadata values pulled from the session
-        var metadataString = buildStringForSession(sessionKey + "Metadata", "coordinateVariable", $(this).attr("value"));
+        var metadataString = buildStringForSession(sessionKey + "Metadata", "_coordinateVariable", $(this).attr("value"));
 
         // update the data in the session
         addToSession(sessionKey + "Metadata", metadataString); 
-        removeAllButTheseFromSessionString(sessionKey + "Metadata", ["standard_name", "units", "coordinateVariable", "dataType"]);
+        removeAllButTheseFromSessionString(sessionKey + "Metadata", ["standard_name", "units", "_coordinateVariable", "dataType"]);
 
         // update the metadata choices based on the user input
         addMetadataHTMLToDialog(sessionKey, $(this).attr("value")); 
@@ -715,7 +715,7 @@ function addMetadataHTMLToDialog(sessionKey, variableType) {
     // a result of a coordinate variable seclection event.  Hence, we need to check the session to see
     // if the user has already specified that information and assign the variableType based on that info.
     if (variableType == undefined) {   
-        var coordinateVariableSelected = getItemEntered(sessionKey + "Metadata", "coordinateVariable");
+        var coordinateVariableSelected = getItemEntered(sessionKey + "Metadata", "_coordinateVariable");
         if (coordinateVariableSelected != null) {
             variableType = coordinateVariableSelected;
         } else {
@@ -919,7 +919,7 @@ function createTagElement(sessionKey, tagName, variableValue, displayName, metad
     } else {
         // if the user has specified the coordinate var type and data type, then enable input tags (otherwise start out disabled)
         var isDisabled = "disabled";
-        if (getItemEntered(sessionKey + "Metadata", "coordinateVariable") != null) {
+        if (getItemEntered(sessionKey + "Metadata", "_coordinateVariable") != null) {
             if (getItemEntered(sessionKey + "Metadata", "dataType") != null) {
                 isDisabled = "";
             }
@@ -1018,7 +1018,7 @@ function populateDataFromSession(sessionKey) {
             if (variableMetadataInSession) { 
 
                 // coordinate variable
-                var coordinateVariableSelected = getItemEntered(sessionKey + "Metadata", "coordinateVariable");
+                var coordinateVariableSelected = getItemEntered(sessionKey + "Metadata", "_coordinateVariable");
                 if (coordinateVariableSelected != null) {
                     // check the appropriate choice and update the metadata options accordingly
                     $("#dialog #coordinateVariableAssignment input[name=\"isCoordinateVariable\"][value=\"" + coordinateVariableSelected + "\"]").attr("checked", true);    
@@ -1040,7 +1040,7 @@ function populateDataFromSession(sessionKey) {
                        // need to populate any additional metadata
 
                        // get the metadata from the session string, minus the coordinateVariable and dataType entries
-                       var metadataProvided = getAllButTheseFromSessionString(sessionKey + "Metadata", ["coordinateVariable", "dataType"]);
+                       var metadataProvided = getAllButTheseFromSessionString(sessionKey + "Metadata", ["_coordinateVariable", "dataType"]);
 
                        // get the metadata names (not values) held in the session
                        var metadataInSession = getKeysFromSessionData(metadataProvided);
@@ -1237,13 +1237,13 @@ function testIfComplete(colNumber) {
 function testVariableCompleteness(sessionKey, variableName) {
     if (variableName != "Do Not Use") { 
         // do we have the coordinateVariable?
-        var coordinateVariableInSession = getItemEntered(sessionKey + "Metadata", "coordinateVariable");
+        var coordinateVariableInSession = getItemEntered(sessionKey + "Metadata", "_coordinateVariable");
         if (coordinateVariableInSession != null) {
             // do we have the dataType?
             var dataTypeInSession = getItemEntered(sessionKey + "Metadata", "dataType");
             if (dataTypeInSession != null) {
                 // do we have the required metadata?
-                var metadataProvided = getAllButTheseFromSessionString(sessionKey + "Metadata", ["coordinateVariable", "dataType"]);
+                var metadataProvided = getAllButTheseFromSessionString(sessionKey + "Metadata", ["_coordinateVariable", "dataType"]);
                 if (metadataProvided.length > 0) {
                     // get the metadata names (not values) held in the session
                     var metadataInSession = getKeysFromSessionData(metadataProvided);
