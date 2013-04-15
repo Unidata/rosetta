@@ -35,30 +35,26 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
-/**
- * Created with IntelliJ IDEA.
- * User: sarms
- */
 public class Pzhta {
 
-    /** _more_ */
+    /** Convert ASCII CSV file (simple, one station, one time per row) into netCDF
+     * using metadata defined in the ncml file */
 
 
     /**
-     * _more_
+     * Convert the list of list data, as obtained from the ascii file, into a netCDF file
+     * using the metadata defined in the ncml template
      *
-     * @param ncmlFile _more_
-     * @param fileOut _more_
-     * @param outerList _more_
+     * @param ncmlFile path to ncml template
+     * @param fileOut path of netCDF output file
+     * @param outerList data list-of-lists
      *
-     * @return _more_
+     * @return true, if successful, false if not
      */
     public boolean convert(String ncmlFile, String fileOut,
                            List<List<String>> outerList) {
 
         try {
-    //        log.error("*** Reading NCML\n");
             NetcdfDataset ncd = NcMLReader.readNcML("file://" + ncmlFile,
                                     null);
             FileWriter2 ncdnew = new ucar.nc2.FileWriter2(ncd, fileOut, NetcdfFileWriter.Version.netcdf3, null);
@@ -66,10 +62,6 @@ public class Pzhta {
             ncd.close();
             ncout.close();
 
-     //       log.error("*** Done");
-
-            // open netCDF file
-            //log.error( "*** Open netCDF file to add 'special' variables\n");
             NetcdfFileWriter ncFileWriter =
                NetcdfFileWriter.openExisting(fileOut);
 
@@ -83,14 +75,9 @@ public class Pzhta {
                 String    varName = theVar.getFullName();
                 Attribute attr    = theVar.findAttribute("_columnId");
                 DataType  dt      = theVar.getDataType();
-             //   log.error("*** Look for _columnID in variable " + varName                          + "\n");
                 if (attr != null) {
                     int varIndex = Integer.parseInt(attr.getStringValue());
                     int len      = outerList.size();
-                  //  log.error("\n");
-                 //   log.error("Read " + varName + "\n");
-                    // Array.makeArray - pass in list of strings and dt.
-                    // make sure outterList comes in as List<String>
                     if (dt.equals(DataType.FLOAT)) {
                         ArrayFloat.D1 vals =
                             new ArrayFloat.D1(outerList.size());
@@ -130,9 +117,7 @@ public class Pzhta {
                         }
                         ncFileWriter.write(theVar, vals);
                     } else {
-                     //   log.error("Unhandled DataType " + dt.toString()                                  + "\n");
                     }
-                   // log.error("Write " + varName + "\n");
                 }
             }
             ncfile.close();
@@ -140,17 +125,15 @@ public class Pzhta {
             File file = new File(fileOut);
 
             if (file.exists()) {
-              //  log.error("I'm here!!!");
                 return true;
             } else {
-               // log.error("Error!  NetCDF file " + fileOut                          + "was not created.");
                 return false;
             }
         } catch (IOException e) {
-          //  log.error("IOException: " + e.getMessage());
+            //log.error("IOException: " + e.getMessage());
             return false;
         } catch (InvalidRangeException e) {
-           // log.error("InvalidRangeException: " + e.getMessage());
+            //log.error("InvalidRangeException: " + e.getMessage());
             return false;
         }
 
