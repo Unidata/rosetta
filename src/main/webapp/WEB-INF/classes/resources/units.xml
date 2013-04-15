@@ -9,7 +9,7 @@
    </unit>
    <unit>
       <name>verticalDistance</name>
-      <value>Feet</value>
-      <value>Meters</value>
+      <value>meters</value>
+      <value>feet</value>
    </unit>
 </units>

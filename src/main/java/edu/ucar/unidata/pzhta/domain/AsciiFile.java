@@ -212,7 +212,7 @@ public class AsciiFile {
      */
     public void setPlatformMetadata(String platformMetadata) {
         this.platformMetadata = platformMetadata;
-        setPlatformMetadataMap(platformMetadata);
+        setPlatformMetadataMap();
     }
 
     /**
@@ -226,11 +226,9 @@ public class AsciiFile {
 
     /**
      * Creates a Map containing the platform metadata as specified by the user.
-     * 
-     * @param platformMetadata  The String of platform metadata. 
      */
-    public void setPlatformMetadataMap(String platformMetadata) {
-        List <String> pairs = Arrays.asList(variableNames.split(","));
+    public void setPlatformMetadataMap() {
+        List <String> pairs = Arrays.asList(platformMetadata.split(","));
         Iterator<String> pairsIterator = pairs.iterator();
         while (pairsIterator.hasNext()) {  
             String pairString = pairsIterator.next();
@@ -273,7 +271,7 @@ public class AsciiFile {
      * @param generalMetadata  The String of general metadata. 
      */
     public void setGeneralMetadataMap(String generalMetadata) {
-        List <String> pairs = Arrays.asList(variableNames.split(","));
+        List <String> pairs = Arrays.asList(generalMetadata.split(","));
         Iterator<String> pairsIterator = pairs.iterator();
         while (pairsIterator.hasNext()) {  
             String pairString = pairsIterator.next();
@@ -298,7 +296,7 @@ public class AsciiFile {
      */
     public void setVariableNames(String variableNames) {
         this.variableNames = variableNames;
-        setVariableNameMap(variableNames);        
+        setVariableNameMap();
     }
 
     /**
@@ -312,10 +310,8 @@ public class AsciiFile {
 
     /**
      * Creates a Map containing the variable units as specified by the user.
-     * 
-     * @param variableNames  The String of variable names. 
      */
-    public void setVariableNameMap(String variableNames) {
+    public void setVariableNameMap() {
         List <String> pairs = Arrays.asList(variableNames.split(","));
         Iterator<String> pairsIterator = pairs.iterator();
         while (pairsIterator.hasNext()) {  
@@ -341,7 +337,7 @@ public class AsciiFile {
      */
     public void setVariableMetadata(String variableMetadata) {
         this.variableMetadata = variableMetadata;
-        setVariableMetadataMap(variableMetadata);
+        setVariableMetadataMap();
     }
 
     /**
@@ -355,10 +351,8 @@ public class AsciiFile {
 
     /**
      * Creates a Map containing the variable metadata as specified by the user.
-     * 
-     * @param variableMetadata  The String of variable metadata. 
      */
-    public void setVariableMetadataMap(String variableMetadata) {
+    public void setVariableMetadataMap() {
         List <String> pairs = Arrays.asList(variableMetadata.split(","));
         Iterator<String> pairsIterator = pairs.iterator();
         while (pairsIterator.hasNext()) {  

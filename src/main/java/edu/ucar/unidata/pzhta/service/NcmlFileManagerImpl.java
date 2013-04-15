@@ -83,6 +83,8 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             }
 
             Map<String, String> generalMetadataMap = new HashMap<String, String>();
+
+            generalMetadataMap = file.getGeneralMetadataMap();
             for (Map.Entry<String, String> entry : generalMetadataMap.entrySet()) {
                 if (entry.getValue() != null) {
                     Element attribute = doc.createElement("attribute");
@@ -94,6 +96,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
 
             Map<String, String> platformMetadataMap = new HashMap<String, String>();
 
+            platformMetadataMap = file.getPlatformMetadataMap();
             // Latitude
             if (platformMetadataMap.containsKey("latitude")) {
                 Element variable = doc.createElement("variable");
@@ -125,7 +128,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             // Longitude
             if (platformMetadataMap.containsKey("longitude")) {
                 Element variable = doc.createElement("variable");
-                variable.setAttribute("name", "lat");
+                variable.setAttribute("name", "lon");
                 variable.setAttribute("type", "float");
 
                 Element attribute = doc.createElement("attribute");
@@ -153,7 +156,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             // Altitude
             if (platformMetadataMap.containsKey("altitude")) {
                 Element variable = doc.createElement("variable");
-                variable.setAttribute("name", "lat");
+                variable.setAttribute("name", "alt");
                 variable.setAttribute("type", "float");
 
                 Element attribute = doc.createElement("attribute");
@@ -191,7 +194,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             // Platform ID
             if (platformMetadataMap.containsKey("platformName")) {
                 Element variable = doc.createElement("variable");
-                variable.setAttribute("name", platformMetadataMap.get("platformName"));
+                variable.setAttribute("name", "station_id");
                 variable.setAttribute("type", "string");
 
                 Element attribute = doc.createElement("attribute");
@@ -201,12 +204,12 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
 
                 attribute = doc.createElement("attribute");
                 attribute.setAttribute("name", "long_name");
-                attribute.setAttribute("value", "platform name");
+                attribute.setAttribute("value", "station_id");
                 variable.appendChild(attribute);
 
                 attribute = doc.createElement("attribute");
                 attribute.setAttribute("name", "standard_name");
-                attribute.setAttribute("value", platformMetadataMap.get("platformName"));
+                attribute.setAttribute("value", "station_id");
                 variable.appendChild(attribute);
 
                 attribute = doc.createElement("values");

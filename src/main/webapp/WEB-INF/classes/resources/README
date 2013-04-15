@@ -4,7 +4,7 @@ View files will display the data contained in these files.
 
 To add a Resource to be used in the View:
 
-1) Have a look at the TemplateController.java to see how these fiels are parsed.
+1) Have a look at the TemplateController.java to see how these files are parsed.
 2) Make your own XML file. 
 3) Document your new file in index.xml.
 4) Add the appropriate JSTL in the corresponding View file.
