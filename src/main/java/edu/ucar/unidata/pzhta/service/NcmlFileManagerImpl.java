@@ -35,7 +35,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             if (!downloadTarget.exists()) {
                 logger.warn("created download path");
                 if (!downloadTarget.mkdir()) {
-                    throw new IOException("Unable to create download directory.");
+                    throw new IOException("Unable to create download directory " + downloadTarget.getAbsolutePath());
                 }
             }
             String ncmlFilePath = downloadDirPath + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".ncml";
