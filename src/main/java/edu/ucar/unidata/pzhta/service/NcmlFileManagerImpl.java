@@ -38,6 +38,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                     throw new IOException("Unable to create download directory " + downloadTarget.getAbsolutePath());
                 }
             }
+
             String ncmlFilePath = downloadDirPath + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".ncml";
             logger.warn("create ncmlFilePath: " + ncmlFilePath);
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -91,6 +92,12 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             attribute = doc.createElement("attribute");
             attribute.setAttribute("name", "_delimiter");
             attribute.setAttribute("value", file.getDelimiters());
+            netcdf.appendChild(attribute);
+
+            // stringified json of sessionStorage
+            attribute = doc.createElement("attribute");
+            attribute.setAttribute("name", "_jsonStrSessionStorage");
+            attribute.setAttribute("value", file.getJsonStrSessionStorage());
             netcdf.appendChild(attribute);
 
             // global metadata

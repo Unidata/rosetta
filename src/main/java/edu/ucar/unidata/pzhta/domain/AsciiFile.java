@@ -14,7 +14,8 @@ import java.util.Map;
  * An arbitrary entity representing an ASCII file uploaded to the 
  * local file system by a user. Various attributes of the AsciiFile 
  * object are populated from the user input data collected via 
- * asynchronous AJAX (POST) requests from the client-side.
+ * asynchronous AJAX (POST) requests from the client-side. (AKA
+ * SPRING Magic!)
  * 
  * @see UploadedFile
  */
@@ -36,7 +37,7 @@ public class AsciiFile {
     private Map<String, String> variableNameMap = new HashMap<String, String>();
     private String variableMetadata = null;
     private Map<String, HashMap> variableMetadataMap = new HashMap<String, HashMap>();
-
+    private String jsonStrSessionStorage = null;
 
     /**
      * Returns the CF Type the user selected. 
@@ -54,6 +55,27 @@ public class AsciiFile {
      */
     public void setCfType(String cfType) {
         this.cfType = cfType;
+    }
+
+    /**
+     * Returns the "stringified" json object that holds all of the
+     * sessionStorage information.
+     *
+     * @return  The sessionStorage "stringified" JSON object
+     */
+    public String getJsonStrSessionStorage() {
+        return jsonStrSessionStorage;
+    }
+
+    /**
+     * Sets the "stringified" json object that holds all of the
+     * sessionStorage information.
+     *
+     * @param jsonStrSessionStorage
+     */
+
+    public void setJsonStrSessionStorage(String jsonStrSessionStorage) {
+        this.jsonStrSessionStorage = jsonStrSessionStorage;
     }
 
     /**

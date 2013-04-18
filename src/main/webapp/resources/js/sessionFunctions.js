@@ -276,5 +276,6 @@ function getAllDataInSession() {
     }
     data["variableNames"] = variableNames.replace(/,/, "");
     data["variableMetadata"] = variableMetadata.replace(/,/, "");
+    data["jsonStrSessionStorage"] = JSON.stringify(sessionStorage);
     return data;
 }
