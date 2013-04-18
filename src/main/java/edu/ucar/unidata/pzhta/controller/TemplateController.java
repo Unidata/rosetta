@@ -1,41 +1,19 @@
 package edu.ucar.unidata.pzhta.controller;
 
-import org.apache.log4j.Logger;
-
+import edu.ucar.unidata.converters.xlsToCsv;
+import edu.ucar.unidata.pzhta.Pzhta;
+import edu.ucar.unidata.pzhta.domain.AsciiFile;
+import edu.ucar.unidata.pzhta.domain.UploadedFile;
+import edu.ucar.unidata.pzhta.service.FileParserManager;
+import edu.ucar.unidata.pzhta.service.FileValidator;
+import edu.ucar.unidata.pzhta.service.NcmlFileManager;
+import edu.ucar.unidata.pzhta.service.ResourceManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.FileOutputStream;
-
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.core.io.ClassPathResource;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,16 +21,13 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
-import edu.ucar.unidata.pzhta.domain.UploadedFile;
-import edu.ucar.unidata.pzhta.domain.AsciiFile;
-import edu.ucar.unidata.pzhta.service.ResourceManager;
-import edu.ucar.unidata.pzhta.service.FileParserManager;
-import edu.ucar.unidata.pzhta.service.NcmlFileManager;
-import edu.ucar.unidata.pzhta.service.FileValidator;
-
-import edu.ucar.unidata.pzhta.Pzhta;
-
-import edu.ucar.unidata.converters.xlsToCsv;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Main controller for pzhta application.
@@ -137,8 +112,7 @@ public class TemplateController implements HandlerExceptionResolver {
     public String parseFile(AsciiFile file, BindingResult result) {
         String tmpDir = System.getProperty("java.io.tmpdir");
         String filePath = tmpDir + "/" + file.getUniqueId() + "/" + file.getFileName();
-        
-      
+
         // SCENARIO 1: no header lines yet
         if (file.getHeaderLineList().isEmpty()) {
             return fileParserManager.parseByLine(filePath);
@@ -147,20 +121,22 @@ public class TemplateController implements HandlerExceptionResolver {
             if (!file.getDelimiterList().isEmpty()) {                                          
                 List <String> delimiterList = file.getDelimiterList(); 
                 String selectedDelimiter = delimiterList.get(0); 
-
+                /**
                 // Time for some validation
-                //fileValidator.validateList(delimiterList, result);
-              // fileValidator.validateList(file.getHeaderLineList(), result); 
-               // fileValidator.validateDelimiterCount(filePath, file, result);
+                fileValidator.validateList(delimiterList, result);
+                fileValidator.validateList(file.getHeaderLineList(), result);
+                fileValidator.validateDelimiterCount(filePath, file, result);
 
-               // if (result.hasErrors()) {
-                //    List<ObjectError> validationErrors = result.getAllErrors();
-               //     Iterator<ObjectError> iterator = validationErrors.iterator();
-	            //    while (iterator.hasNext()) {
-                //        logger.error("Validation Error: " + iterator.next().toString());
-	           //     }            
-                //    return null;
-               // } else {   
+                if (result.hasErrors()) {
+                    List<ObjectError> validationErrors = result.getAllErrors();
+                    Iterator<ObjectError> iterator = validationErrors.iterator();
+	                while (iterator.hasNext()) {
+                        logger.error("Validation Error: " + iterator.next().toString());
+	                }
+                    return null;
+
+                } else {
+                **/
                     String normalizedFileData = fileParserManager.normalizeDelimiters(filePath,selectedDelimiter, delimiterList, file.getHeaderLineList());
                     if (file.getVariableNameMap().isEmpty()) {     
                         return selectedDelimiter + "\n" + normalizedFileData;
