@@ -1,19 +1,41 @@
 package edu.ucar.unidata.pzhta.controller;
 
-import edu.ucar.unidata.converters.xlsToCsv;
-import edu.ucar.unidata.pzhta.Pzhta;
-import edu.ucar.unidata.pzhta.domain.AsciiFile;
-import edu.ucar.unidata.pzhta.domain.UploadedFile;
-import edu.ucar.unidata.pzhta.service.FileParserManager;
-import edu.ucar.unidata.pzhta.service.FileValidator;
-import edu.ucar.unidata.pzhta.service.NcmlFileManager;
-import edu.ucar.unidata.pzhta.service.ResourceManager;
+import org.apache.log4j.Logger;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileOutputStream;
+
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,13 +43,18 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
+import edu.ucar.unidata.pzhta.domain.UploadedFile;
+import edu.ucar.unidata.pzhta.domain.AsciiFile;
+import edu.ucar.unidata.pzhta.service.ResourceManager;
+import edu.ucar.unidata.pzhta.service.FileParserManager;
+import edu.ucar.unidata.pzhta.service.NcmlFileManager;
+import edu.ucar.unidata.pzhta.service.FileValidator;
+
+import edu.ucar.unidata.pzhta.Pzhta;
+
+import edu.ucar.unidata.converters.xlsToCsv;
+import ucar.nc2.NetcdfFile;
+import ucar.nc2.ncml.NcMLReader;
 
 /**
  * Main controller for pzhta application.
@@ -58,6 +85,21 @@ public class TemplateController implements HandlerExceptionResolver {
     public ModelAndView createTemplate(Model model) {              
         model.addAllAttributes(resourceManager.loadResources());   
         return new ModelAndView("create");        
+    }
+
+    /**
+     * Accepts a GET request for template restoration, fetches resource information
+     * from file system and inject that data into the Model to be used in the View.
+     * Returns the view that walks the user through the steps of template creation.
+     *
+     * @param model  The Model object to be populated by Resources.
+     * @return  The 'create' ModelAndView containing the Resource-populated Model.
+     *
+     */
+    @RequestMapping(value="/restore", method=RequestMethod.GET)
+    public ModelAndView restoreTemplate(Model model) {
+        model.addAllAttributes(resourceManager.loadResources());
+        return new ModelAndView("restore");
     }
 
     /**
@@ -112,6 +154,7 @@ public class TemplateController implements HandlerExceptionResolver {
     public String parseFile(AsciiFile file, BindingResult result) {
         String tmpDir = System.getProperty("java.io.tmpdir");
         String filePath = tmpDir + "/" + file.getUniqueId() + "/" + file.getFileName();
+
 
         // SCENARIO 1: no header lines yet
         if (file.getHeaderLineList().isEmpty()) {
@@ -172,7 +215,29 @@ public class TemplateController implements HandlerExceptionResolver {
         }
     }
 
+    /**
+     * Accepts a POST request to restore session from an NcML file,
+     *
+     * @param file  The UploadedFile form backing object containing the file.
+     * @return  A String of the local file name for the ASCII file (or null for an error).
+     */
+    @RequestMapping(value="/restoreFromNcml", method=RequestMethod.POST)
+    @ResponseBody
+    public String processNcml(UploadedFile file) {
+        String jsonStrSessionStorage = null;
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        String filePath = "file://" + tmpDir + "/" + file.getUniqueId() + "/" + file.getFileName();
+        NcMLReader reader = new NcMLReader();
+        try {
+          NetcdfFile ncf = reader.readNcML(filePath, null);
+          jsonStrSessionStorage = ncf.findGlobalAttribute("_jsonStrSessionStorage").getStringValue();
 
+        } catch (Exception e) {
+            logger.error("A file upload error has occurred: " + e.getMessage());
+            return null;
+        }
+        return jsonStrSessionStorage;
+    }
 
     /**
      * Attempts to get the client IP address from the request.

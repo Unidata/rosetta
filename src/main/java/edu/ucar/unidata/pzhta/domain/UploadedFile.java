@@ -12,6 +12,7 @@ public class UploadedFile {
 
     private CommonsMultipartFile file = null;
     private String fileName = null;
+    private String uniqueId = null;
 
     /*
      * Returns the uploaded file in CommonsMultipartFile format.
@@ -51,6 +52,25 @@ public class UploadedFile {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    /*
+     * Returns the unique ID of the uploaded file.
+     *
+     * @return  The unique ID.
+     */
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    /*
+     * Sets the unique ID of the uploaded file.
+     *
+     * @param  The unique ID.
+     */
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
 
 
 }

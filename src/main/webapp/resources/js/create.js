@@ -1,5 +1,5 @@
 /**
- * Main script for pzhta.  Everything starts here and is called via this script.
+ * template creation script for pzhta.  Creation starts here and is called via this script.
  */
 
 $(document).ready(function($) {

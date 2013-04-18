@@ -23,7 +23,6 @@
    <script type="text/javascript" src="resources/js/plugins/jquery.validate.min.js" ></script>
 
   <!-- Custom Utility -->
-   <script type="text/javascript" src="resources/js/main.js"></script>
    <script type="text/javascript" src="resources/js/globalResources.js"></script>
    <script type="text/javascript" src="resources/js/sessionFunctions.js"></script>
    <script type="text/javascript" src="resources/js/validationFunctions.js"></script>

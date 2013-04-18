@@ -4,7 +4,9 @@
   <head>
    <title><spring:message code="global.title"/></title>
 <%@ include file="/WEB-INF/views/includes/css.jsp" %>
+    <link type="text/css" rel="stylesheet" href="resources/css/create.css" />
 <%@ include file="/WEB-INF/views/includes/javascript.jsp" %>
+    <script type="text/javascript" src="resources/js/create.js"></script>
 
     <script type="text/javascript">
 	    var platformMetadata = [];
@@ -131,7 +133,7 @@
            <c:out value="${platformMetadataItem.displayName}" />
            <c:choose>
             <c:when test="${platformMetadataItem.description != null}">
-              <img src="resources/img/help.png" alt="<c:out value="${platformMetadataItem.description}" />""/>
+              <img src="resources/img/help.png" alt="<c:out value="${platformMetadataItem.description}" />"/>
             </c:when>
            </c:choose>
            <br/>

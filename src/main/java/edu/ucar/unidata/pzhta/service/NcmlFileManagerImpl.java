@@ -324,6 +324,11 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
         }
     }
 
+    public String getJsonStrSessionStorage(File ncmlFile) {
+        String jsonStrSessionStorage = null;
+
+        return jsonStrSessionStorage;
+    }
 
 }
 

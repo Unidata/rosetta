@@ -8,6 +8,3 @@
    <link type="text/css" rel="stylesheet" href="resources/css/SlickGrid/slick.grid.css" />
    <link type="text/css" rel="stylesheet" href="resources/css/SlickGrid/slick.headerbuttons.css"/>
    <link type="text/css" rel="stylesheet" href="resources/css/SlickGrid/slick-default-theme.css"/>
-
-  <!-- Main CSS -->
-   <link type="text/css" rel="stylesheet" href="resources/css/main.css" />
