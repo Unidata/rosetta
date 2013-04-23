@@ -27,7 +27,6 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
 
     protected static Logger logger = Logger.getLogger(NcmlFileManagerImpl.class);
 
-
     public String createNcmlFile(AsciiFile file, List<List<String>> parseFileData, String downloadDirPath) throws IOException {
         try {
             // make sure downloadDir exists and, if not, create it
@@ -81,13 +80,6 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             attribute = doc.createElement("attribute");
             attribute.setAttribute("name", "featureType");
             attribute.setAttribute("value", file.getCfType());
-            netcdf.appendChild(attribute);
-
-
-            // stringified json of sessionStorage
-            attribute = doc.createElement("attribute");
-            attribute.setAttribute("name", "_jsonStrSessionStorage");
-            attribute.setAttribute("value", file.getJsonStrSessionStorage());
             netcdf.appendChild(attribute);
 
             // global metadata
@@ -355,13 +347,6 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             return null;
         }
     }
-
-    public String getJsonStrSessionStorage(File ncmlFile) {
-        String jsonStrSessionStorage = null;
-
-        return jsonStrSessionStorage;
-    }
-
 }
 
 
