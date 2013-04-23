@@ -83,16 +83,6 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             attribute.setAttribute("value", file.getCfType());
             netcdf.appendChild(attribute);
 
-            // pzhta specific general metadata
-            attribute = doc.createElement("attribute");
-            attribute.setAttribute("name", "_dataFile");
-            attribute.setAttribute("value", file.getFileName());
-            netcdf.appendChild(attribute);
-
-            attribute = doc.createElement("attribute");
-            attribute.setAttribute("name", "_delimiter");
-            attribute.setAttribute("value", file.getDelimiters());
-            netcdf.appendChild(attribute);
 
             // stringified json of sessionStorage
             attribute = doc.createElement("attribute");
@@ -134,6 +124,11 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                 attribute.setAttribute("value", "latitude");
                 variable.appendChild(attribute);
 
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "_platformMetadata");
+                attribute.setAttribute("value", "true");
+                variable.appendChild(attribute);
+
                 attribute = doc.createElement("values");
                 Text values = doc.createTextNode(platformMetadataMap.get("latitude"));
                 attribute.appendChild(values);
@@ -162,6 +157,11 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                 attribute.setAttribute("value", "longitude");
                 variable.appendChild(attribute);
 
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "_platformMetadata");
+                attribute.setAttribute("value", "true");
+                variable.appendChild(attribute);
+
                 attribute = doc.createElement("values");
                 Text values = doc.createTextNode(platformMetadataMap.get("longitude"));
                 attribute.appendChild(values);
@@ -171,7 +171,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
 
             // Altitude
             if (platformMetadataMap.containsKey("altitude")) {
-                 variable = doc.createElement("variable");
+                variable = doc.createElement("variable");
                 variable.setAttribute("name", "alt");
                 variable.setAttribute("type", "float");
 
@@ -200,6 +200,11 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                 attribute.setAttribute("value", "Z");
                 variable.appendChild(attribute);
 
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "_platformMetadata");
+                attribute.setAttribute("value", "true");
+                variable.appendChild(attribute);
+
                 attribute = doc.createElement("values");
                 Text values = doc.createTextNode(platformMetadataMap.get("altitude"));
                 attribute.appendChild(values);
@@ -226,6 +231,11 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                 attribute = doc.createElement("attribute");
                 attribute.setAttribute("name", "standard_name");
                 attribute.setAttribute("value", "station_id");
+                variable.appendChild(attribute);
+
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "_platformMetadata");
+                attribute.setAttribute("value", "true");
                 variable.appendChild(attribute);
 
                 attribute = doc.createElement("values");
@@ -260,9 +270,6 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                     }
                     variable.setAttribute("type", type);
 
-                    // TODO: specific to this CF profile
-                    variable.setAttribute("shape", "time");
-
                     Set<String> variableMetadataKeys = variableMetadata.keySet();
                     Iterator<String> variableMetadataKeysIterator = variableMetadataKeys.iterator();
                     String metadataKey;
@@ -286,6 +293,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                     variable.appendChild(attribute);
 
                     // TODO: Specific to this CF profile
+                    variable.setAttribute("shape", "time");
                     if (!value.equals("time")) {
                         attribute = doc.createElement("attribute");
                         attribute.setAttribute("name", "coordinates");
@@ -296,6 +304,30 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                     netcdf.appendChild(variable);
                 }
             }
+
+            // pzhta variable (to hold pzhta specific metadata...value is float, version of pzhta
+
+            String pzhta_version = "0.1";
+
+            variable = doc.createElement("variable");
+            variable.setAttribute("name", "pzhta");
+            variable.setAttribute("type", "String");
+            variable.setAttribute("version", pzhta_version);
+
+            attribute = doc.createElement("attribute");
+            attribute.setAttribute("name", "long_name");
+            attribute.setAttribute("value", "pzhta front-end sessionStorage JSON String");
+            variable.appendChild(attribute);
+
+
+            attribute = doc.createElement("values");
+            attribute.setAttribute("separator", "\t");
+            Text values = doc.createTextNode(file.getJsonStrSessionStorage());
+            attribute.appendChild(values);
+            variable.appendChild(attribute);
+            netcdf.appendChild(variable);
+
+            // all done! Save NcML xml file
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
