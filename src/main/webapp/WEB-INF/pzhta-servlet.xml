@@ -30,7 +30,7 @@
   <bean id="fileParserManager" class="edu.ucar.unidata.pzhta.service.FileParserManagerImpl"/>
   <bean id="ncmlFileManager" class="edu.ucar.unidata.pzhta.service.NcmlFileManagerImpl"/>
   <bean id="fileValidator" class="edu.ucar.unidata.pzhta.service.FileValidator"/>
-  <bean id="serverInfo" class="edu.ucar.unidata.pzhta.service.ServerInfo"/>
+  <bean id="serverInfo" class="edu.ucar.unidata.pzhta.service.ServerInfoBean" init-method="init"/>
 
   <!-- File upload multipart resolver -->
   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

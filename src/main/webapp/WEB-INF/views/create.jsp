@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp" %>
-<%@ page import="edu.ucar.unidata.pzhta.service.ServerInfo"%>
+<%@ page import="edu.ucar.unidata.pzhta.service.ServerInfoBean"%>
  <html>
   <head>
    <title><spring:message code="global.title"/></title>
@@ -238,11 +238,18 @@
 
    </form>
    <p>
-    <i>
-     <img src="<spring:message code="global.logo.path"/>" alt="<spring:message code="global.logo.alt"/>" />
-     <spring:message code="global.footer"/>
-     Version : <%=ServerInfo.getVersion()%> Build Date: <%=ServerInfo.getBuildDate()%>
-    </i>
+     <table>
+       <tr>
+         <td> <img src="<spring:message code="global.logo.path"/>" alt="<spring:message code="global.logo.alt"/>" align="middle"/></td>
+         <td>
+           <i><spring:message code="global.footer"/>
+           <br>
+           Version : <%=ServerInfoBean.getVersion()%>
+           <br>
+           Build Date: <%=ServerInfoBean.getBuildDate()%> </i>
+         </td>
+       </tr>
+     </table>
    </p>
   </body>
  </html>
