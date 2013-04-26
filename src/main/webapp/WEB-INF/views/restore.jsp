@@ -5,7 +5,7 @@
   <head>
    <title><spring:message code="global.title"/></title>
 <%@ include file="/WEB-INF/views/includes/css.jsp" %>
-    <link type="text/css" rel="stylesheet" href="resources/css/create.css" />
+    <link type="text/css" rel="stylesheet" href="resources/css/restore.css" />
     <%@ include file="/WEB-INF/views/includes/javascript.jsp" %>
     <script type="text/javascript" src="resources/js/restore.js"></script>
   </head>

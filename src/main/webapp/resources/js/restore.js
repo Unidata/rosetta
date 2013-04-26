@@ -78,28 +78,25 @@ $(document).ready(function($) {
             break;
 
             case 1:
+                var sessionData = getAllDataInSession();
                 $.post("restoreFromZip",
-                      { uniqueId: getFromSession("uniqueId"), fileName: getFromSession("fileName") },
+                      sessionData,
                       function(data) {
+                          console.warn(data);
                           var restoredSessionStorage = JSON.parse(data);
                           for(var item in restoredSessionStorage) {
                               addToSession(item, restoredSessionStorage[item]);
                           }
+                          removeFromSession("uniqueId");
+                          removeFromSession("fileName");
                       },
                       "text");
-                removeFromSession("uniqueId");
-                removeFromSession("fileName");
-                // If we land on this page and user has already enter something
-                // (e.g., clicked previous or used the menu to navigate)
-                // Don't hide the 'Next' button
-                if ((ui.type == "previous") || (ui.type == "next")) {
-                    if (getFromSession("headerLineNumbers")) {
-                        $("#faux").remove();
-                        $(".jw-button-next").removeClass("hideMe");
-                    }
-                }
 
+                $("#faux").remove();
+                $(".jw-button-next").addClass("hideMe");
+                $(".jw-button-finish").addClass("hideMe");
 
+            break;
         }
     })
 

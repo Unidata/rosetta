@@ -63,12 +63,11 @@ public class ZipFileUtil {
     public String readFileFromZip(String fileName) {
         String data = "";
         String line;
-
         try {
-
             String topLevelZipDir = FilenameUtils.getBaseName(this.getName());
             ZipFile zf = new ZipFile(this.getName());
-            ZipEntry fileInZip = zf.getEntry(topLevelZipDir + "/" + fileName);
+            //ZipEntry fileInZip = zf.getEntry(topLevelZipDir + "/" + fileName);
+            ZipEntry fileInZip = zf.getEntry(fileName);
             InputStream inStream = zf.getInputStream(fileInZip);
             BufferedReader buffReader = new BufferedReader(
                     new InputStreamReader(inStream));

@@ -12,6 +12,22 @@
 @import url("uploader/custom.css");
 
 
+/* OVERWRITE step content wrapper (height of wizard interface) */
+.jw-steps-wrap {
+    padding: 0 0 0 20px;
+    margin: 40px 0 0 0;
+    height: 100px;
+}
+/* OVERWRITE location of Step Buttons (next, previous, finished, etc.) */
+.jw-footer {
+    position: absolute;
+    left: 0px;
+    top: 180px;
+    padding: 0;
+    margin: 0 0 0 10px;
+    background: none;
+    border: none;
+}
 
 /* document body */
 body {
