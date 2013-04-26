@@ -87,7 +87,8 @@ $(document).ready(function($) {
                           }
                       },
                       "text");
-
+                removeFromSession("uniqueId");
+                removeFromSession("fileName");
                 // If we land on this page and user has already enter something
                 // (e.g., clicked previous or used the menu to navigate)
                 // Don't hide the 'Next' button
