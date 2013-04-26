@@ -78,15 +78,13 @@ $(document).ready(function($) {
             break;
 
             case 1:
-                $.post("restoreFromNcml",
+                $.post("restoreFromZip",
                       { uniqueId: getFromSession("uniqueId"), fileName: getFromSession("fileName") },
                       function(data) {
                           var restoredSessionStorage = JSON.parse(data);
                           for(var item in restoredSessionStorage) {
                               addToSession(item, restoredSessionStorage[item]);
                           }
-                          removeFromSession("uniqueId");
-                          removeFromSession("fileName");
                       },
                       "text");
 

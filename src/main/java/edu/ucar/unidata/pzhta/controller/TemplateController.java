@@ -8,10 +8,14 @@ import edu.ucar.unidata.pzhta.service.FileParserManager;
 import edu.ucar.unidata.pzhta.service.FileValidator;
 import edu.ucar.unidata.pzhta.service.NcmlFileManager;
 import edu.ucar.unidata.pzhta.service.ResourceManager;
+import edu.ucar.unidata.util.JsonUtil;
+import edu.ucar.unidata.util.ZipFileUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,10 +34,11 @@ import ucar.nc2.ncml.NcMLReader;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Main controller for pzhta application.
@@ -163,22 +168,42 @@ public class TemplateController implements HandlerExceptionResolver {
                 } else {
                     // SCENARIO 3: we have variable data!
                     List<List<String>> parseFileData = fileParserManager.getParsedFileData();
+
                     // Create the NCML file using the file data
                     String catalinaBase = System.getProperty("catalina.base");
                     String downloadDir = catalinaBase + "/webapps/pzhta/download";
                     String ncmlFile = null;
                     try {
                         ncmlFile = ncmlFileManager.createNcmlFile(file, parseFileData, downloadDir);
+
                     } catch (IOException e) {
                         System.err.println("Caught IOException: " + e.getMessage());
                         return ncmlFile;
                     }
+
+                    //crete JSON file that holds sessionStorage information
+                    String jsonOut = downloadDir + "/" + FilenameUtils.getFullPath(file.getFileName()) + "pzhtaSessionStorage.json";
+                    JsonUtil jsonUtil = new JsonUtil(jsonOut);
+                    JSONObject jsonObj = jsonUtil.strToJson(file.getJsonStrSessionStorage());
+                    jsonObj.remove("uniqueId");
+                    jsonObj.remove("fileName");
+                    jsonUtil.writeJsonToFile(jsonObj);
+
+                    // zip JSON and NcML files
+                    String zipFileName = downloadDir + "/" + "pzhta.zip";
+                    ZipFileUtil transactionZip = new ZipFileUtil(zipFileName);
+                    String[] sourceFiles = {ncmlFile, jsonOut};
+
+                    transactionZip.addAllToZip(sourceFiles);
+
                     // Create the netCDF file
                     Pzhta ncWriter = new Pzhta();
                     String fileOut = downloadDir + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
                     logger.warn(fileOut);
+
                     if (ncWriter.convert(ncmlFile, fileOut, parseFileData)) {
-                        return fileOut.replaceAll(downloadDir + "/", "") + "\n" + ncmlFile.replaceAll(downloadDir + "/", "");
+                        return fileOut.replaceAll(downloadDir + "/", "") + "\n" +
+                                transactionZip.getName().replaceAll(downloadDir + "/", "");
                     } else {
                         logger.error("netCDF file not created.");
                         return null;
@@ -198,22 +223,14 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param file The UploadedFile form backing object containing the file.
      * @return A String of the local file name for the ASCII file (or null for an error).
      */
-    @RequestMapping(value = "/restoreFromNcml", method = RequestMethod.POST)
+    @RequestMapping(value = "/restoreFromZip", method = RequestMethod.POST)
     @ResponseBody
-    public String processNcml(UploadedFile file) {
+    public String processZip(UploadedFile file) {
         String jsonStrSessionStorage = null;
         String tmpDir = System.getProperty("java.io.tmpdir");
         String filePath = "file://" + tmpDir + "/" + file.getUniqueId() + "/" + file.getFileName();
-        NcMLReader reader = new NcMLReader();
-        try {
-            NetcdfFile ncf = reader.readNcML(filePath, null);
-            Variable pzhtaVar = ncf.findVariable("pzhta");
-            jsonStrSessionStorage = pzhtaVar.read().toString();
-            //jsonStrSessionStorage = ncf.findGlobalAttribute("_jsonStrSessionStorage").getStringValue();
-        } catch (Exception e) {
-            logger.error("A file upload error has occurred: " + e.getMessage());
-            return null;
-        }
+        ZipFileUtil restoreZip = new ZipFileUtil(filePath);
+        jsonStrSessionStorage = restoreZip.readFileFromZip("pzhtaSessionStorage.json");
 
         return jsonStrSessionStorage;
     }

@@ -38,6 +38,13 @@ a[href$='.ncml'] {
    background: transparent url('../img/icon/ncml.png') center left no-repeat;
 }
 
+a[href$='.zip'] {
+    padding-left:18px;
+    line-height:18px;
+    background: transparent url('../img/icon/pzhta_12x12.png') center left no-repeat;
+}
+
+
 /* fake/disabled next button */
 #faux {
  background: #E6E6E6 url('../img/ui-bg_glass_75_e6e6e6_1x400.png') 50% 50% repeat-x ; 
