@@ -260,20 +260,23 @@ $(document).ready(function($) {
                     function(data) {
                         var urls = data.split(/\r\n|\r|\n/g);
                         var download = $("ul#download");
+                        console.warn("here 1");
                         var zipPattern = /^\.zip$/i;
                         var ncPattern = /^\.nc$/i;
+                        console.warn("here 2");
                         $(download).empty();
                         for (var i = 0; i < urls.length; i++) {
-                            var fileExt = urls[i].name.match(/\.[a-zA-Z]{3,4}$/);
-                            if (zipPattern.test(fileExt[0])) {
+                            var fileExt = urls[i].match(/\.[a-zA-Z]{3,4}$/);
+                            if (zipPattern.test(fileExt)) {
                                 var linkName = "&rho;&zeta;&eta;&tau;&alpha; transaction receipt"
-                            } else if (ncPattern.test(fileExt[0])) {
+                            } else if (ncPattern.test(fileExt)) {
                                 var linkName = "netCDF Data File"
                             } else {
                                 var linkName = urls[i];
                             }
 
                             var link = "<li><a href=\""  +  "download/" + urls[i]  +  "\">" + linkName  +  "</a></li>";
+                            console.warn(link);
                             $(download).append(link);
                         }
                     }, 

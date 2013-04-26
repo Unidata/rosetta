@@ -17,12 +17,20 @@
          <type>coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="positive" displayName="Vertical Positive (up/down)">
+      <!--entry id="positive" displayName="Vertical Positive (up/down)">
          <type>coordinate</type>
          <necessity>additional</necessity>
-      </entry>
+      </entry-->
 
       <!-- Non-Coordinate Metadata -->
+      <entry id="_sampleHeight" displayName="Instrument Height (negative for depths)">
+        <type>non-coordinate</type>
+        <necessity>recommended</necessity>
+      </entry>
+      <entry id="_sampleHeightUnit" displayName="Instrument Height Unit">
+        <type>non-coordinate</type>
+        <necessity>recommended</necessity>
+      </entry>
       <entry id="valid_max" displayName="Maximum Value (Calibrated)">
         <type>non-coordinate</type>
         <necessity>recommended</necessity>
