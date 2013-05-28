@@ -1,5 +1,5 @@
 /**
- * Restore script for pzhta.  Restoration starts here and is called via this script.
+ * Restore script for rosetta.  Restoration starts here and is called via this script.
  */
 
 $(document).ready(function($) {

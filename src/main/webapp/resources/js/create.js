@@ -1,5 +1,5 @@
 /**
- * template creation script for pzhta.  Creation starts here and is called via this script.
+ * template creation script for rosetta.  Creation starts here and is called via this script.
  */
 
 $(document).ready(function($) {
@@ -268,7 +268,7 @@ $(document).ready(function($) {
                         for (var i = 0; i < urls.length; i++) {
                             var fileExt = urls[i].match(/\.[a-zA-Z]{3,4}$/);
                             if (zipPattern.test(fileExt)) {
-                                var linkName = "&rho;&zeta;&eta;&tau;&alpha; transaction receipt"
+                                var linkName = "Rosetta transaction receipt"
                             } else if (ncPattern.test(fileExt)) {
                                 var linkName = "netCDF Data File"
                             } else {

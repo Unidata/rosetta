@@ -3,8 +3,8 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
 
 
-   <appender name="pzhtaLogger" class="org.apache.log4j.DailyRollingFileAppender">
-      <param name="File" value="${catalina.home}/logs/pzhta.log"/>
+   <appender name="rosettaLogger" class="org.apache.log4j.DailyRollingFileAppender">
+      <param name="File" value="${catalina.home}/logs/rosetta.log"/>
       <param name="Threshold" value="INFO" />
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern" value="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
@@ -12,13 +12,13 @@
    </appender>
 
 
-   <logger name="edu.ucar.unidata.pzhta">
-        <appender-ref ref="pzhtaLogger"/>
+   <logger name="edu.ucar.unidata.rosetta">
+        <appender-ref ref="rosettaLogger"/>
    </logger> 
 
   <root>
     <level value="WARN"/>
-    <appender-ref ref="pzhtaLogger"/>
+    <appender-ref ref="rosettaLogger"/>
   </root>
 
   

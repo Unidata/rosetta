@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- =======================================================================
-		Parent Maven Configuration File for UCAR/Unidata pzhta library
+		Parent Maven Configuration File for UCAR/Unidata Rosetta library
 	======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -11,11 +11,11 @@
        ==================================================== -->
 
     <groupId>edu.ucar</groupId>
-    <artifactId>pzhta</artifactId>
+    <artifactId>rosetta</artifactId>
     <packaging>war</packaging>
     <version>0.1-SNAPSHOT</version>
-    <name>pzhta</name>
-    <url>http://www.unidata.ucar.edu/software/pzhta/</url>
+    <name>rosetta</name>
+    <url>http://www.unidata.ucar.edu/software/rosetta/</url>
 
     <organization>
         <name>UCAR/Unidata</name>
@@ -24,9 +24,9 @@
     <inceptionYear>2011</inceptionYear>
 
     <scm>
-        <url>https://github.com/Unidata/pzhta/</url>
-        <connection>scm:git:https://github.com/Unidata/pzhta/</connection>
-        <developerConnection>scm:git:git@github.com:Unidata/pzhta.git</developerConnection>
+        <url>https://github.com/Unidata/rosetta/</url>
+        <connection>scm:git:https://github.com/Unidata/rosetta/</connection>
+        <developerConnection>scm:git:git@github.com:Unidata/rosetta.git</developerConnection>
     </scm>
 
     <!-- ===========================================================
@@ -92,11 +92,15 @@
         <commons-lang.version>3.1</commons-lang.version>
         <commons-io.version>1.3.2</commons-io.version>
         <commons-fileupload.version>1.3</commons-fileupload.version>
+        <commons-codec.version>1.3</commons-codec.version>
         <log4j.version>1.2.17</log4j.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
         <maven-war-plugin.version>2.2</maven-war-plugin.version>
+
+        <!-- dir to bundled libs -->
+        <webapp.libs.dir>${basedir}/src/main/webapp/WEB-INF/lib</webapp.libs.dir>
     </properties>
 
     <dependencies>
@@ -113,6 +117,12 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
@@ -217,10 +227,28 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!--RAMADDA publishing deps, not in Maven-->
+        <dependency>
+            <groupId>idv</groupId>
+            <artifactId>idv-ramadda</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${webapp.libs.dir}/idv.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>ramadda</groupId>
+            <artifactId>ramadda-publish</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${webapp.libs.dir}/ramaddaclient.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
     <build>
-        <finalName>pzhta</finalName>
+        <finalName>rosetta</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

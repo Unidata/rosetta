@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<%@ page import="edu.ucar.unidata.pzhta.service.ServerInfoBean"%>
+<%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean"%>
  <html>
   <head>
     <style>
@@ -12,14 +12,14 @@
         padding:15px;
       }
     </style>
-    <title>&rho;&zeta;&eta;&tau;&alpha;</title>
+    <title>Rosetta</title>
   </head>
   <body>
   <p>
   <table>
     <tr>
       <td>
-        <img src="resources/img/icon/pzhta_lighter_text.jpg" HEIGHT="75%" alt="&rho;&zeta;&eta;&tau;&alpha">
+        <img src="resources/img/icon/rosetta_lighter_text.jpg" HEIGHT="75%" alt="&rho;&zeta;&eta;&tau;&alpha; &rarr; Rosetta">
       </td>
       <td>
         <h1>What would you like to do?</h1>

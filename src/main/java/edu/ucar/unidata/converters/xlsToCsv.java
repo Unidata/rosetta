@@ -176,7 +176,7 @@ public class xlsToCsv {
      */
     public static void main(String[] args) {
         String xlsFile =
-            "/Users/lesserwhirls/dev/unidata/pzhta/pzhta/src/edu/ucar/unidata/converters/test/xlsToCsv/ilu01_07_10.xls";
+            "/Users/lesserwhirls/dev/unidata/rosetta/rosetta/src/edu/ucar/unidata/converters/test/xlsToCsv/ilu01_07_10.xls";
 
         convert(xlsFile, null);
     }

@@ -1,5 +1,5 @@
 edu.ucar.unidata.converters
-edu.ucar.unidata.pzhta
-edu.ucar.unidata.pzhta.controller
-edu.ucar.unidata.pzhta.domain
-edu.ucar.unidata.pzhta.service
+edu.ucar.unidata.rosetta
+edu.ucar.unidata.rosetta.controller
+edu.ucar.unidata.rosetta.domain
+edu.ucar.unidata.rosetta.service

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp" %>
-<%@ page import="edu.ucar.unidata.pzhta.service.ServerInfoBean"%>
+<%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean"%>
  <html>
   <head>
    <title><spring:message code="global.title"/></title>
@@ -12,7 +12,7 @@
 
   <body> 
    <h1><spring:message code="global.title"/></h1>
-   <form id="FORM" action="/pzhta/upload" method="POST" enctype="multipart/form-data">
+   <form id="FORM" action="/rosetta/upload" method="POST" enctype="multipart/form-data">
 
     <div id="step0" title="<spring:message code="step0.template.title"/>">
      <h5><spring:message code="step0.template.description"/></h5>

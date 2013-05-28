@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp" %>
-<%@ page import="edu.ucar.unidata.pzhta.service.ServerInfoBean"%>
+<%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean"%>
  <html>
   <head>
    <title><spring:message code="global.title"/></title>
@@ -18,7 +18,7 @@
   </head>
   <body> 
    <h1><spring:message code="global.title"/></h1>
-   <form id="FORM" action="/pzhta/upload" method="POST" enctype="multipart/form-data">
+   <form id="FORM" action="/rosetta/upload" method="POST" enctype="multipart/form-data">
 
     <div id="step0" title="<spring:message code="step0.title"/>">     
      <h5><spring:message code="step0.description"/></h5>  
@@ -54,7 +54,7 @@
     <div id="step2" title="<spring:message code="step2.title"/>">
      <h5><spring:message code="step2.description"/></h5>
      <label for="headerLineGrid" class="error"></label>
-     <div id="headerLineGrid" class="pzhtaGrid"></div>
+     <div id="headerLineGrid" class="rosettaGrid"></div>
     </div> 
 
     <div id="step3" title="<spring:message code="step3.title"/>">
@@ -85,13 +85,13 @@
        <!-- insert error handling -->
       </c:otherwise>
      </c:choose>   
-   <!--  <div id="delimiterGrid" class="pzhtaGrid"></div>  -->
+   <!--  <div id="delimiterGrid" class="rosettaGrid"></div>  -->
     </div> 
 
     <div id="step4" title="<spring:message code="step4.title"/>">
      <h5><spring:message code="step4.description"/></h5>
      <label for="variableGrid" class="error"></label>    
-     <div id="variableGrid" class="pzhtaGrid"></div>
+     <div id="variableGrid" class="rosettaGrid"></div>
      <div id="dialog"></div>
     </div> 
 
