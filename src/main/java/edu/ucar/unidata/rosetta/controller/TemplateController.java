@@ -9,6 +9,7 @@ import edu.ucar.unidata.rosetta.service.FileValidator;
 import edu.ucar.unidata.rosetta.service.NcmlFileManager;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.util.JsonUtil;
+import edu.ucar.unidata.util.RosettaProperties;
 import edu.ucar.unidata.util.ZipFileUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,8 @@ public class TemplateController implements HandlerExceptionResolver {
     private NcmlFileManager ncmlFileManager;
     @Resource(name = "fileValidator")
     private FileValidator fileValidator;
+
+    Properties rosettaProperties = RosettaProperties.getRosettaProps();
 
     /**
      * Accepts a GET request for template creation, fetches resource information
@@ -161,7 +164,10 @@ public class TemplateController implements HandlerExceptionResolver {
 
                     // Create the NCML file using the file data
                     String catalinaBase = System.getProperty("catalina.base");
-                    String downloadDir = catalinaBase + "/webapps/rosetta/download";
+                    //String downloadDir = rosettaProperties.getProperty("downloadDir");
+                    //String downloadDir = catalinaBase + "/webapps/rosetta/download";
+                    String downloadDir = catalinaBase + rosettaProperties.getProperty("downloadDir");
+
                     String ncmlFile = null;
                     try {
                         ncmlFile = ncmlFileManager.createNcmlFile(file, parseFileData, downloadDir);
