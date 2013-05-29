@@ -254,7 +254,7 @@ $(document).ready(function($) {
                 }
             break;   
 
-            case 7:  
+            case 7:
                 var data = getAllDataInSession();
                 $.post("parse", data,
                     function(data) {
@@ -275,7 +275,7 @@ $(document).ready(function($) {
                                 var linkName = urls[i];
                             }
 
-                            var link = "<li><a href=\""  +  "download/" + urls[i]  +  "\">" + linkName  +  "</a></li>";
+                            var link = "<li><a href=\""  +  "fileDownload/" + getFromSession("uniqueId") + "/" + urls[i]  +  "\">" + linkName  +  "</a></li>";
                             console.warn(link);
                             $(download).append(link);
                         }

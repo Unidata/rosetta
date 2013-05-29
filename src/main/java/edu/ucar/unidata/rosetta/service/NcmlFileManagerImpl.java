@@ -33,7 +33,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             File downloadTarget = new File(downloadDirPath);
             if (!downloadTarget.exists()) {
                 logger.warn("created download path");
-                if (!downloadTarget.mkdir()) {
+                if (!downloadTarget.mkdirs()) {
                     throw new IOException("Unable to create download directory " + downloadTarget.getAbsolutePath());
                 }
             }

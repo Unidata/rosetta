@@ -12,12 +12,14 @@ import edu.ucar.unidata.util.JsonUtil;
 import edu.ucar.unidata.util.RosettaProperties;
 import edu.ucar.unidata.util.ZipFileUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -90,16 +92,16 @@ public class TemplateController implements HandlerExceptionResolver {
     public String processUpload(UploadedFile file, HttpServletRequest request) {
         FileOutputStream outputStream = null;
         String uniqueId = createUniqueId(request);
-        String filePath = System.getProperty("java.io.tmpdir") + "/" + uniqueId;
+        String filePath = FilenameUtils.concat(System.getProperty("java.io.tmpdir"), uniqueId);
         try {
             File localFileDir = new File(filePath);
             if (!localFileDir.exists()) localFileDir.mkdir();
-            outputStream = new FileOutputStream(new File(filePath + "/" + file.getFileName()));
+            outputStream = new FileOutputStream(new File(FilenameUtils.concat(filePath, file.getFileName())));
             outputStream.write(file.getFile().getFileItem().get());
             outputStream.flush();
             outputStream.close();
             if ((file.getFileName().contains(".xls")) || (file.getFileName().contains(".xlsx"))) {
-                String xlsFilePath = filePath + "/" + file.getFileName();
+                String xlsFilePath = FilenameUtils.concat(filePath, file.getFileName());
                 xlsToCsv.convert(xlsFilePath, null);
                 String csvFilePath = null;
                 if (xlsFilePath.contains(".xlsx")) {
@@ -128,7 +130,8 @@ public class TemplateController implements HandlerExceptionResolver {
     @ResponseBody
     public String parseFile(AsciiFile file, BindingResult result) {
         String tmpDir = System.getProperty("java.io.tmpdir");
-        String filePath = tmpDir + "/" + file.getUniqueId() + "/" + file.getFileName();
+        String filePath = FilenameUtils.concat(tmpDir, file.getUniqueId());
+        filePath = FilenameUtils.concat(filePath,file.getFileName());
 
 
         // SCENARIO 1: no header lines yet
@@ -164,9 +167,8 @@ public class TemplateController implements HandlerExceptionResolver {
 
                     // Create the NCML file using the file data
                     String catalinaBase = System.getProperty("catalina.base");
-                    //String downloadDir = rosettaProperties.getProperty("downloadDir");
-                    //String downloadDir = catalinaBase + "/webapps/rosetta/download";
-                    String downloadDir = catalinaBase + rosettaProperties.getProperty("downloadDir");
+                    String downloadDir = FilenameUtils.concat(rosettaProperties.getProperty("downloadDir"),
+                            file.getUniqueId());
 
                     String ncmlFile = null;
                     try {
@@ -178,7 +180,8 @@ public class TemplateController implements HandlerExceptionResolver {
                     }
 
                     //crete JSON file that holds sessionStorage information
-                    String jsonOut = downloadDir + "/" + FilenameUtils.getFullPath(file.getFileName()) + "rosettaSessionStorage.json";
+                    String jsonOut = FilenameUtils.concat(downloadDir,FilenameUtils.getFullPath(file.getFileName()));
+                    jsonOut = FilenameUtils.concat(jsonOut, "rosettaSessionStorage.json");
                     JsonUtil jsonUtil = new JsonUtil(jsonOut);
                     JSONObject jsonObj = jsonUtil.strToJson(file.getJsonStrSessionStorage());
                     jsonObj.remove("uniqueId");
@@ -186,7 +189,7 @@ public class TemplateController implements HandlerExceptionResolver {
                     jsonUtil.writeJsonToFile(jsonObj);
 
                     // zip JSON and NcML files
-                    String zipFileName = downloadDir + "/" + "rosetta.zip";
+                    String zipFileName = FilenameUtils.concat(downloadDir, "rosetta.zip");
                     ZipFileUtil transactionZip = new ZipFileUtil(zipFileName);
                     String[] sourceFiles = {ncmlFile, jsonOut};
 
@@ -194,7 +197,7 @@ public class TemplateController implements HandlerExceptionResolver {
 
                     // Create the netCDF file
                     Rosetta ncWriter = new Rosetta();
-                    String fileOut = downloadDir + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
+                    String fileOut = FilenameUtils.concat(downloadDir, FilenameUtils.removeExtension(file.getFileName()) + ".nc");
                     logger.warn(fileOut);
 
                     if (ncWriter.convert(ncmlFile, fileOut, parseFileData)) {
@@ -224,12 +227,48 @@ public class TemplateController implements HandlerExceptionResolver {
     public String processZip(UploadedFile file) {
         String jsonStrSessionStorage = null;
         String tmpDir = System.getProperty("java.io.tmpdir");
-        String filePath = "file://" + tmpDir + "/" + file.getUniqueId() + "/" + file.getFileName();
+        String filePath = FilenameUtils.concat(tmpDir, file.getUniqueId());
+        filePath = FilenameUtils.concat(filePath, file.getFileName());
         ZipFileUtil restoreZip = new ZipFileUtil(filePath);
         jsonStrSessionStorage = restoreZip.readFileFromZip("rosettaSessionStorage.json");
 
         return jsonStrSessionStorage;
     }
+
+    /**
+     * Accepts a GET request to download a file from the download directory.
+     *
+     * @param uniqueID   the sessions unique ID.
+     * @param fileName   the name of the file the user wants to download
+     *                   from the download directory
+     *
+     * @return IOStream of the file requested.
+     */
+    @RequestMapping(value = "/fileDownload/{uniqueID}/{file:.*}", method = RequestMethod.GET)
+    public void fileDownload(@PathVariable(value="uniqueID") String uniqueID, @PathVariable(value="file") String fileName,  HttpServletResponse response) {
+        String relFileLoc = uniqueID + "/" + fileName;
+        String fullFilePath = FilenameUtils.concat(rosettaProperties.getProperty("downloadDir"),relFileLoc);
+        File requestedFile = new File(fullFilePath);
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(requestedFile);
+            // copy it to response's OutputStream
+            IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        }
+    }
+
 
     /**
      * Attempts to get the client IP address from the request.

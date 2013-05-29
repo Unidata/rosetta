@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.commons.io.FilenameUtils;
+
 public class RosettaProperties {
 
     private static String defaultConfigFileName = "rosettaConfig.properties";
@@ -15,8 +17,13 @@ public class RosettaProperties {
     public static void create() {
         String defaultRosettaConfigPath = getDefaultConfigFileLoc();
         Properties prop = new Properties();
-        // downloadDir in catalina.base context, not file system!
-        String defaultDownloadDir = "/webapps/rosetta/download";
+        String defaultDownloadDir = FilenameUtils.concat(getDefaultRosettaHome(), "downloads");
+
+        File defaultRosettaConfigLoc = new File(defaultRosettaConfigPath.replace(defaultConfigFileName,""));
+        if (!defaultRosettaConfigLoc.exists()){
+            defaultRosettaConfigLoc.mkdirs();
+        }
+
         try {
             //set the properties value
             prop.setProperty("downloadDir", defaultDownloadDir);
@@ -30,12 +37,12 @@ public class RosettaProperties {
 
     private static String getDefaultRosettaHome() {
         String homeDir = System.getProperty("user.home");
-        String unidataDir = "/.unidata/rosetta/";
-        return homeDir + unidataDir;
+        String unidataDir = ".unidata/rosetta/";
+        return FilenameUtils.concat(homeDir, unidataDir);
     }
 
     private static String getDefaultConfigFileLoc() {
-        String configFileLoc = getDefaultRosettaHome() + defaultConfigFileName;
+        String configFileLoc = FilenameUtils.concat(getDefaultRosettaHome(), defaultConfigFileName);
         return configFileLoc;
     }
 
@@ -45,9 +52,7 @@ public class RosettaProperties {
         if (configFileLoc == null) {
             configFileLoc = getDefaultConfigFileLoc();
         } else {
-            File file1 = new File(configFileLoc);
-            File file2 = new File(file1, defaultConfigFileName);
-            configFileLoc =  file2.getPath();
+            configFileLoc = FilenameUtils.concat(configFileLoc, defaultConfigFileName);
         }
         return configFileLoc;
     }
