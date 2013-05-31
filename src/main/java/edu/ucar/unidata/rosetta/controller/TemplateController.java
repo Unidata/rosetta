@@ -302,7 +302,7 @@ public class TemplateController implements HandlerExceptionResolver {
         } else {
             id = new Integer(new Random().nextInt()).toString() + id;
         }
-        return id;
+        return id.replaceAll(":","_");
     }
 
     /**
