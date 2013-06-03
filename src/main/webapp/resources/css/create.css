@@ -41,7 +41,7 @@ a[href$='.ncml'] {
 a[href$='.zip'] {
     padding-left:18px;
     line-height:18px;
-    background: transparent url('../img/icon/rosetta_12x12.png') center left no-repeat;
+    background: transparent url('../img/icon/pzhta_12x12.png') center left no-repeat;
 }
 
 
@@ -156,7 +156,7 @@ ul li label img {
 
 /* dialog box section titles */
 #dialog h3 {
- width: 450px;
+ min-width: 450px;
  font-size: 10pt;
  padding: 0;
  margin: 0;
@@ -227,7 +227,8 @@ ul li label img {
 }
 
 /* dialog box unit builder formatting */
-#dialog #unitBuilder {
+#dialog #unitBuilder,
+#dialog #existingMetadataImporter {
  width: 100%;
  padding: 5px !important;
  margin: 0; 
@@ -236,25 +237,30 @@ ul li label img {
 }
 
 /* dialog box unit builder label formatting (general) */
-#dialog #unitBuilder label {
+#dialog #unitBuilder label,
+#dialog #existingMetadataImporter label {
  padding: 0;
  margin: 5px; 
 }
 
 /* dialog box unit builder label formatting for show unit builder section */
-#dialog label.unitBuilder {
+#dialog label.unitBuilder,
+#dialog label.existingMetadataImporter {
  margin: 10px 0; 
  display: block;
 }
 
 /* dialog box unit builder label formatting for data type section */
-#dialog #unitBuilder label.whole {
+#dialog #unitBuilder label.whole,
+#dialog label.existingMetadataImporter label.whole {
  display: block;
 }
 
 /* dialog box unit builder input tag formatting */
 #dialog label.unitBuilder input,
-#dialog #unitBuilder input {
+#dialog label.existingMetadataImporter input,
+#dialog #unitBuilder input
+#dialog #existingMetadataImporter input {
  float: left !important;
  clear: left !important;
  padding: 0 !important;

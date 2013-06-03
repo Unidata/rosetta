@@ -254,6 +254,26 @@ function createSessionAppendString(key, value) {
 }
 
 /** 
+ * Retrieves the session keys of only those variable containing metadata. 
+ * Note, those variables specified "Do Not Use" are ignored and not included.
+ */
+function getVariablesWithMetadata() {
+    var sessionKeys = [];
+    var sessionLength = getSessionLength();
+    for (var i = 0; i < sessionLength; i++) {  
+        var key = getSessionKey(i);
+        var value = getFromSession(key);
+        if (key.match(/[variableName]{1}\d+/)) {
+            if (key.match(/Metadata/)) {                                               
+                sessionKeys.push(key.replace("Metadata", ""));
+            }
+        }
+    }
+    return sessionKeys;
+}
+
+
+/** 
  * This function retrieves all the session data and stashes it into an object. 
  */
 function getAllDataInSession() {
@@ -262,17 +282,17 @@ function getAllDataInSession() {
     var variableMetadata = "";
     var sessionLength = getSessionLength();
     for (var i = 0; i < sessionLength; i++) {  
-          var key = getSessionKey(i);
-          var value = getFromSession(key);
-          if (key.match(/[variableName]{1}\d+/)) {
-              if (key.match(/Metadata/)) {                            
-                  variableMetadata = variableMetadata + "," + key + "=" + value.replace(/,/g, "+");
-              } else {
-                  variableNames = variableNames + "," + key + ":" + value;
-              }
-          } else {
-              data[key] = value;
-          }
+        var key = getSessionKey(i);
+        var value = getFromSession(key);
+        if (key.match(/[variableName]{1}\d+/)) {
+            if (key.match(/Metadata/)) {                            
+                variableMetadata = variableMetadata + "," + key + "=" + value.replace(/,/g, "+");
+            } else {
+                variableNames = variableNames + "," + key + ":" + value;
+            }
+        } else {
+            data[key] = value;
+        }
     }
     data["variableNames"] = variableNames.replace(/,/, "");
     data["variableMetadata"] = variableMetadata.replace(/,/, "");

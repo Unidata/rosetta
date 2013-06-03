@@ -85,7 +85,7 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
                             // create placeholder column object
                             var colObject = {
                                 id: x,  
-                                name: x,
+                                name: "column " + x,
                                 field: x,
                                 width: 100,
                                 resizable: false,
@@ -246,7 +246,7 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid, step
                           
                                 // get the variable name and assign to the column and update the header with the value   
                                 var variableName = getFromSession(sessionKey);                 
-                                grid.updateColumnHeader(id, variableName, variableName);
+                                grid.updateColumnHeader(id, "column " + id + ": " + variableName, "column " + id + ": " + variableName);
                                  
                                 // make sure the column is enabled/disabled depending on the user's choice
                                 checkIfColumnIsDisabled(colNumber, grid);
@@ -295,7 +295,7 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid, step
  */
 function bindDialogEvents(sessionKey) {
 
-    // variable name type (use column data or not)
+    // assign variable name or do not to use column data
     $("#dialog #variableNameTypeAssignment input[name=\"variableNameType\"]").bind("click", function() {
 
         $("#dialog #variableNameTypeAssignment").find("label.error").text(""); // get rid of any error messages
@@ -315,10 +315,16 @@ function bindDialogEvents(sessionKey) {
             // disable all parts of the dialog content except the first part
             disableVariableAttributes();
 
+        // enter in variable name
         } else {
-            $("#dialog #variableNameAssignment").removeClass("hideMe");
+            $("#dialog #variableNameAssignment").removeClass("hideMe");        
+            if (testIfMetadataImportPossible()) {
+                // metadata exists for other metadata so show option to import it
+                $("#dialog label.existingMetadataImporter").removeClass("hideMe");
+            }                    
         }  
     });
+
 
     // variable name 
     $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").autocomplete({
@@ -326,6 +332,7 @@ function bindDialogEvents(sessionKey) {
          delay: 0
     });
 
+    // variable name assignment
     $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").focusout(function() {
 
         $("#dialog #variableNameTypeAssignment").find("label.error").text(""); // get rid of any error messages
@@ -360,6 +367,13 @@ function bindDialogEvents(sessionKey) {
             enableVariableAttributes("coordinateVariableAssignment");
         }       
     });
+
+    // existing metadata importer activation: toggle existing metadata importer box
+    $("#dialog #variableNameTypeAssignment input[type=\"checkbox\"]").bind("click", function() {
+        $("#dialog #variableNameTypeAssignment #existingMetadataImporter").toggleClass("hideMe");
+        createExistingMetadataImporter(sessionKey);
+    });
+
 
     // coordinate variable
     $("#dialog #coordinateVariableAssignment input[name=\"isCoordinateVariable\"]").bind("click", function() {
@@ -432,7 +446,7 @@ function bindGeneralMetadataEvents(sessionKey) {
     // unit builder activation: toggle unit builder box
     $("#dialog #requiredMetadataAssignment input[type=\"checkbox\"]").bind("click", function() {
         $("#dialog #requiredMetadataAssignment #unitBuilder").toggleClass("hideMe");
-        createUnitBuilder(sessionKey)
+        createUnitBuilder(sessionKey);
     });
 
     // recommended metadata
@@ -539,7 +553,6 @@ function bindAdditionalMetadataEvents(sessionKey) {
  * @param sessionKey  The key used to store the data in the session.
  */
 function bindUnitBuildEvents(sessionKey) {
-
     // unit builder data type selection
     $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitBuilderDataType\"]").on("change", function() {
         if ($(this).attr("value") != "") {
@@ -569,6 +582,9 @@ function bindUnitBuildEvents(sessionKey) {
 
         // Adding to units 
         if ($(this).attr("alt") == "Add To Units") { 
+
+            $(this).parents("li").find("label[for=\"units\"].error").text(""); // get rid of any errors
+
             unitsInSession = unitsInSession + unitString;
 
             // concatenation the entered value to any existing Metadata values pulled from the session
@@ -603,7 +619,29 @@ function bindUnitBuildEvents(sessionKey) {
         }
 
     });
+
 }
+
+
+
+/** 
+ * This function binds events associated with the metadata import feature added to the dialog DOM.
+ *
+ * @param sessionKey  The key used to store the data in the session.
+ */
+function bindImportMetdataEvents(sessionKey) {
+    // metadata import selection
+    $("#dialog #existingMetadataImporter select[name=\"existingMetadataChoice\"]").on("change", function() {
+        if ($(this).attr("value") != "") {
+           var name = getFromSession($(this).attr("value"));
+           addToSession(sessionKey, name); 
+           var metadata = getFromSession($(this).attr("value") + "Metadata");
+           addToSession(sessionKey + "Metadata", metadata); 
+           populateDataFromSession(sessionKey);
+        }
+    });
+}
+
 
 
 
@@ -620,6 +658,7 @@ function bindUnitBuildEvents(sessionKey) {
  */
 function addContentToDialog(sessionKey) {
     $("#dialog").empty(); // start off with a dialog box free of content
+
     var dialogContent = "<div id=\"variableNameTypeAssignment\">\n" +
                         " <h3>What would you like to do with this column of data?</h3>\n" +
                         " <label class=\"error\"></label>" +
@@ -629,8 +668,19 @@ function addContentToDialog(sessionKey) {
                         "    <input type=\"radio\" name=\"variableNameType\" value=\"assign\"/> Assign a variable name\n" +
                         "   </label>\n" +
                         "   <label id=\"variableNameAssignment\">\n" +
-                        "    <input type=\"text\" name=\"variableName\" value=\"\"/>\n" +
+                        "    <input type=\"text\" name=\"variableName\" value=\"\"/>\n" +   
+                        "   </label>\n" +            
+                        "   <label class=\"existingMetadataImporter hideMe\">\n" +         
+                        "     use metadata from another column?  \n" +
+                        "    <input type=\"checkbox\" name=\"existingMetadataImporter\" value=\"true\"/> \n" +
                         "   </label>\n" +
+                        "   <div id=\"existingMetadataImporter\" class=\"hideMe\">\n" +
+                        "    <label for=\"existingMetadataChoice\" class=\"whole\">\n" +
+                        "     Import metadata from: \n" +
+                        "     <select name=\"existingMetadataChoice\">\n" +
+                        "     </select>\n" +
+                        "    </label>\n" +
+                        "   </div>\n" +   
                         "  </li>\n" +
                         "  <li>\n" +
                         "   <label>\n" +
@@ -751,7 +801,6 @@ function addMetadataHTMLToDialog(sessionKey, variableType) {
  * @param tagValue  The pre-existing value gleaned from the session (if it exists).
  */
 function createAdditionalMetadataTag(tagName, displayName, tagValue) {
-
     // Create a form tag containing metadata information
     // The addititional metadata sectional has a general error tag associated with it for general errors,
     // and we are creating error tags associated with the input tags for displaying specific errors.
@@ -771,7 +820,6 @@ function createAdditionalMetadataTag(tagName, displayName, tagValue) {
  * @param sessionKey  The key used to store the data in the session.
  */
 function createUnitBuilder(sessionKey) {
-
     var optionTags = "<option value=\"\">---- select one ----</option>";
     // loop through unitBuilderData 
     for (var i = 0; i < unitBuilderData.length; i++) { 
@@ -804,6 +852,31 @@ function createUnitBuilder(sessionKey) {
 
     // bind events
     bindUnitBuildEvents(sessionKey);
+}
+
+
+/** 
+ * Creates the initial HTML input tags for the existing metadata importer.
+ *
+ * @param sessionKey  The key used to store the data in the session.
+ */
+function createExistingMetadataImporter(sessionKey) {
+    var optionTags = "<option value=\"\">---- select one ----</option>";
+
+    // get variables with metadata           
+    var variablesWithMetadata = getVariablesWithMetadata();
+    for (var i = 0; i < variablesWithMetadata.length; i++) { 
+        if (testVariableCompleteness(variablesWithMetadata[i], getFromSession(variablesWithMetadata[i]))) {
+            optionTags =  optionTags + "<option value=\"" + variablesWithMetadata[i] + "\">" + getFromSession(variablesWithMetadata[i]) + " from column " + variablesWithMetadata[i].replace("variableName", "") + "</option>\n";
+        } 
+    }
+
+    // add to the DOM
+    $("#dialog #existingMetadataImporter select[name=\"existingMetadataChoice\"]").append(optionTags);
+
+    // bind events
+    bindImportMetdataEvents(sessionKey);
+
 }
 
 /** 
@@ -1008,6 +1081,10 @@ function populateDataFromSession(sessionKey) {
             // add variable name input tag 
             $("#dialog #variableNameAssignment").removeClass("hideMe");
             $("#dialog #variableNameAssignment input[name=\"variableName\"]").attr("value", variableValue);
+            if (testIfMetadataImportPossible()) {
+                // metadata exists for other metadata so show option to import it
+                $("#dialog label.existingMetadataImporter").removeClass("hideMe");
+            } 
 
             // if they've provided a variable name, then enable the coordinate variable section 
             enableVariableAttributes("coordinateVariableAssignment");
@@ -1076,6 +1153,31 @@ function populateDataFromSession(sessionKey) {
         }  
     }
 }
+
+/** 
+ * Tests to see if metadata from another column is available for import.
+ * Looks to see if 1) variable metadata exists in the session; and 2) if
+ * all the required metadata for that variable is present and not incomplete.
+ */
+function testIfMetadataImportPossible() {
+    // see if any metadata has been entered for other variables           
+    var variablesWithMetadata = getVariablesWithMetadata();
+    if (variablesWithMetadata.length > 0) { 
+        for (var i = 0; i < variablesWithMetadata.length; i++) { 
+            if (testVariableCompleteness(variablesWithMetadata[i], getFromSession(variablesWithMetadata[i]))) {
+                return true;
+            } else {
+                if (i = (variablesWithMetadata.length - 1)) {
+                    return false;
+                }
+            }
+        }
+    } else {
+        return false;
+    }
+
+}
+
 
 /** 
  * Disables the input tags and de-emphasizes the text of the variable
@@ -1191,7 +1293,7 @@ function hackGridButtonElement(id, variableName) {
     var buttonElement = $("div[title=\"data column " + id + "\"].slick-header-button");
     if (buttonElement.length > 0) {
         $(buttonElement).removeClass("todo").addClass("done");
-        $(buttonElement).attr("title", variableName);
+        $(buttonElement).attr("title", "column " + id + ": " + variableName);
     }
 }
 
