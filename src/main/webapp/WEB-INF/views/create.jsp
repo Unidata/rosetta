@@ -12,6 +12,7 @@
     <script type="text/javascript">
 	    var platformMetadata = [];
 	    var generalMetadata = [];
+        var publisherInfo = [];
         $.metadata.setType("attr", "validate");
     </script>
  
@@ -179,7 +180,7 @@
      <c:choose>
       <c:when test="${fn:length(globalMetadataItems) gt 0}">
        <ul>
-        <c:forEach items="${globalMetadataItems}" var="globalMetadataItem">   
+        <c:forEach items="${globalMetadataItems}" var="globalMetadataItem">
          <script type="text/javascript">
              var obj = {};
              obj["tagName"] = "<c:out value="${globalMetadataItem.tagName}" />";
@@ -233,8 +234,25 @@
      <h5><spring:message code="step7.description"/></h5>
      <ul id="download">
      </ul>
-    </div> 
+    </div>
 
+    <div id="step8" title="<spring:message code="step8.title"/>">
+        <h5><spring:message code="step8.description"/></h5>
+        <select id="publisherName">
+            <c:forEach items="${publishers}" var="publisher">
+                <option> <c:out value="${publisher.pubName}" /> </option>
+            </c:forEach>
+        </select>
+        <form>
+            <br>
+            User Name: <input type="text" id="userName"><br>
+            Password: <input type="password" id="userPassword">
+            <br>
+        </form>
+        <br>
+        <input type="button" id="publish" value="Publish" />
+        <div id="notice"></div>
+    </div>
 
    </form>
    <p>

@@ -3,6 +3,7 @@ package edu.ucar.unidata.rosetta.controller;
 import edu.ucar.unidata.converters.xlsToCsv;
 import edu.ucar.unidata.rosetta.Rosetta;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
+import edu.ucar.unidata.rosetta.domain.Publisher;
 import edu.ucar.unidata.rosetta.domain.UploadedFile;
 import edu.ucar.unidata.rosetta.service.FileParserManager;
 import edu.ucar.unidata.rosetta.service.FileValidator;
@@ -16,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.ramadda.repository.client.RepositoryClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -233,6 +235,35 @@ public class TemplateController implements HandlerExceptionResolver {
         jsonStrSessionStorage = restoreZip.readFileFromZip("rosettaSessionStorage.json");
 
         return jsonStrSessionStorage;
+    }
+
+    @RequestMapping(value = "/publish", method = RequestMethod.POST)
+    @ResponseBody
+    public String publish(Publisher publisherObj) {
+        String userId = "";
+        String passwd = "";
+
+        String server = "motherlode.ucar.edu";
+        String parent = "c8c04a3c-d32c-42b8-8c3c-5c174aaa0991";
+        String entryName = "myTest";
+        String entryDescription = "just a test";
+        String filePath = "";
+
+        try {
+            RepositoryClient client = new RepositoryClient(server, 80, "/repository", userId, passwd);
+            client.uploadFile(entryName, entryDescription, parent,
+                    filePath);
+            String[] msg = { "" };
+            if (client.isValidSession(true, msg)) {
+                System.err.println("Valid session");
+            } else {
+                System.err.println("Invalid session:" + msg[0]);
+            }
+        } catch (Exception e)  {
+            String fail = "fail";
+        }
+
+        return "";
     }
 
     /**

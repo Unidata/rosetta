@@ -2,11 +2,30 @@ package edu.ucar.unidata.rosetta.service;
 
 import org.ramadda.repository.client.RepositoryClient;
 
+import java.util.List;
+import java.util.Map;
+
 public class RamaddaPublisher {
 
+    private static ResourceManagerImpl resourceManager = new ResourceManagerImpl();
+
+    private Map resources;
+
+    private  Map getResources() {
+        System.out.println("hi");
+        return resources;
+    }
+
+    private void setResources() {
+        resources = resourceManager.loadResources();
+    }
+
     public static void main(String args[]) {
+        RamaddaPublisher rp = new RamaddaPublisher();
+        rp.setResources();
         String userId = "";
         String passwd = "";
+
         String server = "motherlode.ucar.edu";
         String parent = "c8c04a3c-d32c-42b8-8c3c-5c174aaa0991";
         String entryName = "myTest";

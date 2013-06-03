@@ -281,10 +281,10 @@ $(document).ready(function($) {
                         }
                     }, 
                 "text");
-
+                $(".jw-button-next").removeClass("hideMe")
                 $(".jw-button-finish").addClass("hideMe");
                 $("#faux").remove();
-            break;     
+            break;
         }
     })
 
@@ -458,5 +458,22 @@ $(document).ready(function($) {
                 }        
             } 
         } 
-    }); 
+    });
+    /**
+     * STEP 7
+     */
+    // publish to portal
+
+    $("#publish").bind("click", function() {
+        addToSession("pubName", $(publisherName.pubName).val());
+        addToSession("userName", $(userName).val());
+        var data = getAllDataInSession();
+        data["auth"] = $(userPassword).val();
+
+        $.post("publish", data,
+            function(returnData) {
+                var returnData2 = returnData;
+            },
+            "text");
+       });
 });

@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<publishers>
+    <publisher>
+        <pubName>Unidata RAMADDA</pubName>
+        <pubUrl>motherlode.ucar.edu</pubUrl>
+        <incomingDest>c8c04a3c-d32c-42b8-8c3c-5c174aaa0991</incomingDest>
+    </publisher>
+</publishers>
