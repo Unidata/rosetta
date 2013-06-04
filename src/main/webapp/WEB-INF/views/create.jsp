@@ -251,6 +251,7 @@
         </form>
         <br>
         <input type="button" id="publish" value="Publish" />
+        <ul id="pubMessage">
         <div id="notice"></div>
     </div>
 

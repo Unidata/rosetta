@@ -51,7 +51,11 @@ public class TemplateController implements HandlerExceptionResolver {
     @Resource(name = "fileValidator")
     private FileValidator fileValidator;
 
-    Properties rosettaProperties = RosettaProperties.getRosettaProps();
+    private String getDownloadDir() {
+        String downloadDir = "";
+        downloadDir = RosettaProperties.getDownloadDir();
+        return downloadDir;
+    }
 
     /**
      * Accepts a GET request for template creation, fetches resource information
@@ -169,7 +173,7 @@ public class TemplateController implements HandlerExceptionResolver {
 
                     // Create the NCML file using the file data
                     String catalinaBase = System.getProperty("catalina.base");
-                    String downloadDir = FilenameUtils.concat(rosettaProperties.getProperty("downloadDir"),
+                    String downloadDir = FilenameUtils.concat(getDownloadDir(),
                             file.getUniqueId());
 
                     String ncmlFile = null;
@@ -240,30 +244,35 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/publish", method = RequestMethod.POST)
     @ResponseBody
     public String publish(Publisher publisherObj) {
-        String userId = "";
-        String passwd = "";
+        String userId = publisherObj.getUserName();
+        String passwd = publisherObj.getAuth();
+        HashMap<String, String> pubMap = (HashMap<String, String>) publisherObj.getPublisherInfoMap();
+        String server = pubMap.get("pubUrl");
+        String parent = pubMap.get("incomingDest");
 
-        String server = "motherlode.ucar.edu";
-        String parent = "c8c04a3c-d32c-42b8-8c3c-5c174aaa0991";
-        String entryName = "myTest";
-        String entryDescription = "just a test";
-        String filePath = "";
+        String entryName = publisherObj.getGeneralMetadataMap().get("title");
+        String entryDescription = publisherObj.getGeneralMetadataMap().get("description");
 
+        String downloadDir = FilenameUtils.concat(getDownloadDir(),
+                publisherObj.getUniqueId());
+        String ncFileName = FilenameUtils.removeExtension(publisherObj.getFileName()) + ".nc";
+        String filePath = FilenameUtils.concat(downloadDir, ncFileName);
+        String msg = "";
         try {
             RepositoryClient client = new RepositoryClient(server, 80, "/repository", userId, passwd);
-            client.uploadFile(entryName, entryDescription, parent,
+            msg = client.uploadFile(entryName, entryDescription, parent,
                     filePath);
-            String[] msg = { "" };
-            if (client.isValidSession(true, msg)) {
+
+            if (client.isValidSession(true, null)) {
                 System.err.println("Valid session");
             } else {
-                System.err.println("Invalid session:" + msg[0]);
+                System.err.println("Invalid session:" + msg);
             }
         } catch (Exception e)  {
-            String fail = "fail";
+            msg = e.getMessage();
         }
 
-        return "";
+        return msg;
     }
 
     /**
@@ -278,7 +287,7 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/fileDownload/{uniqueID}/{file:.*}", method = RequestMethod.GET)
     public void fileDownload(@PathVariable(value="uniqueID") String uniqueID, @PathVariable(value="file") String fileName,  HttpServletResponse response) {
         String relFileLoc = uniqueID + "/" + fileName;
-        String fullFilePath = FilenameUtils.concat(rosettaProperties.getProperty("downloadDir"),relFileLoc);
+        String fullFilePath = FilenameUtils.concat(getDownloadDir(),relFileLoc);
         File requestedFile = new File(fullFilePath);
         FileInputStream inputStream = null;
         try {

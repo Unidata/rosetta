@@ -1,11 +1,17 @@
 package edu.ucar.unidata.rosetta.domain;
 
+import edu.ucar.unidata.rosetta.service.ResourceManager;
+import edu.ucar.unidata.rosetta.service.ResourceManagerImpl;
+
 import java.util.*;
 
 public class Publisher extends AsciiFile {
     private String pubName;
-    private String pubUrl;
-    private String incomingDest;
+    private String userName;
+    private String auth;
+    private Map<String, String> publisherInfoMap;
+
+    private ResourceManager rs = new ResourceManagerImpl();
 
     /**
      * Returns the publisher name.
@@ -23,41 +29,68 @@ public class Publisher extends AsciiFile {
      */
     public void setPubName(String pubName) {
         this.pubName = pubName;
+        setPublisherInfoMap();
     }
 
     /**
-     * Returns the publisher url.
+     * Returns the publisher username.
      *
-     * @return  The publisher url.
+     * @return  The username for publishing login.
      */
-    public String getPubUrl() {
-        return pubUrl;
+    public String getUserName() {
+        return userName;
     }
 
     /**
-     * Sets the publisher url.
+     * Sets the publisher username.
      *
-     * @param pubUrl the publisher url.
+     * @param userName  The username for publishing login.
      */
-    public void setPubUrl(String pubUrl) {
-        this.pubUrl = pubUrl;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     /**
-     * Returns the publish location.
+     * Returns the publisher auth.
      *
-     * @return  The location to publish to.
+     * @return  The auth for publishing login.
      */
-    public String getIncomingDest() {
-        return incomingDest;
+    public String getAuth() {
+        return auth;
     }
 
     /**
-     * Sets the publish location.
+     * Sets the publisher auth.
      *
-     * @param incomingDest  The location to publish to.
+     * @param auth  The username for publishing login.
      */
-    public void setIncomingDest(String incomingDest) {
-        this.incomingDest = incomingDest;
+    public void setAuth(String auth) {
+        this.auth = auth;
     }
+
+    /**
+     * Returns a Map containing the variable metadata.
+     *
+     * @return  The variable metadata in a map.
+     */
+    public Map<String, String> getPublisherInfoMap() {
+        return publisherInfoMap;
+    }
+
+    /**
+     * Creates a Map containing the variable metadata as specified by the user.
+     */
+    public void setPublisherInfoMap() {
+        publisherInfoMap = new HashMap<String, String>();
+        Map resources = rs.loadResources();
+        List publishers = (List) resources.get("publishers");
+        for(Object pub : publishers) {
+            HashMap<String, String> pubMap = (HashMap<String, String>) pub;
+            String pubName = pubMap.get("pubName");
+            if (pubName.equals(this.getPubName())) {
+                publisherInfoMap = pubMap;
+            }
+        }
+    }
+
 }

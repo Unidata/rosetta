@@ -245,12 +245,24 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             String value;
             String type;
             Map<String, String> variableMetadata;
+            List<String> usedVarNames = new ArrayList<String>();
+            HashMap<String, Integer> nameCounts = new HashMap<String, Integer>();
             while (variableNameKeysIterator.hasNext()) {
                 key = variableNameKeysIterator.next();
                 value = variableNameMap.get(key);
                 if (!value.equals("Do Not Use")) {
                     variable = doc.createElement("variable");
-                    variable.setAttribute("name", value);
+                    String userName = value;
+                    String varName = value.replace(" ", "_");
+                    if (!usedVarNames.contains(varName)) {
+                        usedVarNames.add(varName);
+                        nameCounts.put(varName,1);
+                    } else {
+                        Integer newCount = nameCounts.get(varName) + 1;
+                        nameCounts.put(varName, newCount);
+                        varName = varName + "_" + newCount.toString();
+                    }
+                    variable.setAttribute("name", varName);
                     variableMetadata = variableMetadataMap.get(key + "Metadata");
                     type = variableMetadata.get("dataType");
                     if (type.equals("Text")) {
@@ -261,7 +273,9 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                         type = "float";
                     }
                     variable.setAttribute("type", type);
-
+                    if (!userName.equals(varName)) {
+                        variable.setAttribute("_userSuppliedName", value);
+                    }
                     Set<String> variableMetadataKeys = variableMetadata.keySet();
                     Iterator<String> variableMetadataKeysIterator = variableMetadataKeys.iterator();
                     String metadataKey;

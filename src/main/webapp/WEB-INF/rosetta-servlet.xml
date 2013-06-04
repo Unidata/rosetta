@@ -34,7 +34,7 @@
 
   <!-- File upload multipart resolver -->
   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-      <property name="maxUploadSize" value="1048576"/>
+      <property name="maxUploadSize" value="2202010"/>
   </bean>
 
   <!-- Message source resolver to use messages.properties file in the 'war/WEB-INF/classes' directory -->

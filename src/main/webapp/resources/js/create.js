@@ -465,14 +465,23 @@ $(document).ready(function($) {
     // publish to portal
 
     $("#publish").bind("click", function() {
-        addToSession("pubName", $(publisherName.pubName).val());
+        var pubName = publisherName.value;
+        addToSession("pubName", pubName);
         addToSession("userName", $(userName).val());
         var data = getAllDataInSession();
         data["auth"] = $(userPassword).val();
 
         $.post("publish", data,
             function(returnData) {
-                var returnData2 = returnData;
+                var pubMessage = $("ul#pubMessage");
+                $(pubMessage).empty();
+                if (returnData.indexOf("Incorrect") !== -1) {
+                    pubMessage.append("<br><label class=\"error\">" + returnData + "</label>");
+                } else {
+                    $("#publish").remove()
+                    var linkName = "View published data!";
+                    pubMessage.append("<br><li><a href=\""  +  "http://motherlode.ucar.edu/repository/entry/show?entryid=" + returnData  +  "\">" + linkName  +  "</a></li>");
+                }
             },
             "text");
        });
