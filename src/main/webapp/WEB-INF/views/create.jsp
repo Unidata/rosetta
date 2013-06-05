@@ -269,6 +269,8 @@
          </td>
        </tr>
      </table>
+     <br>
+     <img src="<spring:message code="unidata.banner.path"/>" alt="<spring:message code="unidata.banner.alt"/>" align="left"/>
    </p>
   </body>
  </html>

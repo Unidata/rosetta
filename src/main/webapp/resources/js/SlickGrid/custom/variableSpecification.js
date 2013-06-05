@@ -691,7 +691,7 @@ function addContentToDialog(sessionKey) {
                         "</div>\n" +
                         "<div id=\"variableAttributes\">\n" +
                         " <div id=\"coordinateVariableAssignment\">\n" +
-                        "  <h3>Is this variable a coordinate variable?</h3>\n" +
+                        "  <h3>Is this variable a coordinate variable? (examples: latitude, longitude, time)</h3>\n" +
                         "  <ul class=\"third\">\n" +
                         "   <li>\n" +
                         "    <label>\n" +
@@ -716,7 +716,7 @@ function addContentToDialog(sessionKey) {
                         "   </li>\n" +
                         "   <li>\n" +
                         "    <label>\n" +
-                        "     <input type=\"radio\" name=\"dataType\" value=\"Float\"/> Float\n" +
+                        "     <input type=\"radio\" name=\"dataType\" value=\"Float\"/> Float (decimal)\n" +
                         "    </label>\n" +
                         "   </li>\n" +
                         "   <li>\n" +
