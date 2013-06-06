@@ -270,7 +270,9 @@
        </tr>
      </table>
      <br>
-     <img src="<spring:message code="unidata.banner.path"/>" alt="<spring:message code="unidata.banner.alt"/>" align="left"/>
+     <a href="<spring:message code="unidata.banner.url"/>">
+       <img src="<spring:message code="unidata.banner.path"/>" alt="<spring:message code="unidata.banner.alt"/>" align="left"/>
+     </a>
    </p>
   </body>
  </html>
