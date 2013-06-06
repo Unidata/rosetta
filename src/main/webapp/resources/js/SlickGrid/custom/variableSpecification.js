@@ -941,8 +941,9 @@ function addUnitBuilderOptionsToDom(dataTypeSelected) {
  * @param variableValue  The name value assigned to the variable by the user.
  * @param displayName  The user-friendly name of the metadata item as it appears in the reference XML file.
  * @param metadataNecessity  The importance of the metadata entry (required, recommended or additonal)
+ * @param helpTip The text for for the help tip hover text.
  */
-function createTagElement(sessionKey, tagName, variableValue, displayName, metadataNecessity) {
+function createTagElement(sessionKey, tagName, variableValue, displayName, metadataNecessity, helpTip) {
 
     // first thing we do is get any metadata items already stored in the session and assign them to tagValue
     var tagValue = getItemEntered(sessionKey + "Metadata", tagName);
@@ -961,7 +962,7 @@ function createTagElement(sessionKey, tagName, variableValue, displayName, metad
     }
 
     // get the display (pretty) name if it exists
-    if (displayName == undefined) {  
+    if (displayName == undefined) {
         displayName = tagName;
     }
 
@@ -984,7 +985,13 @@ function createTagElement(sessionKey, tagName, variableValue, displayName, metad
                       "    </div>\n"; 
     }
    
-    // create the tag! 
+    // create help tip element, if defined
+    var helpTipElement = "";
+    if (helpTip != "") {
+        helpTipElement = "<img src=\"resources/img/help.png\" alt=\"" + helpTip + "\" />";
+    }
+
+    // create the tag!
     var tag;
 
     if (metadataNecessity == "additional") {
@@ -998,10 +1005,12 @@ function createTagElement(sessionKey, tagName, variableValue, displayName, metad
             }
         }
 
+
         tag = "   <li>\n" +
               "    <label for=\"" + tagName + "\" class=\"error\"></label>" + 
               "    <label>\n" +
               "     " + displayName + "\n" +
+              "     " + helpTipElement + "\n" +
               "     <input type=\"text\" name=\"" + tagName  + "\" value=\"" + tagValue + "\" " + isDisabled + "/> \n" +
               "    </label>\n" +
               unitBuilderSelector +
@@ -1034,7 +1043,7 @@ function populateMetadataInputTags(sessionKey, variableType, metadataNecessity) 
         // create a form tag containing that information.
         if (metadataItem.type == variableType) {
             if (metadataItem.necessity == metadataNecessity) {
-                tag = createTagElement(sessionKey, metadataItem.entry, variableValue, metadataItem.displayName, metadataItem.necessity);
+                tag = createTagElement(sessionKey, metadataItem.entry, variableValue, metadataItem.displayName, metadataItem.necessity, metadataItem.helptip);
                 metadataTags = metadataTags + tag;
             }
         }
@@ -1043,7 +1052,7 @@ function populateMetadataInputTags(sessionKey, variableType, metadataNecessity) 
         // and create a form tag containing that information.
         if (metadataItem.type == "both") {
             if (metadataItem.necessity == metadataNecessity) {
-                tag = createTagElement(sessionKey, metadataItem.entry, variableValue, metadataItem.displayName, metadataItem.necessity);
+                tag = createTagElement(sessionKey, metadataItem.entry, variableValue, metadataItem.displayName, metadataItem.necessity, metadataItem.helptip);
                 metadataTags = metadataTags + tag;
             }
         }

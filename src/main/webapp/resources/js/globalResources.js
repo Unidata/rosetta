@@ -55,9 +55,9 @@ function loadMetadata() {
             var e = {};
             e["entry"] = $(this).attr("id");
             e["displayName"] = $(this).attr("displayName");
-
             e["type"] = $(this).find("type").text();
             e["necessity"] = $(this).find("necessity").text();
+            e["helptip"] = $(this).find("helptip").text();
             m.push(e);
         }); 
         metadata = m;

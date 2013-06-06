@@ -23,6 +23,16 @@
       </entry-->
 
       <!-- Non-Coordinate Metadata -->
+      <entry id="source" displayName="Instrument Description">
+        <type>non-coordinate</type>
+        <necessity>required</necessity>
+        <helptip>Describe the instrument used to sample this variable (example: CSAT3 Sonic Anemometer)</helptip>
+      </entry>
+      <entry id="missing_value" displayName="Missing Value">
+        <type>non-coordinate</type>
+        <necessity>required</necessity>
+        <helptip>How are missing values represented in your dataset (example: -999)</helptip>
+      </entry>
       <entry id="_sampleHeight" displayName="Instrument Height (negative for depths)">
         <type>non-coordinate</type>
         <necessity>recommended</necessity>
@@ -42,10 +52,6 @@
       <entry id="valid_range" displayName="Calibration Range">
         <type>non-coordinate</type>
         <necessity>additional</necessity>
-      </entry>
-      <entry id="missing_value" displayName="Missing Value">
-        <type>non-coordinate</type>
-        <necessity>required</necessity>
       </entry>
       <entry id="add_offset" displayName="Calibration Offset">
          <type>non-coordinate</type>
@@ -79,41 +85,43 @@
          <type>non-coordinate</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="source" displayName="Instrument Description">
-         <type>non-coordinate</type>
-         <necessity>required</necessity>
-      </entry>
 
       <!-- Coordinate and Non-Coordinate (Shared) Metadata -->
       <entry id="long_name" displayName="Variable Description">
         <type>both</type>
         <necessity>required</necessity>
+        <helptip>Describe the variable (example: kinematic momentum flux sampled 5 meters over the past 30 minute interval)</helptip>
+      </entry>
+      <entry id="units" displayName="Units">
+        <type>both</type>
+        <necessity>required</necessity>
+        <helptip>Must be a UDUNIT compatible unit (tip: try the unit builder)</helptip>
       </entry>
       <entry id="standard_name" displayName="CF Name">
         <type>both</type>
         <necessity>recommended</necessity>
       </entry>
-      <entry id="units" displayName="Units">
-        <type>both</type>
-        <necessity>required</necessity>
-      </entry>
 
       <!-- Global Metadata -->
+      <entry id="description">
+        <type>global</type>
+        <necessity>required</necessity>
+      </entry>
+      <entry id="institution">
+        <type>global</type>
+        <necessity>required</necessity>
+      </entry>
+      <entry id="title">
+        <type>global</type>
+        <necessity>required</necessity>
+      </entry>
       <entry id="comment" displayName="Comments">
          <type>global</type>
          <necessity>additional</necessity>
       </entry>
-      <entry id="description">
-         <type>global</type>
-         <necessity>required</necessity>
-      </entry>
       <entry id="history">
          <type>global</type>
          <necessity>additional</necessity>
-      </entry>
-      <entry id="institution">
-         <type>global</type>
-         <necessity>required</necessity>
       </entry>
       <entry id="processor">
          <type>global</type>
@@ -126,10 +134,6 @@
       <entry id="source">
          <type>global</type>
          <necessity>additional</necessity>
-      </entry>
-      <entry id="title">
-         <type>global</type>
-         <necessity>title</necessity>
       </entry>
       <entry id="version">
          <type>global</type>
