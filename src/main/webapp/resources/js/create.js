@@ -44,46 +44,20 @@ $(document).ready(function($) {
             var error;
             // using currentStepIndex, we can intercept the user when they are *done* with a particular step
             switch(ui.currentStepIndex) { 
-                case 0: 
-                    // Validation
-                    error = validateItemExistsInSession(ui.currentStepIndex, "cfType", "You must select a platform to continue.");
-                    if (!error) {
-                        return false;
-                    }
+                case 0:
+                    selectPlatform("stepValidation", ui);
                 break;
 
                 case 1:  
-                    // Validation
-                    if (ui.type == "next") {
-                        error = validateItemExistsInSession(ui.currentStepIndex, "uniqueId", "You need to upload a file to continue.");
-                        if (!error) {
-                            return false;
-                        }
-                    }  
+                    uploadDataFile("stepValidation", ui);
                 break;
 
                 case 2: 
-                    // Validation
-                    if (ui.type == "next") {
-                        error = validateItemExistsInSession(ui.currentStepIndex, "headerLineNumbers", "You need to specify which lines are header lines to continue.");
-                        if (!error) {
-                            return false;
-                        }
-                    }   
+                    specifyHeaderLines("stepValidation", ui);
                 break;
 
                 case 3:  
-                    // Validation
-                    if (ui.type == "next") {
-                        error = validateItemExistsInSession(ui.currentStepIndex, "delimiters", "You need to specify at least one delimiter to continue.");
-                        if (!error) {
-                            return false;
-                        }
-                        error = validateOtherDelimiter(ui.currentStepIndex);
-                        if (!error) {
-                            return false;
-                        }
-                    }   
+                    specifyDelimiters("stepValidation", ui);
                 break;
 
                 case 5:      
@@ -112,80 +86,20 @@ $(document).ready(function($) {
 
         // by using nextStepIndex, we can intercept the user when they are *about to start* on a particular step
         switch(ui.nextStepIndex) {   
-            case 0:  
-                // If we land on this page and user has already enter something 
-                // (e.g., clicked previous or used the menu to navigate)
-                // Don't hide the 'Next' button
-                if (ui.type == "previous") {
-                    if (getFromSession("cfType")) {
-                        $("#faux").remove();
-                        $(".jw-button-next").removeClass("hideMe");
-                    }
-                }
+            case 0:
+                selectPlatform("repopulateStep", ui);
             break;
 
             case 1:  
-                // Initially hide the upload button (will appear when user opens file chooser)
-                $("#upload").addClass("hideMe");
-
-                // If we land on this page and user has already enter something 
-                // (e.g., clicked previous or used the menu to navigate)    
-                // Don't hide the 'Next' button           
-                if ((ui.type == "previous") || (ui.type == "next")) {
-                    if (getFromSession("uniqueId")) {
-                        $("#file").addClass("hideMe");      
-                        progressBarCallback();
-                        $("#faux").remove();
-                        $(".jw-button-next").removeClass("hideMe");
-                    }
-                }
+                uploadDataFile("repopulateStep", ui);
             break;
 
             case 2:  
-                $.post("parse", { uniqueId: getFromSession("uniqueId"), fileName: getFromSession("fileName") },  
-                    function(data) {
-                       drawGrid(data, "2")
-                    }, 
-                "text");
-
-                // If we land on this page and user has already enter something 
-                // (e.g., clicked previous or used the menu to navigate)    
-                // Don't hide the 'Next' button           
-                if ((ui.type == "previous") || (ui.type == "next")) {
-                    if (getFromSession("headerLineNumbers")) {
-                        $("#faux").remove();
-                        $(".jw-button-next").removeClass("hideMe");
-                    }
-                }
+                specifyHeaderLines("repopulateStep", ui);
             break;
 
             case 3:  
-                // If we land on this page and user has already enter something 
-                // (e.g., clicked previous or used the menu to navigate)    
-                // Don't hide the 'Next' button           
-                if ((ui.type == "previous") || (ui.type == "next")) {
-                    if (getFromSession("delimiters")) {                        
-                        $("#step3 #delimiter").each(function(){      
-                            if (getFromSession("delimiters").search($(this).val()) >= 0 ) {  
-                                if ($(this).val() == "Other") {
-                                    if (!getFromSession("otherDelimiter")) { 
-                                        removeItemFromSessionString("delimiters", "Other")
-                                        return true;
-                                    } 
-                                }
-                                $(this).attr("checked", true);
-                            } else {
-                                $(this).attr("checked", false);
-                            }
-                        });
-                        if (getFromSession("otherDelimiter")) {    
-                            $("#otherDelimiter").val(getFromSession("otherDelimiter"));
-                            $("#otherDelimiter").removeClass("hideMe");
-                        }
-                        $("#faux").remove();
-                        $(".jw-button-next").removeClass("hideMe");
-                    }
-                }
+                specifyDelimiters("repopulateStep", ui);
             break;
 
             case 4: 
@@ -201,16 +115,7 @@ $(document).ready(function($) {
                 // (e.g., clicked previous or used the menu to navigate)    
                 // Don't hide the 'Next' button           
                 if ((ui.type == "previous") || (ui.type == "next")) {
-                    if (getItemEntered("platformMetadata", "platformName") != null ) {
-                        if (getItemEntered("platformMetadata", "latitude") != null ) { 
-                            if (getItemEntered("platformMetadata", "longitude") != null ) {
-                                if (getItemEntered("platformMetadata", "altitude") != null ) {                                    
-                                    $("#faux").remove();
-                                    $(".jw-button-next").removeClass("hideMe");                                   
-                                }                  
-                            }        
-                        } 
-                    }
+                    foo();
                 }
 
                 // populate input elements from sessionStorage
@@ -303,53 +208,13 @@ $(document).ready(function($) {
 
     /** 
      * STEP 0 
-     */    
-    $("#step0 input").bind("click", function() {
-        // add to session
-        addToSession("cfType", $(this).val());
-        // Show 'Next' button after user makes a selection
-        $(".jw-button-next").removeAttr("disabled").removeClass("disabled");
-    });
+     */
+     selectPlatform("stepFunctions", 0);
 
     /** 
      * STEP 1
-     */        
-    $("#file").bind("change", function() {
-        // Validate file being uploaded
-        var error = validateUploadedFile($("#file")[0].files[0], 1);
-        if (!error) {
-            return false;
-        } else {
-            // Show upload button after user launches file chooser (if upload successful)
-            $(".jw-step:eq(1)").find("label.error").text("");
-            $("#upload").removeClass("hideMe");  
-        }
-    });
-    
-    $("#upload").bind("click", function() {
-        // Upload file and add to session
-        var up = instantiateUploader($("#progress"), $(".jw-step:eq(1)").find("label.error"), $("#upload"));
-        up.send();         
-        addToSession("fileName", cleanFilePath($("#file").val()));
-        // show 'Next' button after user uploads file
-        $("#file").addClass("hideMe"); 
-    });
-   
-    $("#clearFileUpload").bind("click", function() {
-        //removed uploaded file from session and recreate the upload form.
-        removeFromSession("uniqueId");
-        removeFromSession("fileName");
-        $("#file").removeClass("hideMe");   
-        $("#clearFileUpload").addClass("hideMe");
-        // clear progress bar
-        $("#progress").attr("style","").addClass("progress");
-        $("#progress").html("0%");
-        // clear any notices about file types
-        $("#notice").empty();
-        // hide the 'Next' button
-        $("#faux").remove();
-        $(".jw-button-next").addClass("hideMe").after(faux);
-    });
+     */
+    uploadDataFile("stepFunctions")
 
     /** 
      * STEP 2 handled in SlickGrid/custom/headerLineSelection.js
@@ -357,54 +222,10 @@ $(document).ready(function($) {
 
     /** 
      * STEP 3
-     */   
-    $("#step3 input:checkbox").bind("click", function() {
-        $(".jw-step:eq(3)").find("label.error").text("");
-        // create array from selected values
-        var checkedDelimiters = $("input:checkbox").serializeArray();
-        var delimiterArray = [];
-        $.each(checkedDelimiters, function(index, field){            
-            delimiterArray[index] = field.value;         
-        });
+     */
+    specifyDelimiters("stepFunctions", 3);
 
-        // add to session
-        addToSession("delimiters", delimiterArray);
-        if (delimiterArray.length <= 0) {
-            removeFromSession("delimiters");
-        } else {
-            // Show 'Next' button after user makes a selection
-            $("#faux").remove();
-            $(".jw-button-next").removeClass("hideMe");
-        }
-
-        // if Other is selected 
-        if ($(this).val() == "Other") {
-            if (jQuery.inArray("Other", delimiterArray) < 0) {
-                // toggled off
-                $("#otherDelimiter").addClass("hideMe");
-                $("#otherDelimiter").val("");
-                removeFromSession("otherDelimiter");
-            } else {
-                // toggled on 
-                $("#otherDelimiter").removeClass("hideMe");
-            }
-        }
-    });
-
-    $("#otherDelimiter").on("focusin", function() {
-        $(".jw-step:eq(3)").find("label.error").text("");
-    });
-
-    $("#otherDelimiter").on("focusout", function() {
-        addToSession("otherDelimiter", $(this).val());
-        if (getFromSession("delimiters")) {
-            // Show 'Next' button after user makes a selection
-            $("#faux").remove();
-            $(".jw-button-next").removeClass("hideMe");
-        }
-    });
-
-    /** 
+    /**
      * STEP 4 handled in SlickGrid/custom/variableSpecification.js
      */   
 
@@ -486,3 +307,17 @@ $(document).ready(function($) {
             "text");
        });
 });
+
+
+function foo() {
+    if (getItemEntered("platformMetadata", "platformName") != null ) {
+        if (getItemEntered("platformMetadata", "latitude") != null ) {
+            if (getItemEntered("platformMetadata", "longitude") != null ) {
+                if (getItemEntered("platformMetadata", "altitude") != null ) {
+                    $("#faux").remove();
+                    $(".jw-button-next").removeClass("hideMe");
+                }
+            }
+        }
+    }
+}

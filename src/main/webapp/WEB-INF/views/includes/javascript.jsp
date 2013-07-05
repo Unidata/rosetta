@@ -26,7 +26,7 @@
    <script type="text/javascript" src="resources/js/globalResources.js"></script>
    <script type="text/javascript" src="resources/js/sessionFunctions.js"></script>
    <script type="text/javascript" src="resources/js/validationFunctions.js"></script>
-
+   <script type="text/javascript" src="resources/js/stepFunctions.js"></script>
   <!-- HTML5 AJAX File Uploader -->
    <script type="text/javascript" src="resources/js/uploader/uploader.js"></script>
    <script type="text/javascript" src="resources/js/uploader/custom.js"></script>
