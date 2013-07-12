@@ -75,6 +75,7 @@ function uploadDataFile(stepType, stepData) {
             addToSession("fileName", cleanFilePath($("#file").val()));
             // show 'Next' button after user uploads file
             $("#file").addClass("hideMe");
+            $(".jw-button-next").removeAttr("disabled").removeClass("disabled");
         });
 
         $("#clearFileUpload").bind("click", function() {
@@ -128,7 +129,6 @@ function specifyHeaderLines(stepType, stepData) {
         return true;
     }
 }
-
 
 function specifyDelimiters(stepType, stepData) {
     if (stepType == "stepValidation") {
@@ -219,6 +219,242 @@ function specifyDelimiters(stepType, stepData) {
     }
 }
 
+function specifyVariableMetadata(stepType, stepData) {
+    if (stepType == "stepValidation") {
+        // handled elsewhere
+    } else if (stepType == "repopulateStep") {
+        $.post("parse", { uniqueId: getFromSession("uniqueId"),
+                          fileName: getFromSession("fileName"),
+                          otherDelimiter:  getFromSession("otherDelimiter"),
+                          headerLineNumbers:  getFromSession("headerLineNumbers"),
+                          delimiters:  getFromSession("delimiters")},
+            function(data) {
+                drawGrid(data, "4")
+            },
+            "text");
+    } else if (stepType == "stepFunctions") {
+        /**
+         * Handled in SlickGrid/custom/variableSpecification.js
+         */
+    }
+}
+
+function specifyGeneralMetadata(stepType, stepData) {
+    if (stepType == "stepValidation") {
+        if (stepData.type == "next") {
+            error = validateMetadataEntries(getFromSession("generalMetadata"), "generalMetadata", stepData.currentStepIndex);
+            if (!error) {
+                return false;
+            } else {
+                return error;
+            }
+        }
+    } else if (stepType == "repopulateStep") {
+        if ((stepData[0].type == "previous") || (stepData[0].type == "next")) {
+            if (getItemEntered("generalMetadata", "title") != null ) {
+                if (getItemEntered("generalMetadata", "institution") != null ) {
+                    if (getItemEntered("generalMetadata", "description") != null ) {
+                        $("#faux").remove();
+                        $(".jw-button-next").removeClass("hideMe");
+                    }
+                }
+            }
+        }
+        var stepElement = "#step" + stepData[1] + " input";
+        var inputElements = $(stepElement);
+        for (var i = 0; i < inputElements.length; i++) {
+            var name = $(inputElements[i]).attr("name");
+            var itemInSession = getItemEntered("generalMetadata", name);
+            if (itemInSession != null) {
+                $("input[name=\"" + name + "\"]").val(itemInSession);
+            } else {
+                $("input[name=\"" + name + "\"]").val("");
+            }
+        }
+    } else if (stepType == "stepFunctions") {
+        var stepElement = "#step" + stepData + " input";
+        var stepCheck = ".jw-step:eq(" + stepData + ")";
+        $(stepElement).on("focusout", function() {
+            if ($(this).attr("value") != "") {
+                // add to the session
+                var metadataString = buildStringForSession("generalMetadata", $(this).attr("name"), $(this).attr("value"));
+                addToSession("generalMetadata", metadataString);
+            } else {
+                // entered a blank value so get rid of it in the session
+                removeItemFromSessionString("generalMetadata", $(this).attr("name"));
+            }
+
+            // see if we can expose the next button
+            if (getItemEntered("generalMetadata", "title") != null ) {
+                if (getItemEntered("generalMetadata", "institution") != null ) {
+                    if (getItemEntered("generalMetadata", "description") != null ) {
+                        $("#faux").remove();
+                        $(".jw-button-next").removeClass("hideMe");
+                    }
+                }
+            }
+        });
+    }
+}
+
+function specifyPlatformMetadata(stepType, stepData) {
+    if (stepType == "stepValidation") {
+        if (stepData.type == "next") {
+            // platformMetadata array loaded via jstl
+            error = validateMetadataEntries(getFromSession("platformMetadata"), "platformMetadata", stepData.currentStepIndex);
+            if (!error) {
+                return false;
+            } else {
+                return error;
+            }
+        }
+    } else if (stepType == "repopulateStep") {
+        if ((stepData[0].type == "previous") || (stepData[0].type == "next")) {
+            if (getItemEntered("platformMetadata", "platformName") != null ) {
+                if (getItemEntered("platformMetadata", "latitude") != null ) {
+                    if (getItemEntered("platformMetadata", "longitude") != null ) {
+                        if (getItemEntered("platformMetadata", "altitude") != null ) {
+                            $("#faux").remove();
+                            $(".jw-button-next").removeClass("hideMe");
+                        }
+                    }
+                }
+            }
+        }
+
+        // populate input elements from sessionStorage
+        var stepElement = "#step" + stepData[1] + " input";
+        var inputElements = $(stepElement);
+        for (var i = 0; i < inputElements.length; i++) {
+            var name = $(inputElements[i]).attr("name");
+            var itemInSession = getItemEntered("platformMetadata", name);
+            if (itemInSession != null) {
+                $("input[name=\"" + name + "\"]").val(itemInSession);
+            } else {
+                $("input[name=\"" + name + "\"]").val("");
+            }
+        }
+    } else if (stepType == "stepFunctions") {
+        var stepElement = "#step" + stepData + " input";
+        $(stepElement).on("focusout", function() {
+            if ($(this).attr("value") != "") {
+                // add to the session
+                var metadataString = buildStringForSession("platformMetadata", $(this).attr("name"), $(this).attr("value"));
+                addToSession("platformMetadata", metadataString);
+            } else {
+                // entered a blank value so get rid of it in the session
+                removeItemFromSessionString("platformMetadata", $(this).attr("name"));
+            }
+
+            // see if we can expose the next button
+            if (getItemEntered("platformMetadata", "platformName") != null ) {
+                if (getItemEntered("platformMetadata", "latitude") != null ) {
+                    if (getItemEntered("platformMetadata", "longitude") != null ) {
+                        if (getItemEntered("platformMetadata", "altitude") != null ) {
+                            $("#faux").remove();
+                            $(".jw-button-next").removeClass("hideMe");
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+function convertAndDownload(stepType, stepData) {
+    if (stepType == "stepValidation") {
+        // validate data entered from step
+    } else if (stepType == "repopulateStep") {
+        convertAndDownload("stepFunctions", stepData);
+    } else if (stepType == "stepFunctions") {
+        $.post("parse", stepData,
+            function(data) {
+                var urls = data.split(/\r\n|\r|\n/g);
+                var download = $("ul#download");
+                console.warn("here 1");
+                var zipPattern = /^\.zip$/i;
+                var ncPattern = /^\.nc$/i;
+                console.warn("here 2");
+                $(download).empty();
+                for (var i = 0; i < urls.length; i++) {
+                    var fileExt = urls[i].match(/\.[a-zA-Z]{3,4}$/);
+                    if (zipPattern.test(fileExt)) {
+                        var linkName = "Rosetta transaction receipt"
+                    } else if (ncPattern.test(fileExt)) {
+                        var linkName = "netCDF Data File"
+                    } else {
+                        var linkName = urls[i];
+                    }
+
+                    var link = "<li><a href=\""  +  "fileDownload/" + getFromSession("uniqueId") + "/" + urls[i]  +  "\">" + linkName  +  "</a></li>";
+                    console.warn(link);
+                    $(download).append(link);
+                }
+            },
+            "text");
+        $(".jw-button-next").removeClass("hideMe")
+        $(".jw-button-finish").addClass("hideMe");
+        $("#faux").remove();
+    }
+}
+
+function publishToUnidataRamadda(stepType, stepData) {
+    if (stepType == "stepValidation") {
+        // validate data entered from step
+    } else if (stepType == "repopulateStep") {
+        // if we land on this page from a previous or next step
+        // page, then repopulate from storage
+    } else if (stepType == "stepFunctions") {
+        $("#publish").bind("click", function() {
+            var pubName = publisherName.value;
+            addToSession("pubName", pubName);
+            addToSession("userName", $(userName).val());
+            var data = getAllDataInSession();
+            data["auth"] = $(userPassword).val();
+
+            $.post("publish", data,
+                function(returnData) {
+                    var pubMessage = $("ul#pubMessage");
+                    $(pubMessage).empty();
+                    if (returnData.indexOf("Incorrect") !== -1) {
+                        pubMessage.append("<br><label class=\"error\">" + returnData + "</label>");
+                    } else {
+                        $("#publish").remove()
+                        var linkName = "View published data!";
+                        pubMessage.append("<br><li><a href=\""  +  "http://motherlode.ucar.edu/repository/entry/show?entryid=" + returnData  +  "\">" + linkName  +  "</a></li>");
+                    }
+                },
+                "text");
+        });
+    }
+}
+
+function restoreSession(stepType, stepData) {
+    if (stepType == "stepValidation") {
+        // validate data entered from step
+    } else if (stepType == "repopulateStep") {
+        restoreSession("stepFunctions", null);
+    } else if (stepType == "stepFunctions") {
+        var sessionData = getAllDataInSession();
+        $.post("restoreFromZip",
+            sessionData,
+            function(data) {
+                console.warn(data);
+                var restoredSessionStorage = JSON.parse(data);
+                for(var item in restoredSessionStorage) {
+                    addToSession(item, restoredSessionStorage[item]);
+                }
+                removeFromSession("uniqueId");
+                removeFromSession("fileName");
+            },
+            "text");
+
+        $("#faux").remove();
+        $(".jw-button-next").addClass("hideMe");
+        $(".jw-button-finish").addClass("hideMe");
+
+    }
+}
 
 function stepTemplate(stepType, stepData) {
     if (stepType == "stepValidation") {

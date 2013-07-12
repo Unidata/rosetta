@@ -6,6 +6,176 @@ $(document).ready(function($) {
 
     // automagically make any image alt a tooltip
     $(document).tooltip({ items: "img[alt]",
+        content: function() { return $(this).attr("alt") }
+    });
+
+    // our faux next button that is disabled
+    var faux = '<div id="faux" class="ui-corner-all disabled">Next</div>';
+
+    // instantiate jWizard!
+    $w = $("#FORM");
+    $w.validate();
+    $w.jWizard({
+        menuEnable: true,
+        titleHide: false,
+        buttons : {
+            finishType : "button"
+        }
+    })
+
+    /**
+     * The bindings below are event handlers, they will all be executed before proceeding to the callback
+     *
+     * ui = {
+     *       type: "previous|next|first|last|manual",
+     *       currentStepIndex: [int],
+     *       nextStepIndex: [int]
+     * };
+     */
+
+    /**
+     * Handling custom navigation through the wizard
+     */
+        .bind("jwizardchangestep", function(event, ui) {
+            // "manual" is always triggered by the user, never jWizard itself
+            if (ui.type !== "manual") {
+                $("#faux").remove();
+                $(".jw-button-next").addClass("hideMe").after(faux);
+                var error;
+                // using currentStepIndex, we can intercept the user when they are *done* with a particular step
+                switch(ui.currentStepIndex) {
+                    case 0:
+                        uploadDataFile("stepValidation", ui);
+                    break;
+
+                    case 1:
+                        uploadDataFile("stepValidation", ui);
+                        break;
+
+                    case 2:
+                        specifyHeaderLines("stepValidation", ui);
+                        break;
+
+                    case 3:
+                        specifyDelimiters("stepValidation", ui);
+                        break;
+
+                    case 5:
+                        // Validation
+                        specifyPlatformMetadata("stepValidation", ui)
+                        break;
+
+                    case 6:
+                        // Validation
+                        specifyGeneralMetadata("stepValidation", ui);
+                        break;
+                }
+            }
+
+            // by using nextStepIndex, we can intercept the user when they are *about to start* on a particular step
+            switch(ui.nextStepIndex) {
+                case 0:
+                    uploadDataFile("repopulateStep", ui);
+                break;
+
+                case 1:
+                    uploadDataFile("repopulateStep", ui);
+                    break;
+
+                case 2:
+                    specifyHeaderLines("repopulateStep", ui);
+                    break;
+
+                case 3:
+                    specifyDelimiters("repopulateStep", ui);
+                    break;
+
+                case 4:
+                    specifyVariableMetadata("repopulateStep", ui);
+                    break;
+
+                case 5:
+                    var stepDataCase5 = new Array()
+                    stepDataCase5[0] = ui;
+                    stepDataCase5[1] = 5;
+                    specifyPlatformMetadata("repopulateStep", stepDataCase5);
+                    break;
+
+                case 6:
+                    var stepDataCase6 = new Array()
+                    stepDataCase6[0] = ui;
+                    stepDataCase6[1] = 6;
+                    specifyGeneralMetadata("repopulateStep", stepDataCase6);
+                    break;
+
+                case 7:
+                    convertAndDownload("repopulateStep", getAllDataInSession());
+                    break;
+            }
+        })
+
+
+    /**
+     * CUSTOM EVENT HANDLERS BY STEP
+     */
+
+
+    /**
+     * INITIAL DOCUMENT LOAD
+     */
+    $w.ready(function() {
+        $(".jw-button-next").prop("disabled", true).addClass("disabled");
+    });
+
+    /**
+     * STEP 0
+     */
+    uploadDataFile("stepFunctions");
+
+    /**
+     * STEP 1
+     */
+    uploadDataFile("stepFunctions")
+
+    /**
+     * STEP 2 handled in SlickGrid/custom/headerLineSelection.js
+     */
+
+    /**
+     * STEP 3
+     */
+    specifyDelimiters("stepFunctions", 3);
+
+    /**
+     * STEP 4 handled in SlickGrid/custom/variableSpecification.js
+     */
+
+    /**
+     * STEP 5
+     */
+    specifyPlatformMetadata("stepFunctions", 5)
+
+    /**
+     * STEP 6
+     */
+    specifyGeneralMetadata("stepFunctions", 6);
+
+    /**
+     * STEP 7
+     */
+    publishToUnidataRamadda("stepFunctions", null);
+});
+
+
+
+
+
+
+/**
+$(document).ready(function($) {
+
+    // automagically make any image alt a tooltip
+    $(document).tooltip({ items: "img[alt]",
         content: function() { return $(this).attr("alt") } 
     });
 
@@ -36,6 +206,7 @@ $(document).ready(function($) {
     /** 
      * Handling custom navigation through the wizard     
      */
+/**
     .bind("jwizardchangestep", function(event, ui) {
         // "manual" is always triggered by the user, never jWizard itself
         if (ui.type !== "manual") {          
@@ -43,59 +214,21 @@ $(document).ready(function($) {
            $(".jw-button-next").addClass("hideMe").after(faux);
             var error;
             // using currentStepIndex, we can intercept the user when they are *done* with a particular step
-            switch(ui.currentStepIndex) { 
-
+            switch(ui.currentStepIndex) {
                 case 0:
-                    // Validation
-                    if (ui.type == "next") {
-                        error = validateItemExistsInSession(ui.currentStepIndex, "uniqueId", "You need to upload a file to continue.");
-                        if (!error) {
-                            return false;
-                        }
-                    }
+                    uploadDataFile("stepValidation", ui);
                 break;
             }
         }
 
         // by using nextStepIndex, we can intercept the user when they are *about to start* on a particular step
-        switch(ui.nextStepIndex) {   
-
+        switch(ui.nextStepIndex) {
             case 0:
-                // Initially hide the upload button (will appear when user opens file chooser)
-                $("#upload").addClass("hideMe");
-                // If we land on this page and user has already enter something
-                // (e.g., clicked previous or used the menu to navigate)    
-                // Don't hide the 'Next' button           
-                if (ui.type == "previous") {
-                    if (getFromSession("uniqueId")) {
-                        $("#file").addClass("hideMe");
-                        progressBarCallback();
-                        $("#faux").remove();
-                        $(".jw-button-next").removeClass("hideMe");
-                    }
-                }
-
+                uploadDataFile("repopulateStep", ui);
             break;
 
             case 1:
-                var sessionData = getAllDataInSession();
-                $.post("restoreFromZip",
-                      sessionData,
-                      function(data) {
-                          console.warn(data);
-                          var restoredSessionStorage = JSON.parse(data);
-                          for(var item in restoredSessionStorage) {
-                              addToSession(item, restoredSessionStorage[item]);
-                          }
-                          removeFromSession("uniqueId");
-                          removeFromSession("fileName");
-                      },
-                      "text");
-
-                $("#faux").remove();
-                $(".jw-button-next").addClass("hideMe");
-                $(".jw-button-finish").addClass("hideMe");
-
+                 restoreSession("stepFunctions", null);
             break;
         }
     })
@@ -109,49 +242,15 @@ $(document).ready(function($) {
     /**
      * INITIAL DOCUMENT LOAD
      */
+/**
     $w.ready(function() {
         $(".jw-button-next").prop("disabled", true).addClass("disabled");
     });
 
     /** 
      * STEP 0
-     */        
-    $("#file").bind("change", function() {
-        // Validate file being uploaded
-        var error = validateUploadedFile($("#file")[0].files[0], 1);
-        if (!error) {
-            return false;
-        } else {
-            // Show upload button after user launches file chooser (if upload successful)
-            $(".jw-step:eq(1)").find("label.error").text("");
-            $("#upload").removeClass("hideMe");  
-        }
-    });
-    
-    $("#upload").bind("click", function() {
-        // Upload file and add to session
-        var up = instantiateUploader($("#progress"), $(".jw-step:eq(1)").find("label.error"), $("#upload"));
-        up.send();         
-        addToSession("fileName", cleanFilePath($("#file").val()));
-        // show 'Next' button after user uploads file
-        $(".jw-button-next").removeAttr("disabled").removeClass("disabled");
-        $("#file").addClass("hideMe");
-
-    });
-   
-    $("#clearFileUpload").bind("click", function() {
-        //removed uploaded file from session and recreate the upload form.
-        removeFromSession("uniqueId");
-        removeFromSession("fileName");
-        $("#file").removeClass("hideMe");   
-        $("#clearFileUpload").addClass("hideMe");
-        // clear progress bar
-        $("#progress").attr("style","").addClass("progress");
-        $("#progress").html("0%");
-        // clear any notices about file types
-        $("#notice").empty();
-        // hide the 'Next' button
-        $("#faux").remove();
-        $(".jw-button-next").addClass("hideMe").after(faux);
-    });
+     */
+/**
+    uploadDataFile("stepFunctions");
 });
+*/
