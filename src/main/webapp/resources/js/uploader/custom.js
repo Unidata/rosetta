@@ -12,13 +12,14 @@
  * @param progressBar  The progress bar associated with the file upload.
  * @param errorLabel  The error label associated with the file upload.
  * @param uploadButton  The upload button associated with the file upload.
+ * @param fileTag The ID of the file button
  */
-function instantiateUploader(progressBar, errorLabel, uploadButton) {
-    var up = new uploader($("#file").get(0), {
+function instantiateUploader(progressBarId, errorLabel, uploadButton, fileId, clearId) {
+    var up = new uploader($(fileId).get(0), {
         url:'upload',
         progress:function(ev){ 
-            $(progressBar).html(((ev.loaded/ev.total)*100) + "%"); 
-            $(progressBar).css("width","50%"); 
+            $(progressBarId).html(((ev.loaded/ev.total)*100) + "%");
+            $(progressBarId).css("width","50%");
         },
         error:function(ev){ 
             $(errorLabel).text("Error!  No file uploaded!"); 
@@ -26,8 +27,8 @@ function instantiateUploader(progressBar, errorLabel, uploadButton) {
         },
         success:function(data){ 
             $(uploadButton).addClass("hideMe");  
-            $(progressBar).html("100%"); 
-            $(progressBar).effect("fade", 1000, progressBarCallback()); 
+            $(progressBarId).html("100%");
+            $(progressBarId).effect("fade", 1000, progressBarCallback(progressBarId, clearId));
             addToSession("uniqueId", data); 
             $("#faux").remove();
             $(".jw-button-next").removeClass("hideMe");
@@ -39,10 +40,10 @@ function instantiateUploader(progressBar, errorLabel, uploadButton) {
 /** 
  * A callback function to bring a display the clearFileUpload button.
  */
-function progressBarCallback() {
+function progressBarCallback(progressBarId, clearId) {
     setTimeout(function() {
-        $("#progress").html(getFromSession("fileName") + " successfully uploaded").removeClass("progress").fadeIn("fast");
-        $("#clearFileUpload").removeClass("hideMe");
+        $(progressBarId).html(getFromSession("fileName") + " successfully uploaded").removeClass("progress").fadeIn("fast");
+        $(clearId).removeClass("hideMe");
     }, 1000 );
 }
 

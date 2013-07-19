@@ -109,6 +109,44 @@ function validateUploadedFile(file, currentStep) {
     return boolean;
 }
 
+/**
+ * This function validates the file size and type uploaded by the user.
+ *     Specific to template files
+ * @param file  The file uploaded by the user.
+ * @param currentStep  The current step in the jWizard.
+ */
+function validateUploadedTemplateFile(file, currentStep) {
+    var boolean = true;
+    var errorLabel = $(".jw-step:eq(" + currentStep + ")").find("label.error");
+    // RegEx patters for valid files (extensions, "type" from input variable `file`)
+    var zipPattern = /^\.zip$/i;
+
+    // get file extension
+    var fileExt = file.name.match(/\.[a-zA-Z]{3,4}$/);
+
+    // test valid regex patterns
+    var isZip = zipPattern.test(fileExt[0]);
+
+    //if ((file.size / 1024) > 1024) {
+    if ((file.size / 1024) > 2150) {
+        $(errorLabel).text("Error! File size should be less then 1MB");
+        $("#uploadTemplate").addClass("hideMe");
+        boolean = false;
+    } else if (($("#templateFile")[0].files[0].size / 1024) <= 0) {
+        $(errorLabel).text("Error! You are attempting to upload an empty file");
+        $("#uploadTemplate").addClass("hideMe");
+        boolean = false;
+    } else {
+        // handle special cases first, then as last check see if it of type "file:
+        if (!isZip) {
+            $(errorLabel).text("Error! Incorrect file type selected for upload");
+            $("#uploadTemplate").addClass("hideMe");
+            boolean = false;
+        }
+    }
+    return boolean;
+}
+
 /** 
  * This function verifies a value for other delimiter exists if users has "Other" among the delimiters listed in the session.
  *

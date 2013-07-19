@@ -1,3 +1,5 @@
+var faux = '<div id="faux" class="ui-corner-all disabled">Next</div>';
+
 function selectPlatform(stepType, stepData) {
     // stepTypes:
     //    stepValidation - validate input for current step
@@ -37,6 +39,10 @@ function selectPlatform(stepType, stepData) {
 }
 
 function uploadDataFile(stepType, stepData) {
+    var fileId = "#file";
+    var progressId = "#progress";
+    var uploadId = "#upload";
+    var clearId = "#clearFileUpload";
     if (stepType == "stepValidation") {
         error = validateItemExistsInSession(stepData.currentStepIndex, "uniqueId", "You need to upload a file to continue.");
         if (!error) {
@@ -46,17 +52,18 @@ function uploadDataFile(stepType, stepData) {
         }
     } else if (stepType == "repopulateStep") {
         // Initially hide the upload button (will appear when user opens file chooser)
-        $("#upload").addClass("hideMe");
+        $(uploadId).addClass("hideMe");
         if ((stepData.type == "previous") || (stepData.type == "next")) {
+            var uid = getFromSession("uniqueId")
             if (getFromSession("uniqueId")) {
-                $("#file").addClass("hideMe");
-                progressBarCallback();
+                $(fileId).addClass("hideMe");
+                progressBarCallback(progressId, clearId);
                 $("#faux").remove();
                 $(".jw-button-next").removeClass("hideMe");
             }
         }
     } else if (stepType == "stepFunctions") {
-        $("#file").bind("change", function() {
+        $(fileId).bind("change", function() {
             // Validate file being uploaded
             var error = validateUploadedFile($("#file")[0].files[0], 1);
             if (!error) {
@@ -68,25 +75,105 @@ function uploadDataFile(stepType, stepData) {
             }
         });
 
-        $("#upload").bind("click", function() {
+        $(uploadId).bind("click", function() {
             // Upload file and add to session
-            var up = instantiateUploader($("#progress"), $(".jw-step:eq(1)").find("label.error"), $("#upload"));
+            var up = instantiateUploader($(progressId), $(".jw-step:eq(1)").find("label.error"), $(uploadId), $(fileId), $(clearId));
+            //var up = instantiateUploader($("#progress"), $(".jw-step:eq(1)").find("label.error"), $("#upload"), $("file"));
             up.send();
-            addToSession("fileName", cleanFilePath($("#file").val()));
+            addToSession("fileName", cleanFilePath($(fileId).val()));
             // show 'Next' button after user uploads file
-            $("#file").addClass("hideMe");
+            $(fileId).addClass("hideMe");
             $(".jw-button-next").removeAttr("disabled").removeClass("disabled");
         });
 
-        $("#clearFileUpload").bind("click", function() {
+        $(clearId).bind("click", function() {
             //removed uploaded file from session and recreate the upload form.
             removeFromSession("uniqueId");
             removeFromSession("fileName");
-            $("#file").removeClass("hideMe");
-            $("#clearFileUpload").addClass("hideMe");
+            $(fileId).removeClass("hideMe");
+            $(clearId).addClass("hideMe");
             // clear progress bar
-            $("#progress").attr("style","").addClass("progress");
-            $("#progress").html("0%");
+            $(progressId).attr("style","").addClass("progress");
+            $(progressId).html("0%");
+            // clear any notices about file types
+            $("#notice").empty();
+            // hide the 'Next' button
+            $("#faux").remove();
+            $(".jw-button-next").addClass("hideMe").after(faux);
+        });
+    }
+}
+
+function uploadRosettaTemplate(stepType, stepData) {
+    var fileId = "#templateFile";
+    var progressId = "#templateProgress";
+    var uploadId = "#uploadTemplate";
+    var clearId = "#clearTemplateFileUpload";
+    if (stepType == "stepValidation") {
+        error = validateItemExistsInSession(stepData.currentStepIndex, "uniqueId", "You need to upload a file to continue.");
+        if (!error) {
+            return false;
+        } else {
+            restoreSession("stepFunctions");
+            return error;
+        }
+    } else if (stepType == "repopulateStep") {
+        $(fileId).bind("change", function() {
+            // Validate file being uploaded
+            var error = validateUploadedFile($("#file")[0].files[0], 1);
+            if (!error) {
+                return false;
+            } else {
+                // Show upload button after user launches file chooser (if upload successful)
+                $(".jw-step:eq(0)").find("label.error").text("");
+                $(uploadId).removeClass("hideMe");
+            }
+            restoreSession("stepFunctions");
+        });
+
+
+        // Initially hide the upload button (will appear when user opens file chooser)
+        $(uploadId).addClass("hideMe");
+        if ((stepData.type == "previous") || (stepData.type == "next")) {
+            if (getFromSession("uniqueId")) {
+                $(fileId).addClass("hideMe");
+                progressBarCallback(progressId, clearId);
+                $("#faux").remove();
+                $(".jw-button-next").removeClass("hideMe");
+            }
+        }
+    } else if (stepType == "stepFunctions") {
+        $(fileId).bind("change", function() {
+            // Validate file being uploaded
+            var error = validateUploadedTemplateFile($(fileId)[0].files[0], 1);
+            if (!error) {
+                return false;
+            } else {
+                // Show upload button after user launches file chooser (if upload successful)
+                $(".jw-step:eq(0)").find("label.error").text("");
+                $(uploadId).removeClass("hideMe");
+            }
+        });
+
+        $(uploadId).bind("click", function() {
+            // Upload file and add to session
+            var up = instantiateUploader($(progressId), $(".jw-step:eq(0)").find("label.error"), $(uploadId), $(fileId), $(clearId));
+            up.send();
+            addToSession("fileName", cleanFilePath($(fileId).val()));
+            // show 'Next' button after user uploads file
+            $(fileId).addClass("hideMe");
+            $(".jw-button-next").removeAttr("disabled").removeClass("disabled");
+        });
+
+        $(clearId).bind("click", function() {
+            //removed uploaded file from session and recreate the upload form.
+            removeFromSession("uniqueId");
+            removeFromSession("fileName");
+            $(fileId).removeClass("hideMe");
+            $(clearId).addClass("hideMe");
+            // clear progress bar
+            $(progressId).attr("style","").addClass("progress");
+            $(progressId).html("0%");
             // clear any notices about file types
             $("#notice").empty();
             // hide the 'Next' button
@@ -444,6 +531,9 @@ function restoreSession(stepType, stepData) {
                 for(var item in restoredSessionStorage) {
                     addToSession(item, restoredSessionStorage[item]);
                 }
+                // remove session storage things related to file upload
+                // as they are no longer needed after the repopulation of
+                // the session storage from the transaction receipt.
                 removeFromSession("uniqueId");
                 removeFromSession("fileName");
             },

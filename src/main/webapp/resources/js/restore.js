@@ -45,12 +45,16 @@ $(document).ready(function($) {
                 // using currentStepIndex, we can intercept the user when they are *done* with a particular step
                 switch(ui.currentStepIndex) {
                     case 0:
-                        uploadDataFile("stepValidation", ui);
-                    break;
+                        // upload template
+                        uploadRosettaTemplate("stepValidation", ui);
+                        removeFromSession("uniqueId");
+                        removeFromSession("fileName");
+                        break;
 
                     case 1:
+                        // upload data file
                         uploadDataFile("stepValidation", ui);
-                        break;
+                    break;
 
                     case 2:
                         specifyHeaderLines("stepValidation", ui);
@@ -75,12 +79,12 @@ $(document).ready(function($) {
             // by using nextStepIndex, we can intercept the user when they are *about to start* on a particular step
             switch(ui.nextStepIndex) {
                 case 0:
-                    uploadDataFile("repopulateStep", ui);
+                    uploadRosettaTemplate("repopulateStep", ui);
                 break;
 
                 case 1:
                     uploadDataFile("repopulateStep", ui);
-                    break;
+                break;
 
                 case 2:
                     specifyHeaderLines("repopulateStep", ui);
@@ -130,12 +134,11 @@ $(document).ready(function($) {
     /**
      * STEP 0
      */
-    uploadDataFile("stepFunctions");
-
+    uploadRosettaTemplate("stepFunctions");
     /**
      * STEP 1
      */
-    uploadDataFile("stepFunctions")
+    uploadDataFile("stepFunctions");
 
     /**
      * STEP 2 handled in SlickGrid/custom/headerLineSelection.js
@@ -165,10 +168,6 @@ $(document).ready(function($) {
      */
     publishToUnidataRamadda("stepFunctions", null);
 });
-
-
-
-
 
 
 /**
