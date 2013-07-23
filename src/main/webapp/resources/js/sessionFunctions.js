@@ -20,6 +20,19 @@ function addToSession(key, value) {
     }
 }
 
+/**
+ * General function called to check if a key exists in the session.
+ *
+ * @param key  The key used to store the data in the session (to be checked).
+ */
+function isInSession(key) {
+    if (typeof(Storage)!=="undefined")  {
+        sessionStorage.hasOwnProperty(key);
+    } else  {
+        // add some jQuery method here for non-HTML5
+    }
+}
+
 /**  
  * General function called to retrieve a value from the session.
  * 

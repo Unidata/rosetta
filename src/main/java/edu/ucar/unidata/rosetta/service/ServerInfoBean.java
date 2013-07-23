@@ -23,6 +23,15 @@ public class ServerInfoBean implements ServletContextAware  {
                 props.load(servletContext.getResourceAsStream(name));
                 this.version = (String) props.get("Implementation-Version");
                 this.buildDate = (String) props.get("Built-On");
+
+                if (this.version == null) {
+                    this.version = "localDevel";
+                }
+
+                if (this.buildDate == null) {
+                    this.buildDate = "localDevel";
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

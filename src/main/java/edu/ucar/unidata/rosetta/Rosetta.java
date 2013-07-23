@@ -116,7 +116,6 @@ public class Rosetta {
                             i++;
                         }
                         ncFileWriter.write(theVar, vals);
-                    } else {
                     }
                 }
             }

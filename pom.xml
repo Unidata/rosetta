@@ -94,9 +94,11 @@
         <commons-fileupload.version>1.3</commons-fileupload.version>
         <commons-codec.version>1.3</commons-codec.version>
         <log4j.version>1.2.17</log4j.version>
+        <selenium.version>2.33.0</selenium.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>2.15</maven-surefire-plugin.version>
         <maven-war-plugin.version>2.2</maven-war-plugin.version>
 
         <!-- dir to bundled libs -->
@@ -122,7 +124,6 @@
             <artifactId>commons-codec</artifactId>
             <version>${commons-codec.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
@@ -197,15 +198,6 @@
             <version>${jexcelapi.version}</version>
         </dependency>
 
-        <!-- Lib for reading stuff from MAINFEST files -->
-        <!-- May use this later
-        <dependency>
-            <groupId>com.jcabi</groupId>
-            <artifactId>jcabi-manifests</artifactId>
-            <version>0.7.17</version>
-        </dependency>
-        -->
-
         <!-- netCDF-Java dependencies -->
         <dependency>
             <groupId>edu.ucar</groupId>
@@ -236,7 +228,6 @@
             <scope>system</scope>
             <systemPath>${webapp.libs.dir}/idv.jar</systemPath>
         </dependency>
-
         <dependency>
             <groupId>ramadda</groupId>
             <artifactId>ramadda-publish</artifactId>
@@ -245,6 +236,12 @@
             <systemPath>${webapp.libs.dir}/ramaddaclient.jar</systemPath>
         </dependency>
 
+        <!--selenium  dependencies -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -273,6 +270,27 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <!-- Skip the normal tests, we'll run them in the integration-test phase -->
+                    <skip>true</skip>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <skip>false</skip>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

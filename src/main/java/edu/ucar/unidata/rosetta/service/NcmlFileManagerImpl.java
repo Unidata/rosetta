@@ -1,6 +1,7 @@
 package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
+import edu.ucar.unidata.rosetta.service.ServerInfoBean;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -38,6 +39,47 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                 }
             }
 
+            // get metadata maps
+            Map<String, String> variableNameMap = file.getVariableNameMap();
+            Map<String, HashMap> variableMetadataMap = file.getVariableMetadataMap();
+            Map<String, String> generalMetadataMap = file.getGeneralMetadataMap();
+            Map<String, String> platformMetadataMap = file.getPlatformMetadataMap();
+
+
+            // look for coordinate and non-coordinate variables
+            HashMap<String, ArrayList<String>> coordVars = new HashMap<String, ArrayList<String>>();
+            ArrayList<String> nonCoordVarList = new ArrayList<String>();
+            Set<String> variableNameKeys = variableNameMap.keySet();
+            Iterator<String> variableNameKeysIterator = variableNameKeys.iterator();
+            String key, value;
+            Map<String, String> variableMetadata;
+            ArrayList<String> coordVarList = new ArrayList<String>();
+
+            while (variableNameKeysIterator.hasNext()) {
+                //ex:
+                // key = "variableName1"
+                // value = "time"
+                key = variableNameKeysIterator.next();
+                value = variableNameMap.get(key);
+                if (!value.equals("Do Not Use")) {
+                    variableMetadata = variableMetadataMap.get(key + "Metadata");
+                    // check if variable is a coordinate variable!
+                    if (variableMetadata.containsKey("_coordinateVariable")) {
+                        if(variableMetadata.get("_coordinateVariable").equals("coordinate")){
+                            String coordVarType = variableMetadata.get("_coordinateVariableType");
+                            coordVarList = coordVars.get(coordVarType);
+                            if (coordVarList == null) {
+                                coordVarList = new ArrayList<String>();
+                            }
+                            coordVarList.add(key);
+                            coordVars.put(coordVarType, coordVarList);
+                        } else {
+                            nonCoordVarList.add(key);
+                        }
+                    }
+                }
+            }
+
             String ncmlFilePath = downloadDirPath + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".ncml";
             logger.warn("create ncmlFilePath: " + ncmlFilePath);
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -58,15 +100,43 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             netcdf.setAttribute("xmlns", "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
             doc.appendChild(netcdf);
 
-            logger.warn("create time dimension in ncml/n");
-            Element dim = doc.createElement("dimension");
-            dim.setAttribute("name", "time");
+            //TODO look at coordVars and create the appropriate dimensions
+            logger.warn("create dimensions in ncml/n");
+            Iterator<String> coordVarNameIterator;
+            //List<String> usedCoordVarNames = new ArrayList<String>();
+            //HashMap<String, Integer> coordNameCounts = new HashMap<String, Integer>();
 
-            logger.warn("number of data lines to parse: " + Integer.toString(parseFileData.size()));
-            dim.setAttribute("length", Integer.toString(parseFileData.size()));
-            logger.warn("append time dim\n");
-            netcdf.appendChild(dim);
+            String shapeAttr = "";
+            for (String coordType : coordVars.keySet()) {
+                // coordAttr is the attribute that defines the coord system for variables
+                if (shapeAttr.equals("")) {
+                    shapeAttr = coordType;
+                } else {
+                    shapeAttr = shapeAttr + " " + coordType;
+                }
 
+                coordVarNameIterator = coordVars.get(coordType).iterator();
+                while (coordVarNameIterator.hasNext()) {
+                    key = coordVarNameIterator.next();
+                    value = variableNameMap.get(key);
+                    Element dim = doc.createElement("dimension");
+                    // set dimension name based on coordType
+
+                    dim.setAttribute("name", coordType);
+                    logger.warn("number of data lines to parse: " + Integer.toString(parseFileData.size()));
+                    // TODO get actual length of variable
+                    dim.setAttribute("length", Integer.toString(parseFileData.size()));
+                    logger.warn("append dim\n");
+                    netcdf.appendChild(dim);
+
+                }
+            }
+
+            // create a coordinate attribute based on CF1.6 DSG
+            String coordAttr = "";
+            if (file.getCfType().equals("timeSeries")) {
+                coordAttr = "time lat lon alt";
+            }
 
             Element attribute;
             Element variable;
@@ -83,7 +153,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             netcdf.appendChild(attribute);
 
             // global metadata
-            Map<String, String> generalMetadataMap = file.getGeneralMetadataMap();
+
             for (Map.Entry<String, String> entry : generalMetadataMap.entrySet()) {
                 if (entry.getValue() != null) {
                     attribute = doc.createElement("attribute");
@@ -94,7 +164,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             }
 
             // platform metadata
-            Map<String, String> platformMetadataMap = file.getPlatformMetadataMap();
+
             // Latitude
             if (platformMetadataMap.containsKey("latitude")) {
                 variable = doc.createElement("variable");
@@ -103,6 +173,14 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
 
                 attribute = doc.createElement("attribute");
                 attribute.setAttribute("name", "units");
+                String latUnits = platformMetadataMap.get("longitudeUnits");
+
+                Boolean unitChanged = false;
+                if (latUnits.equals("degrees_south")) {
+                    latUnits = "degrees_north";
+                    unitChanged=true;
+                }
+
                 attribute.setAttribute("value", platformMetadataMap.get("latitudeUnits"));
                 variable.appendChild(attribute);
 
@@ -122,7 +200,13 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                 variable.appendChild(attribute);
 
                 attribute = doc.createElement("values");
-                Text values = doc.createTextNode(platformMetadataMap.get("latitude"));
+
+                String latVal = platformMetadataMap.get("latitude");
+
+                if (unitChanged) {
+                    latVal = "-" + latVal;
+                }
+                Text values = doc.createTextNode(latVal);
                 attribute.appendChild(values);
                 variable.appendChild(attribute);
                 netcdf.appendChild(variable);
@@ -136,7 +220,14 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
 
                 attribute = doc.createElement("attribute");
                 attribute.setAttribute("name", "units");
-                attribute.setAttribute("value", platformMetadataMap.get("longitudeUnits"));
+                String lonUnits = platformMetadataMap.get("longitudeUnits");
+                Boolean unitChanged = false;
+                if (lonUnits.equals("degrees_west")) {
+                    lonUnits = "degrees_east";
+                    unitChanged=true;
+                }
+
+                attribute.setAttribute("value", lonUnits);
                 variable.appendChild(attribute);
 
                 attribute = doc.createElement("attribute");
@@ -155,7 +246,12 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                 variable.appendChild(attribute);
 
                 attribute = doc.createElement("values");
-                Text values = doc.createTextNode(platformMetadataMap.get("longitude"));
+                String lonVal = platformMetadataMap.get("longitude");
+
+                if (unitChanged) {
+                    lonVal = "-" + lonVal;
+                }
+                Text values = doc.createTextNode(lonVal);
                 attribute.appendChild(values);
                 variable.appendChild(attribute);
                 netcdf.appendChild(variable);
@@ -237,33 +333,24 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                 netcdf.appendChild(variable);
             }
 
-            Map<String, String> variableNameMap = file.getVariableNameMap();
-            Map<String, HashMap> variableMetadataMap = file.getVariableMetadataMap();
-            Set<String> variableNameKeys = variableNameMap.keySet();
-            Iterator<String> variableNameKeysIterator = variableNameKeys.iterator();
-            String key;
-            String value;
+            //TODO check for multiple time definitions and aggregate the cols into one variable
+
+            // look at coordVars and create the appropriate coordinate variables
             String type;
-            Map<String, String> variableMetadata;
-            List<String> usedVarNames = new ArrayList<String>();
-            HashMap<String, Integer> nameCounts = new HashMap<String, Integer>();
-            while (variableNameKeysIterator.hasNext()) {
-                key = variableNameKeysIterator.next();
-                value = variableNameMap.get(key);
-                if (!value.equals("Do Not Use")) {
+            for (String coordType : coordVars.keySet()) {
+
+                coordVarNameIterator = coordVars.get(coordType).iterator();
+                while (coordVarNameIterator.hasNext()) {
+                    key = coordVarNameIterator.next();
+                    value = variableNameMap.get(key);
+                    variableMetadata = variableMetadataMap.get(key + "Metadata");
                     variable = doc.createElement("variable");
                     String userName = value;
                     String varName = value.replace(" ", "_");
-                    if (!usedVarNames.contains(varName)) {
-                        usedVarNames.add(varName);
-                        nameCounts.put(varName,1);
-                    } else {
-                        Integer newCount = nameCounts.get(varName) + 1;
-                        nameCounts.put(varName, newCount);
-                        varName = varName + "_" + newCount.toString();
-                    }
-                    variable.setAttribute("name", varName);
-                    variableMetadata = variableMetadataMap.get(key + "Metadata");
+
+                    variable.setAttribute("name", coordType);
+                    variable.setAttribute("shape", coordType);
+
                     type = variableMetadata.get("dataType");
                     if (type.equals("Text")) {
                         type = "string";
@@ -273,9 +360,14 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                         type = "float";
                     }
                     variable.setAttribute("type", type);
+
                     if (!userName.equals(varName)) {
-                        variable.setAttribute("_userSuppliedName", value);
+                        attribute = doc.createElement("attribute");
+                        attribute.setAttribute("name", "_userSuppliedName");
+                        attribute.setAttribute("value", userName);
+                        variable.appendChild(attribute);
                     }
+
                     Set<String> variableMetadataKeys = variableMetadata.keySet();
                     Iterator<String> variableMetadataKeysIterator = variableMetadataKeys.iterator();
                     String metadataKey;
@@ -292,28 +384,92 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                         }
                         variable.appendChild(attribute);
                     }
+
                     String columnId = key.replace("variableName", "");
                     attribute = doc.createElement("attribute");
                     attribute.setAttribute("name", "_columnId");
                     attribute.setAttribute("value", columnId);
                     variable.appendChild(attribute);
-
-                    // TODO: Specific to this CF profile
-                    variable.setAttribute("shape", "time");
-                    if (!value.equals("time")) {
-                        attribute = doc.createElement("attribute");
-                        attribute.setAttribute("name", "coordinates");
-                        attribute.setAttribute("value", "time lat lon alt");
-                        variable.appendChild(attribute);
-                    }
-
                     netcdf.appendChild(variable);
                 }
             }
 
+
+            // create variables for the non-coordinate variables
+
+            Iterator<String> nonCoordVarNameIterator = nonCoordVarList.iterator();
+            List<String> usedVarNames = new ArrayList<String>();
+            HashMap<String, Integer> nameCounts = new HashMap<String, Integer>();
+
+            while (nonCoordVarNameIterator.hasNext()) {
+                key = nonCoordVarNameIterator.next();
+                value = variableNameMap.get(key);
+                variableMetadata = variableMetadataMap.get(key + "Metadata");
+                variable = doc.createElement("variable");
+                String userName = value;
+                String varName = value.replace(" ", "_");
+                if (!usedVarNames.contains(varName)) {
+                    usedVarNames.add(varName);
+                    nameCounts.put(varName,1);
+                } else {
+                    Integer newCount = nameCounts.get(varName) + 1;
+                    nameCounts.put(varName, newCount);
+                    varName = varName + "_" + newCount.toString();
+                }
+                variable.setAttribute("name", varName);
+
+                type = variableMetadata.get("dataType");
+                if (type.equals("Text")) {
+                    type = "string";
+                } else if (type.equals("Integer")) {
+                    type = "int";
+                } else if (type.equals("Float")) {
+                    type = "float";
+                }
+                variable.setAttribute("type", type);
+                if (!userName.equals(varName)) {
+                    attribute = doc.createElement("attribute");
+                    attribute.setAttribute("name", "_userSuppliedName");
+                    attribute.setAttribute("value", userName);
+                    variable.appendChild(attribute);
+                }
+                Set<String> variableMetadataKeys = variableMetadata.keySet();
+                Iterator<String> variableMetadataKeysIterator = variableMetadataKeys.iterator();
+                String metadataKey;
+                String metadataValue;
+                while (variableMetadataKeysIterator.hasNext()) {
+                    attribute = doc.createElement("attribute");
+                    metadataKey = variableMetadataKeysIterator.next();
+                    metadataValue = variableMetadata.get(metadataKey);
+                    if (!metadataKey.equals("dataType")) {
+                        attribute.setAttribute("name", metadataKey);
+                        attribute.setAttribute("value", metadataValue);
+                    } else {
+                        continue;
+                    }
+                    variable.appendChild(attribute);
+                }
+                String columnId = key.replace("variableName", "");
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "_columnId");
+                attribute.setAttribute("value", columnId);
+                variable.appendChild(attribute);
+
+                variable.setAttribute("shape", shapeAttr.replace(" ", ","));
+                attribute = doc.createElement("attribute");
+                attribute.setAttribute("name", "coordinates");
+                attribute.setAttribute("value", coordAttr);
+                variable.appendChild(attribute);
+
+                netcdf.appendChild(variable);
+            }
+
+
             // rosetta variable (to hold rosetta specific metadata...value is float, version of rosetta
 
-            String rosetta_version = "0.1";
+
+
+            String rosetta_version = ServerInfoBean.getVersion();
 
             variable = doc.createElement("variable");
             variable.setAttribute("name", "Rosetta");
@@ -321,10 +477,14 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             variable.setAttribute("version", rosetta_version);
 
             attribute = doc.createElement("attribute");
+            attribute.setAttribute("name", "version");
+            attribute.setAttribute("value", rosetta_version);
+            variable.appendChild(attribute);
+
+            attribute = doc.createElement("attribute");
             attribute.setAttribute("name", "long_name");
             attribute.setAttribute("value", "Rosetta front-end sessionStorage JSON String");
             variable.appendChild(attribute);
-
 
             attribute = doc.createElement("values");
             attribute.setAttribute("separator", "\t");
@@ -357,6 +517,9 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             logger.error(e.getMessage());
             return null;
         } catch (TransformerException e) {
+            logger.error(e.getMessage());
+            return null;
+        } catch (Exception e) {
             logger.error(e.getMessage());
             return null;
         }

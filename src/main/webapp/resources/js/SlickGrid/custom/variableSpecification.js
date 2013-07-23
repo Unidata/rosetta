@@ -392,11 +392,28 @@ function bindDialogEvents(sessionKey) {
 
         // validate user input 
         validateVariableData(sessionKey);
-
         // if there are no validation errors, we can proceed
         if ($("#dialog #coordinateVariableAssignment").find("label.error").text() === "") {
-            enableVariableAttributes("dataTypeAssignment");
+            // validate here!;
         }       
+    });
+
+
+    $("#dialog #coordinateVarTypeAssignment select[name=\"coordVarType\"]").bind("change", function() {
+        // ToDo check if something is selected already and make sure it gets populated in the session
+        // likely needs to be done in the step above
+        // also, need to add validation
+        $("#dialog #coordinateVarTypeAssignment").find("label.error").text(""); // get rid of any error messages
+
+        // concatenation the entered value to any existing Metadata values pulled from the session
+        var metadataString = buildStringForSession(sessionKey + "Metadata", "_coordinateVariableType", $(this).attr("value"));
+        removeItemFromSessionString(sessionKey + "Metadata", "_coordinateVariableType");
+        addToSession(sessionKey + "Metadata", metadataString);
+
+        // if there are no validation errors, we can proceed
+        if ($("#dialog #coordinateVariableTypeAssignment").find("label.error").text() === "") {
+            enableVariableAttributes("dataTypeAssignment");
+        }
     });
 
     // data type
@@ -706,6 +723,32 @@ function addContentToDialog(sessionKey) {
                         "  </ul>\n" +
                         "  <label class=\"error\"></label>" + 
                         " </div>\n" +
+                        " <div id=\"coordinateVarTypeAssignment\">\n" +
+                        "  <h3>What type of coordinate variable?</h3>\n" +
+                        "  <select name=\"coordVarType\">\n" +
+                        "    <option value=\"lat\">latitude</option>\n" +
+                        "    <option value=\"lon\">longitude</option>\n" +
+                        "    <option value=\"alt\">altitude</option>\n" +
+                        "    <option value=\"time\">time</option>\n" +
+                        "  </select>\n" +
+                        /** "  <ul>\n" +
+                        "   <li>\n" +
+                        "    <label>\n" +
+                        "     <input type=\"radio\" name=\"coordVarType\" value=\"time\"/> Time\n" +
+                        "    </label>\n" +
+                        "   </li>\n" +
+                        "   <li>\n" +
+                        "    <label>\n" +
+                        "     <input type=\"radio\" name=\"coordVarType\" value=\"latitude\"/> Latitude\n" +
+                        "    </label>\n" +
+                        "   </li>\n" +
+                        "   <li>\n" +
+                        "    <label>\n" +
+                        "     <input type=\"radio\" name=\"coordVarType\" value=\"vertical\"/> Height / Depth\n" +
+                        "    </label>\n" +
+                        "   </li>\n" +
+                        "  </ul>\n" + **/
+                        " </div>\n" +
                         " <div id=\"dataTypeAssignment\">\n" +
                         "  <h3>Specify variable data type:</h3>\n" +
                         "  <ul class=\"third\">\n" +
@@ -747,7 +790,8 @@ function addContentToDialog(sessionKey) {
                         " </div>\n" +
                         "</div>\n";
 
-    $("#dialog").append(dialogContent);    
+
+    $("#dialog").append(dialogContent);
     addMetadataHTMLToDialog(sessionKey); // this is dynamically generated and hence separate from the above
 
     populateDataFromSession(sessionKey);
@@ -768,11 +812,22 @@ function addMetadataHTMLToDialog(sessionKey, variableType) {
         var coordinateVariableSelected = getItemEntered(sessionKey + "Metadata", "_coordinateVariable");
         if (coordinateVariableSelected != null) {
             variableType = coordinateVariableSelected;
+            if (variableType === "coordinate") {
+                enableDiv("coordinateVarTypeAssignment");
+            } else {
+                disableDiv("coordinateVarTypeAssignment");;
+            }
         } else {
             variableType = "coordinate";
+            disableDiv("coordinateVarTypeAssignment");
+        }
+    } else {
+        if (variableType === "coordinate") {
+            enableDiv("coordinateVarTypeAssignment");
+        } else {
+            disableDiv("coordinateVarTypeAssignment");
         }
     }
-   
     $("#dialog #requiredMetadataAssignment ul").empty();
     var requiredMetadata = populateMetadataInputTags(sessionKey, variableType, "required");
     $("#dialog #requiredMetadataAssignment ul").append(requiredMetadata);
@@ -1220,6 +1275,23 @@ function enableVariableAttributes(dialogDomSection) {
         $(this).attr("disabled", false);
     }); 
 }
+
+function disableDiv(dialogDomSection) {
+    // enable this section of the dialog content
+    $("#dialog #" + dialogDomSection).addClass("inactive");
+    $("#dialog #" + dialogDomSection).find("input").each(function(){
+        $(this).attr("disabled", true);
+    });
+}
+
+function enableDiv(dialogDomSection) {
+    // enable this section of the dialog content
+    $("#dialog #" + dialogDomSection).removeClass("inactive");
+    $("#dialog #" + dialogDomSection).find("input").each(function(){
+        $(this).attr("disabled", false);
+    });
+}
+
 
 /** 
  * Marks a column of data as disabled by changing the css info.
