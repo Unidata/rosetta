@@ -59,6 +59,19 @@
            External Repositories and Dependencies
          =========================================================== -->
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>oss.sonatype.org</id>
+            <url>https://oss.sonatype.org/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
     <repositories>
         <repository>
             <id>unidata</id>
@@ -95,11 +108,16 @@
         <commons-codec.version>1.3</commons-codec.version>
         <log4j.version>1.2.17</log4j.version>
         <selenium.version>2.33.0</selenium.version>
+        <jsdoc3-maven-plugin.version>1.0.4</jsdoc3-maven-plugin.version>
+        <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.15</maven-surefire-plugin.version>
         <maven-war-plugin.version>2.2</maven-war-plugin.version>
+        <maven-project-info-reports-plugin.version>2.2</maven-project-info-reports-plugin.version>
+        <maven-site-plugin.version>3.0-beta-3</maven-site-plugin.version>
+        <sphinx-maven-plugin.version>1.0.2</sphinx-maven-plugin.version>
 
         <!-- dir to bundled libs -->
         <webapp.libs.dir>${basedir}/src/main/webapp/WEB-INF/lib</webapp.libs.dir>
@@ -242,8 +260,101 @@
             <artifactId>selenium-java</artifactId>
             <version>${selenium.version}</version>
         </dependency>
+
+        <!--JSDoc3  dependencies -->
+        <dependency>
+            <groupId>com.github.phasebash</groupId>
+            <artifactId>jsdoc3-maven-plugin</artifactId>
+            <version>${jsdoc3-maven-plugin.version}</version>
+        </dependency>
     </dependencies>
 
+    <!-- ===========================================================
+           Profiles
+         =========================================================== -->
+    <profiles>
+        <profile>
+            <id>maven-3</id>
+            <activation>
+                <file>
+                    <exists>${basedir}</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <reportOutputDirectory>${basedir}/docs</reportOutputDirectory>
+                            <destDir>javadoc</destDir>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>build-javadocs</id>
+                                <phase>site</phase>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.phasebash</groupId>
+                        <artifactId>jsdoc3-maven-plugin</artifactId>
+                        <version>${jsdoc3-maven-plugin.version}</version>
+                        <configuration>
+                            <recursive>false</recursive>
+                            <directoryRoots>
+                                <directoryRoot>${basedir}/src/main/webapp/resources/js</directoryRoot>
+                            </directoryRoots>
+                            <outputDirectory>${basedir}/docs/jsdoc</outputDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>jsdoc3</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <version>${maven-site-plugin.version}</version>
+                        <configuration>
+                            <reportPlugins>
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                                    <version>${maven-project-info-reports-plugin.version}</version>
+                                    <reportSets>
+                                        <reportSet>
+                                            <reports></reports>
+                                        </reportSet>
+                                    </reportSets>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.tomdz.maven</groupId>
+                                    <artifactId>sphinx-maven-plugin</artifactId>
+                                    <version>${sphinx-maven-plugin.version}</version>
+                                    <configuration>
+                                        <sourceDirectory>${basedir}/src/site/sphinx</sourceDirectory>
+                                        <outputDirectory>${basedir}/docs/site</outputDirectory>
+                                    </configuration>
+                                </plugin>
+                            </reportPlugins>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <!-- ===========================================================
+           Build
+         =========================================================== -->
     <build>
         <finalName>rosetta</finalName>
         <plugins>

@@ -3,6 +3,9 @@
 ###############
 target/
 build.properties
+docs/javadoc
+docs/jsdoc
+docs/site
 
 #############
 # IDE files #
