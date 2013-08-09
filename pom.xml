@@ -309,6 +309,9 @@
                             <directoryRoots>
                                 <directoryRoot>${basedir}/src/main/webapp/resources/js</directoryRoot>
                             </directoryRoots>
+                            <sourceFiles>
+                                <sourceFile>${basedir}/src/site/jsDoc3/README.md</sourceFile>
+                            </sourceFiles>
                             <outputDirectory>${basedir}/docs/jsdoc</outputDirectory>
                         </configuration>
                         <executions>
