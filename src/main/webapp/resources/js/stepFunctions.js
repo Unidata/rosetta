@@ -186,12 +186,14 @@ function uploadRosettaTemplate(stepType, stepData) {
 function specifyHeaderLines(stepType, stepData) {
     if (stepType == "stepValidation") {
         if (stepData.type == "next") {
-            error = validateItemExistsInSession(stepData.currentStepIndex, "headerLineNumbers", "You need to specify which lines are header lines to continue.");
-            if (!error) {
-                return false;
-            } else {
-                return error;
-            }
+            // some files do not have a header, so skip this validation step for now
+            //error = validateItemExistsInSession(stepData.currentStepIndex, "headerLineNumbers", "You need to specify which lines are header lines to continue.");
+            //if (!error) {
+            //    return false;
+            //} else {
+            //    return error;
+            //}
+            return false
         }
     } else if (stepType == "repopulateStep") {
         $.post("parse", { uniqueId: getFromSession("uniqueId"), fileName: getFromSession("fileName") },
@@ -204,10 +206,10 @@ function specifyHeaderLines(stepType, stepData) {
         // (e.g., clicked previous or used the menu to navigate)
         // Don't hide the 'Next' button
         if ((stepData.type == "previous") || (stepData.type == "next")) {
-            if (getFromSession("headerLineNumbers")) {
+            //if (getFromSession("headerLineNumbers")) {
                 $("#faux").remove();
                 $(".jw-button-next").removeClass("hideMe");
-            }
+            //}
         }
     } else if (stepType == "stepFunctions") {
         /**

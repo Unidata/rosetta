@@ -54,22 +54,34 @@
     <unit>weber</unit>
   </entry>
 
-  <entry id="time">
+  <entry id="relative date/time">
     <unit>seconds since 1970-01-01</unit>
-    <unit>"period" since "year"-"month"-"day" "hour":"minute":"second"."millisecond"</unit>
+    <unit>days since 1970-01-01 23:59:59.9</unit>
+  </entry>
+
+  <entry id="full date/time string">
     <unit>YYYY-MM-DDThh:mm:ss.sTZD</unit>
-    <unit>second</unit>
-    <unit>minute</unit>
-    <unit>hour</unit>
-    <unit>day</unit>
-    <unit>month</unit>
-    <unit>year</unit>
-    <unit>MM/DD/YYYY HH:MM:SS</unit>
     <unit>MM/DD/YYYY HH:MM:SS</unit>
     <unit>MM/DD/YY HH:MM:SS</unit>
     <unit>YYYY/MM/DD HH:MM:SS</unit>
-    <unit>YYYY:MM:DD:HH:MM:SS</unit>
+    <unit>YY:MM:DD:HH:MM:SS</unit>
   </entry>
+
+
+  <entry id="date only">
+    <unit>YYYY-MM-DD</unit>
+    <unit>MM/DD/YYYY</unit>
+  </entry>
+
+  <entry id="time only">
+    <unit>YYYY-MM-DDThh:mm:ss.sTZD</unit>
+    <unit>MM/DD/YYYY hh:mm:ss</unit>
+    <unit>MM/DD/YYYY HH:mm:ss</unit>
+    <unit>MM/DD/YY HH:mm:ss</unit>
+    <unit>YYYY/MM/DD HH:mm:ss</unit>
+    <unit>YYYY:MM:DD:HH:mm:ss</unit>
+  </entry>
+
 
   <entry id="power">
     <unit>Watt</unit>

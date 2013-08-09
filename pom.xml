@@ -97,7 +97,7 @@
         <spring.security.version>3.1.3.RELEASE</spring.security.version>
         <junit.version>4.11</junit.version>
         <jdk.version>1.7</jdk.version>
-        <cdm.version>4.3.16</cdm.version>
+        <cdm.version>4.3.18</cdm.version>
         <json.version>1.1.1</json.version>
         <jexcelapi.version>2.6.12</jexcelapi.version>
         <javax.version>3.0.1</javax.version>

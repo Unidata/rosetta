@@ -349,7 +349,7 @@ function bindDialogEvents(sessionKey) {
             var units = cfStandardUnits[$(this).attr("value")];
             if (units != "") {
                 if (units != undefined) {
-                    metadataString = buildStringForSession(sessionKey + "Metadata", "units", units); 
+                    metadataString = buildStringForSession(sessionKey + "Metadata", "units", units);
                     addToSession(sessionKey + "Metadata", metadataString); 
                 }
             }
@@ -400,9 +400,7 @@ function bindDialogEvents(sessionKey) {
 
 
     $("#dialog #coordinateVarTypeAssignment select[name=\"coordVarType\"]").bind("change", function() {
-        // ToDo check if something is selected already and make sure it gets populated in the session
-        // likely needs to be done in the step above
-        // also, need to add validation
+
         $("#dialog #coordinateVarTypeAssignment").find("label.error").text(""); // get rid of any error messages
 
         // concatenation the entered value to any existing Metadata values pulled from the session
@@ -410,8 +408,15 @@ function bindDialogEvents(sessionKey) {
         removeItemFromSessionString(sessionKey + "Metadata", "_coordinateVariableType");
         addToSession(sessionKey + "Metadata", metadataString);
 
+        // validate user input
+
+        var coordVarTypeError = lookForBlankSelection($(this).attr("value"),"Coordinate Variable Type");
+        if (coordVarTypeError != null) {
+            $("#dialog #coordinateVarTypeAssignment").find("label.error").text("Please specify the coordinate variable type.");
+        }
+
         // if there are no validation errors, we can proceed
-        if ($("#dialog #coordinateVariableTypeAssignment").find("label.error").text() === "") {
+        if ($("#dialog #coordinateVarTypeAssignment").find("label.error").text() === "") {
             enableVariableAttributes("dataTypeAssignment");
         }
     });
@@ -451,7 +456,12 @@ function bindGeneralMetadataEvents(sessionKey) {
         $(this).parents("li").find("label.error").text(""); // get rid of any error messages
 
         // concatenation the entered value to any existing Metadata values pulled from the session
-        var metadataString = buildStringForSession(sessionKey + "Metadata", $(this).attr("name"), $(this).attr("value"));
+        var generalMetadataValue = $(this).attr("value");
+        if ($(this).attr("name") == "units") {
+            generalMetadataValue.replaceAll("\:",":");
+            generalMetadataValue.replaceAll(":","\:");
+        }
+        var metadataString = buildStringForSession(sessionKey + "Metadata", $(this).attr("name"), generalMetadataValue);
 
         // update the data in the session
         addToSession(sessionKey + "Metadata", metadataString); 
@@ -584,6 +594,9 @@ function bindUnitBuildEvents(sessionKey) {
 
         // get the user selected values of the unit chooser
         var unitSelected = $("#dialog #unitBuilder select[name=\"unitSelected\"]").val();
+        // for time related units
+        unitSelected = unitSelected.replaceAll(":","\:");
+
         var prefixSelected = $("#dialog #unitBuilder select[name=\"unitPrefix\"]").val();
         if (prefixSelected != null) {
             unitString = prefixSelected + unitSelected;
@@ -611,7 +624,7 @@ function bindUnitBuildEvents(sessionKey) {
             addToSession(sessionKey + "Metadata", metadataString); 
 
             // update units display in dialog to show new value
-            $("#dialog #requiredMetadataAssignment input[name=\"units\"]").attr("value", unitsInSession);
+            $("#dialog #requiredMetadataAssignment input[name=\"units\"]").attr("value", unitsInSession.replaceAll("\:",":"));
 
         // Removing from units 
         } else {
@@ -725,29 +738,17 @@ function addContentToDialog(sessionKey) {
                         " </div>\n" +
                         " <div id=\"coordinateVarTypeAssignment\">\n" +
                         "  <h3>What type of coordinate variable?</h3>\n" +
+                        "  <label for=\"coordinateVarTypeAssignment\" class=\"error\"></label>\n" +
                         "  <select name=\"coordVarType\">\n" +
+                        "    <option value=\"\">---- select one ----</option>\n" +
                         "    <option value=\"lat\">latitude</option>\n" +
                         "    <option value=\"lon\">longitude</option>\n" +
                         "    <option value=\"alt\">altitude</option>\n" +
-                        "    <option value=\"time\">time</option>\n" +
+                        "    <option value=\"relTime\">Relative time (i.e. days since 1970-01-01)</option>\n" +
+                        "    <option value=\"fullDateTime\">Full date and time string</option>\n" +
+                        "    <option value=\"date\">Date only (year, month, and/or day)</option>\n" +
+                        "    <option value=\"time\">Time only (hour, minute, second, and/or millisecond)</option>\n" +
                         "  </select>\n" +
-                        /** "  <ul>\n" +
-                        "   <li>\n" +
-                        "    <label>\n" +
-                        "     <input type=\"radio\" name=\"coordVarType\" value=\"time\"/> Time\n" +
-                        "    </label>\n" +
-                        "   </li>\n" +
-                        "   <li>\n" +
-                        "    <label>\n" +
-                        "     <input type=\"radio\" name=\"coordVarType\" value=\"latitude\"/> Latitude\n" +
-                        "    </label>\n" +
-                        "   </li>\n" +
-                        "   <li>\n" +
-                        "    <label>\n" +
-                        "     <input type=\"radio\" name=\"coordVarType\" value=\"vertical\"/> Height / Depth\n" +
-                        "    </label>\n" +
-                        "   </li>\n" +
-                        "  </ul>\n" + **/
                         " </div>\n" +
                         " <div id=\"dataTypeAssignment\">\n" +
                         "  <h3>Specify variable data type:</h3>\n" +
@@ -1165,6 +1166,10 @@ function populateDataFromSession(sessionKey) {
                     $("#dialog #coordinateVariableAssignment input[name=\"isCoordinateVariable\"][value=\"" + coordinateVariableSelected + "\"]").attr("checked", true);    
                     addMetadataHTMLToDialog(sessionKey);
 
+                    var coordinateVariableType = getItemEntered(sessionKey + "Metadata", "_coordinateVariableType");
+                    if (coordinateVariableType != null) {
+                        $("#dialog #coordinateVarTypeAssignment select[name=\"coordVarType\"]").val(coordinateVariableType);
+                    }
                     // data type
                     enableVariableAttributes("dataTypeAssignment");
                     var dataTypeSelected = getItemEntered(sessionKey + "Metadata", "dataType");
@@ -1451,4 +1456,17 @@ function testVariableCompleteness(sessionKey, variableName) {
         }
     }
     return true;
+}
+
+/**
+ * Returns the sum of all numbers passed to the function.
+ * @param {string} find - A string representing the characters you wish to replace.
+ * @param {string} replace - A string representing the characters you wish to replace @find with.
+ * @param {string} str - The string you wish to perform the replacement upon
+ *
+ * @returns {string} A new string where all instances of @find have been replaced with @replace in the @str
+ *
+ */
+function replaceAll(find, replace, str) {
+    return str.replace(new RegExp(find, 'g'), replace);
 }

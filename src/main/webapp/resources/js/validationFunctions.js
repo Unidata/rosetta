@@ -198,6 +198,21 @@ function lookForBlankEntries(userInput, tagName) {
     }
 }
 
+/**
+ * Similar to lookForBlankEnteries, but for a blank
+ * option for a select element
+ *
+ * @param userInput  The user input data to test.
+ * @param tagName  The name value of the input tag that collected the data.
+ */
+function lookForBlankSelection(userInput, tagName) {
+    if (userInput === "") {  // empty selection
+        return "Please select a value for " + getMetadataDisplayName(tagName);
+    } else {
+        return null;
+    }
+}
+
 /** 
  * This function checks to see that all the required metadata values for the specified
  * variable type (coordinate versus non-coordinate) were provided by the user and stored in
@@ -246,49 +261,55 @@ function validateVariableData(sessionKey, finalCheck) {
                         // coordinate variable
                         var coordinateVariableSelected = getItemEntered(sessionKey + "Metadata", "_coordinateVariable");
                         if (coordinateVariableSelected != null) {
- 
-                            // data type
-                            var dataTypeSelected = getItemEntered(sessionKey + "Metadata", "dataType");
-                            if (dataTypeSelected != null) {
-                                
-                                // metadata
-                                // get the metadata from the session string, minus the coordinateVariable and dataType entries
-                                var metadataProvided = getAllButTheseFromSessionString(sessionKey + "Metadata", ["_coordinateVariable", "dataType"]);
-                                if (metadataProvided.length > 0) {
-                                    // make sure chars are correct and no blank entries
-                                    for (var i = 0; i < metadataProvided.length; i++) {
-                                        var metadataKeyValuePair = metadataProvided[i].split(/:/);
+                            var coordinateVariableType = getItemEntered(sessionKey + "Metadata", "_coordinateVariableType");
+                            if (((coordinateVariableType != "") & (coordinateVariableType != null)) | ((coordinateVariableType == null) & (coordinateVariableSelected != "coordinate"))) {
+                                // data type
+                                var dataTypeSelected = getItemEntered(sessionKey + "Metadata", "dataType");
+                                if (dataTypeSelected != null) {
 
-                                        // all entries have to pass this test
-                                        errorMessage = lookForBadChars(metadataKeyValuePair[1], getMetadataDisplayName(metadataKeyValuePair[0]));
-                                        if (errorMessage != null) { 
-                                            $("#dialog #variableAttributes label[for=\"" + metadataKeyValuePair[0] + "\"].error").text(errorMessage);
-                                            removeItemFromSessionString(sessionKey + "Metadata", metadataKeyValuePair[0]);                                   
-                                        } else {
-                                            errorMessage = lookForBlankEntries(metadataKeyValuePair[1], metadataKeyValuePair[0]);
-                                            if (errorMessage != null) { 
-                                                // only required metadata must pass this 
-                                                if (isRequiredMetadata(coordinateVariableSelected, metadataKeyValuePair[0])) {
-                                                    $("#dialog #variableAttributes label[for=\"" + metadataKeyValuePair[0] + "\"].error").text(errorMessage);
-                                                } 
+                                    // metadata
+                                    // get the metadata from the session string, minus the coordinateVariable and dataType entries
+                                    var metadataProvided = getAllButTheseFromSessionString(sessionKey + "Metadata", ["_coordinateVariable", "dataType"]);
+                                    if (metadataProvided.length > 0) {
+                                        // make sure chars are correct and no blank entries
+                                        for (var i = 0; i < metadataProvided.length; i++) {
+                                            var metadataKeyValuePair = metadataProvided[i].split(/:/);
+
+                                            // all entries have to pass this test
+                                            errorMessage = lookForBadChars(metadataKeyValuePair[1], getMetadataDisplayName(metadataKeyValuePair[0]));
+                                            if (errorMessage != null) {
+                                                $("#dialog #variableAttributes label[for=\"" + metadataKeyValuePair[0] + "\"].error").text(errorMessage);
                                                 removeItemFromSessionString(sessionKey + "Metadata", metadataKeyValuePair[0]);
                                             } else {
-                                                // has all the required metadata been provided?
-                                                if (finalCheck) { // has the "done" button been clicked?
-                                                    checkRequiredMetadataCompletion(coordinateVariableSelected, getKeysFromSessionData(metadataProvided));                                              
+                                                errorMessage = lookForBlankEntries(metadataKeyValuePair[1], metadataKeyValuePair[0]);
+                                                if (errorMessage != null) {
+                                                    // only required metadata must pass this
+                                                    if (isRequiredMetadata(coordinateVariableSelected, metadataKeyValuePair[0])) {
+                                                        $("#dialog #variableAttributes label[for=\"" + metadataKeyValuePair[0] + "\"].error").text(errorMessage);
+                                                    }
+                                                    removeItemFromSessionString(sessionKey + "Metadata", metadataKeyValuePair[0]);
+                                                } else {
+                                                    // has all the required metadata been provided?
+                                                    if (finalCheck) { // has the "done" button been clicked?
+                                                        checkRequiredMetadataCompletion(coordinateVariableSelected, getKeysFromSessionData(metadataProvided));
+                                                    }
                                                 }
                                             }
-                                        }                                    
+                                        }
+                                    } else {
+                                        if (finalCheck) { // has the "done" button been clicked?
+                                            $("#dialog #requiredMetadataAssignment").find("label.error").text("Please provide an entry for this field: ");
+                                        }
                                     }
+
                                 } else {
                                     if (finalCheck) { // has the "done" button been clicked?
-                                        $("#dialog #requiredMetadataAssignment").find("label.error").text("Please provide an entry for this field: ");
+                                        $("#dialog #dataTypeAssignment").find("label.error").text("Please select the data type for this variable.");
                                     }
                                 }
-
-                            } else {
+                            } else { // no coordinate variable type specified
                                 if (finalCheck) { // has the "done" button been clicked?
-                                    $("#dialog #dataTypeAssignment").find("label.error").text("Please select the data type for this variable.");
+                                    $("#dialog #coordinateVarTypeAssignment").find("label.error").text("Please specify the coordinate variable type.");
                                 }
                             }
 

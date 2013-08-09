@@ -2,7 +2,7 @@
 <platformMetadataItems>
 
       <platformMetadataItem>
-         <displayName>Platform Name</displayName>
+         <displayName>Station or Platform Name</displayName>
          <tagName>platformName</tagName>
          <isRequired>true</isRequired>
          <description>The ID or name of the platform used to collect the data.</description>

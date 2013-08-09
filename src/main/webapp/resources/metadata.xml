@@ -95,7 +95,7 @@
       <entry id="units" displayName="Units">
         <type>both</type>
         <necessity>required</necessity>
-        <helptip>Must be a UDUNIT compatible unit (tip: try the unit builder)</helptip>
+        <helptip>Must be a UDUNIT compatible unit or a date/time format string (tip: try the unit builder)</helptip>
       </entry>
       <entry id="standard_name" displayName="CF Name">
         <type>both</type>

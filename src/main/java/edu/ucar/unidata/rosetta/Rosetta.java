@@ -80,12 +80,10 @@ public class Rosetta {
 
             NetcdfFile ncfile = ncFileWriter.getNetcdfFile();
             List<Variable> ncFileVariables = ncfile.getVariables();
-            // get time dim
-            Dimension timeDim       = ncfile.findDimension("time");
+
             Iterator  ncVarIterator = ncFileVariables.iterator();
             while (ncVarIterator.hasNext()) {
                 Variable  theVar  = (Variable) ncVarIterator.next();
-                String    varName = theVar.getFullName();
                 Attribute attr    = theVar.findAttribute("_columnId");
                 DataType  dt      = theVar.getDataType();
                 if (attr != null) {
