@@ -423,8 +423,22 @@ function specifyPlatformMetadata(stepType, stepData) {
                 $("input[name=\"" + name + "\"]").val("");
             }
         }
+
+        // populate select elements from sessionStorage
+        var stepElementSelect = "#step" + stepData[1] + " select";
+        var inputElementsSelect = $(stepElementSelect);
+        for (var i = 0; i < inputElementsSelect.length; i++) {
+            var name = $(inputElementsSelect[i]).attr("name");
+            var itemInSession = getItemEntered("platformMetadata", name);
+            if (itemInSession != null) {
+                $("select[name=\"" + name + "\"]").val(itemInSession);
+            }
+        }
+
     } else if (stepType == "stepFunctions") {
         var stepElement = "#step" + stepData + " input";
+        var moveAlongInput  = false;
+        var moveAlongSelect = false;
         $(stepElement).on("focusout", function() {
             if ($(this).attr("value") != "") {
                 // add to the session
@@ -440,6 +454,40 @@ function specifyPlatformMetadata(stepType, stepData) {
                 if (getItemEntered("platformMetadata", "latitude") != null ) {
                     if (getItemEntered("platformMetadata", "longitude") != null ) {
                         if (getItemEntered("platformMetadata", "altitude") != null ) {
+                            moveAlongInput = true;
+                            if (moveAlongSelect) {
+                                $("#faux").remove();
+                                $(".jw-button-next").removeClass("hideMe");
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        var stepElementSelect = "#step" + stepData + " select";
+        // grab initial values for tje select elements
+        $(stepElementSelect).each(function() {
+            if ($(this).attr("value") != "") {
+                // add to the session
+                var metadataString = buildStringForSession("platformMetadata", $(this).attr("name"), $(this).attr("value"));
+                addToSession("platformMetadata", metadataString);
+            }
+        });
+
+        $(stepElementSelect).change(function() {
+            if ($(this).attr("value") != "") {
+                // add to the session
+                var metadataString = buildStringForSession("platformMetadata", $(this).attr("name"), $(this).attr("value"));
+                addToSession("platformMetadata", metadataString);
+            }
+
+            // see if we can expose the next button
+            if (getItemEntered("platformMetadata", "altitudeUnits") != null ) {
+                if (getItemEntered("platformMetadata", "latitudeUnits") != null ) {
+                    if (getItemEntered("platformMetadata", "longitudeUnits") != null ) {
+                        moveAlongSelect = true
+                        if (moveAlongInput) {
                             $("#faux").remove();
                             $(".jw-button-next").removeClass("hideMe");
                         }

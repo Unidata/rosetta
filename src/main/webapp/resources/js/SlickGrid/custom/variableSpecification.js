@@ -7,6 +7,17 @@
  */
 
 
+/**
+ * Returns the sum of all numbers passed to the function.
+ * @param {string} target - A string representing the characters you wish to replace.
+ * @param {string} replace,emt - A string representing the characters you wish to replace @find with.
+ *
+ * @returns {string} A new string where all instances of @find have been replaced with @replace in the @str
+ *
+ */
+String.prototype.replaceAll = function(target, replacement) {
+    return this.split(target).join(replacement);
+};
 
 /** 
  * This function creates a SlickGrid displaying the parsed file data by by row
@@ -394,8 +405,8 @@ function bindDialogEvents(sessionKey) {
         validateVariableData(sessionKey);
         // if there are no validation errors, we can proceed
         if ($("#dialog #coordinateVariableAssignment").find("label.error").text() === "") {
-            // validate here!;
-        }       
+            enableVariableAttributes("dataTypeAssignment");
+        }
     });
 
 
@@ -1456,17 +1467,4 @@ function testVariableCompleteness(sessionKey, variableName) {
         }
     }
     return true;
-}
-
-/**
- * Returns the sum of all numbers passed to the function.
- * @param {string} find - A string representing the characters you wish to replace.
- * @param {string} replace - A string representing the characters you wish to replace @find with.
- * @param {string} str - The string you wish to perform the replacement upon
- *
- * @returns {string} A new string where all instances of @find have been replaced with @replace in the @str
- *
- */
-function replaceAll(find, replace, str) {
-    return str.replace(new RegExp(find, 'g'), replace);
 }
