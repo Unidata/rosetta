@@ -1,6 +1,7 @@
 package edu.ucar.unidata.rosetta.service;
 
 import org.apache.log4j.Logger;
+import ucar.unidata.util.StringUtil2;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -101,7 +102,19 @@ public class FileParserManagerImpl implements FileParserManager {
                             String[] lineComponents = updatedLineData.split(selectedDelimiter);
                             List<String> list = new ArrayList<String>(Arrays.asList(lineComponents));
                             parsedData.add(list);
-                        }                            
+                        }
+                    } else if (selectedDelimiter == " ") {
+                        // This will use ANY white space, variable number spaces, tabs, etc. as
+                        // the delimiter...not that the delimiter is " ", and is defined
+                        // in the convertDelimiters of FileParserManagerimpl.java.
+                        //
+                        // This special case also needs to be handled by variableSpecification.js
+                        // in the gridForVariableSpecification function.
+                        stringBuffer.append(currentLine + "\n");
+                        String[] tokens = StringUtil2.splitString(currentLine);
+                        List<String> valList = Arrays.asList(tokens);
+                        parsedData.add(valList);
+
                     } else { // only one delimiter 
                         stringBuffer.append(currentLine + "\n");  
                         String[] lineComponents = currentLine.split(selectedDelimiter); 

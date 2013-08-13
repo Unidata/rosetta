@@ -9,7 +9,7 @@
       <character>,</character>
    </delimiter>
    <delimiter>
-      <name>Space</name>
+      <name>Whitespace</name>
       <character> </character>
    </delimiter>
    <delimiter>

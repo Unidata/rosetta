@@ -86,7 +86,14 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
                 if (jQuery.inArray(i.toString(), headerLines) < 0) { // it's not a header line
 
                     // split the data line using the given delimiter
-                    var dataItems = fileData[i].split(delimiter);
+                    if (delimiter != " ") {
+                        var dataItems = fileData[i].split(delimiter);
+                    } else {
+                        var dataItems = fileData[i].split(/\s+/);
+                        if (dataItems[0] == "") {
+                            dataItems.splice(0,1);
+                        }
+                    }
 
                     // find if this is the first iteration through the data lines in the loop and finish creating the columns[]
                     if (bool == 1) { 

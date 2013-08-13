@@ -399,10 +399,11 @@ public class AsciiFile {
      * @param delimiterList  The list of delimiter strings.
      */
     public List <String> convertDelimiters(List <String> delimiterList) {
+        // todo - why is delimiter mapping hard coded when it's defined in delimiters.xml?
         HashMap <String, String> delimiterMapping = new HashMap<String, String> (); 
         delimiterMapping.put("Tab", "\t");
         delimiterMapping.put("Comma", ",");
-        delimiterMapping.put("Space", " ");
+        delimiterMapping.put("Whitespace", " ");
         delimiterMapping.put("Semicolon", ";");
         delimiterMapping.put("Double Quote", "\"");
         delimiterMapping.put("Single Quote", "\'");
