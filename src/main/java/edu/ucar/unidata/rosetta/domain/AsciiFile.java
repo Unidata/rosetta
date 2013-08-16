@@ -374,6 +374,7 @@ public class AsciiFile {
      * Creates a Map containing the variable metadata as specified by the user.
      */
     public void setVariableMetadataMap() {
+        String colonReplacement = "DotDot";
         List <String> pairs = Arrays.asList(variableMetadata.split(","));
         Iterator<String> pairsIterator = pairs.iterator();
         while (pairsIterator.hasNext()) {  
@@ -386,7 +387,12 @@ public class AsciiFile {
                 while (valuesIterator.hasNext()) {
                     String data = valuesIterator.next();
                     String[] metadata = data.split(":");
-                    metadataMapping.put(metadata[0], metadata[1]);
+                    String metadataName = metadata[0];
+                    String value = metadata[1];
+                    if (value.contains(colonReplacement)) {
+                        value = value.replaceAll(colonReplacement,":");
+                    }
+                    metadataMapping.put(metadataName, value);
                 }
             }
             this.variableMetadataMap.put(items[0], metadataMapping);

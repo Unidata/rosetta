@@ -19,6 +19,9 @@ String.prototype.replaceAll = function(target, replacement) {
     return this.split(target).join(replacement);
 };
 
+// string to replace : in units...used for sessionStorage.
+var colonReplacement = "DotDot";
+
 /** 
  * This function creates a SlickGrid displaying the parsed file data by by row
  * and delimiter. The user will use the SlickGrid interface and the HeaderButtons
@@ -476,8 +479,8 @@ function bindGeneralMetadataEvents(sessionKey) {
         // concatenation the entered value to any existing Metadata values pulled from the session
         var generalMetadataValue = $(this).attr("value");
         if ($(this).attr("name") == "units") {
-            generalMetadataValue.replaceAll("\:",":");
-            generalMetadataValue.replaceAll(":","\:");
+            generalMetadataValue = generalMetadataValue.replaceAll(colonReplacement,":");
+            generalMetadataValue = generalMetadataValue.replaceAll(":",colonReplacement);
         }
         var metadataString = buildStringForSession(sessionKey + "Metadata", $(this).attr("name"), generalMetadataValue);
 
@@ -613,7 +616,7 @@ function bindUnitBuildEvents(sessionKey) {
         // get the user selected values of the unit chooser
         var unitSelected = $("#dialog #unitBuilder select[name=\"unitSelected\"]").val();
         // for time related units
-        unitSelected = unitSelected.replaceAll(":","\:");
+        unitSelected = unitSelected.replaceAll(":",colonReplacement);
 
         var prefixSelected = $("#dialog #unitBuilder select[name=\"unitPrefix\"]").val();
         if (prefixSelected != null) {
@@ -642,7 +645,7 @@ function bindUnitBuildEvents(sessionKey) {
             addToSession(sessionKey + "Metadata", metadataString); 
 
             // update units display in dialog to show new value
-            $("#dialog #requiredMetadataAssignment input[name=\"units\"]").attr("value", unitsInSession.replaceAll("\:",":"));
+            $("#dialog #requiredMetadataAssignment input[name=\"units\"]").attr("value", unitsInSession.replaceAll(colonReplacement,":"));
 
         // Removing from units 
         } else {
@@ -764,8 +767,8 @@ function addContentToDialog(sessionKey) {
                         "    <option value=\"alt\">altitude</option>\n" +
                         "    <option value=\"relTime\">Relative time (i.e. days since 1970-01-01)</option>\n" +
                         "    <option value=\"fullDateTime\">Full date and time string</option>\n" +
-                        "    <option value=\"date\">Date only (year, month, and/or day)</option>\n" +
-                        "    <option value=\"time\">Time only (hour, minute, second, and/or millisecond)</option>\n" +
+                        "    <option value=\"dateOnly\">Date only (year, month, and/or day)</option>\n" +
+                        "    <option value=\"timeOnly\">Time only (hour, minute, second, and/or millisecond)</option>\n" +
                         "  </select>\n" +
                         " </div>\n" +
                         " <div id=\"dataTypeAssignment\">\n" +

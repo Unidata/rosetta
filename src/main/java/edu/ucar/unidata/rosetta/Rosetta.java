@@ -130,6 +130,11 @@ public class Rosetta {
                     }
                 }
             }
+            // TODO look for partial time related variable (_coordinateVariableType dateOnly, timeOnly) and create
+            // time variable
+
+            //TODO make sure a string version of time is always created (not in CF standard, but readable),
+            //     in addition to the relative time (CF standard)
             ncfile.close();
 
             File file = new File(fileOut);
@@ -149,8 +154,7 @@ public class Rosetta {
 
     }
 
-
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         String ncmlFile =
             "/Users/lesserwhirls/dev/unidata/rosetta/rosetta/src/edu/ucar/unidata/rosetta/test/test.ncml";
         String fileOutName =

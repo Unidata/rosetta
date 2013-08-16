@@ -174,10 +174,12 @@ function validateOtherDelimiter(currentStep) {
  * @param tagName  The name value of the input tag that collected the data.  
  */
 function lookForBadChars(userInput, tagName) {
-    if (/[^a-zA-Z0-9_\s\-\.]/g.test(userInput.trim())) { // garbage characters entered
-        return "Please enter a legitimate value for " + tagName + " (allowed: a-zA-Z0-9 _-.):";
-    } else {
-        return null;
+    if (tagName != "Units") {
+        if (/[^a-zA-Z0-9_\s\-\.]/g.test(userInput.trim())) { // garbage characters entered
+            return "Please enter a legitimate value for " + tagName + " (allowed: a-zA-Z0-9 _-.):";
+        } else {
+            return null;
+        }
     }
 }
 

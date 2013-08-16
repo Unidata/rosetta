@@ -37,6 +37,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
     private HashMap<String, Integer> nameCounts = new HashMap<String, Integer>();
     private List<String> nonCoordVarList = new ArrayList<String>();
     private List<String> usedVarNames = new ArrayList<String>();
+    private ArrayList buildTimeTriggers;
 
     private Document doc;
     private String shapeAttr;
@@ -49,6 +50,18 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
         this.variableMetadataMap = file.getVariableMetadataMap();
         this.platformMetadataMap = file.getPlatformMetadataMap();
         this.generalMetadataMap = file.getGeneralMetadataMap();
+
+        // create a list of the various types of time variables a user
+        // can supply. These need to be carefully handled in the code!
+        // these can be found in the addContentToDialog() function in
+        // src/main/webapp/resources/js/SlickGrid/custom/variableSpecification.js
+        // Note that "relTime" isn't included, as a relative time (e.g. days since 1970)
+        // can be handled as any other variable (i.e. we do not need to build
+        // anything special in Rosetta.java to handle this).
+        //
+        String[] specialTimeNames = {"fullDateTime", "dateOnly", "timeOnly"};
+        this.buildTimeTriggers = new ArrayList<String>();
+        this.buildTimeTriggers.addAll(Arrays.asList(specialTimeNames));
     }
 
     private Element makeSimpleAttribute(String name, String value) {
@@ -227,7 +240,11 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             Iterator<String> variableNameKeysIterator = variableNameKeys.iterator();
             String key, value;
             Map<String, String> variableMetadata;
-
+            // check to see if user supplied a relTime (i.e. days since yyyy-mm-dd) If so,
+            // then we do not need to construct a time variable. If not, then we need to create
+            // a time dimension which will then be assembled in Rosetta.java.
+            Boolean hasRelTime = false;
+            String relTimeVarName = "";
             while (variableNameKeysIterator.hasNext()) {
                 //ex:
                 // key = "variableName1"
@@ -238,8 +255,12 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
                     variableMetadata = this.variableMetadataMap.get(key + "Metadata");
                     // check if variable is a coordinate variable!
                     if (variableMetadata.containsKey("_coordinateVariable")) {
-                        if(variableMetadata.get("_coordinateVariable").equals("coordinate")){
-                            String coordVarType = variableMetadata.get("_coordinateVariableType");
+                        String coordVarType = variableMetadata.get("_coordinateVariableType");
+                        if(variableMetadata.get("_coordinateVariable").equals("coordinate") && (!buildTimeTriggers.contains(coordVarType))){
+                            if (coordVarType == "relTime") {
+                                hasRelTime = true;
+                                relTimeVarName = key;
+                            }
                             coordVarList = this.coordVars.get(coordVarType);
                             if (coordVarList == null) {
                                 coordVarList = new ArrayList<String>();
@@ -275,36 +296,64 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
 
             logger.warn("create dimensions in ncml/n");
             Iterator<String> coordVarNameIterator;
-
+            // we only want one time related dimension. So, if relTime is supplied, then
+            // we only want to use it; if time spans multiple cols, then we will create
+            // a "time" dimension, and assemble the "time" coordinate variable in Rosetta.java
             this.shapeAttr = "";
             for (String coordType : coordVars.keySet()) {
-                // coordAttr is the attribute that defines the coord system for variables
-                if (this.shapeAttr.equals("")) {
-                    this.shapeAttr = coordType;
-                } else {
-                    this.shapeAttr = this.shapeAttr + " " + coordType;
+                // don't create a dimension for the partial time variables that will need to
+                // be assembled in Rosetta.java.
+                if (!this.buildTimeTriggers.contains(coordType)) {
+                    // coordAttr is the attribute that defines the coord system for variables
+                    if (this.shapeAttr.equals("")) {
+                        this.shapeAttr = coordType;
+                    } else {
+                        this.shapeAttr = this.shapeAttr + " " + coordType;
+                    }
+
+                    coordVarNameIterator = coordVars.get(coordType).iterator();
+                    while (coordVarNameIterator.hasNext()) {
+                        key = coordVarNameIterator.next();
+                        Element dim = doc.createElement("dimension");
+                        // set dimension name based on coordType
+
+                        dim.setAttribute("name", coordType);
+                        logger.warn("number of data lines to parse: " + Integer.toString(parseFileData.size()));
+                        // TODO get actual length of variable
+                        dim.setAttribute("length", Integer.toString(parseFileData.size()));
+                        logger.warn("append dim\n");
+                        netcdf.appendChild(dim);
+                    }
                 }
+            }
 
-                coordVarNameIterator = coordVars.get(coordType).iterator();
-                while (coordVarNameIterator.hasNext()) {
-                    key = coordVarNameIterator.next();
-                    Element dim = doc.createElement("dimension");
-                    // set dimension name based on coordType
-
-                    dim.setAttribute("name", coordType);
-                    logger.warn("number of data lines to parse: " + Integer.toString(parseFileData.size()));
-                    // TODO get actual length of variable
-                    dim.setAttribute("length", Integer.toString(parseFileData.size()));
-                    logger.warn("append dim\n");
-                    netcdf.appendChild(dim);
-
+            // now, if relTime was not supplied as a coordVarType, then we know we will need to build a time variable
+            // later. Let's create a "time" dimension that will go with our (to-be-created-later) time variable
+            if (!hasRelTime) {
+                Element dim = doc.createElement("dimension");
+                dim.setAttribute("name", "time");
+                logger.warn("number of data lines to parse: " + Integer.toString(parseFileData.size()));
+                // TODO get actual length of variable
+                dim.setAttribute("length", Integer.toString(parseFileData.size()));
+                logger.warn("append dim\n");
+                netcdf.appendChild(dim);
+                if (this.shapeAttr.equals("")) {
+                    this.shapeAttr = "time";
+                } else {
+                    this.shapeAttr = this.shapeAttr + " time";
                 }
             }
 
             // create a coordinate attribute based on CF1.6 DSG
             this.coordAttr = "";
             if (file.getCfType().equals("timeSeries")) {
-                this.coordAttr = "time lat lon alt";
+                // if we have a relTime (a complete time variable), use that variable name
+                // otherwise, use a (yet-to-be-created) variable called "time"
+                if (hasRelTime) {
+                    this.coordAttr = relTimeVarName + " lat lon alt";
+                } else {
+                    this.coordAttr = "time lat lon alt";
+                }
             }
 
             Element attribute;
@@ -345,14 +394,10 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             }
 
             // look at coordVars and create the appropriate coordinate variables
-            String[] specialTimeNames = {"relTime", "fullDateTime", "date", "time"};
-            ArrayList buildTimeTriggers = new ArrayList<String>(4);
-            buildTimeTriggers.addAll(Arrays.asList(specialTimeNames));
-            ArrayList timeVarTypes = new ArrayList<String>();
 
             for (String coordType : coordVars.keySet()) {
                 coordVarNameIterator = coordVars.get(coordType).iterator();
-                if (buildTimeTriggers.contains(coordType)) {
+                if (this.buildTimeTriggers.contains(coordType)) {
                     // time related variables are special in that they may span
                     // multiple variables. We will mark these variables with a
                     // "timeRelatedVariable" attribute set to true. Then, on the
@@ -372,7 +417,7 @@ public class NcmlFileManagerImpl implements NcmlFileManager {
             }
 
             // create variables for the non-coordinate variables
-            Iterator<String> nonCoordVarNameIterator = nonCoordVarList.iterator();
+            Iterator<String> nonCoordVarNameIterator = this.nonCoordVarList.iterator();
             this.usedVarNames = new ArrayList<String>();
 
             while (nonCoordVarNameIterator.hasNext()) {
