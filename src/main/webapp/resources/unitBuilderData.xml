@@ -70,16 +70,15 @@
 
   <entry id="date only">
     <unit>YYYY-MM-DD</unit>
+    <unit>YYYY/MM/DD</unit>
     <unit>MM/DD/YYYY</unit>
+    <unit>MM-DD-YYYY</unit>
   </entry>
 
   <entry id="time only">
-    <unit>YYYY-MM-DDThh:mm:ss.sTZD</unit>
-    <unit>MM/DD/YYYY hh:mm:ss</unit>
-    <unit>MM/DD/YYYY HH:mm:ss</unit>
-    <unit>MM/DD/YY HH:mm:ss</unit>
-    <unit>YYYY/MM/DD HH:mm:ss</unit>
-    <unit>YYYY:MM:DD:HH:mm:ss</unit>
+    <unit>hh:mm:ss.sTZD</unit>
+    <unit>HH:mm:ss</unit>
+    <unit>HH:MM:ss</unit>
   </entry>
 
 
