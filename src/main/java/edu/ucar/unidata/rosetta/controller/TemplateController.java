@@ -5,10 +5,7 @@ import edu.ucar.unidata.rosetta.Rosetta;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import edu.ucar.unidata.rosetta.domain.Publisher;
 import edu.ucar.unidata.rosetta.domain.UploadedFile;
-import edu.ucar.unidata.rosetta.service.FileParserManager;
-import edu.ucar.unidata.rosetta.service.FileValidator;
-import edu.ucar.unidata.rosetta.service.NcmlFileManager;
-import edu.ucar.unidata.rosetta.service.ResourceManager;
+import edu.ucar.unidata.rosetta.service.*;
 import edu.ucar.unidata.util.JsonUtil;
 import edu.ucar.unidata.util.RosettaProperties;
 import edu.ucar.unidata.util.ZipFileUtil;
@@ -48,6 +45,8 @@ public class TemplateController implements HandlerExceptionResolver {
     private FileParserManager fileParserManager;
     @Resource(name = "ncmlFileManager")
     private NcmlFileManager ncmlFileManager;
+    @Resource(name = "netcdfFileManager")
+    private NetcdfFileManager netcdfFileManager;
     @Resource(name = "fileValidator")
     private FileValidator fileValidator;
 
@@ -176,15 +175,6 @@ public class TemplateController implements HandlerExceptionResolver {
                     String downloadDir = FilenameUtils.concat(getDownloadDir(),
                             file.getUniqueId());
 
-                    String ncmlFile = null;
-                    try {
-                        ncmlFile = ncmlFileManager.createNcmlFile(file, parseFileData, downloadDir);
-
-                    } catch (IOException e) {
-                        System.err.println("Caught IOException: " + e.getMessage());
-                        return ncmlFile;
-                    }
-
                     //crete JSON file that holds sessionStorage information
                     String jsonOut = FilenameUtils.concat(downloadDir,FilenameUtils.getFullPath(file.getFileName()));
                     jsonOut = FilenameUtils.concat(jsonOut, "rosettaSessionStorage.json");
@@ -197,22 +187,22 @@ public class TemplateController implements HandlerExceptionResolver {
                     // zip JSON and NcML files
                     String zipFileName = FilenameUtils.concat(downloadDir, "rosetta.zip");
                     ZipFileUtil transactionZip = new ZipFileUtil(zipFileName);
-                    String[] sourceFiles = {ncmlFile, jsonOut};
+                    String[] sourceFiles = {jsonOut};
 
                     transactionZip.addAllToZip(sourceFiles);
+                    String netcdfFile = null;
+                    try {
+                        netcdfFile = netcdfFileManager.createNetcdfFile(file, parseFileData, downloadDir);
 
-                    // Create the netCDF file
-                    Rosetta ncWriter = new Rosetta();
-                    String fileOut = FilenameUtils.concat(downloadDir, FilenameUtils.removeExtension(file.getFileName()) + ".nc");
-                    logger.warn(fileOut);
-
-                    if (ncWriter.convert(ncmlFile, fileOut, parseFileData)) {
-                        return fileOut.replaceAll(downloadDir + "/", "") + "\n" +
-                                transactionZip.getName().replaceAll(downloadDir + "/", "");
-                    } else {
-                        logger.error("netCDF file not created.");
-                        return null;
+                    } catch (IOException e) {
+                        System.err.println("Caught IOException: " + e.getMessage());
+                        return netcdfFile;
                     }
+
+                    String fileOut = FilenameUtils.concat(downloadDir, FilenameUtils.removeExtension(file.getFileName()) + ".nc");
+
+                    return fileOut.replaceAll(downloadDir + "/", "") + "\n" +
+                            transactionZip.getName().replaceAll(downloadDir + "/", "");
                 }
                 // }
             } else {

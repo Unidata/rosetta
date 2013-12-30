@@ -31,6 +31,7 @@
   <bean id="ncmlFileManager" class="edu.ucar.unidata.rosetta.service.NcmlFileManagerImpl"/>
   <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.FileValidator"/>
   <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean" init-method="init"/>
+  <bean id="netcdfFileManager" class="edu.ucar.unidata.rosetta.service.NetcdfFileManagerImpl"/>
 
   <!-- File upload multipart resolver -->
   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
