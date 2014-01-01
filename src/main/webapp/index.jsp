@@ -27,7 +27,6 @@
         <a href="create"><img src="resources/img/add.png" alt="Works!" /></a>
         Create a new template
         <br>
-        <!--<a href="restore"><img src="resources/img/add.png" alt="Works!" /></a> -->
         <img src="resources/img/remove.png" alt="Temporarily Unavailable." />
         Upload, modify, and use an existing template
         <br>
