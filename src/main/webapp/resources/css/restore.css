@@ -48,10 +48,10 @@ a[href$='.nc'] {
    background: transparent url('../img/icon/netcdf.png') center left no-repeat;
 }
 
-a[href$='.ncml'] {   
+a[href$='.template'] {
    padding-left:18px;
    line-height:18px;
-   background: transparent url('../img/icon/ncml.png') center left no-repeat;
+   background: transparent url('../img/icon/rosetta-12x12.png') center left no-repeat;
 }
 
 /* fake/disabled next button */

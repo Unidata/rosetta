@@ -48,6 +48,7 @@ function uploadDataFile(stepType, stepData) {
         if (!error) {
             return false;
         } else {
+
             return error;
         }
     } else if (stepType == "repopulateStep") {
@@ -57,6 +58,7 @@ function uploadDataFile(stepType, stepData) {
             var uid = getFromSession("uniqueId")
             if (getFromSession("uniqueId")) {
                 $(fileId).addClass("hideMe");
+                $("#quickSaveButton").removeClass("hideMe");
                 progressBarCallback(progressId, clearId);
                 $("#faux").remove();
                 $(".jw-button-next").removeClass("hideMe");
@@ -84,6 +86,7 @@ function uploadDataFile(stepType, stepData) {
             // show 'Next' button after user uploads file
             $(fileId).addClass("hideMe");
             $(".jw-button-next").removeAttr("disabled").removeClass("disabled");
+            $("#quickSaveButton").removeClass("hideMe")
         });
 
         $(clearId).bind("click", function() {
@@ -92,6 +95,7 @@ function uploadDataFile(stepType, stepData) {
             removeFromSession("fileName");
             $(fileId).removeClass("hideMe");
             $(clearId).addClass("hideMe");
+            $("#quickSaveButton").addClass("hideMe")
             // clear progress bar
             $(progressId).attr("style","").addClass("progress");
             $(progressId).html("0%");
@@ -509,13 +513,13 @@ function convertAndDownload(stepType, stepData) {
                 var urls = data.split(/\r\n|\r|\n/g);
                 var download = $("ul#download");
                 console.warn("here 1");
-                var zipPattern = /^\.zip$/i;
+                var templatePattern = /^\.template$/i;
                 var ncPattern = /^\.nc$/i;
                 console.warn("here 2");
                 $(download).empty();
                 for (var i = 0; i < urls.length; i++) {
                     var fileExt = urls[i].match(/\.[a-zA-Z]{3,4}$/);
-                    if (zipPattern.test(fileExt)) {
+                    if (templatePattern.test(fileExt)) {
                         var linkName = "Rosetta transaction receipt"
                     } else if (ncPattern.test(fileExt)) {
                         var linkName = "netCDF Data File"
@@ -523,7 +527,7 @@ function convertAndDownload(stepType, stepData) {
                         var linkName = urls[i];
                     }
 
-                    var link = "<li><a href=\""  +  "fileDownload/" + getFromSession("uniqueId") + "/" + urls[i]  +  "\">" + linkName  +  "</a></li>";
+                    var link = "<li><a href=\""  +  "fileDownload/" + getFromSession("uniqueId") + "/" + urls[i]  +  "\" " + "download=\"" + urls[i] + "\" >" + linkName  +  "</a></li>";
                     console.warn(link);
                     $(download).append(link);
                 }

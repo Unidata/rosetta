@@ -12,6 +12,9 @@ $(document).ready(function($) {
     // our faux next button that is disabled
     var faux = '<div id="faux" class="ui-corner-all disabled">Next</div>';
 
+    // this hides the quick save button in the footer...is enabled once a file is uploaded.
+    $("#quickSaveButton").addClass("hideMe")
+
     // instantiate jWizard!
     $w = $("#FORM");
     $w.validate();

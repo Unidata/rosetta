@@ -14,7 +14,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.ramadda.repository.client.RepositoryClient;
+import org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +34,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -43,8 +48,6 @@ public class TemplateController implements HandlerExceptionResolver {
     private ResourceManager resourceManager;
     @Resource(name = "fileParserManager")
     private FileParserManager fileParserManager;
-    @Resource(name = "ncmlFileManager")
-    private NcmlFileManager ncmlFileManager;
     @Resource(name = "netcdfFileManager")
     private NetcdfFileManager netcdfFileManager;
     @Resource(name = "fileValidator")
@@ -83,6 +86,7 @@ public class TemplateController implements HandlerExceptionResolver {
         model.addAllAttributes(resourceManager.loadResources());
         return new ModelAndView("restore");
     }
+
 
     /**
      * Accepts a POST request for an uploaded file, stores that file to disk and,
@@ -176,8 +180,12 @@ public class TemplateController implements HandlerExceptionResolver {
                             file.getUniqueId());
 
                     //crete JSON file that holds sessionStorage information
+                    Boolean isQuickSave = false;
+                    String userFile = file.getFileName();
+                    String jsonFileName = getTemplateFileName(userFile, isQuickSave);
+
                     String jsonOut = FilenameUtils.concat(downloadDir,FilenameUtils.getFullPath(file.getFileName()));
-                    jsonOut = FilenameUtils.concat(jsonOut, "rosettaSessionStorage.json");
+                    jsonOut = FilenameUtils.concat(jsonOut, jsonFileName);
                     JsonUtil jsonUtil = new JsonUtil(jsonOut);
                     JSONObject jsonObj = jsonUtil.strToJson(file.getJsonStrSessionStorage());
                     jsonObj.remove("uniqueId");
@@ -185,11 +193,12 @@ public class TemplateController implements HandlerExceptionResolver {
                     jsonUtil.writeJsonToFile(jsonObj);
 
                     // zip JSON and NcML files
-                    String zipFileName = FilenameUtils.concat(downloadDir, "rosetta.zip");
-                    ZipFileUtil transactionZip = new ZipFileUtil(zipFileName);
-                    String[] sourceFiles = {jsonOut};
+                    //String zipFileName = FilenameUtils.concat(downloadDir, "rosetta.zip");
+                    //ZipFileUtil transactionZip = new ZipFileUtil(zipFileName);
+                    //String[] sourceFiles = {jsonOut};
+                    //transactionZip.addAllToZip(sourceFiles);
+                    //                    String netcdfFile = null;
 
-                    transactionZip.addAllToZip(sourceFiles);
                     String netcdfFile = null;
                     try {
                         netcdfFile = netcdfFileManager.createNetcdfFile(file, parseFileData, downloadDir);
@@ -202,7 +211,7 @@ public class TemplateController implements HandlerExceptionResolver {
                     String fileOut = FilenameUtils.concat(downloadDir, FilenameUtils.removeExtension(file.getFileName()) + ".nc");
 
                     return fileOut.replaceAll(downloadDir + "/", "") + "\n" +
-                            transactionZip.getName().replaceAll(downloadDir + "/", "");
+                            jsonOut.replaceAll(downloadDir + "/", "");
                 }
                 // }
             } else {
@@ -229,6 +238,50 @@ public class TemplateController implements HandlerExceptionResolver {
         jsonStrSessionStorage = restoreZip.readFileFromZip("rosettaSessionStorage.json");
 
         return jsonStrSessionStorage;
+    }
+
+
+
+    /**
+     * Accepts a POST request to to initiate a quick save (download a temp save template)
+     *
+     * @return A String of the local file name for the ASCII file (or null for an error).
+     */
+    @RequestMapping(value = "/QuickSave", method = RequestMethod.POST)
+    @ResponseBody
+    public String quickSave(String jsonStrSessionStorage) {
+        Boolean isQuickSave = true;
+        Map<String,String> infoForDownload = new HashMap<>();
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = (JSONObject) jsonParser.parse(jsonStrSessionStorage);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        String userFileName = jsonObj.get("fileName").toString();
+        String jsonFileName = getTemplateFileName(userFileName, isQuickSave);
+
+        // map to be returned to front end to construct download request
+        infoForDownload.put("uniqueId", jsonObj.get("uniqueId").toString());
+        infoForDownload.put("fileName", jsonFileName);
+
+
+        //crete JSON file that holds sessionStorage information
+        String downloadDir = FilenameUtils.concat(getDownloadDir(),
+                jsonObj.get("uniqueId").toString());
+
+        String jsonOut = FilenameUtils.concat(downloadDir,jsonFileName);
+
+        jsonObj.remove("uniqueId");
+        jsonObj.remove("fileName");
+
+        JsonUtil jsonUtil = new JsonUtil(jsonOut);
+        jsonUtil.writeJsonToFile(jsonObj);
+        // return enough info to download the template file
+        String returnString = JSONObject.toJSONString(infoForDownload);
+        return returnString;
     }
 
     @RequestMapping(value = "/publish", method = RequestMethod.POST)
@@ -282,6 +335,14 @@ public class TemplateController implements HandlerExceptionResolver {
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(requestedFile);
+            String ext = FilenameUtils.getExtension(fileName);
+            String contentType = "text/plain";
+            if (ext.equals("template")) {
+                contentType = "application/rosetta";
+            } else if (ext.equals("nc")) {
+                contentType = "application/x-netcdf";
+            }
+            response.setHeader("Content-Type", contentType);
             // copy it to response's OutputStream
             IOUtils.copy(inputStream, response.getOutputStream());
             response.flushBuffer();
@@ -298,7 +359,6 @@ public class TemplateController implements HandlerExceptionResolver {
             }
         }
     }
-
 
     /**
      * Attempts to get the client IP address from the request.
@@ -333,6 +393,17 @@ public class TemplateController implements HandlerExceptionResolver {
             id = new Integer(new Random().nextInt()).toString() + id;
         }
         return id.replaceAll(":","_");
+    }
+
+    private String getTemplateFileName(String userFileName, Boolean isQuickSave) {
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
+        String jsonFileName = FilenameUtils.removeExtension(userFileName);
+        jsonFileName = jsonFileName + "-Rosetta_" + currentDate;
+        jsonFileName = jsonFileName + ".template";
+        if (isQuickSave) {
+            jsonFileName = "QuickSave_" + jsonFileName;
+        }
+        return jsonFileName;
     }
 
     /**

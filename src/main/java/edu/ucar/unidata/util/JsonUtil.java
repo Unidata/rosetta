@@ -1,9 +1,11 @@
 package edu.ucar.unidata.util;
 
+import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -16,6 +18,10 @@ public class JsonUtil {
 
     public JsonUtil(String jsonFile) {
         this.setName(jsonFile);
+        File jsonDir = new File(FilenameUtils.getFullPath(jsonFile));
+        if (!jsonDir.exists()) {
+            jsonDir.mkdirs();
+        }
     }
 
     public String getName() {

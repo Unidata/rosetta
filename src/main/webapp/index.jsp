@@ -19,7 +19,7 @@
   <table>
     <tr>
       <td>
-        <img src="resources/img/icon/rosetta_lighter_text.jpg" HEIGHT="75%" alt="&rho;&zeta;&eta;&tau;&alpha; &rarr; Rosetta">
+        <img src="resources/img/logo/rosetta-150x150.png" HEIGHT="75%" alt="&rho;&zeta;&eta;&tau;&alpha; &rarr; Rosetta">
       </td>
       <td>
         <h1>What would you like to do?</h1>
@@ -27,7 +27,8 @@
         <a href="create"><img src="resources/img/add.png" alt="Works!" /></a>
         Create a new template
         <br>
-        <a href="restore"><img src="resources/img/add.png" alt="Works!" /></a>
+        <!--<a href="restore"><img src="resources/img/add.png" alt="Works!" /></a> -->
+        <img src="resources/img/remove.png" alt="Temporarily Unavailable." />
         Upload, modify, and use an existing template
         <br>
         <img src="resources/img/remove.png" alt="Future Work." />

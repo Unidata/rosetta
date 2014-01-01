@@ -500,7 +500,7 @@ public class singleStationTimeSeries implements NcmlFileManager {
 
         dateTimeBluePrint = new DateTimeBluePrint(timeRelatedVars, ncFileWriter);
 
-        ncFileWriter = dateTimeBluePrint.createNewVariables(ncFileWriter);
+        ncFileWriter = dateTimeBluePrint.createNewVars(ncFileWriter);
 
         ncFileWriter.create();
 
