@@ -1,7 +1,7 @@
 Rosetta
 =======
 
-![Alt Rosetta](http://www.unidata.ucar.edu/img/v3/logos/pzhta-300x300.jpg "Rosetta")
+![Alt Rosetta](http://www.unidata.ucar.edu/images2/logos/rosetta-150x150.png "Rosetta")
 
 Overview
 --------
