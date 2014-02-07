@@ -73,17 +73,19 @@ public class NetcdfFileManagerImpl implements NetcdfFileManager {
         String timeType;
         for (String varName : ncFileVariableNames) {
             Variable theVar = ncFileWriter.findVariable(varName);
-            Attribute triggerAttr = theVar.findAttributeIgnoreCase("_coordinateVariableType");
-            if (triggerAttr != null) {
-                timeType = theVar.findAttributeIgnoreCase("_coordinateVariableType").getStringValue(0);
-                if (timeRelatedVars.containsKey(timeType)) {
-                    ArrayList<String> tmpArray = timeRelatedVars.get(timeType);
-                    tmpArray.add(varName);
-                    timeRelatedVars.put(timeType, tmpArray);
-                } else {
-                    ArrayList<String> singleValArray = new ArrayList<>();
-                    singleValArray.add(varName);
-                    timeRelatedVars.put(timeType, singleValArray);
+            if (theVar != null) {
+                Attribute triggerAttr = theVar.findAttributeIgnoreCase("_coordinateVariableType");
+                if (triggerAttr != null) {
+                    timeType = theVar.findAttributeIgnoreCase("_coordinateVariableType").getStringValue(0);
+                    if (timeRelatedVars.containsKey(timeType)) {
+                        ArrayList<String> tmpArray = timeRelatedVars.get(timeType);
+                        tmpArray.add(varName);
+                        timeRelatedVars.put(timeType, tmpArray);
+                    } else {
+                        ArrayList<String> singleValArray = new ArrayList<>();
+                        singleValArray.add(varName);
+                        timeRelatedVars.put(timeType, singleValArray);
+                    }
                 }
             }
         }
@@ -302,6 +304,7 @@ public class NetcdfFileManagerImpl implements NetcdfFileManager {
                 while (coordVarNameIterator.hasNext()) {
                     // set dimension name based on coordType
                     ncFileWriter.addDimension(null, coordType, parseFileData.size());
+                    coordVarNameIterator.next();
                 }
             }
         }
@@ -357,7 +360,7 @@ public class NetcdfFileManagerImpl implements NetcdfFileManager {
                 if (variableMetadata.containsKey("_coordinateVariable")) {
                     String coordVarType = variableMetadata.get("_coordinateVariableType");
                     if(variableMetadata.get("_coordinateVariable").equals("coordinate") && (!buildTimeTriggers.contains(coordVarType))){
-                        if (coordVarType == "relTime") {
+                        if (coordVarType.toLowerCase().equals("reltime")) {
                             hasRelTime = true;
                             relTimeVarName = key;
                         }
@@ -382,50 +385,52 @@ public class NetcdfFileManagerImpl implements NetcdfFileManager {
     private NetcdfFileWriter writeUserVarData(List<List<String>> outerList, NetcdfFileWriter ncFileWriter) throws IOException, InvalidRangeException {
         for (String var : allVarNames) {
             Variable theVar = ncFileWriter.findVariable(var);
-            Attribute attr = theVar.findAttributeIgnoreCase("_columnId");
-            if (attr != null) {
-                String    varName = theVar.getFullName();
-                DataType  dt      = theVar.getDataType();
-                int varIndex = Integer.parseInt(attr.getStringValue());
-                int len      = outerList.size();
-                if (dt.equals(DataType.FLOAT)) {
-                    ArrayFloat.D1 vals =
-                            new ArrayFloat.D1(outerList.size());
-                    int      i                 = 0;
-                    for (List<String> innerList : outerList) {
-                        float f = Float.parseFloat(
-                                innerList.get(
-                                        varIndex));
-                        vals.set(i, f);
-                        i++;
-                    }
-                    ncFileWriter.write(theVar, vals);
-                } else if (dt.equals(DataType.INT)) {
-                    ArrayInt.D1 vals =
-                            new ArrayInt.D1(outerList.size());
-                    int      i                 = 0;
-                    for (List<String> innerList : outerList) {
-                        int f = Integer.parseInt(
-                                innerList.get(
-                                        varIndex));
-                        vals.set(i, f);
-                        i++;
-                    }
-                    ncFileWriter.write(theVar, vals);
-                } else if (dt.equals(DataType.CHAR)) {
-                    assert theVar.getRank() == 2;
-                    int elementLength = theVar.getDimension(1).getLength();
+            if (theVar != null) {
+                Attribute attr = theVar.findAttributeIgnoreCase("_columnId");
+                if (attr != null) {
+                    String    varName = theVar.getFullName();
+                    DataType  dt      = theVar.getDataType();
+                    int varIndex = Integer.parseInt(attr.getStringValue());
+                    int len      = outerList.size();
+                    if (dt.equals(DataType.FLOAT)) {
+                        ArrayFloat.D1 vals =
+                                new ArrayFloat.D1(outerList.size());
+                        int      i                 = 0;
+                        for (List<String> innerList : outerList) {
+                            float f = Float.parseFloat(
+                                    innerList.get(
+                                            varIndex));
+                            vals.set(i, f);
+                            i++;
+                        }
+                        ncFileWriter.write(theVar, vals);
+                    } else if (dt.equals(DataType.INT)) {
+                        ArrayInt.D1 vals =
+                                new ArrayInt.D1(outerList.size());
+                        int      i                 = 0;
+                        for (List<String> innerList : outerList) {
+                            int f = Integer.parseInt(
+                                    innerList.get(
+                                            varIndex));
+                            vals.set(i, f);
+                            i++;
+                        }
+                        ncFileWriter.write(theVar, vals);
+                    } else if (dt.equals(DataType.CHAR)) {
+                        assert theVar.getRank() == 2;
+                        int elementLength = theVar.getDimension(1).getLength();
 
-                    ArrayChar.D2 vals =
-                            new ArrayChar.D2(outerList.size(), elementLength);
-                    int      i                 = 0;
-                    for (List<String> innerList : outerList) {
+                        ArrayChar.D2 vals =
+                                new ArrayChar.D2(outerList.size(), elementLength);
+                        int      i                 = 0;
+                        for (List<String> innerList : outerList) {
 
-                        String f = innerList.get(varIndex);
-                        vals.setString(i,f);
-                        i++;
+                            String f = innerList.get(varIndex);
+                            vals.setString(i,f);
+                            i++;
+                        }
+                        ncFileWriter.write(theVar, vals);
                     }
-                    ncFileWriter.write(theVar, vals);
                 }
             }
         }
