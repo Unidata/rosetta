@@ -49,7 +49,6 @@ More Information
 Rosetta: A white paper on the challenges of sharing observational datasets
 (`pdf <http://www.unidata.ucar.edu/software/pzhta/files/rosetta_whitepaper.pdf>`_)
 
-
 AMS 2013 Presentation on Rosetta\:
 
 | Arms, S. C., J. O. Ganter, J. Weber, and M. K. Ramamurthy, 2013: *A Web-based*
@@ -58,7 +57,18 @@ AMS 2013 Presentation on Rosetta\:
 |   Technologies, 93rd AMS Annual Meeting, Austin, TX, J12.3. Available online 
 |   at `https://ams.confex.com/ams/93Annual/webprogram/Paper222186.html <https://ams.confex.com/ams/93Annual/webprogram/Paper222186.html>`_
 
-`Presentation <_static/presentations/AMS_2013_pzhta_pptx2pdf.pdf>`_
+`Presentation <_static/presentations/2013/AMS2013/AMS_2013_pzhta_pptx2pdf.pdf>`_
+
+AMS 2014 Presentation on Rosetta\:
+8A.4 Rosetta - Unidata's Web-based Data Translation Tool: Progress and Future Plans
+
+| Arms, S. C., J. O. Ganter, J. Weber, and M. K. Ramamurthy, 2013: *Rosetta - *
+|   *Unidata's Web-based Translation Tool: Progress and Future Plans.* 30th
+|   Conference on Environmental Information Processing Technologies, 94th 
+|   AMS Annual Meeting, Atlanta, GA, A.84. Available online at
+|   `https://ams.confex.com/ams/94Annual/webprogram/Paper240011.html <https://ams.confex.com/ams/94Annual/webprogram/Paper240011.html>`_
+
+`Presentation <_static/presentations/2014/AMS2014/AMS2014-RosettaUpdate.pdf>`_
 
 .. Indices and tables
 .. ==================
