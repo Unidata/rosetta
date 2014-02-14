@@ -9,9 +9,30 @@ import edu.ucar.unidata.rosetta.service.*;
 import edu.ucar.unidata.util.JsonUtil;
 import edu.ucar.unidata.util.RosettaProperties;
 import edu.ucar.unidata.util.ZipFileUtil;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScheme;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.mime.Header;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -34,6 +55,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URISyntaxException;
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -302,14 +325,18 @@ public class TemplateController implements HandlerExceptionResolver {
         String filePath = FilenameUtils.concat(downloadDir, ncFileName);
         String msg = "";
         try {
-            RepositoryClient client = new RepositoryClient(server, 80, "/repository", userId, passwd);
-            msg = client.uploadFile(entryName, entryDescription, parent,
-                    filePath);
+            if (server.toLowerCase().contains("motherlode")) {
+                RepositoryClient client = new RepositoryClient(server, 80, "/repository", userId, passwd);
+                msg = client.uploadFile(entryName, entryDescription, parent,
+                        filePath);
 
-            if (client.isValidSession(true, null)) {
-                System.err.println("Valid session");
-            } else {
-                System.err.println("Invalid session:" + msg);
+                if (client.isValidSession(true, null)) {
+                    System.err.println("Valid session");
+                } else {
+                    System.err.println("Invalid session:" + msg);
+                }
+            } else if (server.toLowerCase().contains("cadis")) {
+
             }
         } catch (Exception e)  {
             msg = e.getMessage();
@@ -432,4 +459,5 @@ public class TemplateController implements HandlerExceptionResolver {
         ModelAndView modelAndView = new ModelAndView("fatalError", model);
         return modelAndView;
     }
-} 
+
+}

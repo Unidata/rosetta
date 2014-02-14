@@ -105,7 +105,8 @@
         <commons-lang.version>3.1</commons-lang.version>
         <commons-io.version>1.3.2</commons-io.version>
         <commons-fileupload.version>1.3</commons-fileupload.version>
-        <commons-codec.version>1.3</commons-codec.version>
+        <commons-codec.version>1.4</commons-codec.version>
+        <httpcomponents.version>4.3.2</httpcomponents.version>
         <log4j.version>1.2.17</log4j.version>
         <selenium.version>2.33.0</selenium.version>
 
@@ -153,6 +154,12 @@
             <version>${commons-fileupload.version}</version>
         </dependency>
 
+        <!-- http client for publishing -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpcomponents.version}</version>
+        </dependency>
         <!-- java server pages standard tag lib -->
         <dependency>
             <groupId>jstl</groupId>

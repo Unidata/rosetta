@@ -1,8 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <publishers>
-    <publisher>
-        <pubName>Unidata RAMADDA</pubName>
-        <pubUrl>motherlode.ucar.edu</pubUrl>
-        <incomingDest>83f7a000-5cf5-4b14-9b24-7914008ede20</incomingDest>
-    </publisher>
+  <publisher>
+    <pubName>Unidata RAMADDA</pubName>
+    <pubUrl>motherlode.ucar.edu</pubUrl>
+    <incomingDest>83f7a000-5cf5-4b14-9b24-7914008ede20</incomingDest>
+  </publisher>
+  <publisher>
+    <pubName>ACADIS Gateway</pubName>
+    <pubUrl>https://cadis.staging.ucar.edu/api/dataset/</pubUrl>
+    <incomingDest>test_project_one</incomingDest>
+  </publisher>
 </publishers>

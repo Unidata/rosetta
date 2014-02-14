@@ -7,6 +7,7 @@
     <br>
     User Name: <input type="text" id="userName"><br>
     Password: <input type="password" id="userPassword">
+    Server Destination: <input type="text" id="incomingDest">
     <br>
 </form>
 <br>
