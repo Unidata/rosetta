@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.service;
+package edu.ucar.unidata.rosetta.dsg;
 
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 

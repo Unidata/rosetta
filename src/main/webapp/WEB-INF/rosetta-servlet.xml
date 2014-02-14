@@ -17,8 +17,7 @@
 
   
   <!-- Static resources since we are handling all requests -->
-  <mvc:resources mapping="/resources/**" location="/resources/" />
-  <mvc:resources mapping="/download/**" location="/download/" />
+  <mvc:resources mapping="/resources/**" location="/frontEndResources/" />
 
   <!-- Scans the classpath of this application for @Components to deploy as beans -->
   <context:component-scan base-package="edu.ucar.unidata.rosetta" />
@@ -28,10 +27,9 @@
    
   <bean id="resourceManager" class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl"/>
   <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.FileParserManagerImpl"/>
-  <bean id="ncmlFileManager" class="edu.ucar.unidata.rosetta.service.NcmlFileManagerImpl"/>
   <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.FileValidator"/>
   <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean" init-method="init"/>
-  <bean id="netcdfFileManager" class="edu.ucar.unidata.rosetta.service.NetcdfFileManagerImpl"/>
+  <bean id="netcdfFileManager" class="edu.ucar.unidata.rosetta.dsg.SingleStationTimeSeries"/>
 
   <!-- File upload multipart resolver -->
   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

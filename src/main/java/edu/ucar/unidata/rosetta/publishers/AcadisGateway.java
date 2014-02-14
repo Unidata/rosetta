@@ -24,15 +24,14 @@ import java.net.URISyntaxException;
 /**
  * This class is designed to create a publisher for the ACADIS Gateway
  */
-public class AcadisGateway implements Publisher{
+public class AcadisGateway implements Publisher {
 
-    private String server = "cadis.staging.ucar.edu";
     private String path = "/api/dataset";
     private int port = 443;
     private String scheme = "https";
     protected static Logger logger = Logger.getLogger(AcadisGateway.class);
 
-
+    private String server;
     private HttpHost gatewayHost;
     private HttpClientBuilder gatewayClientBuilder;
     private String userAgent;
@@ -126,9 +125,9 @@ public class AcadisGateway implements Publisher{
         return response;
     }
 
-    public AcadisGateway(String userId, String passwd, String shortName, String filePath) {
+    public AcadisGateway(String server, String userId, String passwd, String shortName, String filePath) {
         try {
-            init(userId, passwd, shortName, filePath);
+            init(server, userId, passwd, shortName, filePath);
         } catch (URISyntaxException e) {
             logger.error("Could not create an AcadisGateway Publisher for the project with a short name of " + shortName);
             logger.error(e.getMessage());
@@ -137,8 +136,9 @@ public class AcadisGateway implements Publisher{
         }
     }
 
-    private void init(String userId, String passwd, String parent, String filePath) throws URISyntaxException {
+    private void init(String server, String userId, String passwd, String parent, String filePath) throws URISyntaxException {
 
+        this.server = server;
         fileToPublish = new File(filePath);
         String ncFileName = fileToPublish.getName();
         //String fullPutUrl = server + path + parent + "/files/" + ncFileName;
@@ -183,7 +183,6 @@ public class AcadisGateway implements Publisher{
         return gatewayDownloadUrl;
     }
 
-
     public boolean publish() {
         boolean successful = false;
         try {
@@ -213,5 +212,4 @@ public class AcadisGateway implements Publisher{
             return successful;
         }
     }
-
 }

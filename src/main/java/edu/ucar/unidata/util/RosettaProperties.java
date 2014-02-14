@@ -8,8 +8,9 @@ import org.apache.commons.io.FilenameUtils;
 
 public class RosettaProperties {
 
-    private static String defaultConfigFileName = "rosettaConfig.properties";
-    public static String ROSETTA_HOME_ENVAR = "ROSETTA_HOME";
+    private static String defaultConfigFileName = "defaultRosettaConfig.properties";
+    private static String ROSETTA_HOME_ENVAR = "ROSETTA_HOME";
+    private static String SPRING_RESOURCES = "WEB-INF/classes/";
 
     public static void create() {
         String defaultRosettaConfigPath = getDefaultConfigFileLoc();
@@ -43,7 +44,7 @@ public class RosettaProperties {
     }
 
     private static String getDefaultConfigFileLoc() {
-        String configFileLoc = FilenameUtils.concat(getDefaultRosettaHome(), "resources");
+        String configFileLoc = FilenameUtils.concat(getDefaultRosettaHome(), SPRING_RESOURCES);
         configFileLoc = FilenameUtils.concat(configFileLoc, defaultConfigFileName);
         return configFileLoc;
     }

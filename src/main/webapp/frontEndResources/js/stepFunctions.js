@@ -539,7 +539,7 @@ function convertAndDownload(stepType, stepData) {
     }
 }
 
-function publishToUnidataRamadda(stepType, stepData) {
+function publish(stepType, stepData) {
     if (stepType == "stepValidation") {
         // validate data entered from step
     } else if (stepType == "repopulateStep") {
@@ -561,8 +561,13 @@ function publishToUnidataRamadda(stepType, stepData) {
                         pubMessage.append("<br><label class=\"error\">" + returnData + "</label>");
                     } else {
                         $("#publish").remove()
-                        var linkName = "View published data!";
-                        pubMessage.append("<br><li><a href=\""  +  "http://motherlode.ucar.edu/repository/entry/show?entryid=" + returnData  +  "\">" + linkName  +  "</a></li>");
+                        if (pubName.toLowerCase().contains("ramadda")) {
+                            var linkName = "View published data!";
+                            pubMessage.append("<br><li><a href=\""  +  "http://motherlode.ucar.edu/repository/entry/show?entryid=" + returnData  +  "\">" + linkName  +  "</a></li>");
+                        } else if (pubName.toLowerCase().contains("")) {
+                            var linkName = "Download link to published data!";
+                            pubMessage.append("<br><li><a href=\"" + returnData  +  "\">" + linkName  +  "</a></li>");
+                        }
                     }
                 },
                 "text");

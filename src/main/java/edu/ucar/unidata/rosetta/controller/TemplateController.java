@@ -1,45 +1,23 @@
 package edu.ucar.unidata.rosetta.controller;
 
 import edu.ucar.unidata.converters.xlsToCsv;
-import edu.ucar.unidata.rosetta.Rosetta;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import edu.ucar.unidata.rosetta.domain.Publisher;
 import edu.ucar.unidata.rosetta.domain.UploadedFile;
+import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
+import edu.ucar.unidata.rosetta.publishers.AcadisGateway;
+import edu.ucar.unidata.rosetta.publishers.UnidataRamadda;
 import edu.ucar.unidata.rosetta.service.*;
 import edu.ucar.unidata.util.JsonUtil;
 import edu.ucar.unidata.util.RosettaProperties;
 import edu.ucar.unidata.util.ZipFileUtil;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScheme;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.mime.Header;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.ramadda.repository.client.RepositoryClient;
-import org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -55,8 +33,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URISyntaxException;
-import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -314,7 +290,7 @@ public class TemplateController implements HandlerExceptionResolver {
         String passwd = publisherObj.getAuth();
         HashMap<String, String> pubMap = (HashMap<String, String>) publisherObj.getPublisherInfoMap();
         String server = pubMap.get("pubUrl");
-        String parent = pubMap.get("incomingDest");
+        String parent = pubMap.get("pubDest");
 
         String entryName = publisherObj.getGeneralMetadataMap().get("title");
         String entryDescription = publisherObj.getGeneralMetadataMap().get("description");
@@ -324,19 +300,27 @@ public class TemplateController implements HandlerExceptionResolver {
         String ncFileName = FilenameUtils.removeExtension(publisherObj.getFileName()) + ".nc";
         String filePath = FilenameUtils.concat(downloadDir, ncFileName);
         String msg = "";
+        boolean success;
         try {
             if (server.toLowerCase().contains("motherlode")) {
-                RepositoryClient client = new RepositoryClient(server, 80, "/repository", userId, passwd);
-                msg = client.uploadFile(entryName, entryDescription, parent,
-                        filePath);
+                UnidataRamadda pub = new UnidataRamadda(server, userId, passwd, parent,
+                        filePath, entryName, entryDescription);
 
-                if (client.isValidSession(true, null)) {
-                    System.err.println("Valid session");
+                success = pub.publish();
+                if (success) {
+                    msg = pub.getMessage();
                 } else {
-                    System.err.println("Invalid session:" + msg);
+                    System.err.println("Failed to publish to ACADIS Gateway");
                 }
-            } else if (server.toLowerCase().contains("cadis")) {
 
+            } else if (server.toLowerCase().contains("cadis")) {
+                AcadisGateway pub = new AcadisGateway(server, userId, passwd, parent, filePath);
+                success = pub.publish();
+                if (success) {
+                    msg = pub.getGatewayDownloadUrl();
+                } else {
+                    System.err.println("Failed to publish to ACADIS Gateway");
+                }
             }
         } catch (Exception e)  {
             msg = e.getMessage();
@@ -448,7 +432,7 @@ public class TemplateController implements HandlerExceptionResolver {
         String message = "";
         if (exception instanceof MaxUploadSizeExceededException) {
             // this value is declared in the /WEB-INF/rosetta-servlet.xml file (we can move it elsewhere for convenience)
-            message = "File size should be less then " + ((MaxUploadSizeExceededException) exception).getMaxUploadSize() + " byte.";
+            message = "File size should be less than " + ((MaxUploadSizeExceededException) exception).getMaxUploadSize() + " byte.";
         } else {
             message = "An error has occurred: " + exception.getClass().getName() + ":" + exception.getMessage();
         }

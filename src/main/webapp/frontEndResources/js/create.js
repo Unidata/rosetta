@@ -166,5 +166,5 @@ $(document).ready(function($) {
     /**
      * STEP 7
      */
-    publishToUnidataRamadda("stepFunctions", null);
+    publish("stepFunctions", null);
 });

@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta;
+package edu.ucar.unidata.rosetta.dsg.util;
 
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayLong;

@@ -7,7 +7,7 @@
   </publisher>
   <publisher>
     <pubName>ACADIS Gateway</pubName>
-    <pubUrl>https://cadis.staging.ucar.edu/api/dataset/</pubUrl>
+    <pubUrl>cadis.staging.ucar.edu</pubUrl>
     <incomingDest>test_project_one</incomingDest>
   </publisher>
 </publishers>
