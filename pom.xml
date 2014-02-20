@@ -313,7 +313,7 @@
                         <configuration>
                             <recursive>false</recursive>
                             <directoryRoots>
-                                <directoryRoot>${basedir}/src/main/webapp/resources/js</directoryRoot>
+                                <directoryRoot>${basedir}/src/main/webapp/frontEndResources/js</directoryRoot>
                             </directoryRoots>
                             <sourceFiles>
                                 <sourceFile>${basedir}/src/site/jsDoc3/README.md</sourceFile>
