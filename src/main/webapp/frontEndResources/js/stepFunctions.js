@@ -605,6 +605,7 @@ function restoreSession(stepType, stepData) {
     }
 }
 
+
 function stepTemplate(stepType, stepData) {
     if (stepType == "stepValidation") {
         // validate data entered from step

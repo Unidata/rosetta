@@ -2,7 +2,10 @@ package edu.ucar.unidata.util;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -13,6 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,7 +24,7 @@ import java.util.Map;
  */
 public class AcadisGatewayProjectReader {
 
-    private String server = "www.aoncadis.org";
+    private String server = "cadis.prototype.ucar.edu";
     private int port = 443;
     private String scheme = "https";
     protected static Logger logger = Logger.getLogger(AcadisGatewayProjectReader.class);
@@ -67,6 +71,17 @@ public class AcadisGatewayProjectReader {
         return uri;
     }
 
+    private URI makeDatasetIdUri(String datasetId) throws URISyntaxException {
+        URI uri = new URIBuilder()
+                .setScheme(gatewayHost.getSchemeName())
+                .setHost(gatewayHost.getHostName())
+                .setPath("/dataset/id/" + datasetId)
+                .build();
+
+        return uri;
+    }
+
+
     private String makeUserAgent() {
         String rosettaVersion = "0.2-SNAPSHOT";
         String userAgent = "Unidata/Rosetta_"+ rosettaVersion;
@@ -109,25 +124,73 @@ public class AcadisGatewayProjectReader {
         return inventory;
     }
 
-    public AcadisGatewayProjectReader(String dsShortName) {
+    public AcadisGatewayProjectReader(String datasetId) {
+        String dsShortName = null;
         try {
-            init(dsShortName);
+            init(datasetId);
         } catch (URISyntaxException e) {
             logger.error("Could not create an AcadisGatewayProjectReader for the dataset with a short name of " + dsShortName);
             logger.error(e.getMessage());
             logger.error(e.getStackTrace());
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void init(String dsShortName) throws URISyntaxException {
+    private String getDatasetShortName(URI datasetUri) {
+        String datasetPath = datasetUri.getPath();
+        int dsShortNameStart = datasetPath.lastIndexOf("/") + 1;
+        int dsShortNameEnd = datasetPath.lastIndexOf(".html");
+        String datasetShortName = datasetPath.substring(dsShortNameStart, dsShortNameEnd);
+
+        return datasetShortName;
+    }
+
+    private URI resolveDataset(String datasetId) throws IOException {
+        List<URI> redirects = null;
+        CloseableHttpResponse response = null;
+        CloseableHttpClient httpClient;
+        URI redirectUri = null;
+        try {
+            URI datasetIdUri = makeDatasetIdUri(datasetId);
+            httpClient = makeHttpClient();
+            HttpClientContext context = HttpClientContext.create();
+            HttpGet httpGet = new HttpGet(datasetIdUri);
+            response = httpClient.execute(httpGet, context);
+            // get all redirection locations
+            redirects = context.getRedirectLocations();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(response != null) {
+                response.close();
+            }
+            if (redirects != null) {
+                if (redirects.size() > 0) {
+                    redirectUri = redirects.get(0);
+                }
+            }
+        }
+
+        return redirectUri;
+
+    }
+
+    private void init(String datasetId) throws URISyntaxException, IOException {
 
         userAgent = makeUserAgent();
 
         gatewayHost = makeHost();
 
-        uri = makeWgetUri(dsShortName);
+        URI datasetUri = resolveDataset(datasetId);
+        String dsShortName = getDatasetShortName(datasetUri);
 
+        uri = makeWgetUri(dsShortName);
     }
 
 
@@ -156,9 +219,10 @@ public class AcadisGatewayProjectReader {
 
 
     public static void main(String [] args) throws IOException, URISyntaxException {
+        // ef653b66-a09f-11e3-b343-00c0f03d5b7c
+        String datasetId = "ef653b66-a09f-11e3-b343-00c0f03d5b7c";
 
-        String dsShortName = "greenland";
-        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(dsShortName);
+        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(datasetId);
         projectReader.read();
         Map<String, String> inventory = projectReader.getInventory();
         for (String name : inventory.keySet()) {
