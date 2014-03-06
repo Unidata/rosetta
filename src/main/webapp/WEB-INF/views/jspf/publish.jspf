@@ -6,7 +6,7 @@
 <form>
     <br>
     User Name: <input type="text" id="userName"><br>
-    Password: <input type="password" id="userPassword"><br>
+    Password: <input type="password" id="auth"><br>
     Publish Destination: <input type="text" id="pubDest">
     <br>
 </form>

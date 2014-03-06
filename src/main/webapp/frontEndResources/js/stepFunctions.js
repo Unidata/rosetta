@@ -1,5 +1,3 @@
-var faux = '<div id="faux" class="ui-corner-all disabled">Next</div>';
-
 function selectPlatform(stepType, stepData) {
     // stepTypes:
     //    stepValidation - validate input for current step
@@ -547,11 +545,15 @@ function publish(stepType, stepData) {
         // page, then repopulate from storage
     } else if (stepType == "stepFunctions") {
         $("#publish").bind("click", function() {
+
             var pubName = publisherName.value;
-            addToSession("pubName", pubName);
-            addToSession("userName", $(userName).val());
-            var data = getAllDataInSession();
-            data["auth"] = $(userPassword).val();
+            var data = {"pubName" : pubName,
+            "userName" : $(userName).val(),
+            "auth" : $(auth).val(),
+            "pubDest" : $(pubDest).val(),
+            "uniqueId" : getFromSession("uniqueId"),
+            "fileName" : getFromSession("fileName"),
+            "generalMetadata" : getFromSession("generalMetadata")};
 
             $.post("publish", data,
                 function(returnData) {
@@ -564,7 +566,7 @@ function publish(stepType, stepData) {
                         if (pubName.toLowerCase().contains("ramadda")) {
                             var linkName = "View published data!";
                             pubMessage.append("<br><li><a href=\""  +  "http://motherlode.ucar.edu/repository/entry/show?entryid=" + returnData  +  "\">" + linkName  +  "</a></li>");
-                        } else if (pubName.toLowerCase().contains("")) {
+                        } else if (pubName.toLowerCase().contains("cadis")) {
                             var linkName = "Download link to published data!";
                             pubMessage.append("<br><li><a href=\"" + returnData  +  "\">" + linkName  +  "</a></li>");
                         }

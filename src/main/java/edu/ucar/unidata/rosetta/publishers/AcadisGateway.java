@@ -40,6 +40,9 @@ public class AcadisGateway implements Publisher {
     private URI uri;
     private HttpResponse latestResponse;
     private String gatewayDownloadUrl;
+    private String gatewayProjectUrl;
+    private String parent;
+
 
     private HttpHost makeHost() {
         // create client for given host
@@ -142,7 +145,7 @@ public class AcadisGateway implements Publisher {
         fileToPublish = new File(filePath);
         String ncFileName = fileToPublish.getName();
         //String fullPutUrl = server + path + parent + "/files/" + ncFileName;
-        String putPath =  path + parent + "/file/" + ncFileName;
+        String putPath =  path + "/" + parent + "/file/" + ncFileName;
 
         userAgent = makeUserAgent();
 
@@ -179,6 +182,15 @@ public class AcadisGateway implements Publisher {
         }
     }
 
+    private void setGatewayProjectUrl(String parent) {
+        gatewayProjectUrl = "https://cadis.prototype.ucar.edu/dataset/" +  parent + "html";
+    }
+
+    public String getGatewayProjectUrl() {
+        return gatewayProjectUrl;
+    }
+
+
     public String getGatewayDownloadUrl() {
         return gatewayDownloadUrl;
     }
@@ -208,6 +220,7 @@ public class AcadisGateway implements Publisher {
         } finally {
             if (successful) {
                 setGatewayDownloadUrl();
+                setGatewayProjectUrl(parent);
             }
             return successful;
         }

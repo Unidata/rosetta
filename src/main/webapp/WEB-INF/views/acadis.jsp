@@ -16,6 +16,6 @@
         <h3>Project Inventory:</h3>
         <!-- this is what happens upon submit: rosetta/createAcadis  -->
         <div id="inventory"></div>
-        <input type="submit" value="Submit" id="getAcadisFile">
+        <input type="button" value="Convert Selected File" id="getAcadisFile">
     </body>
 </html>

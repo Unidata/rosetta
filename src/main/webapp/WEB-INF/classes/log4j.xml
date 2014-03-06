@@ -5,7 +5,7 @@
 
    <appender name="rosettaLogger" class="org.apache.log4j.DailyRollingFileAppender">
       <param name="File" value="${catalina.home}/logs/rosetta.log"/>
-      <param name="Threshold" value="INFO" />
+      <param name="Threshold" value="DEBUG" />
       <layout class="org.apache.log4j.PatternLayout">
          <param name="ConversionPattern" value="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
       </layout>
@@ -16,8 +16,38 @@
         <appender-ref ref="rosettaLogger"/>
    </logger>
 
+  <logger name="org.springframework.core">
+    <appender-ref ref="rosettaLogger"/>
+
+    <level value="debug" />
+  </logger>
+
+  <logger name="org.springframework.beans">
+    <appender-ref ref="rosettaLogger"/>
+
+    <level value="debug" />
+  </logger>
+
+  <logger name="org.springframework.context">
+    <appender-ref ref="rosettaLogger"/>
+
+    <level value="debug" />
+  </logger>
+
+  <logger name="org.springframework.http">
+    <appender-ref ref="rosettaLogger"/>
+
+    <level value="debug" />
+  </logger>
+  <!-- below alternate between debug and info -->
+  <logger name="org.springframework.web">
+    <appender-ref ref="rosettaLogger"/>
+
+    <level value="debug" />
+  </logger>
+
   <root>
-    <level value="WARN"/>
+    <level value="DEBUG, file, stdout"/>
     <appender-ref ref="rosettaLogger"/>
   </root>
 

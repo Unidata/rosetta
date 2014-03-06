@@ -362,7 +362,7 @@ public class SingleStationTimeSeries implements NetcdfFileManager {
                     if(variableMetadata.get("_coordinateVariable").equals("coordinate") && (!buildTimeTriggers.contains(coordVarType))){
                         if (coordVarType.toLowerCase().equals("reltime")) {
                             hasRelTime = true;
-                            relTimeVarName = key;
+                            relTimeVarName = value;
                         }
                         coordVarList = coordVars.get(coordVarType);
                         if (coordVarList == null) {

@@ -16,9 +16,12 @@
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
   
-  <!-- Static resources since we are handling all requests -->
+  <!-- Static resources since we are handling all requests
+       these are front end resources, found under
+       scr/main/webapp/resources -->
   <mvc:resources mapping="/resources/**" location="/frontEndResources/" />
 
+  <mvc:resources mapping="/resources/**" location="/WEB-INF/classes/resources/" />
   <!-- Scans the classpath of this application for @Components to deploy as beans -->
   <context:component-scan base-package="edu.ucar.unidata.rosetta" />
 

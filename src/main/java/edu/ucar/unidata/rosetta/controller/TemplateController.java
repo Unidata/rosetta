@@ -2,7 +2,7 @@ package edu.ucar.unidata.rosetta.controller;
 
 import edu.ucar.unidata.converters.xlsToCsv;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
-import edu.ucar.unidata.rosetta.domain.Publisher;
+import edu.ucar.unidata.rosetta.domain.PublisherInfo;
 import edu.ucar.unidata.rosetta.domain.RemoteAcadisUploadedFile;
 import edu.ucar.unidata.rosetta.domain.UploadedFile;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
@@ -16,6 +16,7 @@ import edu.ucar.unidata.util.ZipFileUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -82,6 +83,7 @@ public class TemplateController implements HandlerExceptionResolver {
      */
     @RequestMapping(value = "/restore", method = RequestMethod.GET)
     public ModelAndView restoreTemplate(Model model) {
+        BasicConfigurator.configure();
         model.addAllAttributes(resourceManager.loadResources());
         return new ModelAndView("restore");
     }
@@ -234,9 +236,28 @@ public class TemplateController implements HandlerExceptionResolver {
         String tmpDir = System.getProperty("java.io.tmpdir");
         String filePath = FilenameUtils.concat(tmpDir, file.getUniqueId());
         filePath = FilenameUtils.concat(filePath, file.getFileName());
-        ZipFileUtil restoreZip = new ZipFileUtil(filePath);
-        jsonStrSessionStorage = restoreZip.readFileFromZip("rosettaSessionStorage.json");
+        if (filePath.endsWith(".zip")) {
+            ZipFileUtil restoreZip = new ZipFileUtil(filePath);
+            jsonStrSessionStorage = restoreZip.readFileFromZip("rosettaSessionStorage.json");
+        } else if (filePath.endsWith(".template")) {
+            InputStream inStream = null;
+            jsonStrSessionStorage = "";
+            String line;
+            try {
+                inStream = new FileInputStream(filePath);
+                BufferedReader buffReader = new BufferedReader(
+                        new InputStreamReader(inStream));
+                while ((line = buffReader.readLine()) != null) {
+                    jsonStrSessionStorage = jsonStrSessionStorage + line;
+                }
+                buffReader.close();
 
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return jsonStrSessionStorage;
     }
 
@@ -286,7 +307,9 @@ public class TemplateController implements HandlerExceptionResolver {
 
     @RequestMapping(value = "/publish", method = RequestMethod.POST)
     @ResponseBody
-    public String publish(Publisher publisherObj) {
+    public String publish(PublisherInfo publisherObj) {
+        BasicConfigurator.configure();
+
         String userId = publisherObj.getUserName();
         String passwd = publisherObj.getAuth();
         HashMap<String, String> pubMap = (HashMap<String, String>) publisherObj.getPublisherInfoMap();
@@ -315,10 +338,12 @@ public class TemplateController implements HandlerExceptionResolver {
                 }
 
             } else if (server.toLowerCase().contains("cadis")) {
+                AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(parent);
+                parent = projectReader.getDatasetShortName();
                 AcadisGateway pub = new AcadisGateway(server, userId, passwd, parent, filePath);
                 success = pub.publish();
                 if (success) {
-                    msg = pub.getGatewayDownloadUrl();
+                    msg = pub.getGatewayProjectUrl();
                 } else {
                     System.err.println("Failed to publish to ACADIS Gateway");
                 }
@@ -429,7 +454,20 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     @RequestMapping(value = "/createAcadis", method = RequestMethod.GET)
-    public ModelAndView createAcadis(Model model) {
+    public ModelAndView createAcadis(@RequestParam(value = "dataset", required = false) String datasetId, Model model) {
+        // https://cadis.prototype.ucar.edu/redirect.html?link=http%3a%2f%2frosetta.unidata.ucar.edu%2facadis%3fdataset%3def653b66-a09f-11e3-b343-00c0f03d5b7c
+        if (datasetId != null) {
+            AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(datasetId);
+            projectReader.read();
+            Map<String, String> inventory = projectReader.getInventory();
+            JSONObject jsonInventory = new JSONObject(inventory);
+            String jsonInventoryStr = jsonInventory.toJSONString();
+            for (String name : inventory.keySet()) {
+                String downloadUrl = inventory.get(name);
+                System.out.println("name: " + name + " access: " + downloadUrl);
+            }
+            model.addAttribute("dataJson", jsonInventoryStr);
+        }
         model.addAllAttributes(resourceManager.loadResources());
         return new ModelAndView("createAcadis");
     }

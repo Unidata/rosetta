@@ -38,6 +38,8 @@ public class AcadisGatewayProjectReader {
     private String wgetText;
     private Map<String, String> inventory;
 
+    private String dsShortName;
+
     private HttpHost makeHost() {
         // create client for given host
         HttpHost httpHost = new HttpHost(
@@ -188,13 +190,15 @@ public class AcadisGatewayProjectReader {
         gatewayHost = makeHost();
 
         URI datasetUri = resolveDataset(datasetId);
-        String dsShortName = getDatasetShortName(datasetUri);
+        dsShortName = getDatasetShortName(datasetUri);
 
         uri = makeWgetUri(dsShortName);
     }
 
 
-
+    public String getDatasetShortName() {
+        return this.dsShortName;
+    }
     public Boolean read() {
         boolean successful = false;
         try {

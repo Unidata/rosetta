@@ -3,11 +3,9 @@
   <publisher>
     <pubName>Unidata RAMADDA</pubName>
     <pubUrl>motherlode.ucar.edu</pubUrl>
-    <incomingDest>83f7a000-5cf5-4b14-9b24-7914008ede20</incomingDest>
   </publisher>
   <publisher>
     <pubName>ACADIS Gateway</pubName>
-    <pubUrl>cadis.staging.ucar.edu</pubUrl>
-    <incomingDest>test_project_one</incomingDest>
+    <pubUrl>cadis.prototype.ucar.edu</pubUrl>
   </publisher>
 </publishers>
