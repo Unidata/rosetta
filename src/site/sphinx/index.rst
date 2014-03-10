@@ -62,7 +62,7 @@ AMS 2013 Presentation on Rosetta\:
 AMS 2014 Presentation on Rosetta\:
 8A.4 Rosetta - Unidata's Web-based Data Translation Tool: Progress and Future Plans
 
-| Arms, S. C., J. O. Ganter, J. Weber, and M. K. Ramamurthy, 2013: *Rosetta - *
+| Arms, S. C., J. O. Ganter, J. Weber, and M. K. Ramamurthy, 2014: *Rosetta - *
 |   *Unidata's Web-based Translation Tool: Progress and Future Plans.* 30th
 |   Conference on Environmental Information Processing Technologies, 94th 
 |   AMS Annual Meeting, Atlanta, GA, A.84. Available online at
