@@ -1,88 +1,119 @@
 <!DOCTYPE HTML>
- <html>   
+<html>   
   <head>
-   <title>Unidata | Rosetta</title>
-   <meta name="description" content="Rosetta">
-   <!-- INSERT TAB INCLUDES -->
-   <!-- INSERT ACCORDION INCLUDES -->
+    <title>Unidata | Rosetta</title>
+    <meta name="description" content="Rosetta">
+    <!-- INSERT TAB INCLUDES -->
+    <!-- INSERT ACCORDION INCLUDES -->
   </head>
   <body>
 
-      
     <ul id="breadcrumbs">
-     <li><a href="/">Home</a></li>
+      <li><a href="/">Home</a></li>
     </ul>
-  
+
+    <!-- START TABS -->
     <div id="tabs">
-     <nav>
+      <nav>
       <ul class="links">
-       <li><a href="#home">Rosetta</a></li>  
-      <!-- <a href="/software/" class="external">Version History</a> -->
-      <!-- <a href="/software/gempak/" class="external">FAQs</a> -->
-       <a href="/software/rosetta/site/index.html" class="external">Documentation</a>
-       <li><a href="#help">Support</a></li>
-      </ul>
-     </nav>
-
-
-     <!-- INSERT ACCORDION -->
-
-
-     <!-- ROSETTA HOME -->
-     <div id="home">
-      <section>
-       <h1>Rosetta</h1> 
-       <div class="all nodec">
-       <p><img src="/img/v3/logos/rosetta_50x50.png" alt="Rosetta" class="dec">The Unidata Data Translation Tool, Rosetta, is a web-based service that provides an easy, wizard-based interface for data collectors to transform their datalogger generated ASCII output into Climate and Forecast (CF) compliant netCDF files, complete with metadata describing what data are contained in the file, the instruments used to collect the data, and other critical information that otherwise may be lost in one of many dreaded README files. The use of CF compliant netCDF files allows the use of standard services to achieve the many goals of the ACADIS project. However, with the understanding that the observational community appreciates the ease of use of ASCII files, methods for transforming the netCDF back into a user defined CSV or spreadsheet format are also built-in. We anticipate that Rosetta and the associated services will be of value to a broader community users who have similar needs for transforming the data they have collected or stored in non-standard formats.</p>
-       <a href="/software/rosetta/site/" class="more">See the Rosetta package overview</a>
-       </div> <!-- end -->
-       
-     <!-- FOR DEVELOPERS -->
-     <div id="developers">
-      <section>
-       <h1>For Rosetta Developers</h1>
-       <p>Rosetta is an Open Source project led by developers at the Unidata Program Center. If you're interested in contributing to the project, you might be interested in these resources:</p>
-       <div class="all">
-        <ul class="tabular">
-         <li><a href="https://github.com/Unidata/rosetta"><img src="/img/v3/logos/github-32x32.png" alt="GitHub" class="dec"></a> Rosetta code<br> in <b><a href="https://github.com/Unidata/rosetta">GitHub</a></b> </li>
+          <li><a href="#home">Rosetta</a></li>  
+          <!-- <a href="/software/" class="external">Version History</a> -->
+          <!-- <a href="/software/gempak/" class="external">FAQs</a> -->
+          <a href="/software/rosetta/site/index.html" class="external">Documentation</a>
+          <li><a href="#developers">For Developers</a></li>
+          <li><a href="#related_projects">Related Projects</a></li>
+          <li><a href="#help">Support</a></li>
         </ul>
-       </div> <!-- end all -->
-      </section>
-     </div> <!-- end developers -->
+      </nav>
 
-      <div class="right nodec">
-       <aside>
-        <h5>Questions About Rosetta?</h5>
-        <p>Questions or comments about Rosetta can be sent to: <a href="mailto:support-rosetta@unidata.ucar.edu">support-rosetta@unidata.ucar.edu</a></p>
-       </aside>
-      </div> <!-- end right -->
+      <!-- INSERT ACCORDION -->
 
-      </section>
-     </div> 
+      <!-- ROSETTA HOME -->
+      <div id="home">
+        <section>
+          <h1>Rosetta</h1> 
+          <div class="all nodec">
+            <p><img src="/img/v3/logos/rosetta_50x50.png" alt="Rosetta" class="dec">
+The Unidata Data Translation Tool, Rosetta, is a web-based service that provides an easy, wizard-based interface for data collectors to transform their datalogger generated ASCII output into Climate and Forecast (CF) compliant netCDF files, complete with metadata describing what data are contained in the file, the instruments used to collect the data, and other critical information that otherwise may be lost in one of many dreaded README files. The use of CF compliant netCDF files allows the use of standard services to achieve the many goals of the ACADIS project. However, with the understanding that the observational community appreciates the ease of use of ASCII files, methods for transforming the netCDF back into a user defined CSV or spreadsheet format are also built-in. We anticipate that Rosetta and the associated services will be of value to a broader community users who have similar needs for transforming the data they have collected or stored in non-standard formats.
+            </p>
+            <a href="/software/rosetta/site/" class="more">See the Rosetta package overview</a>
+          </div> <!-- end -->
 
-     <!-- SUPPORT -->
-     <div id="help">
-      <section>
-       <h1>Rosetta Support</h1>    
-       <div class="left nodec">
-        <article>
-         <h5>How To Get Rosetta Support</h5>
-         <dl class="listCounter">
-          <dt><b><a href="/support/requestSupport.jsp">Request Support</a></b> from the Rosetta developers by emailing: <a href="mailto:support-rosetta@unidata.ucar.edu">support-rosetta@unidata.ucar.edu</a></dt>
-         </dl>
-        </article>
-       </div> <!-- end left -->
+          <div class="left nodec">
+            <aside>
+              <h5>Questions About Rosetta?</h5>
+              <p>Questions or comments about Rosetta can be sent to: <a href="mailto:support-rosetta@unidata.ucar.edu">support-rosetta@unidata.ucar.edu</a></p>
+            </aside>
+          </div> <!-- end right -->
+        </section>
+      </div>
+      <!-- END ROSETTA HOME -->
 
-       <div class="right nodec">
-        <aside>
-         <h5>Questions about Rosetta?</h5>
-         <p>Questions about Rosetta can be sent to: <a href="mailto:support-rosetta@unidata.ucar.edu">support-rosetta@unidata.ucar.edu</a></p>
-        </aside>
-       </div> <!-- end right -->
-      </section>
-     </div> <!-- end support/help -->
+      <!-- FOR DEVELOPERS -->
+      <div id="developers">
+        <section>
+          <h1>For Rosetta Developers</h1>
+          <p>Rosetta is an Open Source project led by developers at the Unidata Program Center. If you're interested in contributing to the project, you might be interested in these resources:</p>
+          <div class="all">
+            <ul class="tabular">
+               <li><a href="https://github.com/Unidata/rosetta">
+                   <img src="/img/v3/logos/github-32x32.png" alt="GitHub" class="dec"></a>
+                   Rosetta code<br> on <b><a href="https://github.com/Unidata/rosetta">GitHub</a></b>
+              </li>
+              <li><a href="/software/rosetta/javadoc/index.html">
+                   <img src="/img/v3/logos/java-32x32.png" alt="JavaDoc" class="dec"></a>
+                   Rosetta <br><b><a href="/software/rosetta/javadoc/index.html">Javadoc</a></b>
+              </li>
+               <li><a href="/software/rosetta/jsdoc/index.html">
+                   <img src="/img/v3/icons/unofficial_js_logo-32x32.png" alt="JSDoc" class="dec"></a>
+                   Rosetta <br><b><a href="/software/rosetta/jsdoc/index.html">JavaScript JSDoc</a></b>
+              </li>
+            </ul>
+          </div> <!-- end all -->
+        </section>
+      </div> 
+      <!-- END FOR DEVELOPERS -->
 
-    </div> <!-- end tabs -->
+      <!-- SUPPORT -->
+      <div id="help">
+        <section>
+          <h1>Rosetta Support</h1>    
+          <div class="left nodec">
+            <article>
+              <h5>How To Get Rosetta Support</h5>
+              <dl class="listCounter">
+                <dt><b><a href="/support/requestSupport.jsp">Request Support</a></b> from the Rosetta developers by emailing: <a href="mailto:support-rosetta@unidata.ucar.edu">support-rosetta@unidata.ucar.edu</a></dt>
+              </dl>
+            </article>
+          </div> <!-- end left -->
+          <div class="right nodec">
+            <aside>
+              <h5>Questions about Rosetta?</h5>
+              <p>Questions about Rosetta can be sent to: <a href="mailto:support-rosetta@unidata.ucar.edu">support-rosetta@unidata.ucar.edu</a></p>
+            </aside>
+          </div> <!-- end right -->
+        </section>
+      </div> 
+      <!-- END SUPPORT -->
+
+
+      <!-- RELATED PROJECTS -->
+      <div id="related_projects">
+        <section>
+          <h1>Unidata Projects Involving Rosetta</h1>
+          <p>Unidata embarks on <a href="/projects/">new projects</a> to help make its data and tools available to a broader, more diverse audience. The following is a list of Rosetta related projects between the Unidata Program Center and external collaborators.
+          </p>
+          <div class="all">
+            <h5><a href="/projects/index.html#acadis">ACADIS</a></h5>
+            <p><img src="/img/v3/logos/acadis-75x32.png" alt="ACADIS" class="dec"/>The <a href="http://www.aoncadis.org/"><b><u>A</u>vanced <u>C</u>ooperative <u>A</u>rctic <u>D</u>ata and <u>I</u>nformation <u>S</u>ervice</b></a> (<a href="http://aoncadis.ucar.edu/home.htm"><b>ACADIS</b></a>) is the continuation and expansion of CADIS, or Advanced CADIS. ACADIS is a joint effort between the National Snow and Ice Data Center (NSIDC), the National Center for Atmospheric Research (NCAR), and Unidata to manage the diverse data needs of the Arctic research community supported by the National Science Foundation (NSF) Office of Polar Programs (OPP).
+            </p>
+            <a href="/projects/index.html#acadis" class="more">More about ACADIS</a>
+          </div> <!-- end all -->
+        </section>
+      </div> <!-- end related projects -->
+      <!-- END RELATED PROJECTS -->
+    </div>
+    <!-- END TABS -->
   </body>
- </html>
+</html>
 
