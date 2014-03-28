@@ -134,6 +134,7 @@ $(document).ready(function($) {
 
     var dataJsonStr = JSON.stringify(data);
     addToSession("acadisInventory", dataJsonStr);
+    var fileSelector = $("#acadisFileSelector");
     var dataFiles = [];
     for(var k in data) dataFiles.push(k);
     var numDataFiles = dataFiles.length;
@@ -143,7 +144,7 @@ $(document).ready(function($) {
         var inv =  name + " " + dlLink;
         var optionElement=$("<option></option>")
         optionElement.append(name);
-        $("#acadisFileSelector").append(optionElement);
+        fileSelector.append(optionElement);
     }
 
     // add function to do post to createAcadis, set appropriate session storage stuff, and

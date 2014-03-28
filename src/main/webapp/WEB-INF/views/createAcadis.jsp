@@ -24,7 +24,7 @@
 <h1 id="title"><spring:message code="global.title"/></h1>
 <form id="FORM" action="/rosetta/upload" method="POST" enctype="multipart/form-data">
 
-    <div id="step0" title="Choose Acadis data file">
+    <div id="step0" title="Please choose a file to convert">
         <%@include file="/WEB-INF/views/jspf/selectAcadisFile.jspf" %>
     </div>
 

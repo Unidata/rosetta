@@ -1,6 +1,4 @@
-<h3>Please choose a file to convert:</h3>
-<br>
-<h4>Project Inventory:</h4>
+<b>Project Inventory:</b>
 <!-- this is what happens upon submit: rosetta/createAcadis  -->
 <div id="inventory">
     <select name='fileToConvert' id='acadisFileSelector'></select>
