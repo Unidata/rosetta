@@ -137,16 +137,14 @@ $(document).ready(function($) {
     var dataFiles = [];
     for(var k in data) dataFiles.push(k);
     var numDataFiles = dataFiles.length;
-    var selectElement = $("<select name='fileToConvert' id='acadisFileSelector'></select>");
     for (var i = 0; i < numDataFiles; i++){
         var name = dataFiles[i];
         var dlLink = data[name];
         var inv =  name + " " + dlLink;
         var optionElement=$("<option></option>")
         optionElement.append(name);
-        selectElement.append(optionElement);
+        $("#acadisFileSelector").append(optionElement);
     }
-    $("#inventory").append(selectElement);
 
     // add function to do post to createAcadis, set appropriate session storage stuff, and
     // move along with the main createAcadis wizzard

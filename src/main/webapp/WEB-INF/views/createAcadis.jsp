@@ -5,7 +5,8 @@
 <head>
     <title><spring:message code="global.title"/></title>
     <%@ include file="/WEB-INF/views/includes/css.jsp" %>
-    <link type="text/css" rel="stylesheet" href="resources/css/create.css" />
+    <link type="text/css" rel="stylesheet" href="resources/css/createAcadis.css" />
+    <link type="text/css" rel="stylesheet" href="resources/img/acadis/integrate_acadis.css" />
     <%@ include file="/WEB-INF/views/includes/javascript.jsp" %>
     <script type="text/javascript" src="resources/js/createAcadis.js"></script>
     <script type="text/javascript">
@@ -19,11 +20,11 @@
     </script>
 </head>
 <body>
-<h1><spring:message code="global.title"/></h1>
+<div id="banner"></div> <!-- end of acadis banner wrapper -->
+<h1 id="title"><spring:message code="global.title"/></h1>
 <form id="FORM" action="/rosetta/upload" method="POST" enctype="multipart/form-data">
 
-    <div id="step1" title="Choose Acadis data file">
-        <h5>Choose ACADIS data file</h5>
+    <div id="step0" title="Choose Acadis data file">
         <%@include file="/WEB-INF/views/jspf/selectAcadisFile.jspf" %>
     </div>
 
