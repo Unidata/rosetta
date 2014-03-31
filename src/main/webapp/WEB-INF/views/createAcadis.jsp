@@ -20,8 +20,9 @@
     </script>
 </head>
 <body>
-<a href="https://www.aoncadis.org/home.htm"  id="banner"></a>
-<!-- div id="banner"></div --> 
+<a href="https://www.aoncadis.org/home.htm">
+<div id="banner"></div> 
+</a>
 <!-- end of acadis banner wrapper -->
 <h1 id="title"><spring:message code="global.title"/></h1>
 <form id="FORM" action="/rosetta/upload" method="POST" enctype="multipart/form-data">
@@ -70,7 +71,7 @@
         <%@include file="/WEB-INF/views/jspf/publish.jspf" %>
     </div>
 
-    <%@include file="/WEB-INF/views/jspf/footer.jspf" %>
+    <%@include file="/WEB-INF/views/jspf/footerAcadis.jspf" %>
 </form>
 </body>
 </html>
