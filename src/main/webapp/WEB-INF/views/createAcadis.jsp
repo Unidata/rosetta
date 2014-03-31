@@ -20,7 +20,9 @@
     </script>
 </head>
 <body>
-<div id="banner"></div> <!-- end of acadis banner wrapper -->
+<a href="https://www.aoncadis.org/home.htm"  id="banner"></a>
+<!-- div id="banner"></div --> 
+<!-- end of acadis banner wrapper -->
 <h1 id="title"><spring:message code="global.title"/></h1>
 <form id="FORM" action="/rosetta/upload" method="POST" enctype="multipart/form-data">
 

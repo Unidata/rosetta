@@ -47,7 +47,7 @@ More Information
 ++++++++++++++++
 
 Rosetta: A white paper on the challenges of sharing observational datasets
-(`pdf <http://www.unidata.ucar.edu/software/pzhta/files/rosetta_whitepaper.pdf>`_)
+(`pdf <_static/whitepapers/2013/rosetta_whitepaper.pdf>`_)
 
 AMS 2013 Presentation on Rosetta\:
 
