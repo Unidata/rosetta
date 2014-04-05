@@ -37,3 +37,9 @@ Thumbs.db
 # class files        #
 ######################
 *.class
+
+##################
+# Coverity files #
+##################
+cov-int
+rosetta.tgz
