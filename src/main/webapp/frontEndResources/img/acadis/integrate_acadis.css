@@ -6,33 +6,30 @@
     top: 0px;
     left: 0px;
     z-index: -99;
-    border-bottom: 2px solid rgb(26, 76, 121);
+    border-bottom: 2px solid rgb(247, 247, 247);
 
     overflow:hidden;
     text-indent:100%;
     white-space:nowrap;
 
-    background: url("banner.png") no-repeat #143465;
+    background: url("banner.png") no-repeat #F7F7F7;
     background-size: 100%;
     background-position: 0 -25px;
     background-repeat: repeat-x;
 }
-	
+
 h1#title {
     margin: 20px 0px 0px 0px;
     padding-bottom: 20px;
     color: #f2f2f2;
     text-shadow: 3px 2px 4px #444;
     filter: drop-shadow(color=#444, offx-3, offy=2);
-    /*
-    background: url('acadis-service-logo.png') no-repeat;
-    */
-    background: url('acadis-service-logo_no-reflect.png') no-repeat;
-    background-size: 110px;
-    background-position: 150px 0px;
-    min-width: 160px;
-}
 
-.jw-title {
-color: rgb(26, 76, 121);
+    background: url('acadis-service-logo.png') no-repeat;
+    /*
+    background: url('acadis-service-logo_no-reflect.png') no-repeat;
+    */
+    background-size: 110px;
+    background-position: 650px 0px
+    min-width: 160px;
 }

@@ -20,11 +20,11 @@
     </script>
 </head>
 <body>
-<a href="https://www.aoncadis.org/home.htm">
+<a href="https://www.aoncadis.org/home.htm" style="text-decoration: none">
 <div id="banner"></div> 
 </a>
 <!-- end of acadis banner wrapper -->
-<h1 id="title"><spring:message code="global.title"/></h1>
+<a href="https://www.aoncadis.org/home.htm" style="text-decoration: none"><h1 id="title"><spring:message code="global.acadis.title"/></h1></a>
 <form id="FORM" action="/rosetta/upload" method="POST" enctype="multipart/form-data">
 
     <div id="step0" title="Please choose a file to convert">
