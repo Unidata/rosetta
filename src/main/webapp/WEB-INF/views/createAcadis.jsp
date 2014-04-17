@@ -17,14 +17,19 @@
 
         // incoming dataset id in json format
         var data = eval('('+'${dataJson}'+')');
+
+    </script>
+    <script type="text/javascript">
+        if (navigator.appName === "Microsoft Internet Explore") {
+            alert("Rosetta is not supported on Internet Explorer.");
+        }
     </script>
 </head>
 <body>
-<a href="https://www.aoncadis.org/home.htm" style="text-decoration: none">
-<div id="banner"></div> 
-</a>
-<!-- end of acadis banner wrapper -->
-<a href="https://www.aoncadis.org/home.htm" style="text-decoration: none"><h1 id="title"><spring:message code="global.acadis.title"/></h1></a>
+<!-- acadis look and feel customization -->
+<div id="banner"></div>
+<a  href="https://www.aoncadis.org/home.htm" id="acadisLink" style="text-decoration: none"><h1 id="title">&nbsp;</h1></a>
+<!-- end of acadis look and feel customization -->
 <form id="FORM" action="/rosetta/upload" method="POST" enctype="multipart/form-data">
 
     <div id="step0" title="Please choose a file to convert">

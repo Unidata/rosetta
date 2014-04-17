@@ -18,18 +18,19 @@
     background-repeat: repeat-x;
 }
 
+
 h1#title {
-    margin: 20px 0px 0px 0px;
-    padding-bottom: 20px;
+    margin: -10px 0px 0px 0px;
+    padding-bottom: 40px;
     color: #f2f2f2;
     text-shadow: 3px 2px 4px #444;
     filter: drop-shadow(color=#444, offx-3, offy=2);
-
-    background: url('acadis-service-logo.png') no-repeat;
+    background: url('txt.png'), url('acadis-service-logo.png');
+    background-repeat: no-repeat, no-repeat;
+    background-size: 340px, 120px;
+    background-position: 0px 0px, 350px 15px;
+    min-width: 160px;
     /*
     background: url('acadis-service-logo_no-reflect.png') no-repeat;
     */
-    background-size: 110px;
-    background-position: 650px 0px
-    min-width: 160px;
 }
