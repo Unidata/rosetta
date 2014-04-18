@@ -563,10 +563,10 @@ function publish(stepType, stepData) {
                         pubMessage.append("<br><label class=\"error\">" + returnData + "</label>");
                     } else {
                         $("#publish").remove()
-                        if (pubName.toLowerCase().contains("ramadda")) {
+                        if (/ramadda/.test(pubName.toLowerCase())) {
                             var linkName = "View published data!";
                             pubMessage.append("<br><li><a href=\""  +  "http://motherlode.ucar.edu/repository/entry/show?entryid=" + returnData  +  "\">" + linkName  +  "</a></li>");
-                        } else if (pubName.toLowerCase().contains("cadis")) {
+                        } else if (/cadis/.test(pubName.toLowerCase())) {
                             var linkName = "Download link to published data!";
                             pubMessage.append("<br><li><a href=\"" + returnData  +  "\">" + linkName  +  "</a></li>");
                         }

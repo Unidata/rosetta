@@ -79,6 +79,14 @@ $(document).ready(function($) {
 
             // by using nextStepIndex, we can intercept the user when they are *about to start* on a particular step
             switch(ui.nextStepIndex) {
+                case 0:
+                    if (sessionStorage.hasOwnProperty("fileName")){
+                        $(".jw-button-next").removeClass("hideMe")
+                        $(".jw-button-finish").addClass("hideMe");
+                        $("#faux").remove();
+                        break
+                    }
+
                 case 1:
                     selectPlatform("repopulateStep", ui);
                     break;
@@ -138,13 +146,15 @@ $(document).ready(function($) {
     var dataFiles = [];
     for(var k in data) dataFiles.push(k);
     var numDataFiles = dataFiles.length;
-    for (var i = 0; i < numDataFiles; i++){
+    for (var i = 0; i < numDataFiles; i++) {
         var name = dataFiles[i];
-        var dlLink = data[name];
-        var inv =  name + " " + dlLink;
-        var optionElement=$("<option></option>")
-        optionElement.append(name);
-        fileSelector.append(optionElement);
+        if (!(/nc$/.test(name))){
+            var dlLink = data[name];
+            var inv = name + " " + dlLink;
+            var optionElement = $("<option></option>")
+            optionElement.append(name);
+            fileSelector.append(optionElement);
+        }
     }
 
     // add function to do post to createAcadis, set appropriate session storage stuff, and
@@ -162,9 +172,9 @@ $(document).ready(function($) {
                 // do stuff with returnData
                 var uniqueId = returnData;
                 addToSession("uniqueId", uniqueId);
-                if (fileName.contains(".xlsx")) {
+                if (/xlsx$/.test(fileName)) {
                     fileName = fileName.replace(".xlsx", ".csv");
-                } else if (fileName.contains(".xls")) {
+                } else if (/xls$/.test(fileName)) {
                     fileName = fileName.replace(".xls", ".csv");
                 };
                 addToSession("fileName", fileName);
@@ -178,7 +188,7 @@ $(document).ready(function($) {
     /**
      * STEP 1
      */
-    selectPlatform("stepFunctions", 0);
+    selectPlatform("stepFunctions", 1);
 
     /**
      * STEP 2 handled in SlickGrid/custom/headerLineSelection.js
@@ -206,5 +216,10 @@ $(document).ready(function($) {
     /**
      * STEP 7
      */
+    $("#publisherName").change(function () {
+        if (/cadis/.test(publisherName.value.toLowerCase())) {
+            $("#pubDest").attr('value',window.location.search.replace("?dataset=", ""));
+        }
+    });
     publish("stepFunctions", null);
 });

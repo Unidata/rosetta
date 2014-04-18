@@ -124,7 +124,7 @@ public class SingleStationTimeSeries implements NetcdfFileManager {
 
         if (coordVars.containsKey(coordVarType)) {
             if (coordVars.get(coordVarType).contains(sessionStorageKey)) {
-                name = coordVarType;
+                name = name;
                 shape = coordVarType;
             }
         }
@@ -573,12 +573,12 @@ public class SingleStationTimeSeries implements NetcdfFileManager {
 
         // check to se if we need to construct new dateTime variables
         HashMap<String, ArrayList<String>> timeRelatedVars = extractTimeRelatedVars(ncFileWriter, usedVarNames);
-
-        dateTimeBluePrint = new DateTimeBluePrint(timeRelatedVars, ncFileWriter);
-        if (!dateTimeBluePrint.isEmpty()) {
-            ncFileWriter = dateTimeBluePrint.createNewVars(ncFileWriter);
+        if (!hasRelTime) {
+            dateTimeBluePrint = new DateTimeBluePrint(timeRelatedVars, ncFileWriter);
+            if (!dateTimeBluePrint.isEmpty()) {
+                ncFileWriter = dateTimeBluePrint.createNewVars(ncFileWriter);
+            }
         }
-
         ncFileWriter.create();
 
         return ncFileWriter;
@@ -645,6 +645,7 @@ public class SingleStationTimeSeries implements NetcdfFileManager {
 
         } catch (Exception e) {
             logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
             return null;
         }
     }
