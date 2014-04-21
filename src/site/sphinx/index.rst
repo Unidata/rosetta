@@ -33,7 +33,7 @@ Architecture
 
 * `jQuery <http://jquery.com/>`_ and `Query UI <http://jqueryui.com/>`_ Javascript Library
 * `jWizard <https://github.com/dominicbarnes/jWizard>`_ (jQuery Plugin)
-* `SlickGrid <https://github.com/mleibman/SlickGrid/wik>`_ (jQuery Plugin)
+* `SlickGrid <https://github.com/mleibman/SlickGrid/wiki>`_ (jQuery Plugin)
 * `HTML5 <http://dev.w3.org/html5/spec/single-page.html>`_
 * Asynchronous `AJAX <http://api.jquery.com/category/ajax/>`_ communication with the back-end (JQuery)
 
@@ -41,7 +41,7 @@ Architecture
 
 * `Spring 3 MVC Framework <http://static.springsource.org/spring/docs/3.1.x/spring-framework-reference/html/mvc.html>`_
 * The Common Data Model (CDM) (`netCDF-Java <http://www.unidata.ucar.edu/software/netcdf-java/>`_)
-* `CF-1.6 Standard <http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html>`_
+* `CF-1.6 Standard <http://cf-convention.github.io>`_
 
 More Information
 ++++++++++++++++
