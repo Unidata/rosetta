@@ -183,7 +183,8 @@ public class AcadisGateway implements Publisher {
     }
 
     private void setGatewayProjectUrl(String parent) {
-        gatewayProjectUrl = "https://cadis.prototype.ucar.edu/dataset/" +  parent + "html";
+        //gatewayProjectUrl = "https://cadis.prototype.ucar.edu/dataset/" +  parent + "html";
+        gatewayProjectUrl = "https://www.aoncadis.org/dataset/" +  parent + "html";
     }
 
     public String getGatewayProjectUrl() {

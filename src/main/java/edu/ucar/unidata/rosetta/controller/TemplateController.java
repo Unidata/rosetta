@@ -456,18 +456,22 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/createAcadis", method = RequestMethod.GET)
     public ModelAndView createAcadis(@RequestParam(value = "dataset", required = false) String datasetId, Model model) {
         // https://cadis.prototype.ucar.edu/redirect.html?link=http%3a%2f%2frosetta.unidata.ucar.edu%2facadis%3fdataset%3def653b66-a09f-11e3-b343-00c0f03d5b7c
-        if (datasetId != null) {
-            AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(datasetId);
-            projectReader.read();
-            Map<String, String> inventory = projectReader.getInventory();
-            JSONObject jsonInventory = new JSONObject(inventory);
-            String jsonInventoryStr = jsonInventory.toJSONString();
-            for (String name : inventory.keySet()) {
-                String downloadUrl = inventory.get(name);
-                System.out.println("name: " + name + " access: " + downloadUrl);
-            }
-            model.addAttribute("dataJson", jsonInventoryStr);
+        if (datasetId == null) {
+            // Rosetta Sandbox ID
+            datasetId = "9e8e03d6-cb31-11e3-b6a5-00c0f03d5b7c";
         }
+
+        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(datasetId);
+        projectReader.read();
+        Map<String, String> inventory = projectReader.getInventory();
+        JSONObject jsonInventory = new JSONObject(inventory);
+        String jsonInventoryStr = jsonInventory.toJSONString();
+        for (String name : inventory.keySet()) {
+            String downloadUrl = inventory.get(name);
+            System.out.println("name: " + name + " access: " + downloadUrl);
+        }
+        model.addAttribute("dataJson", jsonInventoryStr);
+
         model.addAllAttributes(resourceManager.loadResources());
         return new ModelAndView("createAcadis");
     }

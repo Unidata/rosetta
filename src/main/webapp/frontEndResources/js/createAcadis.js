@@ -49,6 +49,8 @@ $(document).ready(function($) {
                 // using currentStepIndex, we can intercept the user when they are *done* with a particular step
                 switch(ui.currentStepIndex) {
                     case 0:
+                        // if user is getting data from sandbox, display message that
+                        // tells them that this is what they are doing.
                         $(".jw-button-next").removeClass("hideMe")
                         $(".jw-button-finish").addClass("hideMe");
                         $("#faux").remove();

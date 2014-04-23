@@ -6,6 +6,7 @@
   </publisher>
   <publisher>
     <pubName>ACADIS Gateway</pubName>
-    <pubUrl>cadis.prototype.ucar.edu</pubUrl>
+    <!--pubUrl>cadis.prototype.ucar.edu</pubUrl-->
+    <pubUrl>www.aoncadis.org</pubUrl>
   </publisher>
 </publishers>

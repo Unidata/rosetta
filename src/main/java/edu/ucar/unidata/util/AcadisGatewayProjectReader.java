@@ -24,7 +24,8 @@ import java.util.Map;
  */
 public class AcadisGatewayProjectReader {
 
-    private String server = "cadis.prototype.ucar.edu";
+    //private String server = "cadis.prototype.ucar.edu";
+    private String server = "www.aoncadis.org";
     private int port = 443;
     private String scheme = "https";
     protected static Logger logger = Logger.getLogger(AcadisGatewayProjectReader.class);
