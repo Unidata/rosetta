@@ -165,8 +165,13 @@ $(document).ready(function($) {
     // add function to do post to createAcadis, set appropriate session storage stuff, and
     // move along with the main createAcadis wizzard
     $("#getAcadisFile").bind("click", function() {
+        var acadisInv = getFromSession("acadisInventory");
         var inventory = JSON.parse(getFromSession("acadisInventory"));
         var fileName = $("#acadisFileSelector").val();
+        if (!(getFromSession("fileName") === fileName )){
+            sessionStorage.clear();
+            addToSession("acadisInventory", acadisInv);
+        }
         addToSession("fileName", fileName);
         var remoteAccessUrl = inventory[fileName];
         var postData = {"fileName" : fileName,
