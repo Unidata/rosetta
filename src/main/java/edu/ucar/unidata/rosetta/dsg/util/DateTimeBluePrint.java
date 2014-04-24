@@ -25,14 +25,17 @@ public class DateTimeBluePrint {
     private int numObs = -1;
     private long numTimeObs = -2;
     private long numDateObs = -3;
+    private long numFullDateTimeObs = -4;
     private Set<String> timeVarTypes;
-    private Boolean timeOnly = null;
-    private Boolean dateOnly = null;
-    private Boolean fullDateTime = null;
+    private Boolean timeOnly = false;
+    private Boolean dateOnly = false;
+    private Boolean fullDateTime = false;
     private Boolean isEmpty = false;
     private Boolean hasSingleDateAndTime = false;
     private Variable dateOnlyVar = null;
     private Variable timeOnlyVar = null;
+    private Variable fullDateTimeVar = null;
+    private Variable dateAndTimeVar = null;
     private Map<String, Dimension> dateTimeDims = new HashMap<>();
     private HashMap<String, ArrayList<String>> timeRelatedVars;
     private String isoFmt = "yyyy-MM-ddTHH:mm:ss.SSSZ";
@@ -49,26 +52,45 @@ public class DateTimeBluePrint {
     }
 
     public void initDateAndTimeArrays() throws IOException {
-        ArrayChar timeDataArray = (ArrayChar) timeOnlyVar.read();
-        ArrayChar dateDataArray = (ArrayChar) dateOnlyVar.read();
-        String dateFmt = dateOnlyVar.getUnitsString();
-        String timeFmt = timeOnlyVar.getUnitsString();
-        CalendarDateFormatter fmt = new CalendarDateFormatter(dateFmt+timeFmt);
-        String date, time, dateTimeStr;
-        CalendarDate dateTime;
-        if ((numTimeObs == numDateObs) & (checkLongToIntConversion(numTimeObs))) {
-            numObs = (int) numTimeObs;
-
-            dateTimeArray = new long[numObs];
-            dateTimeIsoString = new String[numObs];
-            Dimension isoStrLenDim = null;
-            for(int ob = 0; ob < (int) numDateObs; ob++) {
-                date = dateDataArray.getString(ob);
-                time = timeDataArray.getString(ob);
-                dateTimeStr = date + time;
-                dateTime = fmt.parse(dateTimeStr);
-                dateTimeArray[ob] = dateTime.getMillis() / 1000l; // make seconds instead of milliseconds
-                dateTimeIsoString[ob] = dateTime.toString();
+        if (timeOnly && dateOnly) {
+            ArrayChar timeDataArray = (ArrayChar) timeOnlyVar.read();
+            ArrayChar dateDataArray = (ArrayChar) dateOnlyVar.read();
+            String dateFmt = dateOnlyVar.getUnitsString();
+            String timeFmt = timeOnlyVar.getUnitsString();
+            CalendarDateFormatter fmt = new CalendarDateFormatter(dateFmt+timeFmt);
+            String date, time, dateTimeStr;
+            CalendarDate dateTime;
+            if ((numTimeObs == numDateObs) & (checkLongToIntConversion(numTimeObs))) {
+                numObs = (int) numTimeObs;
+                dateTimeArray = new long[numObs];
+                dateTimeIsoString = new String[numObs];
+                Dimension isoStrLenDim = null;
+                for(int ob = 0; ob < (int) numDateObs; ob++) {
+                    date = dateDataArray.getString(ob);
+                    time = timeDataArray.getString(ob);
+                    dateTimeStr = date + time;
+                    dateTime = fmt.parse(dateTimeStr);
+                    dateTimeArray[ob] = dateTime.getMillis() / 1000l; // make seconds instead of milliseconds
+                    dateTimeIsoString[ob] = dateTime.toString();
+                }
+            }
+        } else if (fullDateTime) {
+            ArrayChar fullDateTimeArray = (ArrayChar) fullDateTimeVar.read();
+            String dateFmt = fullDateTimeVar.getUnitsString();
+            CalendarDateFormatter fmt = new CalendarDateFormatter(dateFmt);
+            String date, time, dateTimeStr;
+            CalendarDate dateTime;
+            if (checkLongToIntConversion(numFullDateTimeObs)) {
+                numObs = (int) numFullDateTimeObs;
+                dateTimeArray = new long[numObs];
+                dateTimeIsoString = new String[numObs];
+                Dimension isoStrLenDim = null;
+                for(int ob = 0; ob < (int) numDateObs; ob++) {
+                    dateTimeStr = fullDateTimeArray.getString(ob);
+                    dateTime = fmt.parse(dateTimeStr);
+                    dateTimeArray[ob] = dateTime.getMillis() / 1000l; // make seconds instead of milliseconds
+                    dateTimeIsoString[ob] = dateTime.toString();
+                }
             }
         }
     }
@@ -86,16 +108,27 @@ public class DateTimeBluePrint {
     public NetcdfFileWriter createNewVars(NetcdfFileWriter ncFileWriter) throws IOException {
         // create new variables and dimensions
         if( (ncFileWriter.isDefineMode()) & (hasSingleDateAndTime)) {
-            ArrayList<String> timeOnlyVarNames = timeRelatedVars.get("timeOnly");
-            ArrayList<String> dateOnlyVarNames = timeRelatedVars.get("dateOnly");
-            timeOnlyVar = ncFileWriter.findVariable(timeOnlyVarNames.get(0));
-            dateOnlyVar = ncFileWriter.findVariable(dateOnlyVarNames.get(0));
-            numTimeObs = timeOnlyVar.getShape(0);
-            numDateObs = dateOnlyVar.getShape(0);
+            if (timeOnly && dateOnly) {
+                ArrayList<String> timeOnlyVarNames = timeRelatedVars.get("timeOnly");
+                ArrayList<String> dateOnlyVarNames = timeRelatedVars.get("dateOnly");
+                timeOnlyVar = ncFileWriter.findVariable(timeOnlyVarNames.get(0));
+                dateOnlyVar = ncFileWriter.findVariable(dateOnlyVarNames.get(0));
+                numTimeObs = timeOnlyVar.getShape(0);
+                numDateObs = dateOnlyVar.getShape(0);
 
-            if ((numTimeObs == numDateObs) & checkLongToIntConversion(numObs)) {
-                numObs = (int) numTimeObs;
+                if ((numTimeObs == numDateObs) & checkLongToIntConversion(numObs)) {
+                    numObs = (int) numTimeObs;
+                }
+            } else if (fullDateTime) {
+                ArrayList<String> fullDateTimeVarNames = timeRelatedVars.get("fullDateTime");
+                fullDateTimeVar = ncFileWriter.findVariable(fullDateTimeVarNames.get(0));
+                numFullDateTimeObs = fullDateTimeVar.getShape(0);
+                if (checkLongToIntConversion(numFullDateTimeObs)) {
+                    numObs = (int) numFullDateTimeObs;
+                }
+            }
 
+            if (numObs > 0) {
                 List<Dimension> dtDims = new ArrayList<>();
                 // todo is there a better way to get the dateTime dimension???
                 Dimension dtDim = ncFileWriter.renameDimension(null, dateTimeVarName, dateTimeVarName);
@@ -109,6 +142,7 @@ public class DateTimeBluePrint {
                 ncFileWriter.addVariableAttribute(theVar2, new Attribute("comment", "Created by Rosetta"));
             }
         }
+
         return ncFileWriter;
     }
 
@@ -151,14 +185,33 @@ public class DateTimeBluePrint {
             timeOnly = timeVarTypes.contains("timeOnly");
             dateOnly = timeVarTypes.contains("dateOnly");
             fullDateTime = timeVarTypes.contains("fullDateTime");
-            ArrayList<String> timeOnlyVarNames = timeRelatedVars.get("timeOnly");
-            ArrayList<String> dateOnlyVarNames = timeRelatedVars.get("dateOnly");
-            int numTimeOnlyVars = timeOnlyVarNames.size();
-            int numDateOnlyVars = dateOnlyVarNames.size();
+            int numTimeOnlyVars = 0;
+            int numDateOnlyVars = 0;
+            int numFullDateTime = 0;
+
+            if (timeRelatedVars.containsKey("timeOnly")) {
+                ArrayList<String> timeOnlyVarNames = timeRelatedVars.get("timeOnly");
+                numTimeOnlyVars = timeOnlyVarNames.size();
+            }
+            if (timeRelatedVars.containsKey("dateOnly")) {
+                ArrayList<String> dateOnlyVarNames = timeRelatedVars.get("dateOnly");
+                numDateOnlyVars = dateOnlyVarNames.size();
+            }
+            if (timeRelatedVars.containsKey("fullDateTime")) {
+                ArrayList<String> fullDateVarNames = timeRelatedVars.get("fullDateTime");
+                numFullDateTime = fullDateVarNames.size();
+            }
             // right now, this only works if there is only one date and one time variable
             // and if date and time are separated into two variables, so assert that this
             // is true (i.e. only works for single station time series)
-            if ((timeOnly && dateOnly) && ((numTimeOnlyVars == 1) && (numDateOnlyVars == 1))) {
+            Boolean sepDateTime = ((timeOnly && dateOnly) && (numTimeOnlyVars == 1) && (numDateOnlyVars == 1));
+            Boolean singleDateTime = (fullDateTime && numFullDateTime == 1);
+            hasSingleDateAndTime = false;
+            if (sepDateTime && singleDateTime) {
+                hasSingleDateAndTime = false;
+            } else if (sepDateTime) {
+                hasSingleDateAndTime = true;
+            } else if (singleDateTime) {
                 hasSingleDateAndTime = true;
             }
         }

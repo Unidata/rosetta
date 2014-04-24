@@ -4,3 +4,5 @@
     <select name='fileToConvert' id='acadisFileSelector'></select>
 </div>
 <input type="button" value="Convert Selected File" id="getAcadisFile" />
+<label id="sandboxMessage" class="error"></label>
+

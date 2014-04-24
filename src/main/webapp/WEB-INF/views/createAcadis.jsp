@@ -17,7 +17,14 @@
 
         // incoming dataset id in json format
         var data = eval('('+'${dataJson}'+')');
-
+        var sandBoxMessage = "";
+        if (data.hasOwnProperty("ExampleBoreholeDataset.xls")) {
+            $("#sandbox").empty();
+            sandboxMessage = ["You are currently evaluating Rosetta in Sandbox mode. If you wish ",
+                "to use Rosetta on files from your own project, please login to the ACADIS Gateway, ",
+                "visit your project and the appropriate dataset, navigate to the 'Contribute Metadata' interface,  ",
+                "and follow the 'Rosetta Data Translation Tool' link."].join("\n");
+        }
     </script>
     <script type="text/javascript">
         if (navigator.appName === "Microsoft Internet Explore") {

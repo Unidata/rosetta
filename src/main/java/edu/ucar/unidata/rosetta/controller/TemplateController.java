@@ -468,7 +468,6 @@ public class TemplateController implements HandlerExceptionResolver {
         String jsonInventoryStr = jsonInventory.toJSONString();
         for (String name : inventory.keySet()) {
             String downloadUrl = inventory.get(name);
-            System.out.println("name: " + name + " access: " + downloadUrl);
         }
         model.addAttribute("dataJson", jsonInventoryStr);
 

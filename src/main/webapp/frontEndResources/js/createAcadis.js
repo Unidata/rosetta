@@ -158,6 +158,9 @@ $(document).ready(function($) {
             fileSelector.append(optionElement);
         }
     }
+    if (!(sandboxMessage === "")) {
+        $("#sandboxMessage").append(sandboxMessage);
+    }
 
     // add function to do post to createAcadis, set appropriate session storage stuff, and
     // move along with the main createAcadis wizzard
