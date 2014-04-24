@@ -216,7 +216,7 @@ public class SingleStationTimeSeries implements NetcdfFileManager {
         if (!name.equals("altitude")) {
             ncFileWriter.addVariableAttribute(theVar, new Attribute("long_name", name));
         } else {
-            ncFileWriter.addVariableAttribute(theVar, new Attribute("long_name", "height above mean seal-level"));
+            ncFileWriter.addVariableAttribute(theVar, new Attribute("long_name", "height above mean sea-level"));
             ncFileWriter.addVariableAttribute(theVar, new Attribute("positive", "up"));
             ncFileWriter.addVariableAttribute(theVar, new Attribute("axis", "Z"));
         }
