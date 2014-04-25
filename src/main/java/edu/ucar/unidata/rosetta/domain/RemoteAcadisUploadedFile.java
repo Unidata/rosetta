@@ -9,6 +9,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -22,6 +26,8 @@ public class RemoteAcadisUploadedFile {
     private String fileName = null;
     private String uniqueId = null;
     private String remoteAccessUrl = null;
+    private String templateName = null;
+    private String templateAccessUrl = null;
 
     /*
     * Returns the remote access URL of the datafile on the
@@ -80,35 +86,60 @@ public class RemoteAcadisUploadedFile {
         this.uniqueId = uniqueId;
     }
 
+    public String getTemplateAccessUrl() {
+        return templateAccessUrl;
+    }
+
+    public void setTemplateAccessUrl(String templateAccessUrl) {
+        this.templateAccessUrl = templateAccessUrl;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
+
     public Boolean retrieveFile(String outputFilePath) {
         Boolean success = false;
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         CloseableHttpClient httpClient = httpClientBuilder.build();
 
-        String fullOutputFilePath = FilenameUtils.concat(outputFilePath, this.getFileName());
-        try {
-            HttpGet httpGet = new HttpGet(this.getRemoteAccessUrl());
-            HttpResponse response = httpClient.execute(httpGet);
-            HttpEntity entity = response.getEntity();
-            BufferedInputStream bis = new BufferedInputStream(entity.getContent());
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(fullOutputFilePath)));
-            int inByte;
-            while((inByte = bis.read()) != -1) {
-                bos.write(inByte);
-            }
-            bis.close();
-            bos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        Map<String,String> fileNames = new HashMap<>();
+        fileNames.put(this.getFileName(), this.getRemoteAccessUrl());
+        if (this.getTemplateName() != null) {
+            fileNames.put(this.getTemplateName(), this.getTemplateAccessUrl());
         }
+        for (Map.Entry<String, String> entry : fileNames.entrySet()) {
+            String fileToGet = entry.getKey();
+            String accessUrl = entry.getValue();
+            String fullOutputFilePath = FilenameUtils.concat(outputFilePath, fileToGet);
+            try {
+                HttpGet httpGet = new HttpGet(accessUrl);
+                HttpResponse response = httpClient.execute(httpGet);
+                HttpEntity entity = response.getEntity();
+                BufferedInputStream bis = new BufferedInputStream(entity.getContent());
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(fullOutputFilePath)));
+                int inByte;
+                while ((inByte = bis.read()) != -1) {
+                    bos.write(inByte);
+                }
+                bis.close();
+                bos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        String fileToCheck = fullOutputFilePath;
-        if (new File(fileToCheck).exists()) {
-            success = true;
+            String fileToCheck = fullOutputFilePath;
+            if (new File(fileToCheck).exists()) {
+                success = true;
+            }
         }
         return success;
     }

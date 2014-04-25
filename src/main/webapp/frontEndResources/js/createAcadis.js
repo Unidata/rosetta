@@ -51,9 +51,9 @@ $(document).ready(function($) {
                     case 0:
                         // if user is getting data from sandbox, display message that
                         // tells them that this is what they are doing.
-                        $(".jw-button-next").removeClass("hideMe")
-                        $(".jw-button-finish").addClass("hideMe");
-                        $("#faux").remove();
+                        //$(".jw-button-next").removeClass("hideMe")
+                        //$(".jw-button-finish").addClass("hideMe");
+                        //$("#faux").remove();
                         break
                     case 1:
                         selectPlatform("stepValidation", ui);
@@ -136,6 +136,7 @@ $(document).ready(function($) {
      */
     $w.ready(function() {
         $(".jw-button-next").prop("disabled", true).addClass("disabled");
+        $("#restoreFromTemplate").attr('checked','checked');
     });
 
     /**
@@ -150,7 +151,8 @@ $(document).ready(function($) {
     var numDataFiles = dataFiles.length;
     for (var i = 0; i < numDataFiles; i++) {
         var name = dataFiles[i];
-        if (!(/nc$/.test(name))){
+        var addThisName = !((/nc$/.test(name)) || (/template$/.test(name)));
+        if (addThisName){
             var dlLink = data[name];
             var inv = name + " " + dlLink;
             var optionElement = $("<option></option>")
@@ -168,18 +170,32 @@ $(document).ready(function($) {
         var acadisInv = getFromSession("acadisInventory");
         var inventory = JSON.parse(getFromSession("acadisInventory"));
         var fileName = $("#acadisFileSelector").val();
+
         if (!(getFromSession("fileName") === fileName )){
             sessionStorage.clear();
             addToSession("acadisInventory", acadisInv);
         }
         addToSession("fileName", fileName);
         var remoteAccessUrl = inventory[fileName];
+
         var postData = {"fileName" : fileName,
             "remoteAccessUrl" : remoteAccessUrl}
 
+        if ($("#restoreFromTemplate").is(':checked')) {
+            for (fn in inventory) {
+                var breakStringIndex = fileName.lastIndexOf(".");
+                if (fn.indexOf(fileName.substring(0, breakStringIndex)) > -1) {
+                    if (/template$/.test(fn)) {
+                        postData["templateName"] = fn;
+                        postData["templateAccessUrl"] = inventory[fn];
+                    }
+                }
+            }
+        }
+
+
         $.post("createAcadis", postData,
             function(returnData) {
-                // do stuff with returnData
                 var uniqueId = returnData;
                 addToSession("uniqueId", uniqueId);
                 if (/xlsx$/.test(fileName)) {
@@ -188,6 +204,25 @@ $(document).ready(function($) {
                     fileName = fileName.replace(".xls", ".csv");
                 };
                 addToSession("fileName", fileName);
+
+
+                console.log(uniqueId);
+                if ($("#restoreFromTemplate").is(':checked') && (postData.hasOwnProperty("templateName"))) {
+                    var sessionData = getAllDataInSession();
+                    postData["uniqueId"] = getFromSession("uniqueId");
+                    console.log(postData)
+                    $.post("restoreFromGateway",
+                        postData,
+                        function (data) {
+                            console.warn(data);
+                            var restoredSessionStorage = JSON.parse(data);
+                            for (var item in restoredSessionStorage) {
+                                addToSession(item, restoredSessionStorage[item]);
+                            }
+                        },
+                        "text");
+                }
+
                 //var newUrl = $(location).attr("origin") + "/rosetta/createAcadis"
                 //$(location).attr('href',newUrl);
                 $(".jw-button-next").prop("disabled", false).removeClass("disabled");
@@ -226,10 +261,17 @@ $(document).ready(function($) {
     /**
      * STEP 7
      */
+    //if (!(sandboxPublishMessage === undefined)) {
+    if (!(sandboxPublishMessage === "")) {
+        $("#sandboxPublishMessage").append(sandboxPublishMessage);
+        $("#publishForm").hide();
+    }
+    //}
     $("#publisherName").change(function () {
         if (/cadis/.test(publisherName.value.toLowerCase())) {
             $("#pubDest").attr('value',window.location.search.replace("?dataset=", ""));
         }
     });
+    $("#publisherName").trigger("change");
     publish("stepFunctions", null);
 });

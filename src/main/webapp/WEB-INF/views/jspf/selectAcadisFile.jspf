@@ -3,6 +3,10 @@
 <div id="inventory">
     <select name='fileToConvert' id='acadisFileSelector'></select>
 </div>
+<BR>
+Restore metadata from template (if avaliable)<input type="checkbox" id="restoreFromTemplate"/>
+<BR>
 <input type="button" value="Convert Selected File" id="getAcadisFile" />
+<BR>
 <label id="sandboxMessage" class="error"></label>
 

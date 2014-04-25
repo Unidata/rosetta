@@ -261,8 +261,6 @@ public class TemplateController implements HandlerExceptionResolver {
         return jsonStrSessionStorage;
     }
 
-
-
     /**
      * Accepts a POST request to to initiate a quick save (download a temp save template)
      *
@@ -450,6 +448,7 @@ public class TemplateController implements HandlerExceptionResolver {
             logger.error("A file upload error has occurred: " + e.getMessage());
             return null;
         }
+
         return remoteFile.getUniqueId();
     }
 
@@ -473,6 +472,34 @@ public class TemplateController implements HandlerExceptionResolver {
 
         model.addAllAttributes(resourceManager.loadResources());
         return new ModelAndView("createAcadis");
+    }
+
+    @RequestMapping(value = "/restoreFromGateway", method = RequestMethod.POST)
+    @ResponseBody
+    public String restoreTemplateFromgFateway(RemoteAcadisUploadedFile remoteFile, HttpServletRequest request) {
+
+        String jsonStrSessionStorage = null;
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        String filePath = FilenameUtils.concat(tmpDir, remoteFile.getUniqueId());
+        filePath = FilenameUtils.concat(filePath, remoteFile.getTemplateName());
+        InputStream inStream = null;
+        jsonStrSessionStorage = "";
+        String line;
+        try {
+            inStream = new FileInputStream(filePath);
+            BufferedReader buffReader = new BufferedReader(
+                    new InputStreamReader(inStream));
+            while ((line = buffReader.readLine()) != null) {
+                jsonStrSessionStorage = jsonStrSessionStorage + line;
+            }
+            buffReader.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return jsonStrSessionStorage;
     }
 
     /**

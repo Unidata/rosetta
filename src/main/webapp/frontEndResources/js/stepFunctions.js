@@ -24,6 +24,8 @@ function selectPlatform(stepType, stepData) {
             if (getFromSession("cfType")) {
                 $("#faux").remove();
                 $(".jw-button-next").removeClass("hideMe");
+                $('input:radio[name="cfType"][value="' + getFromSession("cfType") + '"]')
+                    .attr('checked', 'checked');
             }
         }
     } else if (stepType == "stepFunctions") {
@@ -31,7 +33,8 @@ function selectPlatform(stepType, stepData) {
         $(inputName).bind("click", function() {
             addToSession("cfType", $(this).val());
             // Show 'Next' button after user makes a selection
-            $(".jw-button-next").removeAttr("disabled").removeClass("disabled");
+            $("#faux").remove()
+            $(".jw-button-next").removeAttr("disabled").removeClass("disabled").removeClass("hideMe");
         });
     }
 }
@@ -208,10 +211,10 @@ function specifyHeaderLines(stepType, stepData) {
         // (e.g., clicked previous or used the menu to navigate)
         // Don't hide the 'Next' button
         if ((stepData.type == "previous") || (stepData.type == "next")) {
-            //if (getFromSession("headerLineNumbers")) {
+            if (getFromSession("headerLineNumbers")) {
                 $("#faux").remove();
                 $(".jw-button-next").removeClass("hideMe");
-            //}
+            }
         }
     } else if (stepType == "stepFunctions") {
         /**
@@ -434,6 +437,9 @@ function specifyPlatformMetadata(stepType, stepData) {
             var itemInSession = getItemEntered("platformMetadata", name);
             if (itemInSession != null) {
                 $("select[name=\"" + name + "\"]").val(itemInSession);
+            } else {
+                var metadataString = buildStringForSession("platformMetadata", name, $("select[name=\"" + name + "\"]").val());
+                addToSession("platformMetadata", metadataString);
             }
         }
 
@@ -474,6 +480,18 @@ function specifyPlatformMetadata(stepType, stepData) {
                 // add to the session
                 var metadataString = buildStringForSession("platformMetadata", $(this).attr("name"), $(this).attr("value"));
                 addToSession("platformMetadata", metadataString);
+            }
+            // see if we can expose the next button
+            if (getItemEntered("platformMetadata", "altitudeUnits") != null ) {
+                if (getItemEntered("platformMetadata", "latitudeUnits") != null ) {
+                    if (getItemEntered("platformMetadata", "longitudeUnits") != null ) {
+                        moveAlongSelect = true
+                        if (moveAlongInput) {
+                            $("#faux").remove();
+                            $(".jw-button-next").removeClass("hideMe");
+                        }
+                    }
+                }
             }
         });
 

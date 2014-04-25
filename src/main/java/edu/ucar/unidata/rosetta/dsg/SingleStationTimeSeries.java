@@ -48,6 +48,13 @@ public class SingleStationTimeSeries implements NetcdfFileManager {
 
     private void init(AsciiFile file) {
         // get and set the various metadata maps
+        variableNameMap = null;
+        variableMetadataMap = null;
+        platformMetadataMap = null;
+        generalMetadataMap = null;
+        usedVarNames = new ArrayList<String>();
+        allVarNames = new ArrayList<String>();
+
         variableNameMap = file.getVariableNameMap();
         variableMetadataMap = file.getVariableMetadataMap();
         platformMetadataMap = file.getPlatformMetadataMap();
@@ -628,9 +635,10 @@ public class SingleStationTimeSeries implements NetcdfFileManager {
             ncFileWriter = writeRosettaInfo(ncFileWriter, file.getJsonStrSessionStorage());
             // must write user data before any new dateTime variables!
             ncFileWriter = writeUserVarData(parseFileData, ncFileWriter);
-
-            if (!dateTimeBluePrint.isEmpty()) {
-                ncFileWriter = dateTimeBluePrint.writeNewVariables(ncFileWriter);
+            if (dateTimeBluePrint != null) {
+                if (!dateTimeBluePrint.isEmpty()) {
+                    ncFileWriter = dateTimeBluePrint.writeNewVariables(ncFileWriter);
+                }
             }
 
             ncFileWriter.close();
