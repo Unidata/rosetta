@@ -1,0 +1,14 @@
+.doxHideMe {
+    display : none;
+    visibility: hidden;
+}
+
+div.contents {
+    margin-bottom: 10px;
+    padding: 12px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 960px;
+    background-color: white;
+    border-radius: 8px;
+}

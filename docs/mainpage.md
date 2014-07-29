@@ -1,8 +1,3 @@
-<div class=doxHideMe>
-<img src="http://www.unidata.ucar.edu/images2/logos/rosetta-150x150.png">
-</div>
-
-
 Overview
 --------
 

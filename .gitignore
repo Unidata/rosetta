@@ -6,6 +6,7 @@ build.properties
 docs/javadoc
 docs/jsdoc
 docs/site
+docs/dox
 
 #############
 # IDE files #

@@ -59,19 +59,6 @@
            External Repositories and Dependencies
          =========================================================== -->
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>oss.sonatype.org</id>
-            <url>https://oss.sonatype.org/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-
     <repositories>
         <repository>
             <id>unidata</id>
@@ -115,11 +102,6 @@
         <maven-compiler-plugin.version>3.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.15</maven-surefire-plugin.version>
         <maven-war-plugin.version>2.2</maven-war-plugin.version>
-        <maven-project-info-reports-plugin.version>2.7</maven-project-info-reports-plugin.version>
-        <maven-site-plugin.version>3.3</maven-site-plugin.version>
-        <sphinx-maven-plugin.version>1.0.2</sphinx-maven-plugin.version>
-        <jsdoc3-maven-plugin.version>1.0.7</jsdoc3-maven-plugin.version>
-        <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
 
         <!-- dir to bundled libs -->
         <webapp.libs.dir>${basedir}/src/main/webapp/WEB-INF/lib</webapp.libs.dir>
@@ -161,6 +143,7 @@
             <artifactId>httpclient</artifactId>
             <version>${httpcomponents.version}</version>
         </dependency>
+
         <!-- java server pages standard tag lib -->
         <dependency>
             <groupId>jstl</groupId>
@@ -229,6 +212,7 @@
             <version>${jexcelapi.version}</version>
         </dependency>
 
+        <!-- netCDF-Java (CDM) -->
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf</artifactId>
@@ -280,99 +264,7 @@
             <version>${selenium.version}</version>
         </dependency>
 
-        <!--JSDoc3  dependencies -->
-        <dependency>
-            <groupId>com.github.phasebash</groupId>
-            <artifactId>jsdoc3-maven-plugin</artifactId>
-            <version>${jsdoc3-maven-plugin.version}</version>
-        </dependency>
     </dependencies>
-
-    <!-- ===========================================================
-           Profiles
-         =========================================================== -->
-    <profiles>
-        <profile>
-            <id>maven-3</id>
-            <activation>
-                <file>
-                    <exists>${basedir}</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc-plugin.version}</version>
-                        <configuration>
-                            <reportOutputDirectory>${basedir}/docs</reportOutputDirectory>
-                            <destDir>javadoc</destDir>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>build-javadocs</id>
-                                <phase>site</phase>
-                                <goals>
-                                    <goal>aggregate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.phasebash</groupId>
-                        <artifactId>jsdoc3-maven-plugin</artifactId>
-                        <version>${jsdoc3-maven-plugin.version}</version>
-                        <configuration>
-                            <recursive>false</recursive>
-                            <directoryRoots>
-                                <directoryRoot>${basedir}/src/main/webapp/frontEndResources/js</directoryRoot>
-                            </directoryRoots>
-                            <sourceFiles>
-                                <sourceFile>${basedir}/src/site/jsDoc3/README.md</sourceFile>
-                            </sourceFiles>
-                            <outputDirectory>${basedir}/docs/jsdoc</outputDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>jsdoc3</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-site-plugin</artifactId>
-                        <version>${maven-site-plugin.version}</version>
-                        <configuration>
-                            <reportPlugins>
-                                <plugin>
-                                    <groupId>org.apache.maven.plugins</groupId>
-                                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                                    <version>${maven-project-info-reports-plugin.version}</version>
-                                    <reportSets>
-                                        <reportSet>
-                                            <reports></reports>
-                                        </reportSet>
-                                    </reportSets>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.tomdz.maven</groupId>
-                                    <artifactId>sphinx-maven-plugin</artifactId>
-                                    <version>${sphinx-maven-plugin.version}</version>
-                                    <configuration>
-                                        <sourceDirectory>${basedir}/src/site/sphinx</sourceDirectory>
-                                        <outputDirectory>${basedir}/docs/site</outputDirectory>
-                                    </configuration>
-                                </plugin>
-                            </reportPlugins>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <!-- ===========================================================
            Build
