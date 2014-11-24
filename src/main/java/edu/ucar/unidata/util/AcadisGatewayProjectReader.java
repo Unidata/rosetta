@@ -111,13 +111,20 @@ public class AcadisGatewayProjectReader {
         inventory = new HashMap<>();
         String name, downloadUrl;
         for (String line: wgetText.split("\n")) {
-            if (line.startsWith("wget")) {
+            if (line.contains("logicalFileId")) {
                 String[] lineArray = line.split(" ");
                 int numParts = lineArray.length;
-                name = lineArray[numParts - 2];
-                name = name.replaceAll("'", "");
-                downloadUrl = lineArray[numParts - 1];
-                downloadUrl = downloadUrl.replaceAll("'", "");
+                if (numParts == 4) {
+                    name = lineArray[0];
+                    downloadUrl = lineArray[1];
+                    name = name.replaceAll("'", "");
+                    downloadUrl = downloadUrl.replaceAll("'", "");
+                } else {
+                    logger.error("Cannot find name...check that format of wget script from the gateway hasn't changed!");
+                    name="NO DATA FOUND";
+                    downloadUrl="None";
+                }
+
                 inventory.put(name, downloadUrl);
             }
         }
