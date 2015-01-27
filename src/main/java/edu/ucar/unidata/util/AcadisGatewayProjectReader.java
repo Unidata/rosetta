@@ -106,15 +106,17 @@ public class AcadisGatewayProjectReader {
 
     }
 
-
     private void createInventory() {
         inventory = new HashMap<>();
+        String version = "";
         String name, downloadUrl;
         for (String line: wgetText.split("\n")) {
-            if (line.contains("logicalFileId")) {
+            if (line.contains("version=")) {
+                version = line.split("=")[1];
+            } else if (line.contains("logicalFileId")) {
                 String[] lineArray = line.split(" ");
                 int numParts = lineArray.length;
-                if (numParts == 4) {
+                if (version.equals("0.4.4") && (numParts == 4)) {
                     name = lineArray[0];
                     downloadUrl = lineArray[1];
                     name = name.replaceAll("'", "");
@@ -149,11 +151,13 @@ public class AcadisGatewayProjectReader {
     }
 
     private String getDatasetShortName(URI datasetUri) {
-        String datasetPath = datasetUri.getPath();
-        int dsShortNameStart = datasetPath.lastIndexOf("/") + 1;
-        int dsShortNameEnd = datasetPath.lastIndexOf(".html");
-        String datasetShortName = datasetPath.substring(dsShortNameStart, dsShortNameEnd);
-
+        String datasetShortName = "NO DATASET FOUND";
+        if (datasetUri != null) {
+            String datasetPath = datasetUri.getPath();
+            int dsShortNameStart = datasetPath.lastIndexOf("/") + 1;
+            int dsShortNameEnd = datasetPath.lastIndexOf(".html");
+            datasetShortName = datasetPath.substring(dsShortNameStart, dsShortNameEnd);
+        }
         return datasetShortName;
     }
 
@@ -220,6 +224,9 @@ public class AcadisGatewayProjectReader {
                 createInventory();
                 successful = true;
 
+            } else {
+                inventory = new HashMap<>();
+                inventory.put("NO DATASETS FOUND", "NO URL");
             }
         } catch (Exception exc) {
             logger.debug(exc.getMessage());
@@ -232,8 +239,8 @@ public class AcadisGatewayProjectReader {
 
     public static void main(String [] args) throws IOException, URISyntaxException {
         // ef653b66-a09f-11e3-b343-00c0f03d5b7c
-        String datasetId = "ef653b66-a09f-11e3-b343-00c0f03d5b7c";
-
+        //String datasetId = "0fd0b40d-cca6-11e3-b6a5-00c0f03d5b7c";
+        String datasetId = "9e8e03d6-cb31-11e3-b6a5-00c0f03d5b7c";
         AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(datasetId);
         projectReader.read();
         Map<String, String> inventory = projectReader.getInventory();

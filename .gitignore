@@ -22,6 +22,7 @@ ide/intellij/
 #
 .classpath
 .project
+.settings
 
 ######################
 # OS generated files #
