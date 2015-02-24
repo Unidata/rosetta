@@ -3,8 +3,6 @@ package edu.ucar.unidata.rosetta.publishers;
 import org.apache.log4j.Logger;
 import org.ramadda.repository.client.RepositoryClient;
 
-import java.net.URISyntaxException;
-
 /**
  * Created by lesserwhirls on 2/14/14.
  */
@@ -54,10 +52,7 @@ public class UnidataRamadda implements Publisher {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            return successful;
         }
-
-
+        return successful;
     }
 }

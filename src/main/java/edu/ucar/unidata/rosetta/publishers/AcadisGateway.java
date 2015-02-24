@@ -218,12 +218,12 @@ public class AcadisGateway implements Publisher {
             }
         } catch (Exception exc) {
             logger.debug(exc.getMessage());
-        } finally {
-            if (successful) {
-                setGatewayDownloadUrl();
-                setGatewayProjectUrl(parent);
-            }
-            return successful;
+        } 
+        
+        if (successful) {
+            setGatewayDownloadUrl();
+            setGatewayProjectUrl(parent);
         }
+        return successful;        
     }
 }

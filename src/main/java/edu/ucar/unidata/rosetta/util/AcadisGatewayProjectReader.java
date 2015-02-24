@@ -230,10 +230,8 @@ public class AcadisGatewayProjectReader {
             }
         } catch (Exception exc) {
             logger.debug(exc.getMessage());
-        } finally {
-
-            return successful;
         }
+        return successful;
     }
 
 

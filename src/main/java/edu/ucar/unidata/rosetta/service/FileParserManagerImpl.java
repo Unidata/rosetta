@@ -52,8 +52,7 @@ public class FileParserManagerImpl implements FileParserManager {
     public String parseByLine(String filePath) {
         StringBuffer stringBuffer = new StringBuffer();
         String currentLine; 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             while ((currentLine = reader.readLine()) != null) {
                 stringBuffer.append(currentLine + "\n");     
             }
@@ -84,8 +83,7 @@ public class FileParserManagerImpl implements FileParserManager {
         StringBuffer stringBuffer = new StringBuffer();      
         int lineCount = 0;
         String currentLine; 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             while ((currentLine = reader.readLine()) != null) {
                 // If a header line we don't have to deal with the delimiter
                 if (headerLineList.contains(new Integer(lineCount).toString())) {

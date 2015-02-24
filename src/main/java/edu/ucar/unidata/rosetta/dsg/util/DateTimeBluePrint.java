@@ -20,7 +20,6 @@ public class DateTimeBluePrint {
     private String dateTimeVarStrName = "dateTimeStr";
     private String dateTimeVarName = "dateTime";
     private long dateTimeArray[] = null;
-    private Dimension isoStrLen = null;
     private String dateTimeIsoString[];
     private int numObs = -1;
     private long numTimeObs = -2;
@@ -35,8 +34,6 @@ public class DateTimeBluePrint {
     private Variable dateOnlyVar = null;
     private Variable timeOnlyVar = null;
     private Variable fullDateTimeVar = null;
-    private Variable dateAndTimeVar = null;
-    private Map<String, Dimension> dateTimeDims = new HashMap<>();
     private HashMap<String, ArrayList<String>> timeRelatedVars;
     private String isoFmt = "yyyy-MM-ddTHH:mm:ss.SSSZ";
 
@@ -64,7 +61,6 @@ public class DateTimeBluePrint {
                 numObs = (int) numTimeObs;
                 dateTimeArray = new long[numObs];
                 dateTimeIsoString = new String[numObs];
-                Dimension isoStrLenDim = null;
                 for(int ob = 0; ob < (int) numDateObs; ob++) {
                     date = dateDataArray.getString(ob);
                     time = timeDataArray.getString(ob);
@@ -78,13 +74,12 @@ public class DateTimeBluePrint {
             ArrayChar fullDateTimeArray = (ArrayChar) fullDateTimeVar.read();
             String dateFmt = fullDateTimeVar.getUnitsString();
             CalendarDateFormatter fmt = new CalendarDateFormatter(dateFmt);
-            String date, time, dateTimeStr;
+            String dateTimeStr;
             CalendarDate dateTime;
             if (checkLongToIntConversion(numFullDateTimeObs)) {
                 numObs = (int) numFullDateTimeObs;
                 dateTimeArray = new long[numObs];
                 dateTimeIsoString = new String[numObs];
-                Dimension isoStrLenDim = null;
                 for(int ob = 0; ob < (int) numDateObs; ob++) {
                     dateTimeStr = fullDateTimeArray.getString(ob);
                     dateTime = fmt.parse(dateTimeStr);

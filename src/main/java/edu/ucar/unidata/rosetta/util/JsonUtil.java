@@ -43,7 +43,6 @@ public class JsonUtil {
         return json;
     }
     public void writeJsonStrToFile(String jsonStr) {
-        JSONParser jsonParser = new JSONParser();
         JSONObject json = this.strToJson(jsonStr);
         this.writeJsonToFile(json);
     }

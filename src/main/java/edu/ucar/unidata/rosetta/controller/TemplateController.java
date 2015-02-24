@@ -1,18 +1,23 @@
 package edu.ucar.unidata.rosetta.controller;
 
-import edu.ucar.unidata.rosetta.converters.xlsToCsv;
-import edu.ucar.unidata.rosetta.domain.AsciiFile;
-import edu.ucar.unidata.rosetta.domain.PublisherInfo;
-import edu.ucar.unidata.rosetta.domain.RemoteAcadisUploadedFile;
-import edu.ucar.unidata.rosetta.domain.UploadedFile;
-import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
-import edu.ucar.unidata.rosetta.publishers.AcadisGateway;
-import edu.ucar.unidata.rosetta.publishers.UnidataRamadda;
-import edu.ucar.unidata.rosetta.service.*;
-import edu.ucar.unidata.rosetta.util.AcadisGatewayProjectReader;
-import edu.ucar.unidata.rosetta.util.JsonUtil;
-import edu.ucar.unidata.rosetta.util.RosettaProperties;
-import edu.ucar.unidata.rosetta.util.ZipFileUtil;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -26,18 +31,30 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import edu.ucar.unidata.rosetta.converters.xlsToCsv;
+import edu.ucar.unidata.rosetta.domain.AsciiFile;
+import edu.ucar.unidata.rosetta.domain.PublisherInfo;
+import edu.ucar.unidata.rosetta.domain.RemoteAcadisUploadedFile;
+import edu.ucar.unidata.rosetta.domain.UploadedFile;
+import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
+import edu.ucar.unidata.rosetta.publishers.AcadisGateway;
+import edu.ucar.unidata.rosetta.publishers.UnidataRamadda;
+import edu.ucar.unidata.rosetta.service.FileParserManager;
+import edu.ucar.unidata.rosetta.service.FileValidator;
+import edu.ucar.unidata.rosetta.service.ResourceManager;
+import edu.ucar.unidata.rosetta.util.AcadisGatewayProjectReader;
+import edu.ucar.unidata.rosetta.util.JsonUtil;
+import edu.ucar.unidata.rosetta.util.RosettaProperties;
+import edu.ucar.unidata.rosetta.util.ZipFileUtil;
 
 /**
  * Main controller for Rosetta application.
@@ -61,6 +78,12 @@ public class TemplateController implements HandlerExceptionResolver {
         return downloadDir;
     }
 
+    private String getUploadDir() {
+        String uploadDir = "";
+        uploadDir = RosettaProperties.getUploadDir();
+        return uploadDir;
+    }
+    
     /**
      * Accepts a GET request for template creation, fetches resource information
      * from file system and inject that data into the Model to be used in the View.
@@ -102,16 +125,23 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public String processUpload(UploadedFile file, HttpServletRequest request) {
-        FileOutputStream outputStream = null;
+        //FileOutputStream outputStream = null;
         String uniqueId = createUniqueId(request);
-        String filePath = FilenameUtils.concat(System.getProperty("java.io.tmpdir"), uniqueId);
+        String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
         try {
             File localFileDir = new File(filePath);
-            if (!localFileDir.exists()) localFileDir.mkdir();
-            outputStream = new FileOutputStream(new File(FilenameUtils.concat(filePath, file.getFileName())));
-            outputStream.write(file.getFile().getFileItem().get());
-            outputStream.flush();
-            outputStream.close();
+            if (!localFileDir.exists()) {
+                localFileDir.mkdirs();
+            }
+            File uploadedFile = new File(FilenameUtils.concat(filePath, file.getFileName()));
+            try (FileOutputStream outputStream = new FileOutputStream(uploadedFile)) {
+                outputStream.write(file.getFile().getFileItem().get());
+                outputStream.flush();
+                outputStream.close();
+            } catch (Exception exc) {
+                logger.error("error while saving uploaded file to disk.");
+                return null;
+            }
             if ((file.getFileName().contains(".xls")) || (file.getFileName().contains(".xlsx"))) {
                 String xlsFilePath = FilenameUtils.concat(filePath, file.getFileName());
                 xlsToCsv.convert(xlsFilePath, null);
@@ -142,8 +172,7 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/parse", method = RequestMethod.POST)
     @ResponseBody
     public String parseFile(AsciiFile file, BindingResult result) {
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        String filePath = FilenameUtils.concat(tmpDir, file.getUniqueId());
+        String filePath = FilenameUtils.concat(getUploadDir(), file.getUniqueId());
         filePath = FilenameUtils.concat(filePath,file.getFileName());
 
 
@@ -179,11 +208,10 @@ public class TemplateController implements HandlerExceptionResolver {
                     List<List<String>> parseFileData = fileParserManager.getParsedFileData();
 
                     // Create the NCML file using the file data
-                    String catalinaBase = System.getProperty("catalina.base");
                     String downloadDir = FilenameUtils.concat(getDownloadDir(),
                             file.getUniqueId());
 
-                    //crete JSON file that holds sessionStorage information
+                    //create JSON file that holds sessionStorage information
                     Boolean isQuickSave = false;
                     String userFile = file.getFileName();
                     String jsonFileName = getTemplateFileName(userFile, isQuickSave);
@@ -235,8 +263,7 @@ public class TemplateController implements HandlerExceptionResolver {
     @ResponseBody
     public String processZip(UploadedFile file) {
         String jsonStrSessionStorage = null;
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        String filePath = FilenameUtils.concat(tmpDir, file.getUniqueId());
+        String filePath = FilenameUtils.concat(getUploadDir(), file.getUniqueId());
         filePath = FilenameUtils.concat(filePath, file.getFileName());
         if (filePath.endsWith(".zip")) {
             ZipFileUtil restoreZip = new ZipFileUtil(filePath);
@@ -427,9 +454,7 @@ public class TemplateController implements HandlerExceptionResolver {
     public String processRemoteAcadisUploadedFile(RemoteAcadisUploadedFile remoteFile, HttpServletRequest request) {
         String uniqueId = createUniqueId(request);
         remoteFile.setUniqueId(uniqueId);
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        //tmpDir = getDownloadDir();
-        String filePath = FilenameUtils.concat(tmpDir, uniqueId);
+        String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
 
         try {
             File localFileDir = new File(filePath);
@@ -467,9 +492,6 @@ public class TemplateController implements HandlerExceptionResolver {
         Map<String, String> inventory = projectReader.getInventory();
         JSONObject jsonInventory = new JSONObject(inventory);
         String jsonInventoryStr = jsonInventory.toJSONString();
-        for (String name : inventory.keySet()) {
-            String downloadUrl = inventory.get(name);
-        }
         model.addAttribute("dataJson", jsonInventoryStr);
 
         model.addAllAttributes(resourceManager.loadResources());
@@ -481,8 +503,7 @@ public class TemplateController implements HandlerExceptionResolver {
     public String restoreTemplateFromgFateway(RemoteAcadisUploadedFile remoteFile, HttpServletRequest request) {
 
         String jsonStrSessionStorage = null;
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        String filePath = FilenameUtils.concat(tmpDir, remoteFile.getUniqueId());
+        String filePath = FilenameUtils.concat(getUploadDir(), remoteFile.getUniqueId());
         filePath = FilenameUtils.concat(filePath, remoteFile.getTemplateName());
         InputStream inStream = null;
         jsonStrSessionStorage = "";

@@ -2,8 +2,10 @@ package edu.ucar.unidata.rosetta.dsg;
 
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import edu.ucar.unidata.rosetta.dsg.util.DateTimeBluePrint;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+
 import ucar.ma2.*;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
@@ -36,7 +38,7 @@ public class SingleStationTimeSeries implements NetcdfFileManager {
     private List<String> allVarNames = new ArrayList<String>();
 
 
-    private ArrayList buildTimeTriggers;
+    private ArrayList<String> buildTimeTriggers;
 
     private String shapeAttr;
     private String coordAttr;
@@ -69,7 +71,7 @@ public class SingleStationTimeSeries implements NetcdfFileManager {
         // anything special to handle this).
         //
         String[] specialTimeNames = {"fullDateTime", "dateOnly", "timeOnly"};
-        buildTimeTriggers = new ArrayList();
+        buildTimeTriggers = new ArrayList<String>();
         buildTimeTriggers.addAll(Arrays.asList(specialTimeNames));
         cfType = file.getCfType();
         nameCounts = new HashMap<String, Integer>();

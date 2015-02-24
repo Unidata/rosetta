@@ -2,22 +2,12 @@ package edu.ucar.unidata.rosetta.service;
 
 import org.ramadda.repository.client.RepositoryClient;
 
-import java.util.List;
-import java.util.Map;
-
 public class RamaddaPublisher {
 
     private static ResourceManagerImpl resourceManager = new ResourceManagerImpl();
 
-    private Map resources;
-
-    private  Map getResources() {
-        System.out.println("hi");
-        return resources;
-    }
-
     private void setResources() {
-        resources = resourceManager.loadResources();
+        resourceManager.loadResources();
     }
 
     public static void main(String args[]) {
@@ -42,7 +32,7 @@ public class RamaddaPublisher {
                 System.err.println("Invalid session:" + msg[0]);
             }
         } catch (Exception e)  {
-            String fail = "fail";
+            e.printStackTrace();
         }
     }
 }

@@ -104,8 +104,7 @@ public class FileValidator implements Validator  {
         int delimiterRunningTotal = 0;
         boolean dataLine = false;
         String currentLine; 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             while ((currentLine = reader.readLine()) != null) {
                 // If NOT a header line
                 if (!headerLineList.contains(new Integer(lineCount).toString())) {
