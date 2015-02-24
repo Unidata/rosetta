@@ -15,7 +15,6 @@
     <title>Rosetta</title>
   </head>
   <body>
-  <p>
   <table>
     <tr>
       <td>
@@ -40,11 +39,10 @@
         <i>
         Version : <%=ServerInfoBean.getVersion()%>
         <br>
-        Build Date: <%=ServerInfoBean.getBuildDate()%> </i>
+        Build Date: <%=ServerInfoBean.getBuildDate()%>
         </i>
       </td>
     </tr>
   </table>
-  </p>
   </body>
 </html>

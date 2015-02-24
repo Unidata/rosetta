@@ -1,4 +1,4 @@
-package edu.ucar.unidata.util;
+package edu.ucar.unidata.rosetta.util;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;

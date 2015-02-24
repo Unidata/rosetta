@@ -80,8 +80,8 @@
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
 
         <!-- Dependency versions -->
-        <spring.version>3.2.1.RELEASE</spring.version>
-        <spring.security.version>3.2.0.RELEASE</spring.security.version>
+        <spring.version>4.1.5.RELEASE</spring.version>
+        <spring.security.version>3.2.5.RELEASE</spring.security.version>
         <junit.version>4.11</junit.version>
         <jdk.version>1.7</jdk.version>
         <cdm.version>4.3.20</cdm.version>

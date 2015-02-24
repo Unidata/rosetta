@@ -1,4 +1,4 @@
-package edu.ucar.unidata.util;
+package edu.ucar.unidata.rosetta.util;
 
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;

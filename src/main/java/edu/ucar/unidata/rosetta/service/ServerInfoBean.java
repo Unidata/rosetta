@@ -7,32 +7,27 @@ import javax.servlet.ServletContext;
 
 import org.springframework.web.context.ServletContextAware;
 
-public class ServerInfoBean implements ServletContextAware  {
+public class ServerInfoBean implements ServletContextAware {
     /**
-     * Bean containing Server Information, including info from the MANIFEST file.
+     * Bean containing Server Information, including info from the MANIFEST
+     * file.
      */
     private static class ServerInfo {
-        private String version = null;
-        private String buildDate = null;
+        private String version = "local development";
+        private String buildDate = "development";
         private ServletContext servletContext = null;
 
         private void init() {
             String name = "/META-INF/MANIFEST.MF";
+            
             Properties props = new Properties();
             try {
                 props.load(servletContext.getResourceAsStream(name));
                 this.version = (String) props.get("Implementation-Version");
                 this.buildDate = (String) props.get("Built-On");
-
-                if (this.version == null) {
-                    this.version = "localDevel";
-                }
-
-                if (this.buildDate == null) {
-                    this.buildDate = "localDevel";
-                }
-
+                System.out.println("Initilizing Rosetta version " + this.version + " built on " + this.buildDate);
             } catch (IOException e) {
+                // not running from war file, so cannot get from /META-INF
                 e.printStackTrace();
             }
         }
@@ -42,39 +37,39 @@ public class ServerInfoBean implements ServletContextAware  {
             this.init();
         }
 
-        private void setServletContext(ServletContext servletContext){
+        private void setServletContext(ServletContext servletContext) {
             this.servletContext = servletContext;
         }
 
-        public String getVersion(){
+        public String getVersion() {
             return this.version;
         }
 
-        public String getBuildDate(){
+        public String getBuildDate() {
             return this.buildDate;
         }
 
     }
 
-    public ServerInfoBean() {}
+    public ServerInfoBean() {
+    }
 
     private static ServerInfo serverInfo;
     private ServletContext servletContext = null;
 
     public void init() {
-      serverInfo = new ServerInfo(this.servletContext);
+        serverInfo = new ServerInfo(this.servletContext);
     }
 
-    public void setServletContext(ServletContext servletContext){
+    public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 
     public static String getVersion() {
-        return serverInfo.getVersion();
+        return serverInfo.getVersion();            
     }
 
     public static String getBuildDate() {
         return serverInfo.getBuildDate();
     }
-
 }

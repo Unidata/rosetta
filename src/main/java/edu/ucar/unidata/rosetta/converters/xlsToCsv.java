@@ -31,7 +31,7 @@
  * WITH THE ACCESS, USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package edu.ucar.unidata.converters;
+package edu.ucar.unidata.rosetta.converters;
 
 
 import jxl.*;

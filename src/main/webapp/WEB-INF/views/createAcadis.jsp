@@ -41,7 +41,7 @@
 <body>
 <!-- acadis look and feel customization -->
 <div id="banner"></div>
-<a  href="https://www.aoncadis.org/home.htm" id="acadisLink" style="text-decoration: none"><h1 id="title">&nbsp;</h1></a>
+<h1 id="title"><a  href="https://www.aoncadis.org/home.htm" id="acadisLink" style="text-decoration: none">&nbsp;</a></h1>
 <!-- end of acadis look and feel customization -->
 <form id="FORM" action="/rosetta/upload" method="POST" enctype="multipart/form-data">
 
