@@ -2,6 +2,10 @@
 <img src="http://www.unidata.ucar.edu/images2/logos/rosetta-150x150.png">
 </div>
 
+<a href="https://scan.coverity.com/projects/1593">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/1593/badge.svg"/>
+</a>
 
 Overview
 --------
