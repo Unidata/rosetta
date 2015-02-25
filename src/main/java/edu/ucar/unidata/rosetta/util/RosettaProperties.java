@@ -1,6 +1,5 @@
 package edu.ucar.unidata.rosetta.util;
 
-
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
@@ -12,31 +11,34 @@ public class RosettaProperties {
 
     private static String defaultConfigFileName = "defaultRosettaConfig.properties";
     private static String configFileName = "rosettaConfig.properties";
-    private static String ROSETTA_HOME = System.getProperty("rosetta.content.root.path", "../content");
+    private static String ROSETTA_HOME = System.getProperty(
+            "rosetta.content.root.path", "../content");
 
-    public static String getDownloadDir(){
+    public static String getDownloadDir() {
         Properties props = getRosettaProps();
         String downloadDirProp = props.getProperty("downloadDir");
-        File downloadDir = new File(FilenameUtils.concat(getDefaultRosettaHome(), downloadDirProp));
+        File downloadDir = new File(FilenameUtils.concat(
+                getDefaultRosettaHome(), downloadDirProp));
         if (!downloadDir.exists()) {
             downloadDir.mkdirs();
         }
-        
+
         return downloadDir.getAbsolutePath();
     }
 
-    public static String getUploadDir(){
+    public static String getUploadDir() {
         Properties props = getRosettaProps();
         String uploadDirProp = props.getProperty("uploadDir");
-        File uploadDir = new File(FilenameUtils.concat(getDefaultRosettaHome(), uploadDirProp));
+        File uploadDir = new File(FilenameUtils.concat(getDefaultRosettaHome(),
+                uploadDirProp));
         if (!uploadDir.exists()) {
             uploadDir.mkdirs();
-        }       
+        }
         return uploadDir.getAbsolutePath();
     }
-    
+
     // only private methods below here
-    
+
     private static String getDefaultRosettaHome() {
         return ROSETTA_HOME;
     }
@@ -50,66 +52,72 @@ public class RosettaProperties {
         }
         return config;
     }
-    
+
     private static String getDefaultConfigFile() {
-        String config = FilenameUtils.concat(getDefaultRosettaHome(), defaultConfigFileName);
+        String config = FilenameUtils.concat(getDefaultRosettaHome(),
+                defaultConfigFileName);
         File configFile = new File(config);
         if (!configFile.exists()) {
-           System.out.println("creating defautl config");
-           createDefaultConfigFile(); 
+            System.out.println("creating defautl config");
+            createDefaultConfigFile();
         }
         return config;
     }
 
-    //private static String getDefaultDownloadDir() {
-    //    String downloadDir = getRosettaProps().getProperty("downloadDir");
-    //    String defaultDownloadDir = FilenameUtils.concat(getDefaultRosettaHome(), downloadDir);
-    //    return defaultDownloadDir;
-    //}
-    
+    // private static String getDefaultDownloadDir() {
+    // String downloadDir = getRosettaProps().getProperty("downloadDir");
+    // String defaultDownloadDir = FilenameUtils.concat(getDefaultRosettaHome(),
+    // downloadDir);
+    // return defaultDownloadDir;
+    // }
+
     private static Properties getRosettaProps() {
         String configFile = getConfigFile();
 
         Properties prop = new Properties();
-        try {
-            //load a properties file
-            prop.load(new FileInputStream(configFile));
+        try (FileInputStream configFileIS = new FileInputStream(configFile)) {
+            // load a properties file
+            prop.load(configFileIS);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return prop;
 
     }
-    
+
     private static void createDefaultConfigFile() {
-        String defaultDownloadDir = FilenameUtils.concat(getDefaultRosettaHome(), "downloads");
-        String defaultUploadDir = FilenameUtils.concat(getDefaultRosettaHome(), "uploads");
-        
+        String defaultDownloadDir = FilenameUtils.concat(
+                getDefaultRosettaHome(), "downloads");
+        String defaultUploadDir = FilenameUtils.concat(getDefaultRosettaHome(),
+                "uploads");
+
         Properties prop = new Properties();
-        //set the properties value
+        // set the properties value
         prop.setProperty("downloadDir", defaultDownloadDir);
         prop.setProperty("uploadDir", defaultUploadDir);
-        
-        List<String> configNames = Arrays.asList(defaultConfigFileName, configFileName);
+
+        List<String> configNames = Arrays.asList(defaultConfigFileName,
+                configFileName);
 
         File defaultRosettaConfigLoc = new File(getDefaultRosettaHome());
 
-        if (!defaultRosettaConfigLoc.exists()){
+        if (!defaultRosettaConfigLoc.exists()) {
             defaultRosettaConfigLoc.mkdirs();
         }
-        
+
         for (String configName : configNames) {
-            
-            String defaultRosettaConfigFile = FilenameUtils.concat(getDefaultRosettaHome(), configName);
-    
-            try {
-                 //save properties to project root folder
-                prop.store(new FileOutputStream(defaultRosettaConfigFile), null);
+
+            String rosettaConfigFile = FilenameUtils.concat(
+                    getDefaultRosettaHome(), configName);
+
+            try (FileOutputStream configFileOS = new FileOutputStream(
+                    rosettaConfigFile)) {
+                // save properties to project root folder
+                prop.store(configFileOS, null);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
     }
- 
 
 }

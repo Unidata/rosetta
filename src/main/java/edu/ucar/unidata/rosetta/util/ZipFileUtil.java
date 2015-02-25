@@ -15,7 +15,7 @@ public class ZipFileUtil {
     private String name;
 
     public ZipFileUtil(String zipFileName) {
-        this.setName(zipFileName.replace("file://",""));
+        this.setName(zipFileName.replace("file://", ""));
     }
 
     public String getName() {
@@ -31,10 +31,11 @@ public class ZipFileUtil {
         byte[] buffer = new byte[1024];
         int bytesRead;
 
-        //Create input and output streams
+        // Create input and output streams
         try {
 
-            ZipOutputStream outStream = new ZipOutputStream(new FileOutputStream(this.getName()));
+            ZipOutputStream outStream = new ZipOutputStream(
+                    new FileOutputStream(this.getName()));
 
             for (String inputFile : filesToAdd) {
                 inStream = new FileInputStream(inputFile);
@@ -47,7 +48,7 @@ public class ZipFileUtil {
                     outStream.write(buffer, 0, bytesRead);
                 }
 
-                //Close zip entry and file streams
+                // Close zip entry and file streams
                 outStream.closeEntry();
                 inStream.close();
             }
@@ -64,15 +65,18 @@ public class ZipFileUtil {
         String data = "";
         String line;
         try (ZipFile zf = new ZipFile(this.getName())) {
-            //ZipEntry fileInZip = zf.getEntry(topLevelZipDir + "/" + fileName);
+            // ZipEntry fileInZip = zf.getEntry(topLevelZipDir + "/" +
+            // fileName);
             ZipEntry fileInZip = zf.getEntry(fileName);
-            InputStream inStream = zf.getInputStream(fileInZip);
-            BufferedReader buffReader = new BufferedReader(
-                    new InputStreamReader(inStream));
-            while ((line = buffReader.readLine()) != null) {
-                data = data + line;
+            if (fileInZip != null) {
+                InputStream inStream = zf.getInputStream(fileInZip);
+                BufferedReader buffReader = new BufferedReader(
+                        new InputStreamReader(inStream));
+                while ((line = buffReader.readLine()) != null) {
+                    data = data + line;
+                }
+                buffReader.close();
             }
-            buffReader.close();
 
         } catch (IOException e) {
             e.printStackTrace();
