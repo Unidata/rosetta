@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -83,14 +84,17 @@ public class TemplateController implements HandlerExceptionResolver {
         uploadDir = RosettaProperties.getUploadDir();
         return uploadDir;
     }
-    
+
     /**
      * Accepts a GET request for template creation, fetches resource information
-     * from file system and inject that data into the Model to be used in the View.
-     * Returns the view that walks the user through the steps of template creation.
+     * from file system and inject that data into the Model to be used in the
+     * View. Returns the view that walks the user through the steps of template
+     * creation.
      *
-     * @param model The Model object to be populated by Resources.
-     * @return The 'create' ModelAndView containing the Resource-populated Model.
+     * @param model
+     *            The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated
+     *         Model.
      */
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView createTemplate(Model model) {
@@ -99,12 +103,15 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     /**
-     * Accepts a GET request for template restoration, fetches resource information
-     * from file system and inject that data into the Model to be used in the View.
-     * Returns the view that walks the user through the steps of template creation.
+     * Accepts a GET request for template restoration, fetches resource
+     * information from file system and inject that data into the Model to be
+     * used in the View. Returns the view that walks the user through the steps
+     * of template creation.
      *
-     * @param model The Model object to be populated by Resources.
-     * @return The 'create' ModelAndView containing the Resource-populated Model.
+     * @param model
+     *            The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated
+     *         Model.
      */
     @RequestMapping(value = "/restore", method = RequestMethod.GET)
     public ModelAndView restoreTemplate(Model model) {
@@ -113,19 +120,23 @@ public class TemplateController implements HandlerExceptionResolver {
         return new ModelAndView("restore");
     }
 
-
     /**
-     * Accepts a POST request for an uploaded file, stores that file to disk and,
-     * returns the local (unique, alphanumeric) file name of the uploaded ASCII file.
+     * Accepts a POST request for an uploaded file, stores that file to disk
+     * and, returns the local (unique, alphanumeric) file name of the uploaded
+     * ASCII file.
      *
-     * @param file    The UploadedFile form backing object containing the file.
-     * @param request The HttpServletRequest with which to glean the client IP address.
-     * @return A String of the local file name for the ASCII file (or null for an error).
+     * @param file
+     *            The UploadedFile form backing object containing the file.
+     * @param request
+     *            The HttpServletRequest with which to glean the client IP
+     *            address.
+     * @return A String of the local file name for the ASCII file (or null for
+     *         an error).
      */
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public String processUpload(UploadedFile file, HttpServletRequest request) {
-        //FileOutputStream outputStream = null;
+        // FileOutputStream outputStream = null;
         String uniqueId = createUniqueId(request);
         String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
         try {
@@ -133,8 +144,10 @@ public class TemplateController implements HandlerExceptionResolver {
             if (!localFileDir.exists()) {
                 localFileDir.mkdirs();
             }
-            File uploadedFile = new File(FilenameUtils.concat(filePath, file.getFileName()));
-            try (FileOutputStream outputStream = new FileOutputStream(uploadedFile)) {
+            File uploadedFile = new File(FilenameUtils.concat(filePath,
+                    file.getFileName()));
+            try (FileOutputStream outputStream = new FileOutputStream(
+                    uploadedFile)) {
                 outputStream.write(file.getFile().getFileItem().get());
                 outputStream.flush();
                 outputStream.close();
@@ -142,8 +155,10 @@ public class TemplateController implements HandlerExceptionResolver {
                 logger.error("error while saving uploaded file to disk.");
                 return null;
             }
-            if ((file.getFileName().contains(".xls")) || (file.getFileName().contains(".xlsx"))) {
-                String xlsFilePath = FilenameUtils.concat(filePath, file.getFileName());
+            if ((file.getFileName().contains(".xls"))
+                    || (file.getFileName().contains(".xlsx"))) {
+                String xlsFilePath = FilenameUtils.concat(filePath,
+                        file.getFileName());
                 xlsToCsv.convert(xlsFilePath, null);
                 String csvFilePath = null;
                 if (xlsFilePath.contains(".xlsx")) {
@@ -160,90 +175,103 @@ public class TemplateController implements HandlerExceptionResolver {
         return uniqueId;
     }
 
-
     /**
-     * Accepts a POST request Parse the uploaded file.  The methods gets called at various
-     * times and the file data is parsed according the data it contains.
+     * Accepts a POST request Parse the uploaded file. The methods gets called
+     * at various times and the file data is parsed according the data it
+     * contains.
      *
-     * @param file   The AsciiFile form backing object.
-     * @param result The BindingResult object for errors.
+     * @param file
+     *            The AsciiFile form backing object.
+     * @param result
+     *            The BindingResult object for errors.
      * @return A String of the local file name for the ASCII file.
      */
     @RequestMapping(value = "/parse", method = RequestMethod.POST)
     @ResponseBody
     public String parseFile(AsciiFile file, BindingResult result) {
-        String filePath = FilenameUtils.concat(getUploadDir(), file.getUniqueId());
-        filePath = FilenameUtils.concat(filePath,file.getFileName());
-
+        String filePath = FilenameUtils.concat(getUploadDir(),
+                file.getUniqueId());
+        filePath = FilenameUtils.concat(filePath, file.getFileName());
 
         // SCENARIO 1: no header lines yet
         if (file.getHeaderLineList().isEmpty()) {
             return fileParserManager.parseByLine(filePath);
         } else {
-            // SCENARIO 2: header lines and delimiters available 
+            // SCENARIO 2: header lines and delimiters available
             if (!file.getDelimiterList().isEmpty()) {
                 List<String> delimiterList = file.getDelimiterList();
                 String selectedDelimiter = delimiterList.get(0);
                 /**
-                 // Time for some validation
-                 fileValidator.validateList(delimiterList, result);
-                 fileValidator.validateList(file.getHeaderLineList(), result);
-                 fileValidator.validateDelimiterCount(filePath, file, result);
-
-                 if (result.hasErrors()) {
-                 List<ObjectError> validationErrors = result.getAllErrors();
-                 Iterator<ObjectError> iterator = validationErrors.iterator();
-                 while (iterator.hasNext()) {
-                 logger.error("Validation Error: " + iterator.next().toString());
-                 }
-                 return null;
-
-                 } else {
+                 * // Time for some validation
+                 * fileValidator.validateList(delimiterList, result);
+                 * fileValidator.validateList(file.getHeaderLineList(), result);
+                 * fileValidator.validateDelimiterCount(filePath, file, result);
+                 * 
+                 * if (result.hasErrors()) { List<ObjectError> validationErrors
+                 * = result.getAllErrors(); Iterator<ObjectError> iterator =
+                 * validationErrors.iterator(); while (iterator.hasNext()) {
+                 * logger.error("Validation Error: " +
+                 * iterator.next().toString()); } return null;
+                 * 
+                 * } else {
                  **/
-                String normalizedFileData = fileParserManager.normalizeDelimiters(filePath, selectedDelimiter, delimiterList, file.getHeaderLineList());
+                String normalizedFileData = fileParserManager
+                        .normalizeDelimiters(filePath, selectedDelimiter,
+                                delimiterList, file.getHeaderLineList());
                 if (file.getVariableNameMap().isEmpty()) {
-                    return selectedDelimiter + "\n" + normalizedFileData;
+                    return StringEscapeUtils.escapeHtml4(selectedDelimiter
+                            + "\n" + normalizedFileData);
                 } else {
                     // SCENARIO 3: we have variable data!
-                    List<List<String>> parseFileData = fileParserManager.getParsedFileData();
+                    List<List<String>> parseFileData = fileParserManager
+                            .getParsedFileData();
 
                     // Create the NCML file using the file data
                     String downloadDir = FilenameUtils.concat(getDownloadDir(),
                             file.getUniqueId());
 
-                    //create JSON file that holds sessionStorage information
+                    // create JSON file that holds sessionStorage information
                     Boolean isQuickSave = false;
                     String userFile = file.getFileName();
-                    String jsonFileName = getTemplateFileName(userFile, isQuickSave);
+                    String jsonFileName = getTemplateFileName(userFile,
+                            isQuickSave);
 
-                    String jsonOut = FilenameUtils.concat(downloadDir,FilenameUtils.getFullPath(file.getFileName()));
+                    String jsonOut = FilenameUtils.concat(downloadDir,
+                            FilenameUtils.getFullPath(file.getFileName()));
                     jsonOut = FilenameUtils.concat(jsonOut, jsonFileName);
                     JsonUtil jsonUtil = new JsonUtil(jsonOut);
-                    JSONObject jsonObj = jsonUtil.strToJson(file.getJsonStrSessionStorage());
+                    JSONObject jsonObj = jsonUtil.strToJson(file
+                            .getJsonStrSessionStorage());
                     jsonObj.remove("uniqueId");
                     jsonObj.remove("fileName");
                     jsonUtil.writeJsonToFile(jsonObj);
 
                     // zip JSON and NcML files
-                    //String zipFileName = FilenameUtils.concat(downloadDir, "rosetta.zip");
-                    //ZipFileUtil transactionZip = new ZipFileUtil(zipFileName);
-                    //String[] sourceFiles = {jsonOut};
-                    //transactionZip.addAllToZip(sourceFiles);
-                    //                    String netcdfFile = null;
+                    // String zipFileName = FilenameUtils.concat(downloadDir,
+                    // "rosetta.zip");
+                    // ZipFileUtil transactionZip = new
+                    // ZipFileUtil(zipFileName);
+                    // String[] sourceFiles = {jsonOut};
+                    // transactionZip.addAllToZip(sourceFiles);
+                    // String netcdfFile = null;
 
                     String netcdfFile = null;
                     try {
-                        netcdfFile = netcdfFileManager.createNetcdfFile(file, parseFileData, downloadDir);
+                        netcdfFile = netcdfFileManager.createNetcdfFile(file,
+                                parseFileData, downloadDir);
 
                     } catch (IOException e) {
-                        System.err.println("Caught IOException: " + e.getMessage());
+                        System.err.println("Caught IOException: "
+                                + e.getMessage());
                         return netcdfFile;
                     }
 
-                    String fileOut = FilenameUtils.concat(downloadDir, FilenameUtils.removeExtension(file.getFileName()) + ".nc");
+                    String fileOut = FilenameUtils.concat(downloadDir,
+                            FilenameUtils.removeExtension(file.getFileName())
+                                    + ".nc");
 
-                    return fileOut.replaceAll(downloadDir + "/", "") + "\n" +
-                            jsonOut.replaceAll(downloadDir + "/", "");
+                    return fileOut.replaceAll(downloadDir + "/", "") + "\n"
+                            + jsonOut.replaceAll(downloadDir + "/", "");
                 }
                 // }
             } else {
@@ -256,18 +284,22 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Accepts a POST request to restore session from an NcML file,
      *
-     * @param file The UploadedFile form backing object containing the file.
-     * @return A String of the local file name for the ASCII file (or null for an error).
+     * @param file
+     *            The UploadedFile form backing object containing the file.
+     * @return A String of the local file name for the ASCII file (or null for
+     *         an error).
      */
     @RequestMapping(value = "/restoreFromZip", method = RequestMethod.POST)
     @ResponseBody
     public String processZip(UploadedFile file) {
         String jsonStrSessionStorage = null;
-        String filePath = FilenameUtils.concat(getUploadDir(), file.getUniqueId());
+        String filePath = FilenameUtils.concat(getUploadDir(),
+                file.getUniqueId());
         filePath = FilenameUtils.concat(filePath, file.getFileName());
         if (filePath.endsWith(".zip")) {
             ZipFileUtil restoreZip = new ZipFileUtil(filePath);
-            jsonStrSessionStorage = restoreZip.readFileFromZip("rosettaSessionStorage.json");
+            jsonStrSessionStorage = restoreZip
+                    .readFileFromZip("rosettaSessionStorage.json");
         } else if (filePath.endsWith(".template")) {
             InputStream inStream = null;
             jsonStrSessionStorage = "";
@@ -291,15 +323,17 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     /**
-     * Accepts a POST request to to initiate a quick save (download a temp save template)
+     * Accepts a POST request to to initiate a quick save (download a temp save
+     * template)
      *
-     * @return A String of the local file name for the ASCII file (or null for an error).
+     * @return A String of the local file name for the ASCII file (or null for
+     *         an error).
      */
     @RequestMapping(value = "/QuickSave", method = RequestMethod.POST)
     @ResponseBody
     public String quickSave(String jsonStrSessionStorage) {
         Boolean isQuickSave = true;
-        Map<String,String> infoForDownload = new HashMap<>();
+        Map<String, String> infoForDownload = new HashMap<>();
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObj = null;
         try {
@@ -315,12 +349,11 @@ public class TemplateController implements HandlerExceptionResolver {
         infoForDownload.put("uniqueId", jsonObj.get("uniqueId").toString());
         infoForDownload.put("fileName", jsonFileName);
 
+        // crete JSON file that holds sessionStorage information
+        String downloadDir = FilenameUtils.concat(getDownloadDir(), jsonObj
+                .get("uniqueId").toString());
 
-        //crete JSON file that holds sessionStorage information
-        String downloadDir = FilenameUtils.concat(getDownloadDir(),
-                jsonObj.get("uniqueId").toString());
-
-        String jsonOut = FilenameUtils.concat(downloadDir,jsonFileName);
+        String jsonOut = FilenameUtils.concat(downloadDir, jsonFileName);
 
         jsonObj.remove("uniqueId");
         jsonObj.remove("fileName");
@@ -339,23 +372,26 @@ public class TemplateController implements HandlerExceptionResolver {
 
         String userId = publisherObj.getUserName();
         String passwd = publisherObj.getAuth();
-        HashMap<String, String> pubMap = (HashMap<String, String>) publisherObj.getPublisherInfoMap();
+        HashMap<String, String> pubMap = (HashMap<String, String>) publisherObj
+                .getPublisherInfoMap();
         String server = pubMap.get("pubUrl");
         String parent = pubMap.get("pubDest");
 
         String entryName = publisherObj.getGeneralMetadataMap().get("title");
-        String entryDescription = publisherObj.getGeneralMetadataMap().get("description");
+        String entryDescription = publisherObj.getGeneralMetadataMap().get(
+                "description");
 
         String downloadDir = FilenameUtils.concat(getDownloadDir(),
                 publisherObj.getUniqueId());
-        String ncFileName = FilenameUtils.removeExtension(publisherObj.getFileName()) + ".nc";
+        String ncFileName = FilenameUtils.removeExtension(publisherObj
+                .getFileName()) + ".nc";
         String filePath = FilenameUtils.concat(downloadDir, ncFileName);
         String msg = "";
         boolean success;
         try {
             if (server.toLowerCase().contains("motherlode")) {
-                UnidataRamadda pub = new UnidataRamadda(server, userId, passwd, parent,
-                        filePath, entryName, entryDescription);
+                UnidataRamadda pub = new UnidataRamadda(server, userId, passwd,
+                        parent, filePath, entryName, entryDescription);
 
                 success = pub.publish();
                 if (success) {
@@ -365,9 +401,11 @@ public class TemplateController implements HandlerExceptionResolver {
                 }
 
             } else if (server.toLowerCase().contains("cadis")) {
-                AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(parent);
+                AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(
+                        parent);
                 parent = projectReader.getDatasetShortName();
-                AcadisGateway pub = new AcadisGateway(server, userId, passwd, parent, filePath);
+                AcadisGateway pub = new AcadisGateway(server, userId, passwd,
+                        parent, filePath);
                 success = pub.publish();
                 if (success) {
                     msg = pub.getGatewayProjectUrl();
@@ -375,7 +413,7 @@ public class TemplateController implements HandlerExceptionResolver {
                     System.err.println("Failed to publish to ACADIS Gateway");
                 }
             }
-        } catch (Exception e)  {
+        } catch (Exception e) {
             msg = e.getMessage();
         }
 
@@ -385,16 +423,21 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Accepts a GET request to download a file from the download directory.
      *
-     * @param uniqueID   the sessions unique ID.
-     * @param fileName   the name of the file the user wants to download
-     *                   from the download directory
+     * @param uniqueID
+     *            the sessions unique ID.
+     * @param fileName
+     *            the name of the file the user wants to download from the
+     *            download directory
      *
      * @return IOStream of the file requested.
      */
     @RequestMapping(value = "/fileDownload/{uniqueID}/{file:.*}", method = RequestMethod.GET)
-    public void fileDownload(@PathVariable(value="uniqueID") String uniqueID, @PathVariable(value="file") String fileName,  HttpServletResponse response) {
+    public void fileDownload(@PathVariable(value = "uniqueID") String uniqueID,
+            @PathVariable(value = "file") String fileName,
+            HttpServletResponse response) {
         String relFileLoc = uniqueID + "/" + fileName;
-        String fullFilePath = FilenameUtils.concat(getDownloadDir(),relFileLoc);
+        String fullFilePath = FilenameUtils
+                .concat(getDownloadDir(), relFileLoc);
         File requestedFile = new File(fullFilePath);
         FileInputStream inputStream = null;
         try {
@@ -425,10 +468,13 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     @RequestMapping(value = "/acadis", method = RequestMethod.GET)
-    public String readAcadisDatasetInventory(@RequestParam(value = "dataset", required = true) String datasetId, ModelMap model) {
+    public String readAcadisDatasetInventory(
+            @RequestParam(value = "dataset", required = true) String datasetId,
+            ModelMap model) {
         // https://cadis.prototype.ucar.edu/redirect.html?link=http%3a%2f%2frosetta.unidata.ucar.edu%2facadis%3fdataset%3def653b66-a09f-11e3-b343-00c0f03d5b7c
 
-        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(datasetId);
+        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(
+                datasetId);
         projectReader.read();
         Map<String, String> inventory = projectReader.getInventory();
         JSONObject jsonInventory = new JSONObject(inventory);
@@ -442,26 +488,36 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     /**
-     * Accepts a POST request for an uploaded file, stores that file to disk and,
-     * returns the local (unique, alphanumeric) file name of the uploaded ASCII file.
+     * Accepts a POST request for an uploaded file, stores that file to disk
+     * and, returns the local (unique, alphanumeric) file name of the uploaded
+     * ASCII file.
      *
-     * @param remoteFile The RemoteAcadisUploadedFile form backing object containing the file.
-     * @param request The HttpServletRequest with which to glean the client IP address.
-     * @return A String of the local file name for the ASCII file (or null for an error).
+     * @param remoteFile
+     *            The RemoteAcadisUploadedFile form backing object containing
+     *            the file.
+     * @param request
+     *            The HttpServletRequest with which to glean the client IP
+     *            address.
+     * @return A String of the local file name for the ASCII file (or null for
+     *         an error).
      */
     @RequestMapping(value = "/createAcadis", method = RequestMethod.POST)
     @ResponseBody
-    public String processRemoteAcadisUploadedFile(RemoteAcadisUploadedFile remoteFile, HttpServletRequest request) {
+    public String processRemoteAcadisUploadedFile(
+            RemoteAcadisUploadedFile remoteFile, HttpServletRequest request) {
         String uniqueId = createUniqueId(request);
         remoteFile.setUniqueId(uniqueId);
         String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
 
         try {
             File localFileDir = new File(filePath);
-            if (!localFileDir.exists()) localFileDir.mkdir();
+            if (!localFileDir.exists())
+                localFileDir.mkdir();
             remoteFile.retrieveFile(filePath);
-            if ((remoteFile.getFileName().contains(".xls")) || (remoteFile.getFileName().contains(".xlsx"))) {
-                String xlsFilePath = FilenameUtils.concat(filePath, remoteFile.getFileName());
+            if ((remoteFile.getFileName().contains(".xls"))
+                    || (remoteFile.getFileName().contains(".xlsx"))) {
+                String xlsFilePath = FilenameUtils.concat(filePath,
+                        remoteFile.getFileName());
                 xlsToCsv.convert(xlsFilePath, null);
                 String csvFilePath = null;
                 if (xlsFilePath.contains(".xlsx")) {
@@ -476,18 +532,21 @@ public class TemplateController implements HandlerExceptionResolver {
             return null;
         }
 
-        return remoteFile.getUniqueId();
+        return StringEscapeUtils.escapeHtml4(remoteFile.getUniqueId());
     }
 
     @RequestMapping(value = "/createAcadis", method = RequestMethod.GET)
-    public ModelAndView createAcadis(@RequestParam(value = "dataset", required = false) String datasetId, Model model) {
+    public ModelAndView createAcadis(
+            @RequestParam(value = "dataset", required = false) String datasetId,
+            Model model) {
         // https://cadis.prototype.ucar.edu/redirect.html?link=http%3a%2f%2frosetta.unidata.ucar.edu%2facadis%3fdataset%3def653b66-a09f-11e3-b343-00c0f03d5b7c
         if (datasetId == null) {
             // Rosetta Sandbox ID
             datasetId = "9e8e03d6-cb31-11e3-b6a5-00c0f03d5b7c";
         }
 
-        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(datasetId);
+        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(
+                datasetId);
         projectReader.read();
         Map<String, String> inventory = projectReader.getInventory();
         JSONObject jsonInventory = new JSONObject(inventory);
@@ -500,10 +559,12 @@ public class TemplateController implements HandlerExceptionResolver {
 
     @RequestMapping(value = "/restoreFromGateway", method = RequestMethod.POST)
     @ResponseBody
-    public String restoreTemplateFromgFateway(RemoteAcadisUploadedFile remoteFile, HttpServletRequest request) {
+    public String restoreTemplateFromgFateway(
+            RemoteAcadisUploadedFile remoteFile, HttpServletRequest request) {
 
         String jsonStrSessionStorage = null;
-        String filePath = FilenameUtils.concat(getUploadDir(), remoteFile.getUniqueId());
+        String filePath = FilenameUtils.concat(getUploadDir(),
+                remoteFile.getUniqueId());
         filePath = FilenameUtils.concat(filePath, remoteFile.getTemplateName());
         InputStream inStream = null;
         jsonStrSessionStorage = "";
@@ -528,7 +589,8 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Attempts to get the client IP address from the request.
      *
-     * @param request The HttpServletRequest.
+     * @param request
+     *            The HttpServletRequest.
      * @return The client's IP address.
      */
     private String getIpAddress(HttpServletRequest request) {
@@ -544,9 +606,11 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     /**
-     * Creates a unique id for the file name from the clients IP address and the date.
+     * Creates a unique id for the file name from the clients IP address and the
+     * date.
      *
-     * @param request The HttpServletRequest.
+     * @param request
+     *            The HttpServletRequest.
      * @return The unique file name id.
      */
     private String createUniqueId(HttpServletRequest request) {
@@ -557,11 +621,12 @@ public class TemplateController implements HandlerExceptionResolver {
         } else {
             id = new Integer(new Random().nextInt()).toString() + id;
         }
-        return id.replaceAll(":","_");
+        return id.replaceAll(":", "_");
     }
 
     private String getTemplateFileName(String userFileName, Boolean isQuickSave) {
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd_HHmmss")
+                .format(new Date());
         String jsonFileName = FilenameUtils.removeExtension(userFileName);
         jsonFileName = jsonFileName + "-Rosetta_" + currentDate;
         jsonFileName = jsonFileName + ".template";
@@ -572,23 +637,34 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     /**
-     * This method gracefully handles any uncaught exception that are fatal
-     * in nature and unresolvable by the user.
+     * This method gracefully handles any uncaught exception that are fatal in
+     * nature and unresolvable by the user.
      *
-     * @param arg0      The current HttpServletRequest request.
-     * @param arg1      The current HttpServletRequest response.
-     * @param arg2      The executed handler, or null if none chosen at the time of the exception.
-     * @param exception The  exception that got thrown during handler execution.
+     * @param arg0
+     *            The current HttpServletRequest request.
+     * @param arg1
+     *            The current HttpServletRequest response.
+     * @param arg2
+     *            The executed handler, or null if none chosen at the time of
+     *            the exception.
+     * @param exception
+     *            The exception that got thrown during handler execution.
      * @return The error page containing the appropriate message to the user.
      */
     @Override
-    public ModelAndView resolveException(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, Exception exception) {
+    public ModelAndView resolveException(HttpServletRequest arg0,
+            HttpServletResponse arg1, Object arg2, Exception exception) {
         String message = "";
         if (exception instanceof MaxUploadSizeExceededException) {
-            // this value is declared in the /WEB-INF/rosetta-servlet.xml file (we can move it elsewhere for convenience)
-            message = "File size should be less than " + ((MaxUploadSizeExceededException) exception).getMaxUploadSize() + " byte.";
+            // this value is declared in the /WEB-INF/rosetta-servlet.xml file
+            // (we can move it elsewhere for convenience)
+            message = "File size should be less than "
+                    + ((MaxUploadSizeExceededException) exception)
+                            .getMaxUploadSize() + " byte.";
         } else {
-            message = "An error has occurred: " + exception.getClass().getName() + ":" + exception.getMessage();
+            message = "An error has occurred: "
+                    + exception.getClass().getName() + ":"
+                    + exception.getMessage();
         }
         // log it
         logger.error(message);
