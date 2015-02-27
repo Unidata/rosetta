@@ -48,7 +48,6 @@ import edu.ucar.unidata.rosetta.domain.RemoteAcadisUploadedFile;
 import edu.ucar.unidata.rosetta.domain.UploadedFile;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
 import edu.ucar.unidata.rosetta.publishers.AcadisGateway;
-import edu.ucar.unidata.rosetta.publishers.UnidataRamadda;
 import edu.ucar.unidata.rosetta.service.FileParserManager;
 import edu.ucar.unidata.rosetta.service.FileValidator;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
@@ -389,18 +388,7 @@ public class TemplateController implements HandlerExceptionResolver {
         String msg = "";
         boolean success;
         try {
-            if (server.toLowerCase().contains("motherlode")) {
-                UnidataRamadda pub = new UnidataRamadda(server, userId, passwd,
-                        parent, filePath, entryName, entryDescription);
-
-                success = pub.publish();
-                if (success) {
-                    msg = pub.getMessage();
-                } else {
-                    System.err.println("Failed to publish to ACADIS Gateway");
-                }
-
-            } else if (server.toLowerCase().contains("cadis")) {
+            if (server.toLowerCase().contains("cadis")) {
                 AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(
                         parent);
                 parent = projectReader.getDatasetShortName();

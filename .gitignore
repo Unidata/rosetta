@@ -1,12 +1,18 @@
 ###############
 # Rosetta files #
 ###############
-target/
 build.properties
 docs/javadoc
 docs/jsdoc
 docs/site
 docs/dox
+
+# Ignore maven stuff
+target/
+
+# Ignore gradle stuff
+.gradle/
+build/
 
 #############
 # IDE files #
@@ -45,3 +51,5 @@ Thumbs.db
 ##################
 cov-int
 rosetta.tgz
+/build/
+/bin/
