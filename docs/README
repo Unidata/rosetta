@@ -1,3 +1,7 @@
 To generate the docs and documentation website, run:
 
-doxygen rosettaDox.config
+bash buildDocs.sh -b
+
+To sync to the webserver, run:
+
+bash buildDocs.sh -bs

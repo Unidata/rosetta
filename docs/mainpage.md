@@ -36,23 +36,22 @@ Front-end user interface:
 
 Back-end:
 
-* Spring 3 MVC Framework
+* Spring 4 MVC Framework
 * The Common Data Model (CDM) (netCDF-Java)
 * CF-1.6 Standard
 
 ## More Information ##
-Rosetta: A white paper on the challenges of sharing observational datasets ([pdf](http://www.unidata.ucar.edu/software/pzhta/files/rosetta_whitepaper.pdf))
+Rosetta: A white paper on the challenges of sharing observational datasets ([pdf](files/papers/rosetta_whitepaper.pdf))
 
 AMS 2014 Presentation on Rosetta:
-
+---------------------------------
 Arms, S. C., J. O. Ganter, J. Weber, and M. K. Ramamurthy, 2014: Rosetta - Unidata's 
 Web-based Data Translation Tool: Progress and Future Plans 30th Conference on 
 Environmental Information Processing Technologies, 94rd AMS Annual Meeting, Atlanta, GA,
-8A.4. [Available online at https://ams.confex.com/ams/94Annual/webprogram/Paper240011.html]
+8A.4. Available [online](https://ams.confex.com/ams/94Annual/webprogram/Paper240011.html).
 
 AMS 2013 Presentation on Rosetta:
-
+---------------------------------
 Arms, S. C., J. O. Ganter, J. Weber, and M. K. Ramamurthy, 2013: A Web-based Tool for Translating
 Unstructured Data from Dataloggers into Standard Formats. 29th Conference on Environmental Information
-Processing Technologies, 93rd AMS Annual Meeting, Austin, TX, J12.3. [Available online at
-https://ams.confex.com/ams/93Annual/webprogram/Paper222186.html]
+Processing Technologies, 93rd AMS Annual Meeting, Austin, TX, J12.3. Available [online](https://ams.confex.com/ams/93Annual/webprogram/Paper222186.html).
