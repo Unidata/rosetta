@@ -24,12 +24,12 @@ import java.util.Map;
  */
 public class AcadisGatewayProjectReader {
 
-    //private String server = "cadis.prototype.ucar.edu";
+    // private String server = "cadis.prototype.ucar.edu";
     private String server = "www.aoncadis.org";
     private int port = 443;
     private String scheme = "https";
-    protected static Logger logger = Logger.getLogger(AcadisGatewayProjectReader.class);
-
+    protected static Logger logger = Logger
+            .getLogger(AcadisGatewayProjectReader.class);
 
     private HttpHost gatewayHost;
     private HttpClientBuilder gatewayClientBuilder;
@@ -43,8 +43,7 @@ public class AcadisGatewayProjectReader {
 
     private HttpHost makeHost() {
         // create client for given host
-        HttpHost httpHost = new HttpHost(
-                server, port, scheme);
+        HttpHost httpHost = new HttpHost(server, port, scheme);
 
         return httpHost;
     }
@@ -59,39 +58,32 @@ public class AcadisGatewayProjectReader {
         gatewayClientBuilder = makeHttpClientBuilder();
 
         // finally, build the http client
-        CloseableHttpClient httpclient =
-                gatewayClientBuilder.build();
+        CloseableHttpClient httpclient = gatewayClientBuilder.build();
 
         return httpclient;
     }
 
     private URI makeWgetUri(String dsShortName) throws URISyntaxException {
-        URI uri = new URIBuilder()
-                .setScheme(gatewayHost.getSchemeName())
+        URI uri = new URIBuilder().setScheme(gatewayHost.getSchemeName())
                 .setHost(gatewayHost.getHostName())
-                .setPath("/dataset/" + dsShortName + "/file.wget")
-                .build();
+                .setPath("/dataset/" + dsShortName + "/file.wget").build();
         return uri;
     }
 
     private URI makeDatasetIdUri(String datasetId) throws URISyntaxException {
-        URI uri = new URIBuilder()
-                .setScheme(gatewayHost.getSchemeName())
+        URI uri = new URIBuilder().setScheme(gatewayHost.getSchemeName())
                 .setHost(gatewayHost.getHostName())
-                .setPath("/dataset/id/" + datasetId)
-                .build();
+                .setPath("/dataset/id/" + datasetId).build();
 
         return uri;
     }
 
-
     private String makeUserAgent() {
         String rosettaVersion = "0.2-SNAPSHOT";
-        String userAgent = "Unidata/Rosetta_"+ rosettaVersion;
+        String userAgent = "Unidata/Rosetta_" + rosettaVersion;
 
         return userAgent;
     }
-
 
     private CloseableHttpClient gatewayGet(URI uri) throws IOException {
 
@@ -99,8 +91,7 @@ public class AcadisGatewayProjectReader {
         HttpGet httpGet = new HttpGet(uri);
         httpGet.setHeader("User-Agent", userAgent);
 
-        latestResponse = httpClient.execute(gatewayHost,
-                httpGet);
+        latestResponse = httpClient.execute(gatewayHost, httpGet);
 
         return httpClient;
 
@@ -110,7 +101,7 @@ public class AcadisGatewayProjectReader {
         inventory = new HashMap<>();
         String version = "";
         String name, downloadUrl;
-        for (String line: wgetText.split("\n")) {
+        for (String line : wgetText.split("\n")) {
             if (line.contains("version=")) {
                 version = line.split("=")[1];
             } else if (line.contains("logicalFileId")) {
@@ -121,13 +112,27 @@ public class AcadisGatewayProjectReader {
                     downloadUrl = lineArray[1];
                     name = name.replaceAll("'", "");
                     downloadUrl = downloadUrl.replaceAll("'", "");
+                } else if (version.equals("") && (numParts == 4)) {
+                    // assume the simple wget format if version is zero and the
+                    // line splits into 4 pieces:
+                    //
+                    // wget -O 'name' 'downloadUrl'
+                    // best we can do if the wget format keeps changing without
+                    // warning.
+                    //
+                    name = lineArray[2];
+                    downloadUrl = lineArray[3];
+                    name = name.replaceAll("'", "");
+                    downloadUrl = downloadUrl.replaceAll("'", "");
                 } else {
                     logger.error("Cannot find name...check that format of wget script from the gateway hasn't changed!");
-                    name="NO DATA FOUND";
-                    downloadUrl="None";
+                    name = "NO DATA FOUND";
+                    downloadUrl = "None";
                 }
-
-                inventory.put(name, downloadUrl);
+                if (!name.toLowerCase().endsWith("Rosetta.template")
+                        && !downloadUrl.endsWith("iso19139")) {
+                    inventory.put(name, downloadUrl);
+                }
             }
         }
     }
@@ -141,7 +146,8 @@ public class AcadisGatewayProjectReader {
         try {
             init(datasetId);
         } catch (URISyntaxException e) {
-            logger.error("Could not create an AcadisGatewayProjectReader for the dataset with a short name of " + dsShortName);
+            logger.error("Could not create an AcadisGatewayProjectReader for the dataset with a short name of "
+                    + dsShortName);
             logger.error(e.getMessage());
             logger.error(e.getStackTrace());
             e.printStackTrace();
@@ -156,7 +162,8 @@ public class AcadisGatewayProjectReader {
             String datasetPath = datasetUri.getPath();
             int dsShortNameStart = datasetPath.lastIndexOf("/") + 1;
             int dsShortNameEnd = datasetPath.lastIndexOf(".html");
-            datasetShortName = datasetPath.substring(dsShortNameStart, dsShortNameEnd);
+            datasetShortName = datasetPath.substring(dsShortNameStart,
+                    dsShortNameEnd);
         }
         return datasetShortName;
     }
@@ -181,7 +188,7 @@ public class AcadisGatewayProjectReader {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(response != null) {
+            if (response != null) {
                 response.close();
             }
             if (redirects != null) {
@@ -207,10 +214,10 @@ public class AcadisGatewayProjectReader {
         uri = makeWgetUri(dsShortName);
     }
 
-
     public String getDatasetShortName() {
         return this.dsShortName;
     }
+
     public Boolean read() {
         boolean successful = false;
         try {
@@ -234,12 +241,13 @@ public class AcadisGatewayProjectReader {
         return successful;
     }
 
-
-    public static void main(String [] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws IOException,
+            URISyntaxException {
         // ef653b66-a09f-11e3-b343-00c0f03d5b7c
-        //String datasetId = "0fd0b40d-cca6-11e3-b6a5-00c0f03d5b7c";
+        // String datasetId = "0fd0b40d-cca6-11e3-b6a5-00c0f03d5b7c";
         String datasetId = "9e8e03d6-cb31-11e3-b6a5-00c0f03d5b7c";
-        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(datasetId);
+        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(
+                datasetId);
         projectReader.read();
         Map<String, String> inventory = projectReader.getInventory();
         for (String name : inventory.keySet()) {
@@ -247,6 +255,5 @@ public class AcadisGatewayProjectReader {
             System.out.println("name: " + name + " access: " + downloadUrl);
         }
     }
-
 
 }
