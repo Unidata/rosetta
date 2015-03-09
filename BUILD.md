@@ -7,7 +7,7 @@ Clean-up previous builds
 ------------------------
 To clean-up any previous builds of rosetta, run:
 
-`./gradle2 clean`
+`./gradlew clean`
 
 Build and skip tests
 --------------------
