@@ -333,6 +333,10 @@ function bindDialogEvents(sessionKey) {
             $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").attr("value", ""); 
             $("label#variableNameAssignment").addClass("hideMe"); 
 
+            // hide the import metadata option
+            // (can appear of variable data was inputed before & then user chooses to not use column data)
+            $("#dialog label.existingMetadataImporter").addClass("hideMe");
+
             // disable all parts of the dialog content except the first part
             disableVariableAttributes();
 
@@ -374,9 +378,6 @@ function bindDialogEvents(sessionKey) {
                     addToSession(sessionKey + "Metadata", metadataString); 
                 }
             }
-        } else {
-            removeItemFromSessionString(sessionKey + "Metadata", "standard_name");
-            removeItemFromSessionString(sessionKey + "Metadata", "units");
         }
         addMetadataHTMLToDialog(sessionKey);
 
@@ -406,7 +407,7 @@ function bindDialogEvents(sessionKey) {
 
         // update the data in the session
         addToSession(sessionKey + "Metadata", metadataString); 
-        removeAllButTheseFromSessionString(sessionKey + "Metadata", ["standard_name", "units", "_coordinateVariable", "dataType"]);
+        removeAllButTheseFromSessionString(sessionKey + "Metadata", ["standard_name", "units", "_coordinateVariable", "dataType", "long_name"]);
 
         // update the metadata choices based on the user input
         addMetadataHTMLToDialog(sessionKey, $(this).attr("value")); 
