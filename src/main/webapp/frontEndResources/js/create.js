@@ -41,7 +41,7 @@ $(document).ready(function($) {
      */
     .bind("jwizardchangestep", function(event, ui) {
         // "manual" is always triggered by the user, never jWizard itself
-        if (ui.type !== "manual") {          
+        if (ui.type !== "manual") {         
            $("#faux").remove();
            $(".jw-button-next").addClass("hideMe").after(faux);
             var error;
@@ -127,7 +127,18 @@ $(document).ready(function($) {
      * INITIAL DOCUMENT LOAD
      */
     $w.ready(function() {
-        $(".jw-button-next").prop("disabled", true).addClass("disabled");
+        // OK, there is a chance we can arrive at this step by reloading the page 
+        // while maintaining the same session (hence data has been entered). Ergo, 
+        // If we land on this page and user has already enter something
+        // (e.g., clicked previous or used the menu to navigate)
+        // Don't hide the 'Next' button
+        if (getFromSession("cfType")) {            
+            $("#faux").remove();
+            $(".jw-button-next").removeClass("hideMe");
+            $('input:radio[name="cfType"][value="' + getFromSession("cfType") + '"]').attr('checked', 'checked');
+        } else {
+            $(".jw-button-next").prop("disabled", true).addClass("disabled");
+        }
     });
 
     /** 
@@ -138,7 +149,7 @@ $(document).ready(function($) {
     /** 
      * STEP 1
      */
-    uploadDataFile("stepFunctions")
+    uploadDataFile("stepFunctions");
 
     /** 
      * STEP 2 handled in SlickGrid/custom/headerLineSelection.js
