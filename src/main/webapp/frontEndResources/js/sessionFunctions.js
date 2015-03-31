@@ -5,7 +5,6 @@
  */
 
 
-
 /**  
  * General function called to add a key/value pair to the session.
  * 
