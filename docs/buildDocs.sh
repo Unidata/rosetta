@@ -16,6 +16,8 @@ while getopts ":bs" opt; do
       ;;
     s)
       echo "...syncing..." >&2
+      # RosettaDocs must be defined as a Host in .ssh/config 
+      #   to point to the Unidata webserver for this to work.
       scp index.html RosettaDocs:~/rosetta/
       scp -r dox/html/ RosettaDocs:~/rosetta/docs
       ;;
