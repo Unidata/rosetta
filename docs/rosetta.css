@@ -1,3 +1,20 @@
+body {
+  color: #333333;
+  font-family: "UbuntuRegular", "Lucida Grande", Verdana, Arial;
+  color: #333333;
+  font-size: 10pt;
+  line-height: 120%;
+  background: #E3E4E6;
+}
+
+a {
+  color: #06778F
+}
+
+.contents a:visited {
+  color: #81B2C0;
+}
+
 .doxHideMe {
     display : none;
     visibility: hidden;
@@ -11,4 +28,30 @@ div.contents {
     width: 960px;
     background-color: white;
     border-radius: 8px;
+}
+
+.tabs, .tablist li {
+  background-image: url('files/css_related/tabs.png');
+}
+
+.tablist a {
+  background-image: None;
+}
+
+.tabs2, .tabs3, .tabs2 .tablist li, .tabs3 .tablist li {
+  background-image: url('files/css_related/tabs-2.png');
+}
+
+.tablist li.current a {
+  background: #034250;
+  background-image: initial;
+  box-shadow: 0px 0px 15px #06778F;
+}
+
+.tablist a:hover {
+  background: #034250;
+  background-image: initial;
+}
+.tablist a {
+  color: #fff
 }
