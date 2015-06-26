@@ -47,7 +47,7 @@ AMS 2014 Presentation on Rosetta:
 ---------------------------------
 Arms, S. C., J. O. Ganter, J. Weber, and M. K. Ramamurthy, 2014: Rosetta - Unidata's 
 Web-based Data Translation Tool: Progress and Future Plans 30th Conference on 
-Environmental Information Processing Technologies, 94rd AMS Annual Meeting, Atlanta, GA,
+Environmental Information Processing Technologies, 94th AMS Annual Meeting, Atlanta, GA,
 8A.4. Available [online](https://ams.confex.com/ams/94Annual/webprogram/Paper240011.html).
 
 AMS 2013 Presentation on Rosetta:
