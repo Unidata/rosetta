@@ -15,8 +15,8 @@ version = '0.2-SNAPSHOT'
 
 description = """rosetta"""
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {        
      maven { url "https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/" }
@@ -69,7 +69,7 @@ dependencies {
 
     compile "net.sourceforge.jexcelapi:jxl:2.6.12"
 
-    compile "edu.ucar:netcdf:4.3.20"
+    compile "edu.ucar:netcdfAll:4.6.3"
 
     compile "com.googlecode.json-simple:json-simple:1.1.1"
 
@@ -81,5 +81,5 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+    gradleVersion = '2.8'
 }
