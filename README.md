@@ -1,5 +1,5 @@
 <div class=doxHideMe>
-<img src="http://www.unidata.ucar.edu/images2/logos/rosetta-150x150.png">
+<img src="http://www.unidata.ucar.edu/images/logos/rosetta-150x150.png">
 </div>
 
 <a href="https://scan.coverity.com/projects/1593">
