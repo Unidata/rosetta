@@ -14,6 +14,8 @@
     </tr>
 </table>
 <br>
+For a video demo of Rossetta, please see <a href="https://www.youtube.com/watch?v=G5pLIjjnK00">Unidata on YouTube!</a>
+<br>
 <a href="<spring:message code="unidata.banner.url"/>">
 <img src="<spring:message code="unidata.banner.path"/>" alt="<spring:message code="unidata.banner.alt"/>" align="left"/>
 </a>
