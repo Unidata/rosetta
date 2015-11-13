@@ -22,7 +22,7 @@ build/
 #
 .idea/
 ide/intellij/
-
+rosetta.iml
 #
 # Eclipse files
 #
