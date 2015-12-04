@@ -102,6 +102,23 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     /**
+     * Accepts a GET request for template creation, fetches resource information
+     * from file system and inject that data into the Model to be used in the
+     * View. Returns the view that walks the user through the steps of template
+     * creation.
+     *
+     * @param model
+     *            The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated
+     *         Model.
+     */
+    @RequestMapping(value = "/createTrajectory", method = RequestMethod.GET)
+    public ModelAndView createTrajectoryTemplate(Model model) {
+        model.addAllAttributes(resourceManager.loadResources());
+        return new ModelAndView("createTrajectory");
+    }
+
+    /**
      * Accepts a GET request for template restoration, fetches resource
      * information from file system and inject that data into the Model to be
      * used in the View. Returns the view that walks the user through the steps
@@ -256,9 +273,14 @@ public class TemplateController implements HandlerExceptionResolver {
 
                     String netcdfFile = null;
                     try {
-                        netcdfFile = netcdfFileManager.createNetcdfFile(file,
-                                parseFileData, downloadDir);
-
+                        NetcdfFileManager dsgWriter;
+                        for (NetcdfFileManager potentialDsgWriter : netcdfFileManager.asciiToDsg()) {
+                            if (potentialDsgWriter.isMine(file.getCfType())) {
+                                netcdfFile = potentialDsgWriter.createNetcdfFile(file,
+                                        parseFileData, downloadDir);
+                                break;
+                            }
+                        }
                     } catch (IOException e) {
                         System.err.println("Caught IOException: "
                                 + e.getMessage());

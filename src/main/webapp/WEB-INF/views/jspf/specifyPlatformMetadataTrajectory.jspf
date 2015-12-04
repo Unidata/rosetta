@@ -1,0 +1,75 @@
+<c:choose>
+    <c:when test="${fn:length(platformMetedataTrajectoryItems) gt 0}">
+        <ul>
+            <c:forEach items="${platformMetedataTrajectoryItems}" var="platformMetedataTrajectoryItem">
+                <script type="text/javascript">
+                    var obj = {};
+                    obj["tagName"] = "<c:out value="${platformMetedataTrajectoryItem.tagName}" />";
+                    obj["displayName"] = "<c:out value="${platformMetedataTrajectoryItem.displayName}" />";
+                    obj["isRequired"] = <c:out value="${platformMetedataTrajectoryItem.isRequired}" />;
+                    <c:choose>
+                    <c:when test="${platformMetedataTrajectoryItem.isRequired != null}">
+                    obj["isRequired"] = true;
+                    </c:when>
+                    <c:otherwise>
+                    obj["isRequired"] = false;
+                    </c:otherwise>
+                    </c:choose>
+                    <c:choose>
+                    <c:when test="${platformMetedataTrajectoryItem.units != null}">
+                    obj["units"] = true;
+                    </c:when>
+                    <c:otherwise>
+                    obj["units"] = false;
+                    </c:otherwise>
+                    </c:choose>
+                    platformMetadata.push(obj);
+                </script>
+                <li>
+                    <label>
+                        <c:choose>
+                            <c:when test="${platformMetedataTrajectoryItem.isRequired}">
+                                *
+                            </c:when>
+                        </c:choose>
+                        <c:out value="${platformMetedataTrajectoryItem.displayName}" />
+                        <c:choose>
+                            <c:when test="${platformMetedataTrajectoryItem.description != null}">
+                                <img src="resources/img/help.png" alt="<c:out value="${platformMetedataTrajectoryItem.description}" />"/>
+                            </c:when>
+                        </c:choose>
+                        <br/>
+                        <input type="text" name="<c:out value="${platformMetedataTrajectoryItem.tagName}" />" value="" />
+                        <c:choose>
+                            <c:when test="${platformMetedataTrajectoryItem.units != null}">
+                                <c:choose>
+                                    <c:when test="${fn:length(units) gt 0}">
+                                        <c:forEach items="${units}" var="unit">
+                                            <c:choose>
+                                                <c:when test="${platformMetedataTrajectoryItem.units == unit.name}">
+                                                    <select name="<c:out value="${platformMetedataTrajectoryItem.tagName}" />Units">
+                                                        <c:forEach items="${unit.value}" var="val">
+                                                            <option value="<c:out value="${val}" />"><c:out value="${val}" /></option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </c:when>
+                                            </c:choose>
+                                        </c:forEach>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="${platformMetedataTrajectoryItem.displayName}" /> Units *
+                                        <input type="text" name="<c:out value="${platformMetedataTrajectoryItem.tagName}" />Units" value="" />
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:when>
+                        </c:choose>
+                    </label>
+                    <label for="<c:out value="${platformMetedataTrajectoryItem.tagName}" />" class="error"></label>
+                </li>
+            </c:forEach>
+        </ul>
+    </c:when>
+    <c:otherwise>
+        <!-- insert error handling -->
+    </c:otherwise>
+</c:choose>
