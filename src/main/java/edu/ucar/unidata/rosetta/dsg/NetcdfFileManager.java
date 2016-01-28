@@ -28,6 +28,10 @@ public abstract class NetcdfFileManager {
     private Map<String,String> variableNameMap;
     private Map<String, String> platformMetadataMap;
     private Map<String, String> generalMetadataMap;
+    private Map<String, String> otherInfo;
+
+    public Map<String, String> getOtherInfo() {return this.otherInfo;}
+    public void setOtherInfo(Map<String, String> otherInfo) {this.otherInfo = otherInfo;}
 
     private HashMap<String, Integer> nameCounts;
     private String coordAttr;
@@ -190,6 +194,7 @@ public abstract class NetcdfFileManager {
     }
 
     protected void init(AsciiFile file) {
+
         setUsedVarNames(new ArrayList<String>());
         setAllVarNames(new ArrayList<String>());
 
@@ -197,6 +202,7 @@ public abstract class NetcdfFileManager {
         setVariableMetadataMap(file.getVariableMetadataMap());
         setPlatformMetadataMap(file.getPlatformMetadataMap());
         setGeneralMetadataMap(file.getGeneralMetadataMap());
+        setOtherInfo(file.getOtherInfo());
 
         // create a list of the various types of time variables a user
         // can supply. These need to be carefully handled in the code!
@@ -363,6 +369,7 @@ public abstract class NetcdfFileManager {
 
         String name = varName;
         String shape = shapeAttr.replace(" ", ",");
+        shape = shapeAttr;
 
         if (getCoordVars().containsKey(coordVarType)) {
             if (getCoordVars().get(coordVarType).contains(sessionStorageKey)) {
@@ -460,16 +467,6 @@ public abstract class NetcdfFileManager {
             if (!downloadTarget.mkdirs()) {
                 throw new IOException("Unable to create download directory " + downloadTarget.getAbsolutePath());
             }
-        }
-    }
-
-    protected void createCoordinateAttr(boolean hasRelTime) {
-        // if we have a relTime (a complete time variable), use that variable name
-        // otherwise, use a (yet-to-be-created) variable called "time"
-        if (hasRelTime) {
-            setCoordAttr(getRelTimeVarName() + " lat lon alt");
-        } else {
-            setCoordAttr("time lat lon alt");
         }
     }
 
@@ -638,6 +635,8 @@ public abstract class NetcdfFileManager {
     protected abstract NetcdfFileWriter createPlatformInfo(NetcdfFileWriter ncFileWriter, AsciiFile file);
 
     protected abstract NetcdfFileWriter writePlatformInfo(NetcdfFileWriter ncFileWriter, AsciiFile file);
+
+    protected abstract void createCoordinateAttr(boolean hasRelTime);
 
     public List<NetcdfFileManager> asciiToDsg() {
         List<NetcdfFileManager> dsgWriters = new ArrayList<NetcdfFileManager>();

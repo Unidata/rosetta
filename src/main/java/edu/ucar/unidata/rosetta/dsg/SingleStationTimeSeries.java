@@ -18,23 +18,34 @@ public class SingleStationTimeSeries extends NetcdfFileManager {
 
     protected static Logger logger = Logger.getLogger(SingleStationTimeSeries.class);
 
+    @Override
+    protected void createCoordinateAttr(boolean hasRelTime) {
+        // if we have a relTime (a complete time variable), use that variable name
+        // otherwise, use a (yet-to-be-created) variable called "time"
+        if (hasRelTime) {
+            setCoordAttr(getRelTimeVarName() + " lat lon alt");
+        } else {
+            setCoordAttr("time lat lon alt");
+        }
+    }
+
     // name: "latitude", "longitude", "altitude"
     protected NetcdfFileWriter createCoordVarsFromPlatform(NetcdfFileWriter ncFileWriter, String name) throws IOException, InvalidRangeException {
 
         String coordVarUnits = getPlatformMetadataMap().get(name + "Units");
         Boolean unitChanged = false;
-        if (coordVarUnits.equals("degrees_west")) {
-            coordVarUnits = "degrees_east";
-            unitChanged=true;
-        } else if (coordVarUnits.equals("degrees_south")) {
-            coordVarUnits = "degrees_north";
-            unitChanged=true;
-        }
+        //if (coordVarUnits.equals("degrees_west")) {
+        //    coordVarUnits = "degrees_east";
+        //    unitChanged=true;
+        //} else if (coordVarUnits.equals("degrees_south")) {
+        //    coordVarUnits = "degrees_north";
+        //    unitChanged=true;
+        //}
         String coordVarVal = getPlatformMetadataMap().get(name);
 
-        if (unitChanged) {
-            coordVarVal = "-" + coordVarVal;
-        }
+        //if (unitChanged) {
+        //    coordVarVal = "-" + coordVarVal;
+        //}
 
         Variable theVar = ncFileWriter.addVariable(null, name.substring(0,3), DataType.FLOAT, "");
 
@@ -57,16 +68,16 @@ public class SingleStationTimeSeries extends NetcdfFileManager {
 
         String coordVarUnits = getPlatformMetadataMap().get(name + "Units");
         Boolean unitChanged = false;
-        if (coordVarUnits.equals("degrees_west")) {
-            unitChanged=true;
-        } else if (coordVarUnits.equals("degrees_south")) {
-            unitChanged=true;
-        }
+        //if (coordVarUnits.equals("degrees_west")) {
+        //    unitChanged=true;
+        //} else if (coordVarUnits.equals("degrees_south")) {
+        //    unitChanged=true;
+        //}
         String coordVarVal = getPlatformMetadataMap().get(name);
 
-        if (unitChanged) {
-            coordVarVal = "-" + coordVarVal;
-        }
+        //if (unitChanged) {
+        //    coordVarVal = "-" + coordVarVal;
+        //}
 
         Variable theVar = ncFileWriter.findVariable(name.substring(0,3));
 

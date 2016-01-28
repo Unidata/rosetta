@@ -11,9 +11,9 @@
       <type>profile</type>
    </platform>
    <platform>
-      <name>Radiosonde (Coming Soon)</name>
-      <img>resources/img/platforms/baloon_NA.gif</img>
-      <type>profile</type>
+      <name>Radiosonde</name>
+      <img>resources/img/platforms/baloon.jpeg</img>
+      <type>trajectory</type>
    </platform>
    <platform>
       <name>Wind Profiler (Coming Soon)</name>
@@ -21,8 +21,8 @@
       <type>profile</type>
    </platform>
    <platform>
-      <name>Aircraft (Coming Soon)</name>
-      <img>resources/img/platforms/aircraft_NA.gif</img>
+      <name>Aircraft</name>
+      <img>resources/img/platforms/aircraft.jpeg</img>
       <type>trajectory</type>
    </platform>
 </platforms>
