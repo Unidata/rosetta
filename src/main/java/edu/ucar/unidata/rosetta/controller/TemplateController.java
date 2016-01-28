@@ -102,6 +102,23 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     /**
+     * Accepts a GET request for template creation, fetches resource information
+     * from file system and inject that data into the Model to be used in the
+     * View. Returns the view that walks the user through the steps of template
+     * creation.
+     *
+     * @param model
+     *            The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated
+     *         Model.
+     */
+    @RequestMapping(value = "/createTrajectory", method = RequestMethod.GET)
+    public ModelAndView createTrajectoryTemplate(Model model) {
+        model.addAllAttributes(resourceManager.loadResources());
+        return new ModelAndView("createTrajectory");
+    }
+
+    /**
      * Accepts a GET request for template restoration, fetches resource
      * information from file system and inject that data into the Model to be
      * used in the View. Returns the view that walks the user through the steps
@@ -222,6 +239,34 @@ public class TemplateController implements HandlerExceptionResolver {
                             + "\n" + normalizedFileData);
                 } else {
                     // SCENARIO 3: we have variable data!
+
+                    // pull out sessionStorage data
+                    Map<String, HashMap> mm = file.getVariableMetadataMap();
+                    HashMap<String, String> coords = new HashMap<String, String>();
+
+                    // fix where session storage where necessairy
+                    if (file.getCfType().equals("trajectory")) {
+                        // only the time variable should be a coordinate variable, so
+                        // clean up session storage to reflect that.
+
+                        for (String mmKey : mm.keySet()) {
+                            if (mm.get(mmKey).containsKey("_coordinateVariableType")) {
+                                HashMap tmp = mm.get(mmKey);
+                                String cvt = tmp.get("_coordinateVariableType").toString();
+                                boolean chk1 = cvt.equals("relTime");
+                                boolean chk2 = cvt.equals("fullDateTime");
+                                boolean chk3 = cvt.equals("dateOnly");
+                                boolean chk4 = cvt.equals("timeOnly");
+                                if (!(chk1 | chk2 | chk3 | chk4)) {
+                                    coords.put(cvt, file.getVariableNameMap().get(mmKey.replace("Metadata","")));
+                                    tmp.remove("_coordinateVariableType");
+                                    tmp.put("_coordinateVariable", "non-coordinate");
+                                    mm.put(mmKey, tmp);
+                                }
+                            }
+                            file.setOtherInfo(coords);
+                        }
+                    }
                     List<List<String>> parseFileData = fileParserManager
                             .getParsedFileData();
 
@@ -239,10 +284,10 @@ public class TemplateController implements HandlerExceptionResolver {
                             FilenameUtils.getFullPath(file.getFileName()));
                     jsonOut = FilenameUtils.concat(jsonOut, jsonFileName);
                     JsonUtil jsonUtil = new JsonUtil(jsonOut);
-                    JSONObject jsonObj = jsonUtil.strToJson(file
-                            .getJsonStrSessionStorage());
+                    JSONObject jsonObj = jsonUtil.ssHashMapToJson(mm);
                     jsonObj.remove("uniqueId");
                     jsonObj.remove("fileName");
+                    jsonObj.remove("varCoords");
                     jsonUtil.writeJsonToFile(jsonObj);
 
                     // zip JSON and NcML files
@@ -256,9 +301,14 @@ public class TemplateController implements HandlerExceptionResolver {
 
                     String netcdfFile = null;
                     try {
-                        netcdfFile = netcdfFileManager.createNetcdfFile(file,
-                                parseFileData, downloadDir);
-
+                        NetcdfFileManager dsgWriter;
+                        for (NetcdfFileManager potentialDsgWriter : netcdfFileManager.asciiToDsg()) {
+                            if (potentialDsgWriter.isMine(file.getCfType())) {
+                                netcdfFile = potentialDsgWriter.createNetcdfFile(file,
+                                        parseFileData, downloadDir);
+                                break;
+                            }
+                        }
                     } catch (IOException e) {
                         System.err.println("Caught IOException: "
                                 + e.getMessage());

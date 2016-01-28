@@ -38,6 +38,23 @@ public class AsciiFile {
     private String variableMetadata = null;
     private Map<String, HashMap> variableMetadataMap = new HashMap<String, HashMap>();
     private String jsonStrSessionStorage = null;
+    private Map otherInfo = null;
+
+
+    /**
+     * Returns "other info" associated with this file. Allows for modifications and additions
+     * to the file object in the TemplateController.
+     *
+     * @return  The other info associated with the file.
+     */
+    public Map getOtherInfo() { return otherInfo; }
+
+    /**
+     * Sets "other info" associated with this file. Allows for modifications and additions
+     * to the file object in the TemplateController.
+     *
+     */
+    public void  setOtherInfo(Map otherInfo) { this.otherInfo = otherInfo; }
 
     /**
      * Returns the CF Type the user selected. 

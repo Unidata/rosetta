@@ -8,6 +8,8 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
 
@@ -31,6 +33,15 @@ public class JsonUtil {
     private void setName(String name) {
         this.name =name;
     }
+
+    public JSONObject ssHashMapToJson(Map<String, HashMap> jsonHashMap) {
+
+        JSONObject json = null;
+        json = new JSONObject(jsonHashMap);
+
+        return json;
+    }
+
 
     public JSONObject strToJson(String jsonStr) {
         JSONParser jsonParser = new JSONParser();

@@ -2,30 +2,43 @@ package edu.ucar.unidata.rosetta.dsg;
 
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import org.apache.log4j.Logger;
-import ucar.ma2.*;
+import ucar.ma2.ArrayChar;
+import ucar.ma2.ArrayScalar;
+import ucar.ma2.DataType;
+import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+
 
 /**
  * Service for parsing file data.
  */
-public class SingleStationTimeSeries extends NetcdfFileManager {
+public class SingleStationTrajectory extends NetcdfFileManager {
 
-    protected static Logger logger = Logger.getLogger(SingleStationTimeSeries.class);
+    protected static Logger logger = Logger.getLogger(SingleStationTrajectory.class);
 
     @Override
     protected void createCoordinateAttr(boolean hasRelTime) {
+        // need to build the coord attr using the variables removed from the coordinate list
+        // in the templatecontroller.
+        Map<String, String> removedCoordVars = getOtherInfo();
+        String ca = "";
+        for (String coordType : removedCoordVars.keySet()) {
+            ca = ca + " " + removedCoordVars.get(coordType);
+        }
+
         // if we have a relTime (a complete time variable), use that variable name
         // otherwise, use a (yet-to-be-created) variable called "time"
         if (hasRelTime) {
-            setCoordAttr(getRelTimeVarName() + " lat lon alt");
+            setCoordAttr(getRelTimeVarName() + ca);
         } else {
-            setCoordAttr("time lat lon alt");
+            setCoordAttr("time" + ca);
         }
     }
 
@@ -121,8 +134,8 @@ public class SingleStationTimeSeries extends NetcdfFileManager {
         return ncFileWriter;
     }
 
-    public SingleStationTimeSeries() {
-        super.setMyCfRole("timeseries_id");
-        super.setMyDsgType("timeSeries");
+    public SingleStationTrajectory() {
+        super.setMyCfRole("trajectory_id");
+        super.setMyDsgType("trajectory");
     }
 }
