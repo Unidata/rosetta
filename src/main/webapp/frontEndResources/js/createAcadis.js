@@ -4,7 +4,7 @@
  */
 
 $(document).ready(function($) {
-
+    window.alert("Rosetta will no long publish data to the ACADIS Gateway after Feb. 19th 2016.");
     // automagically make any image alt a tooltip
     $(document).tooltip({ items: "img[alt]",
         content: function() { return $(this).attr("alt") }

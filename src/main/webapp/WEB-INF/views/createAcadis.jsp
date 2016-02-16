@@ -24,7 +24,10 @@
             sandboxMessage = ["You are currently evaluating Rosetta in Sandbox mode. If you wish ",
                 "to use Rosetta on files from your own project, please login to the ACADIS Gateway, ",
                 "visit your project and the appropriate dataset, navigate to the 'Contribute Metadata' interface,  ",
-                "and follow the 'Rosetta Data Translation Tool' link."].join("\n");
+                "and follow the 'Rosetta Data Translation Tool' link.",
+                "<BR> ",
+                "<BR>",
+                "(Note: Rosetta will no long publish data to the ACADIS gateway after Feb. 19th 2016)"].join("\n");
             $("#sandboxPublish").empty();
             $("#sandboxPublishMessage").empty();
             sandboxPublishMessage = ["You are currently evaluating Rosetta in Sandbox mode. You will not ",
@@ -34,7 +37,7 @@
     </script>
     <script type="text/javascript">
         if (navigator.appName === "Microsoft Internet Explore") {
-            alert("Rosetta is not supported on Internet Explorer.");
+            window.alert("Rosetta is not supported on Internet Explorer.");
         }
     </script>
 </head>
