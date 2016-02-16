@@ -69,7 +69,7 @@ dependencies {
 
     compile "net.sourceforge.jexcelapi:jxl:2.6.12"
 
-    compile "edu.ucar:netcdfAll:4.6.3"
+    compile "edu.ucar:netcdfAll:4.6.4"
 
     compile "com.googlecode.json-simple:json-simple:1.1.1"
 
