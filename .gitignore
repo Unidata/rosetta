@@ -53,3 +53,8 @@ cov-int
 rosetta.tgz
 /build/
 /bin/
+
+#####################
+# Output Test Files #
+#####################
+src/test/resources/testData/esc/*.nc
