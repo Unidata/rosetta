@@ -33,8 +33,6 @@ import java.util.List;
  *
  */
 
-// todo - make subdir to hold nc files and zip that dir
-// todo - add general controller to accept uploaded file (with file type selector) and reutrn zip file containing converted data
 public class EolSoundingComp {
 
     static Logger log = Logger.getLogger(EolSoundingComp.class.getName());
