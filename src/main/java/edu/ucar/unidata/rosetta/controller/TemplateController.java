@@ -9,16 +9,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import edu.ucar.unidata.rosetta.converters.EolSoundingComp;
+import edu.ucar.unidata.rosetta.domain.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,10 +40,6 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import edu.ucar.unidata.rosetta.converters.xlsToCsv;
-import edu.ucar.unidata.rosetta.domain.AsciiFile;
-import edu.ucar.unidata.rosetta.domain.PublisherInfo;
-import edu.ucar.unidata.rosetta.domain.RemoteAcadisUploadedFile;
-import edu.ucar.unidata.rosetta.domain.UploadedFile;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
 import edu.ucar.unidata.rosetta.publishers.AcadisGateway;
 import edu.ucar.unidata.rosetta.service.FileParserManager;
@@ -100,6 +94,24 @@ public class TemplateController implements HandlerExceptionResolver {
         model.addAllAttributes(resourceManager.loadResources());
         return new ModelAndView("create");
     }
+
+    /**
+     * Accepts a GET request for autoconversion of a known file, fetches resource information
+     * from file system and inject that data into the Model to be used in the
+     * View. Returns the view that walks the user through the steps of template
+     * creation.
+     *
+     * @param model
+     *            The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated
+     *         Model.
+     */
+    @RequestMapping(value = "/autoConvert", method = RequestMethod.GET)
+    public ModelAndView autoConvertKnownFile(Model model) {
+        model.addAllAttributes(resourceManager.loadResources());
+        return new ModelAndView("autoConvert");
+    }
+
 
     /**
      * Accepts a GET request for template creation, fetches resource information
@@ -190,6 +202,70 @@ public class TemplateController implements HandlerExceptionResolver {
         }
         return uniqueId;
     }
+
+
+    /**
+     * Accepts a POST request for an uploaded file, stores that file to disk, auto converts the file,
+     * and, returns a zip file of the converted dataset
+     * ASCII file.
+     *
+     * @param file
+     *            The UploadedFile form backing object containing the file.
+     * @param request
+     *            The HttpServletRequest with which to glean the client IP
+     *            address.
+     * @return A String of the local file name for the ASCII file (or null for
+     *         an error).
+     */
+    @RequestMapping(value = "/autoConvertKnownFile", method = RequestMethod.POST)
+    @ResponseBody
+    public String autoConvertKnownFile(UploadedAutoconvertFile file, HttpServletRequest request) {
+        List<String> convertedFiles = new ArrayList<>();
+        String uniqueId = file.getUniqueId();
+        String convertTo = file.getConvertTo();
+        String convertFrom = file.getConvertFrom();
+
+        String returnFile = null;
+
+        String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
+        String fileName = file.getFileName();
+        String fullFileName = FilenameUtils.concat(filePath, fileName);
+
+        String downloadDir = FilenameUtils.concat(getDownloadDir(), uniqueId);
+        File downloadFileDir = new File(downloadDir);
+        if (!downloadFileDir.exists()) {
+            downloadFileDir.mkdir();
+        }
+
+        try {
+            if (convertFrom != null) {
+                if (convertFrom.equals("esc")) {
+                    EolSoundingComp escConvertor = new EolSoundingComp();
+                    convertedFiles = escConvertor.convert(fullFileName);
+                    if (!convertedFiles.isEmpty()){
+                        logger.info("Success");
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            logger.error("A file conversion error has occurred: " + e.getMessage());
+            return null;
+        }
+
+        if (convertedFiles.size() >= 1) {
+            String zipFileName = FilenameUtils.concat(downloadDir, "converted_files.zip");
+            ZipFileUtil zippedConvertedFiles = new ZipFileUtil(zipFileName);
+            zippedConvertedFiles.addAllToZip(convertedFiles);
+            returnFile = zipFileName;
+        }
+
+        returnFile = returnFile.replaceAll(downloadDir + "/", "");
+
+        return returnFile;
+    }
+
+
 
     /**
      * Accepts a POST request Parse the uploaded file. The methods gets called
@@ -486,6 +562,8 @@ public class TemplateController implements HandlerExceptionResolver {
                 contentType = "application/rosetta";
             } else if (ext.equals("nc")) {
                 contentType = "application/x-netcdf";
+            }  else if (ext.equals("zip")) {
+                contentType = "application/zip";
             }
             response.setHeader("Content-Type", contentType);
             // copy it to response's OutputStream
@@ -549,8 +627,9 @@ public class TemplateController implements HandlerExceptionResolver {
 
         try {
             File localFileDir = new File(filePath);
-            if (!localFileDir.exists())
+            if (!localFileDir.exists()) {
                 localFileDir.mkdir();
+            }
             remoteFile.retrieveFile(filePath);
             if ((remoteFile.getFileName().contains(".xls"))
                     || (remoteFile.getFileName().contains(".xlsx"))) {

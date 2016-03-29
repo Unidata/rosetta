@@ -39,6 +39,47 @@ function selectPlatform(stepType, stepData) {
     }
 }
 
+function selectKnownType(stepType, stepData) {
+    // stepTypes:
+    //    stepValidation - validate input for current step
+    //    repopulateStep - repopulate user input (if exists) if user lands
+    //                     on the step using a next or previous step
+    //    stepFunctions - things that need to be done interactively during the step
+    //
+    //    stepData (optional) - any data you need to pass into the function
+    if (stepType == "stepValidation") {
+        // nothing to validate
+    } else if (stepType == "repopulateStep") {
+        // If we land on this page and user has already enter something
+        // (e.g., clicked previous or used the menu to navigate)
+        // Don't hide the 'Next' button
+        if ((stepData.type == "previous") || (stepData.type == "next")) {
+            if (getFromSession("convertFrom") != null) {
+                $("#faux").remove();
+                $(".jw-button-next").removeClass("hideMe");
+                $("select#convertFrom").val(getFromSession("convertFrom"));
+            } else {
+                //console.log("No Convert From in Session Storage")
+            }
+        }
+    } else if (stepType == "stepFunctions") {
+        if (getFromSession("convertFrom") == null) {
+            //console.log("convertFrom is null")
+            $("#faux").remove();
+            $(".jw-button-next").removeClass("hideMe");
+            //console.log("add to session")
+            addToSession("convertFrom", $("select#convertFrom").val());
+        }
+        $("select#convertFrom").change( function() {
+            //console.log("select changed");
+            addToSession("convertFrom", $(this).val());
+            // Show 'Next' button after user makes a selection
+            $("#faux").remove();
+            $(".jw-button-next").removeAttr("disabled").removeClass("disabled").removeClass("hideMe");
+        });
+    }
+}
+
 function uploadDataFile(stepType, stepData) {
     var fileId = "#file";
     var progressId = "#progress";
@@ -528,10 +569,10 @@ function convertAndDownload(stepType, stepData) {
             function(data) {
                 var urls = data.split(/\r\n|\r|\n/g);
                 var download = $("ul#download");
-                console.warn("here 1");
+                //console.warn("here 1");
                 var templatePattern = /^\.template$/i;
                 var ncPattern = /^\.nc$/i;
-                console.warn("here 2");
+                //console.warn("here 2");
                 $(download).empty();
                 for (var i = 0; i < urls.length; i++) {
                     var fileExt = urls[i].match(/\.[a-zA-Z]{3,4}$/);
@@ -544,9 +585,36 @@ function convertAndDownload(stepType, stepData) {
                     }
 
                     var link = "<li><a href=\""  +  "fileDownload/" + getFromSession("uniqueId") + "/" + urls[i]  +  "\" " + "download=\"" + urls[i] + "\" >" + linkName  +  "</a></li>";
-                    console.warn(link);
+                    //console.warn(link);
                     $(download).append(link);
                 }
+            },
+            "text");
+        $(".jw-button-next").removeClass("hideMe")
+        $(".jw-button-finish").addClass("hideMe");
+        $("#faux").remove();
+    }
+}
+
+function autoconvertAndDownload(stepType, stepData) {
+    if (stepType == "stepValidation") {
+        // validate data entered from step
+    } else if (stepType == "repopulateStep") {
+        autoconvertAndDownload("stepFunctions", stepData);
+    } else if (stepType == "stepFunctions") {
+        $.post("autoConvertKnownFile", stepData,
+            function(data) {
+                var download = $("ul#download");
+                //console.warn("here 1");
+                var templatePattern = /^\.template$/i;
+                var ncPattern = /^\.nc$/i;
+                //console.warn("here 2");
+                $(download).empty();
+
+                var linkName = "Rosetta Autoconverted file"
+                var link = "<li><a href=\""  +  "fileDownload/" + getFromSession("uniqueId") + "/" + data  +  "\" " + "download=\"" + data + "\" >" + linkName  +  "</a></li>";
+                //console.warn(link);
+                $(download).append(link);
             },
             "text");
         $(".jw-button-next").removeClass("hideMe")
@@ -605,7 +673,7 @@ function restoreSession(stepType, stepData) {
         $.post("restoreFromZip",
             sessionData,
             function(data) {
-                console.warn(data);
+                //console.warn(data);
                 var restoredSessionStorage = JSON.parse(data);
                 for(var item in restoredSessionStorage) {
                     addToSession(item, restoredSessionStorage[item]);

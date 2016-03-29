@@ -3,6 +3,7 @@ package edu.ucar.unidata.rosetta.util;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -24,6 +25,10 @@ public class ZipFileUtil {
 
     private void setName(String name) {
         this.name = name;
+    }
+
+    public void addAllToZip(List<String> filesToAdd) {
+        addAllToZip(filesToAdd.toArray(new String[0]));
     }
 
     public void addAllToZip(String[] filesToAdd) {

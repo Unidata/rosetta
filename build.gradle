@@ -11,7 +11,7 @@ ext {
 
 
 group = 'edu.ucar.unidata'
-version = '0.2-SNAPSHOT'
+version = '0.3-SNAPSHOT'
 
 description = """rosetta"""
 

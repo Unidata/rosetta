@@ -22,12 +22,15 @@
       </td>
       <td>
         <h1>What would you like to do?</h1>
-        <p>
+        <a>
         <a href="create"><img src="resources/img/add.png" alt="Works!" /></a>
         Create a new template
         <br>
         <a href="restore"><img src="resources/img/add.png" alt="Works!" /></a>
         Upload, modify, and use an existing template
+        <br>
+        <a href="autoConvert"><img src="resources/img/add.png" alt="Works!" /></a>
+        Autoconvert a new data file and transform automatically
         <br>
         <img src="resources/img/remove.png" alt="Future Work." />
         Upload template and new data file, transform automatically

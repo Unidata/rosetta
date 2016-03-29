@@ -32,6 +32,9 @@ import java.util.List;
  * (thanks to Scot Loehrer <loehrer@ucar.edu>)
  *
  */
+
+// todo - make subdir to hold nc files and zip that dir
+// todo - add general controller to accept uploaded file (with file type selector) and reutrn zip file containing converted data
 public class EolSoundingComp {
 
     static Logger log = Logger.getLogger(EolSoundingComp.class.getName());
@@ -265,7 +268,7 @@ public class EolSoundingComp {
 
             // close shop
             ncfw.close();
-
+            success = true;
         } catch (IOException | InvalidRangeException ioe) {
             log.debug(ioe.getMessage());
         }
@@ -281,9 +284,10 @@ public class EolSoundingComp {
         data = new HashMap<>();
     }
 
-    public boolean convert(String escFile) {
+    public List<String> convert(String escFile) {
 
         // local vars
+        List<String> convertedFiles = new ArrayList<>();
         boolean readSuccess = false;
         boolean parseSuccess = false;
         boolean writeSuccess = false;
@@ -359,21 +363,23 @@ public class EolSoundingComp {
                 // file for this block of data!
                 String ncFile = launchDateIsoStr.replace(":", "") + "-" + siteId + ".nc";
                 String ncFileName = escPath.getParent().toString() + "/" + ncFile;
-                writeSuccess = writeNcFile(ncFileName);
+                if (writeNcFile(ncFileName)) {
+                    convertedFiles.add(ncFileName);
+                }
             }
         } catch (IOException ioe) {
             readSuccess = false;
             log.debug(ioe.getMessage());
         }
 
-        return (readSuccess && parseSuccess && writeSuccess);
+        return convertedFiles;
     }
 
     public static void main(String[] args) {
         String escFile = "/Users/lesserwhirls/dev/unidata/rosetta/src/test/testFiles/esc/ELLIS_20150610_reduced.cls";
         escFile = "/Users/lesserwhirls/Downloads/nc/ELLIS_20150610.cls";
         EolSoundingComp escConvertor = new EolSoundingComp();
-        if (escConvertor.convert(escFile)){
+        if (!escConvertor.convert(escFile).isEmpty()){
             log.debug("Conversion successful");
         }
     }

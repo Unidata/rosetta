@@ -16,18 +16,18 @@ public class UploadedFile {
 
     /*
      * Returns the uploaded file in CommonsMultipartFile format.
-     * 
-     * @return  The CommonsMultipartFile file. 
+     *
+     * @return  The CommonsMultipartFile file.
      */
     public CommonsMultipartFile getFile() {
         return file;
     }
 
     /*
-     * Sets the uploaded file as a CommonsMultipartFile file. 
+     * Sets the uploaded file as a CommonsMultipartFile file.
      * The file is uploaded via an asynchronous AJAX call.
-     * 
-     * @param file  The CommonsMultipartFile file. 
+     *
+     * @param file  The CommonsMultipartFile file.
      */
     public void setFile(CommonsMultipartFile file) {
         setFileName(file.getOriginalFilename());
@@ -37,17 +37,17 @@ public class UploadedFile {
 
     /*
      * Returns the name of the uploaded file.
-     * 
-     * @return  The uploaded file name. 
+     *
+     * @return  The uploaded file name.
      */
     public String getFileName() {
         return fileName;
     }
 
     /*
-     * Sets the file name of the uploaded file. 
-     * 
-     * @param fileName  The uploaded file name. 
+     * Sets the file name of the uploaded file.
+     *
+     * @param fileName  The uploaded file name.
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;

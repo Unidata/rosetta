@@ -76,6 +76,7 @@ function validateUploadedFile(file, currentStep) {
     var ncmlPattern = /^\.ncml$/i;
     var zipPattern = /^\.zip$/i;
     var filePattern = /(text)/i;
+    var eolCompositeSountingPattern = /^\.cls$/i;
 
     // get file extension
     var fileExt = file.name.match(/\.[a-zA-Z]{3,4}$/);
@@ -85,6 +86,7 @@ function validateUploadedFile(file, currentStep) {
     var isNcml = ncmlPattern.test(fileExt[0]);
     var isZip = zipPattern.test(fileExt[0]);
     var isFile = filePattern.test(file.type);
+    var isEcs = eolCompositeSountingPattern.test(fileExt[0]);
 
     //if ((file.size / 1024) > 1024) {
     if ((file.size / 1024) > 2150) {
@@ -100,7 +102,7 @@ function validateUploadedFile(file, currentStep) {
         // handle special cases first, then as last check see if it of type "file:
         if (isExcel) {
           $(".jw-step:eq(" + currentStep + ")").find("#notice").empty().append("Notice: Any date formatted cells in your spreadsheet will be reformatted in 'seconds since 1970-01-01'!");
-        } else if ((!isFile) && (!isNcml) && (!isZip)) {
+        } else if ((!isFile) && (!isNcml) && (!isZip) && (!isEcs)) {
             $(errorLabel).text("Error! Incorrect file type selected for upload");
             $("#upload").addClass("hideMe");
             boolean = false;
