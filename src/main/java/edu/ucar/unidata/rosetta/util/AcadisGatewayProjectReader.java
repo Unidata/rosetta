@@ -22,8 +22,8 @@ import java.util.Map;
 /**
  * Created by lesserwhirls on 2/14/14.
  */
+@Deprecated
 public class AcadisGatewayProjectReader {
-
     // private String server = "cadis.prototype.ucar.edu";
     private String server = "www.aoncadis.org";
     private int port = 443;

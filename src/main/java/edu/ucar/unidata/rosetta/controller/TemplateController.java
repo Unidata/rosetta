@@ -41,11 +41,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import edu.ucar.unidata.rosetta.converters.xlsToCsv;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
-import edu.ucar.unidata.rosetta.publishers.AcadisGateway;
 import edu.ucar.unidata.rosetta.service.FileParserManager;
 import edu.ucar.unidata.rosetta.service.FileValidator;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
-import edu.ucar.unidata.rosetta.util.AcadisGatewayProjectReader;
 import edu.ucar.unidata.rosetta.util.JsonUtil;
 import edu.ucar.unidata.rosetta.util.RosettaProperties;
 import edu.ucar.unidata.rosetta.util.ZipFileUtil;
@@ -490,6 +488,7 @@ public class TemplateController implements HandlerExceptionResolver {
         return returnString;
     }
 
+/*
     @RequestMapping(value = "/publish", method = RequestMethod.POST)
     @ResponseBody
     public String publish(PublisherInfo publisherObj) {
@@ -533,6 +532,7 @@ public class TemplateController implements HandlerExceptionResolver {
 
         return msg;
     }
+*/
 
     /**
      * Accepts a GET request to download a file from the download directory.
@@ -581,126 +581,6 @@ public class TemplateController implements HandlerExceptionResolver {
                 logger.error(e.getMessage());
             }
         }
-    }
-
-    @RequestMapping(value = "/acadis", method = RequestMethod.GET)
-    public String readAcadisDatasetInventory(
-            @RequestParam(value = "dataset", required = true) String datasetId,
-            ModelMap model) {
-        // https://cadis.prototype.ucar.edu/redirect.html?link=http%3a%2f%2frosetta.unidata.ucar.edu%2facadis%3fdataset%3def653b66-a09f-11e3-b343-00c0f03d5b7c
-
-        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(
-                datasetId);
-        projectReader.read();
-        Map<String, String> inventory = projectReader.getInventory();
-        JSONObject jsonInventory = new JSONObject(inventory);
-        String jsonInventoryStr = jsonInventory.toJSONString();
-        for (String name : inventory.keySet()) {
-            String downloadUrl = inventory.get(name);
-            System.out.println("name: " + name + " access: " + downloadUrl);
-        }
-        model.addAttribute("dataJson", jsonInventoryStr);
-        return "acadis";
-    }
-
-    /**
-     * Accepts a POST request for an uploaded file, stores that file to disk
-     * and, returns the local (unique, alphanumeric) file name of the uploaded
-     * ASCII file.
-     *
-     * @param remoteFile
-     *            The RemoteAcadisUploadedFile form backing object containing
-     *            the file.
-     * @param request
-     *            The HttpServletRequest with which to glean the client IP
-     *            address.
-     * @return A String of the local file name for the ASCII file (or null for
-     *         an error).
-     */
-    @RequestMapping(value = "/createAcadis", method = RequestMethod.POST)
-    @ResponseBody
-    public String processRemoteAcadisUploadedFile(
-            RemoteAcadisUploadedFile remoteFile, HttpServletRequest request) {
-        String uniqueId = createUniqueId(request);
-        remoteFile.setUniqueId(uniqueId);
-        String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
-
-        try {
-            File localFileDir = new File(filePath);
-            if (!localFileDir.exists()) {
-                localFileDir.mkdir();
-            }
-            remoteFile.retrieveFile(filePath);
-            if ((remoteFile.getFileName().contains(".xls"))
-                    || (remoteFile.getFileName().contains(".xlsx"))) {
-                String xlsFilePath = FilenameUtils.concat(filePath,
-                        remoteFile.getFileName());
-                xlsToCsv.convert(xlsFilePath, null);
-                String csvFilePath = null;
-                if (xlsFilePath.contains(".xlsx")) {
-                    csvFilePath = xlsFilePath.replace(".xlsx", ".csv");
-                } else if (xlsFilePath.contains(".xls")) {
-                    csvFilePath = xlsFilePath.replace(".xls", ".csv");
-                }
-                remoteFile.setFileName(csvFilePath);
-            }
-        } catch (Exception e) {
-            logger.error("A file upload error has occurred: " + e.getMessage());
-            return null;
-        }
-
-        return StringEscapeUtils.escapeHtml4(remoteFile.getUniqueId());
-    }
-
-    @RequestMapping(value = "/createAcadis", method = RequestMethod.GET)
-    public ModelAndView createAcadis(
-            @RequestParam(value = "dataset", required = false) String datasetId,
-            Model model) {
-        // https://cadis.prototype.ucar.edu/redirect.html?link=http%3a%2f%2frosetta.unidata.ucar.edu%2facadis%3fdataset%3def653b66-a09f-11e3-b343-00c0f03d5b7c
-        if (datasetId == null) {
-            // Rosetta Sandbox ID
-            datasetId = "9e8e03d6-cb31-11e3-b6a5-00c0f03d5b7c";
-        }
-
-        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(
-                datasetId);
-        projectReader.read();
-        Map<String, String> inventory = projectReader.getInventory();
-        JSONObject jsonInventory = new JSONObject(inventory);
-        String jsonInventoryStr = jsonInventory.toJSONString();
-        model.addAttribute("dataJson", jsonInventoryStr);
-
-        model.addAllAttributes(resourceManager.loadResources());
-        return new ModelAndView("createAcadis");
-    }
-
-    @RequestMapping(value = "/restoreFromGateway", method = RequestMethod.POST)
-    @ResponseBody
-    public String restoreTemplateFromgFateway(
-            RemoteAcadisUploadedFile remoteFile, HttpServletRequest request) {
-
-        String jsonStrSessionStorage = null;
-        String filePath = FilenameUtils.concat(getUploadDir(),
-                remoteFile.getUniqueId());
-        filePath = FilenameUtils.concat(filePath, remoteFile.getTemplateName());
-        InputStream inStream = null;
-        jsonStrSessionStorage = "";
-        String line;
-        try {
-            inStream = new FileInputStream(filePath);
-            BufferedReader buffReader = new BufferedReader(
-                    new InputStreamReader(inStream));
-            while ((line = buffReader.readLine()) != null) {
-                jsonStrSessionStorage = jsonStrSessionStorage + line;
-            }
-            buffReader.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return jsonStrSessionStorage;
     }
 
     /**

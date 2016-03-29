@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 /**
  * This class is designed to create a publisher for the ACADIS Gateway
  */
+@Deprecated
 public class AcadisGateway implements Publisher {
 
     private String path = "/api/dataset";

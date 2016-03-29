@@ -58,11 +58,6 @@
                 <%@include file="/WEB-INF/views/jspf/convertAndDownload.jspf" %>
             </div>
 
-            <div id="step8" title="<spring:message code="step8.title"/>">
-                <h5><spring:message code="step8.description"/></h5>
-                <%@include file="/WEB-INF/views/jspf/publish.jspf" %>
-            </div>
-
             <%@include file="/WEB-INF/views/jspf/footer.jspf" %>
         </form>
     </body>
