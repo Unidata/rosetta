@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
-<log4j:configuration xmlns:log4j="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd" debug="false">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
 
    <appender name="rosettaLogger" class="org.apache.log4j.DailyRollingFileAppender">
@@ -19,45 +19,45 @@
         </layout>
     </appender>
 
-
-   <logger name="edu.ucar.unidata.rosetta">
+    <logger name="edu.ucar.unidata.rosetta" additivity="false">
+        <level value="INFO" />
         <appender-ref ref="rosettaLogger"/>
-   </logger>
-
-  <logger name="org.springframework.core">
-    <appender-ref ref="rosettaLogger"/>
-    <level value="debug" />
-  </logger>
-
-  <logger name="org.springframework.beans">
-    <appender-ref ref="rosettaLogger"/>
-    <level value="debug" />
-  </logger>
-
-  <logger name="org.springframework.context">
-    <appender-ref ref="rosettaLogger"/>
-    <level value="debug" />
-  </logger>
-
-  <logger name="org.springframework.http">
-    <appender-ref ref="rosettaLogger"/>
-
-    <level value="debug" />
-  </logger>
-  <!-- below alternate between debug and info -->
-  <logger name="org.springframework.web">
-    <appender-ref ref="rosettaLogger"/>
-    <level value="debug" />
-  </logger>
-
-  <root>
-    <level value="DEBUG, file, stdout"/>
-    <appender-ref ref="rosettaLogger"/>
-  </root>
-
-    <logger name="edu.ucar.unidata.rosetta.converters.ESC">
-        <appender-ref ref="converterLogger"/>
-        <level value="debug" />
     </logger>
+
+    <logger name="org.springframework.core" additivity="false">
+      <level value="INFO" />
+      <appender-ref ref="rosettaLogger"/>
+    </logger>
+
+    <logger name="org.springframework.beans" additivity="false">
+      <level value="INFO" />
+      <appender-ref ref="rosettaLogger"/>
+    </logger>
+
+    <logger name="org.springframework.context" additivity="false">
+      <level value="INFO" />
+      <appender-ref ref="rosettaLogger"/>
+    </logger>
+
+    <logger name="org.springframework.http" additivity="false">
+      <level value="INFO" />
+      <appender-ref ref="rosettaLogger"/>
+    </logger>
+    
+    <!-- below alternate between DEBUG and INFO -->
+    <logger name="org.springframework.web" additivity="false">
+      <level value="INFO" />
+      <appender-ref ref="rosettaLogger"/>
+    </logger>
+	
+    <logger name="edu.ucar.unidata.rosetta.converters.ESC">
+        <level value="INFO" />
+        <appender-ref ref="converterLogger"/>
+    </logger>
+
+    <root>
+      <level value="DEBUG, file, stdout"/>
+      <appender-ref ref="rosettaLogger"/>
+    </root>
 
 </log4j:configuration>
