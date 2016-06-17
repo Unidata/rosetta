@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,6 +27,8 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -64,6 +67,9 @@ public class TemplateController implements HandlerExceptionResolver {
     @Resource(name = "fileValidator")
     private FileValidator fileValidator;
 
+	@Autowired
+	ServletContext servletContext; 
+		
     private String getDownloadDir() {
         String downloadDir = "";
         downloadDir = RosettaProperties.getDownloadDir();
@@ -90,6 +96,7 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView createTemplate(Model model) {
         model.addAllAttributes(resourceManager.loadResources());
+		model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
         return new ModelAndView("create");
     }
 
@@ -325,7 +332,7 @@ public class TemplateController implements HandlerExceptionResolver {
 
                         for (String mmKey : mm.keySet()) {
                             if (mm.get(mmKey).containsKey("_coordinateVariableType")) {
-                                HashMap tmp = mm.get(mmKey);
+                                HashMap<String, Object> tmp = mm.get(mmKey);
                                 String cvt = tmp.get("_coordinateVariableType").toString();
                                 boolean chk1 = cvt.equals("relTime");
                                 boolean chk2 = cvt.equals("fullDateTime");
