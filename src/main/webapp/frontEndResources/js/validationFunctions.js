@@ -87,10 +87,8 @@ function validateUploadedFile(file, currentStep) {
     var isZip = zipPattern.test(fileExt[0]);
     var isFile = filePattern.test(file.type);
     var isEcs = eolCompositeSountingPattern.test(fileExt[0]);
-console.log("in validation: " + maxUploadSize);
-    if ((file.size / 1024) > 1024) {
-    if ((file.size / 1024) > 5120) {
-        $(errorLabel).text("Error! File size should be less then 5 MB");
+    if (file.size > maxUploadSize) {
+        $(errorLabel).text("Error! File size should be less then " + (maxUploadSize / 1024 / 1000).toFixed(2)+ " MB");
         $("#upload").addClass("hideMe"); 
         boolean = false;
     } else if (($("#file")[0].files[0].size / 1024) <= 0) {
@@ -128,9 +126,8 @@ function validateUploadedTemplateFile(file, currentStep) {
     // test valid regex patterns
     var isZip = zipPattern.test(fileExt[0]);
 
-    //if ((file.size / 1024) > 1024) {
-    if ((file.size / 1024) > 2150) {
-        $(errorLabel).text("Error! File size should be less then 1MB");
+    if (file.size > maxUploadSize) {
+        $(errorLabel).text("Error! File size should be less then " + (maxUploadSize / 1024 / 1000).toFixed(2)+ " MB");
         $("#uploadTemplate").addClass("hideMe");
         boolean = false;
     } else if (($("#templateFile")[0].files[0].size / 1024) <= 0) {
