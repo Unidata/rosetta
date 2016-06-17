@@ -16,17 +16,26 @@
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
   
-  <!-- Static resources since we are handling all requests
-       these are front end resources, found under
-       scr/main/webapp/resources -->
+  <!-- Static resources since we are handling all requests.
+       These are front end resources (css, etc.) and xml files -->
   <mvc:resources mapping="/resources/**" location="/frontEndResources/" />
-
   <mvc:resources mapping="/resources/**" location="/WEB-INF/classes/resources/" />
+  
   <!-- Scans the classpath of this application for @Components to deploy as beans -->
   <context:component-scan base-package="edu.ucar.unidata.rosetta" />
 
   <!-- Configures the @Controller programming model -->
   <mvc:annotation-driven />
+  
+  <!-- Properties injection -->
+  <bean id="applicationProperties" 
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+      <list>
+        <value>classpath:defaultRosettaConfig.properties</value>
+      </list>
+    </property>
+  </bean>     
    
   <bean id="resourceManager" class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl"/>
   <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.FileParserManagerImpl"/>
@@ -36,7 +45,7 @@
 
   <!-- File upload multipart resolver -->
   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-      <property name="maxUploadSize" value="5243000"/>
+      <property name="maxUploadSize" value="${maxUploadSize}"/>
   </bean>
 
   <!-- Message source resolver to use messages.properties file in the 'war/WEB-INF/classes' directory -->
