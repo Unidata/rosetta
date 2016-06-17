@@ -1,21 +1,22 @@
 <!DOCTYPE HTML>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp" %>
 <%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean"%>
-<html>
-    <head>
-        <title><spring:message code="global.title"/></title>
-        <%@ include file="/WEB-INF/views/includes/css.jsp" %>
-        <link type="text/css" rel="stylesheet" href="resources/css/create.css" />
-        <%@ include file="/WEB-INF/views/includes/javascript.jsp" %>
-        <script type="text/javascript" src="resources/js/create.js"></script>
-        <script type="text/javascript">
-	        var platformMetadata = [];
-	        var generalMetadata = [];
-            var publisherInfo = [];
-            $.metadata.setType("attr", "validate");
-        </script>
-    </head>
-    <body>
+ <html>
+  <head>
+   <title><spring:message code="global.title"/></title>
+   <%@ include file="/WEB-INF/views/includes/css.jsp" %>
+   <link type="text/css" rel="stylesheet" href="resources/css/create.css" />
+   <%@ include file="/WEB-INF/views/includes/javascript.jsp" %>
+   <script type="text/javascript" src="resources/js/create.js"></script>
+   <script type="text/javascript">
+      var platformMetadata = [];
+      var generalMetadata = [];
+      var publisherInfo = [];
+      $.metadata.setType("attr", "validate");
+      var maxUploadSize = ${maxUploadSize};
+   </script>
+  </head>
+  <body>
         <h1><spring:message code="global.title"/></h1>
         <form id="FORM" action="/rosetta/upload" method="POST" enctype="multipart/form-data">
             <div id="step0" title="<spring:message code="step0.title"/>">

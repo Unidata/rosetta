@@ -87,13 +87,12 @@ function validateUploadedFile(file, currentStep) {
     var isZip = zipPattern.test(fileExt[0]);
     var isFile = filePattern.test(file.type);
     var isEcs = eolCompositeSountingPattern.test(fileExt[0]);
-
-    //if ((file.size / 1024) > 1024) {
+console.log("in validation: " + maxUploadSize);
+    if ((file.size / 1024) > 1024) {
     if ((file.size / 1024) > 5120) {
         $(errorLabel).text("Error! File size should be less then 5 MB");
         $("#upload").addClass("hideMe"); 
         boolean = false;
-    //} else if (($("#file")[0].files[0].size / 1024) <= 0) {
     } else if (($("#file")[0].files[0].size / 1024) <= 0) {
         $(errorLabel).text("Error! You are attempting to upload an empty file");
         $("#upload").addClass("hideMe"); 
