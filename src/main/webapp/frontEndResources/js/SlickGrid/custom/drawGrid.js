@@ -55,7 +55,7 @@ function drawGrid(data, step) {
 
     // call needed function based on the current jWizard step number
     if (step == "2") { // Specify Header Lines
-        gridForHeaderRowSelection(grid, fileData, columns, rows);    
+        gridForHeaderRowSelection(grid, fileData, columns, rows, step);    
     } else if (step == "3") { // Specify Delimiters
         gridForDelimiterSelection(grid, fileData, columns, rows, LineNumberFormatter);
     } else {  // Specify Variable Attributes

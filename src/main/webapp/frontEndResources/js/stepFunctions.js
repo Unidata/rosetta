@@ -229,16 +229,16 @@ function uploadRosettaTemplate(stepType, stepData) {
     }
 }
 
+
 function specifyHeaderLines(stepType, stepData) {
     if (stepType == "stepValidation") {
         if (stepData.type == "next") {
-            // some files do not have a header, so skip this validation step for now
-            //error = validateItemExistsInSession(stepData.currentStepIndex, "headerLineNumbers", "You need to specify which lines are header lines to continue.");
-            //if (!error) {
-            //    return false;
-            //} else {
-            //    return error;
-            //}
+            error = validateItemExistsInSession(stepData.currentStepIndex, "headerLineNumbers", "You need to specify which lines are header lines to continue.");
+            if (!error) {
+                return false;
+            } else {
+                return error;
+            }
             return false
         }
     } else if (stepType == "repopulateStep") {
@@ -246,8 +246,8 @@ function specifyHeaderLines(stepType, stepData) {
             function(data) {
                 drawGrid(data, "2")
             },
-            "text");
-
+        "text");
+        
         // If we land on this page and user has already enter something
         // (e.g., clicked previous or used the menu to navigate)
         // Don't hide the 'Next' button
