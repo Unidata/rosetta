@@ -22,7 +22,7 @@ $(document).ready(function($) {
         menuEnable: true,
         titleHide: false,
         buttons : {
-            finishType : "button"
+        finishType : "button"
         }
     })
 
