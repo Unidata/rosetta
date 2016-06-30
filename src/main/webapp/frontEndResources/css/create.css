@@ -52,6 +52,7 @@ a[href$='.template'] {
  padding: .5em 1em;
  margin-left: 1em;
  display: inline-block;
+ font-size: 11px;
 }
 
 /* commonly used class used to hide elements */
@@ -70,6 +71,14 @@ label.error {
  margin: 10px 0; 
  padding: 0;
  color: #FF0000;
+}
+
+label.noHeaderLines {
+ margin-bottom: 10px;
+ width: 100%;
+ float:left;
+ clear:left;
+ font-family: "Courier New", Courier, monospace;
 }
 
 /* unordered lists are used to display/format form items in the jWizard */
