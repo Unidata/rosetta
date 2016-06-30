@@ -82,6 +82,24 @@ function getSessionKey(index) {
     }
 }
 
+/** 
+ * Removes all key/value pairs from the session except for whatever is defined in the keep array. 
+ *
+ * @param keep  The array of items we wish to keep in the metadata string in the session.
+ */
+function removeAllButTheseFromSession(keep) {
+    var remove = [];
+    for (var i = 0; i < getSessionLength(); i++) {  
+        var key = getSessionKey(i);
+        if ($.inArray( key, keep ) < 0) {
+            remove.push(key);
+        }
+    } 
+    for (var i = 0; i < remove.length; i++) {  
+		removeFromSession(remove[i]);
+    }
+}
+
 /**  
  * Looks to see if the user has already provided a value for something by checking the 
  * session. This function is different than the getFromSession() function (above) in 
@@ -202,11 +220,15 @@ function removeItemFromSessionString(sessionKey, itemToRemove) {
 }
 
 /** 
- * Removes all key/value pairs from the concatenated string stored in the session 
- * except for whatever is defined in the keep array. This function gets called when 
- * the user opts to change the variable coordinate type designation.  
+ * Removes key/value pairs from A SINGLE ITEM stored in the session except for 
+ * whatever is defined in the keep array. E.g., Looks up the one item in the session
+ * and loops through the value of this item, removing the key/value pairs it contains.
+ * 
+ * The difference between this function and removeAllButTheseFromSession is that this
+ * function only modifies ONE ITEM in the session by removing entries from the value.
+ * This function gets called when the user opts to change the variable coordinate type designation.  
  *
- * @param sessionKey  The key used to store the data in the session.
+ * @param sessionKey  The key used to find the stored data in the session.
  * @param keep  The array of items we wish to keep in the metadata string in the session.
  */
 function removeAllButTheseFromSessionString(sessionKey, keep) {
