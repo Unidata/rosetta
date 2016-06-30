@@ -1,5 +1,6 @@
 package edu.ucar.unidata.rosetta.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,16 @@ public interface FileParserManager {
      * @return  A String of the file data parsed by the delimiter(s).
      */
     public String normalizeDelimiters(String filePath, String selectedDelimiter, List<String> delimiterList, List<String> headerLineList);
+	
+    /**
+     * A simple method that reads each line of a file, and looks for blank lines.
+	 * Blank line = empty, only whitespace, or null (as per StringUtils).
+     * 
+     * @param file
+     *            The path to the file on disk.
+     * @return  The number of blank lines in the file. 
+     */
+	public int getBlankLines(File file);
 
 }
 

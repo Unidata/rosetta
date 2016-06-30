@@ -177,10 +177,8 @@ public class TemplateController implements HandlerExceptionResolver {
             if (!localFileDir.exists()) {
                 localFileDir.mkdirs();
             }
-            File uploadedFile = new File(FilenameUtils.concat(filePath,
-                    file.getFileName()));
-            try (FileOutputStream outputStream = new FileOutputStream(
-                    uploadedFile)) {
+            File uploadedFile = new File(FilenameUtils.concat(filePath, file.getFileName()));
+            try (FileOutputStream outputStream = new FileOutputStream(uploadedFile)) {
                 outputStream.write(file.getFile().getFileItem().get());
                 outputStream.flush();
                 outputStream.close();
@@ -188,10 +186,9 @@ public class TemplateController implements HandlerExceptionResolver {
                 logger.error("error while saving uploaded file to disk.");
                 return null;
             }
-            if ((file.getFileName().contains(".xls"))
-                    || (file.getFileName().contains(".xlsx"))) {
-                String xlsFilePath = FilenameUtils.concat(filePath,
-                        file.getFileName());
+			
+            if ((file.getFileName().contains(".xls")) || (file.getFileName().contains(".xlsx"))) {
+                String xlsFilePath = FilenameUtils.concat(filePath, file.getFileName());
                 xlsToCsv.convert(xlsFilePath, null);
                 String csvFilePath = null;
                 if (xlsFilePath.contains(".xlsx")) {
@@ -207,6 +204,25 @@ public class TemplateController implements HandlerExceptionResolver {
         }
         return uniqueId;
     }
+
+
+    /**
+     * Accepts a GET request to see if an already uploaded file contains blank lines.
+     *
+     * @param fileId
+     *            The UploadedFile form backing object containing the file.
+     * @return  The number of blank lines in the file.
+     */
+    @RequestMapping(value = "/getBlankLines", method = RequestMethod.GET)
+	@ResponseBody
+    public String getBlankLines(@RequestParam("fileName") String fileName, @RequestParam("uniqueId") String uniqueId) {
+		int blankLineCount = 0;
+        String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
+		File uploadedFile = new File(FilenameUtils.concat(filePath, fileName));
+		blankLineCount = fileParserManager.getBlankLines(uploadedFile);
+		return new Integer(blankLineCount).toString();
+	}
+		
 
 
     /**
@@ -286,11 +302,10 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/parse", method = RequestMethod.POST)
     @ResponseBody
     public String parseFile(AsciiFile file, BindingResult result) {
-        String filePath = FilenameUtils.concat(getUploadDir(),
-                file.getUniqueId());
+        String filePath = FilenameUtils.concat(getUploadDir(),file.getUniqueId());
         filePath = FilenameUtils.concat(filePath, file.getFileName());
 
-        // SCENARIO 1: no header lines yet
+        // SCENARIO 1: no header lines yet (return the file contents to display in grid)
         if (file.getHeaderLineList().isEmpty()) {
             return fileParserManager.parseByLine(filePath);
         } else {
@@ -312,12 +327,9 @@ public class TemplateController implements HandlerExceptionResolver {
                  * 
                  * } else {
                  **/
-                String normalizedFileData = fileParserManager
-                        .normalizeDelimiters(filePath, selectedDelimiter,
-                                delimiterList, file.getHeaderLineList());
+                String normalizedFileData = fileParserManager.normalizeDelimiters(filePath, selectedDelimiter, delimiterList, file.getHeaderLineList());
                 if (file.getVariableNameMap().isEmpty()) {
-                    return StringEscapeUtils.escapeHtml4(selectedDelimiter
-                            + "\n" + normalizedFileData);
+                    return StringEscapeUtils.escapeHtml4(selectedDelimiter + "\n" + normalizedFileData);
                 } else {
                     // SCENARIO 3: we have variable data!
 
