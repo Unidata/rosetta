@@ -22,7 +22,7 @@ $(document).ready(function($) {
         menuEnable: true,
         titleHide: false,
         buttons : {
-        finishType : "button"
+            finishType : "button"
         }
     })
 
@@ -144,12 +144,12 @@ $(document).ready(function($) {
     /** 
      * STEP 0 
      */
-     selectPlatform("stepFunctions", 0);
+    selectPlatform("stepFunctions", 0);
 
     /** 
      * STEP 1
      */
-    uploadDataFile("stepFunctions");
+    uploadDataFile("stepFunctions", faux);
 
     /** 
      * STEP 2 handled in SlickGrid/custom/headerLineSelection.js

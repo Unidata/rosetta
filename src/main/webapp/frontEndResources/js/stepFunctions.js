@@ -1,11 +1,23 @@
+/**
+ * stepFunctions.js
+ * 
+ * Functions that correspond to a particular step in the jWizard.
+ */
+
+
+
+
+/**  
+ * Used in the 'Select Observation Platform' step.  Called during template creation. 
+ * 
+ * @param stepType  A key denoting where we are in the Wizard process.  Options are:
+ *     stepValidation:  Validate input for current step.
+ *     repopulateStep:  Repopulate user input (if exists) if user lands on the step using a next or previous step
+ *     stepFunctions:   Initialization.  Do things that need to be done interactively during the step.
+ *
+ * @param stepData  Optional data needed in this function.
+ */
 function selectPlatform(stepType, stepData) {
-    // stepTypes:
-    //    stepValidation - validate input for current step
-    //    repopulateStep - repopulate user input (if exists) if user lands
-    //                     on the step using a next or previous step
-    //    stepFunctions - things that need to be done interactively during the step
-    //
-    //    stepData (optional) - any data you need to pass into the function
     if (stepType == "stepValidation") {
         // If we land on this page and user has already enter something
         // (e.g., clicked previous or used the menu to navigate)
@@ -28,9 +40,9 @@ function selectPlatform(stepType, stepData) {
                     .attr('checked', 'checked');
             }
         }
-    } else if (stepType == "stepFunctions") {
-        var inputName = "#step" + stepData + " input";
-        $(inputName).bind("click", function() {
+    } else if (stepType == "stepFunctions") {  // Initialization.  
+        var inputName = "#step" + stepData + " input";  
+        $(inputName).bind("click", function() {    // Bind any click events and capture user input.
             addToSession("cfType", $(this).val());
             // Show 'Next' button after user makes a selection
             $("#faux").remove()
@@ -80,6 +92,17 @@ function selectKnownType(stepType, stepData) {
     }
 }
 
+
+/**  
+ * Used to upload a file.  Called during template creation, auto convert, and restoration. 
+ * 
+ * @param stepType  A key denoting where we are in the Wizard process.  Options are:
+ *     stepValidation:  Validate input for current step.
+ *     repopulateStep:  Repopulate user input (if exists) if user lands on the step using a next or previous step
+ *     stepFunctions:   Initialization.  Do things that need to be done interactively during the step.
+ *
+ * @param stepData  Optional data needed in this function.
+ */
 function uploadDataFile(stepType, stepData) {
     var fileId = "#file";
     var progressId = "#progress";
@@ -90,7 +113,6 @@ function uploadDataFile(stepType, stepData) {
         if (!error) {
             return false;
         } else {
-
             return error;
         }
     } else if (stepType == "repopulateStep") {
@@ -122,7 +144,6 @@ function uploadDataFile(stepType, stepData) {
         $(uploadId).bind("click", function() {
             // Upload file and add to session
             var up = instantiateUploader($(progressId), $(".jw-step:eq(1)").find("label.error"), $(uploadId), $(fileId), $(clearId));
-            //var up = instantiateUploader($("#progress"), $(".jw-step:eq(1)").find("label.error"), $("#upload"), $("file"));
             up.send();
             addToSession("fileName", cleanFilePath($(fileId).val()));
             // show 'Next' button after user uploads file
@@ -133,8 +154,7 @@ function uploadDataFile(stepType, stepData) {
 
         $(clearId).bind("click", function() {
             //removed uploaded file from session and recreate the upload form.
-            removeFromSession("uniqueId");
-            removeFromSession("fileName");
+			removeAllButTheseFromSession(["platformMetadata", "cfType"]);
             $(fileId).removeClass("hideMe");
             $(clearId).addClass("hideMe");
             $("#quickSaveButton").addClass("hideMe")
@@ -144,8 +164,7 @@ function uploadDataFile(stepType, stepData) {
             // clear any notices about file types
             $("#notice").empty();
             // hide the 'Next' button
-            $("#faux").remove();
-            $(".jw-button-next").addClass("hideMe").after(faux);
+            $(".jw-button-next").addClass("hideMe").after(stepData);
         });
     }
 }

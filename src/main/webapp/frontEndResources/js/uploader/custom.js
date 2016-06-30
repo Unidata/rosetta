@@ -29,6 +29,7 @@ function instantiateUploader(progressBarId, errorLabel, uploadButton, fileId, cl
             $(uploadButton).addClass("hideMe");  
             $(progressBarId).html("100%");
             $(progressBarId).effect("fade", 1000, progressBarCallback(progressBarId, clearId));
+            getBlankLines(getFromSession("fileName"), data);
             addToSession("uniqueId", data); 
             $("#faux").remove();
             $(".jw-button-next").removeClass("hideMe");
@@ -55,4 +56,21 @@ function progressBarCallback(progressBarId, clearId) {
 function cleanFilePath(filePath) {
     var cleanFilePath = filePath.replace(/\\/g, "").replace(/C:/g, "").replace(/fakepath/g, "").replace(".xlsx", ".csv").replace(".xls", ".csv");
     return cleanFilePath;
+}
+
+/** 
+ * Queries the server (where the file has already been uploaded and parsed) to see 
+ * if the file contains any "blank" lines (i.e., empty, whitespace only, or null).
+ *
+ * @param fileName  The name of the uploaded file.
+ * @param uniqueId  The uniqueId needed to find the file on disk.
+ */
+function getBlankLines(fileName, uniqueId) {
+    var blankLines = 0;
+    $.get( "getBlankLines", { fileName: fileName, uniqueId: uniqueId } )
+        .done(function( data ) {  
+        if (data > 0) {
+            $("#notice").empty().append("Note: The uploaded file contains <b>blank lines</b> (i.e., empty of characters or only contains white space). These lines will be removed during the data transformation process.");
+        }
+    });
 }
