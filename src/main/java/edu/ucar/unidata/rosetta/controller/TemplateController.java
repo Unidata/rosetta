@@ -412,8 +412,9 @@ public class TemplateController implements HandlerExceptionResolver {
                             FilenameUtils.removeExtension(file.getFileName())
                                     + ".nc");
 
-                    return fileOut.replaceAll(downloadDir + "/", "") + "\n"
-                            + jsonOut.replaceAll(downloadDir + "/", "");
+					String escapedDownloadDir = StringEscapeUtils.escapeJava(downloadDir + File.separator);
+					return fileOut.replaceAll(escapedDownloadDir, "") + "\n"
+							+ jsonOut.replaceAll(escapedDownloadDir, "");
                 }
                 // }
             } else {
@@ -568,7 +569,7 @@ public class TemplateController implements HandlerExceptionResolver {
     public void fileDownload(@PathVariable(value = "uniqueID") String uniqueID,
             @PathVariable(value = "file") String fileName,
             HttpServletResponse response) {
-        String relFileLoc = uniqueID + "/" + fileName;
+        String relFileLoc = uniqueID + File.separator + fileName;
         String fullFilePath = FilenameUtils
                 .concat(getDownloadDir(), relFileLoc);
         File requestedFile = new File(fullFilePath);

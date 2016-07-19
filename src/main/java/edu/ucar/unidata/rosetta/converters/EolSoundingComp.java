@@ -6,6 +6,7 @@ import ucar.nc2.*;
 import ucar.nc2.units.SimpleUnit;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -360,7 +361,7 @@ public class EolSoundingComp {
                 // a given block of data within the ESC file. Now time to setup the netCDF
                 // file for this block of data!
                 String ncFile = launchDateIsoStr.replace(":", "") + "-" + siteId + ".nc";
-                String ncFileName = escPath.getParent().toString() + "/" + ncFile;
+                String ncFileName = escPath.getParent().toString() + File.separator + ncFile;
                 if (writeNcFile(ncFileName)) {
                     convertedFiles.add(ncFileName);
                 }

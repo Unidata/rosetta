@@ -41,7 +41,7 @@ public class ResourceManagerImpl implements ResourceManager  {
     public Map<String, Object> loadResources() {     
         Map<String, Object> model = new HashMap<String, Object>();
         try {
-            Resource r = new ClassPathResource("resources/index.xml");
+            Resource r = new ClassPathResource("resources" + File.separator + "index.xml");
             File file = r.getFile();
             List<Map> resources = fetchResources(file, "resource");
             Iterator<Map> iterator = resources.iterator();
@@ -49,7 +49,7 @@ public class ResourceManagerImpl implements ResourceManager  {
 		        Map<String, String> resource = iterator.next();
                 String fileName = resource.get("fileName");
                 String type = resource.get("type");
-                r = new ClassPathResource("resources/" + fileName);
+                r = new ClassPathResource("resources" + File.separator + fileName);
                 file = r.getFile();
                 List<Map> resourceList = fetchResources(file, type); 
                 model.put(type + "s", resourceList); 
