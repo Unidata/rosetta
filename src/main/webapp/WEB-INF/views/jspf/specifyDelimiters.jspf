@@ -1,7 +1,7 @@
 <label for="delimiter" class="error"></label>
 <c:choose>
     <c:when test="${fn:length(delimiters) gt 0}">
-        <ul>
+        <ul id="delimiterList">
             <c:forEach items="${delimiters}" var="delimiter">
                 <li>
                     <label>

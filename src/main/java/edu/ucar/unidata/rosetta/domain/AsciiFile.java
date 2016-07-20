@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -26,6 +27,7 @@ public class AsciiFile {
     private String fileName = null;
     private String delimiters = null;
     private List<String> delimiterList = new ArrayList<String>();
+    private Locale decimalSeparatorLocale = Locale.ENGLISH;
     private String otherDelimiter = null;
     private String headerLineNumbers = null;
     private List<String> headerLineList = new ArrayList<String>();
@@ -440,5 +442,31 @@ public class AsciiFile {
             }
 	    } 
         return convertedDelimiterList;
+    }
+
+    public Locale getDecimalSeparatorLocale() {
+        return decimalSeparatorLocale;
+    }
+
+    /**
+     * Sets the locale to FRENCH if "Comma" is given as input.
+     * 
+     * Else it sets it to ENGLISH (for Point as separator), which is the
+     * default.
+     * 
+     * @param decimalSeparator
+     *            Text representation of the decimal separator to be used
+     * 
+     */
+    public void setDecimalSeparator(String decimalSeparator) {
+        switch (decimalSeparator) {
+            case "Comma" :
+                this.decimalSeparatorLocale = Locale.FRENCH;
+                break;
+            case "Point" :
+            default :
+                this.decimalSeparatorLocale = Locale.ENGLISH;
+                break;
+        }
     }
 }

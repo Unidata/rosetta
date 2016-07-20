@@ -36,8 +36,10 @@
             </div>
 
             <div id="step3" title="<spring:message code="step3.title"/>">
-               <h5><spring:message code="step3.description"/></h5>
-               <%@include file="/WEB-INF/views/jspf/specifyDelimiters.jspf" %>
+                <h5><spring:message code="step3.description"/></h5>
+                <%@include file="/WEB-INF/views/jspf/specifyDelimiters.jspf" %>
+                <h5><spring:message code="step3.subDescription"/></h5>
+                <%@include file="/WEB-INF/views/jspf/specifyDecimalSeparator.jspf" %>
             </div>
 
             <div id="step4" title="<spring:message code="step4.title"/>">
