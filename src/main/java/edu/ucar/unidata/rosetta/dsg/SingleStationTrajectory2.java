@@ -245,7 +245,7 @@ public class SingleStationTrajectory2  {
     public String createNetcdfFile(AsciiFile file, List<List<String>> parseFileData, String downloadDirPath) throws IOException {
         String ncFilePath = "";
         try {
-            ncFilePath = downloadDirPath + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
+            ncFilePath = downloadDirPath + File.separator + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
             logger.warn("create ncFilePath: " + ncFilePath);
 
             // make sure downloadDir exists and, if not, create it

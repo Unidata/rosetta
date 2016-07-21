@@ -649,7 +649,7 @@ public abstract class NetcdfFileManager {
 
     public String createNetcdfFile(AsciiFile file, List<List<String>> parseFileData, String downloadDirPath) throws IOException {
         try {
-            String ncFilePath = downloadDirPath + "/" + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
+            String ncFilePath = downloadDirPath + File.separator + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
             logger.warn("create ncFilePath: " + ncFilePath);
 
             // make sure downloadDir exists and, if not, create it
