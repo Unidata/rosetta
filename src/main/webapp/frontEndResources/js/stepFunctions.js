@@ -185,7 +185,7 @@ function uploadRosettaTemplate(stepType, stepData) {
     } else if (stepType == "repopulateStep") {
         $(fileId).bind("change", function() {
             // Validate file being uploaded
-            var error = validateUploadedFile($("#file")[0].files[0], 1);
+            var error = validateUploadedTemplateFile($(fileId)[0].files[0], 0);
             if (!error) {
                 return false;
             } else {
@@ -210,7 +210,7 @@ function uploadRosettaTemplate(stepType, stepData) {
     } else if (stepType == "stepFunctions") {
         $(fileId).bind("change", function() {
             // Validate file being uploaded
-            var error = validateUploadedTemplateFile($(fileId)[0].files[0], 1);
+            var error = validateUploadedTemplateFile($(fileId)[0].files[0], 0);
             if (!error) {
                 return false;
             } else {
