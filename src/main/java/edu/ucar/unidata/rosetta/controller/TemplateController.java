@@ -150,6 +150,7 @@ public class TemplateController implements HandlerExceptionResolver {
     public ModelAndView restoreTemplate(Model model) {
         BasicConfigurator.configure();
         model.addAllAttributes(resourceManager.loadResources());
+        model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
         return new ModelAndView("restore");
     }
 
