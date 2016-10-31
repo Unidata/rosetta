@@ -414,8 +414,26 @@ public abstract class NetcdfFileManager {
         while (variableMetadataKeysIterator.hasNext()) {
             metadataKey = variableMetadataKeysIterator.next();
             metadataValue = variableMetadata.get(metadataKey).toString();
-            if (!metadataKey.equals("dataType")) {
-                ncFileWriter.addVariableAttribute(theVar, new Attribute(metadataKey, metadataValue));
+            switch (metadataKey) {
+                case "dataType" :
+                    break;
+                case "missing_value" :
+                case "_FillValue" :
+                case "valid_min" :
+                case "valid_max" :
+                    // TODO: valid range?
+                    // TODO: flag_values?
+                    String[] arrayString = {metadataValue};
+                    DataType varType = ncType;
+                    if (varType == DataType.CHAR)
+                        varType = DataType.STRING;
+                    Array array = Array.makeArray(varType, arrayString);
+                    Attribute attribute = new Attribute(metadataKey, array);
+                    ncFileWriter.addVariableAttribute(theVar, attribute);
+                    break;
+                default :
+                    ncFileWriter.addVariableAttribute(theVar, new Attribute(metadataKey, metadataValue));
+                    break;
             }
         }
 
