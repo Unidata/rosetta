@@ -87,6 +87,12 @@ label.error {
  color: #FF0000;
 }
 
+/* The delimiter list needs this to have decimal separator selection placed properly */
+ul#delimiterList {
+ width: 100%;
+ position: relative; 
+}
+
 /* unordered lists are used to display/format form items in the jWizard */
 ul {
  width: 70%;

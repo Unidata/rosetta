@@ -96,7 +96,7 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView createTemplate(Model model) {
         model.addAllAttributes(resourceManager.loadResources());
-		model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
+        model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
         return new ModelAndView("create");
     }
 
@@ -150,6 +150,7 @@ public class TemplateController implements HandlerExceptionResolver {
     public ModelAndView restoreTemplate(Model model) {
         BasicConfigurator.configure();
         model.addAllAttributes(resourceManager.loadResources());
+        model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
         return new ModelAndView("restore");
     }
 

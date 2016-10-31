@@ -185,7 +185,7 @@ function uploadRosettaTemplate(stepType, stepData) {
     } else if (stepType == "repopulateStep") {
         $(fileId).bind("change", function() {
             // Validate file being uploaded
-            var error = validateUploadedFile($("#file")[0].files[0], 1);
+            var error = validateUploadedTemplateFile($(fileId)[0].files[0], 0);
             if (!error) {
                 return false;
             } else {
@@ -210,7 +210,7 @@ function uploadRosettaTemplate(stepType, stepData) {
     } else if (stepType == "stepFunctions") {
         $(fileId).bind("change", function() {
             // Validate file being uploaded
-            var error = validateUploadedTemplateFile($(fileId)[0].files[0], 1);
+            var error = validateUploadedTemplateFile($(fileId)[0].files[0], 0);
             if (!error) {
                 return false;
             } else {
@@ -321,6 +321,13 @@ function specifyDelimiters(stepType, stepData) {
                 $("#faux").remove();
                 $(".jw-button-next").removeClass("hideMe");
             }
+            if (getFromSession("decimalSeparator")) {
+                $("#step3 #decimalSeparator").each(function(){
+                    if (getFromSession("decimalSeparator").search($(this).val()) >= 0 ) {
+                        $(this).attr("checked", true);
+                    }
+                });
+            }
         }
     } else if (stepType == "stepFunctions") {
         var stepElement = "#step" + stepData + " input:checkbox";
@@ -356,6 +363,10 @@ function specifyDelimiters(stepType, stepData) {
                     $("#otherDelimiter").removeClass("hideMe");
                 }
             }
+        });
+        
+        $("#step3 #decimalSeparator").bind("click", function(){
+        	addToSession("decimalSeparator", $('input[name=decimalSeparator]:checked', '#step3').val());
         });
 
         $("#otherDelimiter").on("focusin", function() {

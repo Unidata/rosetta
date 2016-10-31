@@ -12,6 +12,8 @@ import ucar.nc2.Variable;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -572,7 +574,9 @@ public abstract class NetcdfFileManager {
         return ncFileWriter;
     }
 
-    protected NetcdfFileWriter writeUserVarData(List<List<String>> outerList, NetcdfFileWriter ncFileWriter) throws IOException, InvalidRangeException {
+    protected NetcdfFileWriter writeUserVarData(List<List<String>> outerList, NetcdfFileWriter ncFileWriter, Locale locale)
+            throws IOException, InvalidRangeException, ParseException {
+        NumberFormat nFormat = NumberFormat.getInstance(locale);
         for (String var : getAllVarNames()) {
             Variable theVar = ncFileWriter.findVariable(var);
             if (theVar != null) {
@@ -587,9 +591,8 @@ public abstract class NetcdfFileManager {
                                 new ArrayFloat.D1(outerList.size());
                         int      i                 = 0;
                         for (List<String> innerList : outerList) {
-                            float f = Float.parseFloat(
-                                    innerList.get(
-                                            varIndex));
+                            Number number = nFormat.parse(innerList.get(varIndex));
+                            float f = number.floatValue();
                             vals.set(i, f);
                             i++;
                         }
@@ -689,7 +692,7 @@ public abstract class NetcdfFileManager {
 
             ncFileWriter = writeRosettaInfo(ncFileWriter, file.getJsonStrSessionStorage());
             // must write user data before any new dateTime variables!
-            ncFileWriter = writeUserVarData(parseFileData, ncFileWriter);
+            ncFileWriter = writeUserVarData(parseFileData, ncFileWriter, file.getDecimalSeparatorLocale());
             if (getDateTimeBluePrint() != null) {
                 if (!getDateTimeBluePrint().isEmpty()) {
                     ncFileWriter = getDateTimeBluePrint().writeNewVariables(ncFileWriter);
