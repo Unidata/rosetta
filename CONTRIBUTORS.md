@@ -1,7 +1,6 @@
-Contributors
-============
+# Contributors
 
-Main Developers
----------------
-Sean Arms
-Jennifer Oxelson
+
+# Main Developers
+ * Sean Arms
+ * Jennifer Oxelson
