@@ -3,61 +3,63 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
 
-   <appender name="rosettaLogger" class="org.apache.log4j.DailyRollingFileAppender">
-      <param name="File" value="${catalina.home}/logs/rosetta.log"/>
-      <param name="Threshold" value="DEBUG" />
-      <layout class="org.apache.log4j.PatternLayout">
-         <param name="ConversionPattern" value="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
-      </layout>
-   </appender>
+    <appender name="rosettaLogger" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="${catalina.home}/logs/rosetta.log"/>
+        <param name="Threshold" value="DEBUG"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
+        </layout>
+    </appender>
 
     <appender name="converterLogger" class="org.apache.log4j.DailyRollingFileAppender">
         <param name="File" value="${catalina.home}/logs/converter.log"/>
-        <param name="Threshold" value="DEBUG" />
+        <param name="Threshold" value="DEBUG"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
+            <param name="ConversionPattern"
+                   value="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
         </layout>
     </appender>
 
     <logger name="edu.ucar.unidata.rosetta" additivity="false">
-        <level value="INFO" />
+        <level value="INFO"/>
         <appender-ref ref="rosettaLogger"/>
     </logger>
 
     <logger name="org.springframework.core" additivity="false">
-      <level value="INFO" />
-      <appender-ref ref="rosettaLogger"/>
+        <level value="INFO"/>
+        <appender-ref ref="rosettaLogger"/>
     </logger>
 
     <logger name="org.springframework.beans" additivity="false">
-      <level value="INFO" />
-      <appender-ref ref="rosettaLogger"/>
+        <level value="INFO"/>
+        <appender-ref ref="rosettaLogger"/>
     </logger>
 
     <logger name="org.springframework.context" additivity="false">
-      <level value="INFO" />
-      <appender-ref ref="rosettaLogger"/>
+        <level value="INFO"/>
+        <appender-ref ref="rosettaLogger"/>
     </logger>
 
     <logger name="org.springframework.http" additivity="false">
-      <level value="INFO" />
-      <appender-ref ref="rosettaLogger"/>
+        <level value="INFO"/>
+        <appender-ref ref="rosettaLogger"/>
     </logger>
-    
+
     <!-- below alternate between DEBUG and INFO -->
     <logger name="org.springframework.web" additivity="false">
-      <level value="INFO" />
-      <appender-ref ref="rosettaLogger"/>
+        <level value="INFO"/>
+        <appender-ref ref="rosettaLogger"/>
     </logger>
-	
+
     <logger name="edu.ucar.unidata.rosetta.converters.ESC">
-        <level value="INFO" />
+        <level value="INFO"/>
         <appender-ref ref="converterLogger"/>
     </logger>
 
     <root>
-      <level value="DEBUG, file, stdout"/>
-      <appender-ref ref="rosettaLogger"/>
+        <level value="DEBUG, file, stdout"/>
+        <appender-ref ref="rosettaLogger"/>
     </root>
 
 </log4j:configuration>

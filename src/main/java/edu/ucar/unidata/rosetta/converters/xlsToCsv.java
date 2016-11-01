@@ -34,23 +34,35 @@
 package edu.ucar.unidata.rosetta.converters;
 
 
-import jxl.*;
+import jxl.Cell;
+import jxl.CellType;
+import jxl.DateCell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.WorkbookSettings;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.Locale;
 
 
 /**
  * Class description
  *
- *
- * @version        Enter version here..., Tue, Dec 18, '12
- * @author         Enter your name here...
+ * @author Enter your name here...
+ * @version Enter version here..., Tue, Dec 18, '12
  */
 public class xlsToCsv {
 
-    /** _more_ */
+    /**
+     * _more_
+     */
     private static final String missingFillValue = "-999";
 
     /**
@@ -75,13 +87,13 @@ public class xlsToCsv {
                 }
             }
 
-            File               f        = new File(csvFile);
+            File f = new File(csvFile);
 
-            OutputStream       os       = new FileOutputStream(f);
-            String             encoding = "UTF8";
-            OutputStreamWriter osw      = new OutputStreamWriter(os,
-                                              encoding);
-            BufferedWriter     bw       = new BufferedWriter(osw);
+            OutputStream os = new FileOutputStream(f);
+            String encoding = "UTF8";
+            OutputStreamWriter osw = new OutputStreamWriter(os,
+                    encoding);
+            BufferedWriter bw = new BufferedWriter(osw);
 
             // Gets the sheets from workbook
             for (int sheet = 0; sheet < w.getNumberOfSheets(); sheet++) {
@@ -100,7 +112,7 @@ public class xlsToCsv {
                         Boolean rowIsEmpty = Boolean.TRUE;
                         Boolean skipFirstComma = Boolean.FALSE;
                         contents = getCellContents(row[0]);
-                        if ( !contents.equals("")) {
+                        if (!contents.equals("")) {
                             rowIsEmpty = Boolean.FALSE;
                             bw.write(contents);
                         } else {
@@ -108,7 +120,7 @@ public class xlsToCsv {
                         }
                         for (int j = 1; j < row.length; j++) {
                             contents = getCellContents(row[j]);
-                            if ( !contents.equals("")) {
+                            if (!contents.equals("")) {
                                 rowIsEmpty = Boolean.FALSE;
                                 if (!skipFirstComma) {
                                     bw.write(',');
@@ -118,7 +130,7 @@ public class xlsToCsv {
                                     bw.write(contents);
                                 }
                             } else {
-                                if ((j != row.length -1) && (!skipFirstComma)) {
+                                if ((j != row.length - 1) && (!skipFirstComma)) {
                                     bw.write(" ");
                                 }
                                 skipFirstComma = Boolean.TRUE;
@@ -145,15 +157,14 @@ public class xlsToCsv {
      * _more_
      *
      * @param row _more_
-     *
      * @return _more_
      */
     private static String getCellContents(Cell row) {
         String contents = "";
 
         if (row.getType() == CellType.DATE) {
-            DateCell dc       = (DateCell) row;
-            Date     cellDate = dc.getDate();
+            DateCell dc = (DateCell) row;
+            Date cellDate = dc.getDate();
             // epoch - milliseconds since 1970-01-01
             long epoch = cellDate.getTime();
             // contents - seconds since 1970-01-01
@@ -169,7 +180,6 @@ public class xlsToCsv {
      * _more_
      *
      * @param contents _more_
-     *
      * @return _more_
      */
     private static String checkCellContents(String contents) {
@@ -189,7 +199,7 @@ public class xlsToCsv {
      */
     public static void main(String[] args) {
         String xlsFile =
-            "/Users/lesserwhirls/dev/unidata/rosetta/rosetta/src/edu/ucar/unidata/converters/test/xlsToCsv/ilu01_07_10.xls";
+                "/Users/lesserwhirls/dev/unidata/rosetta/rosetta/src/edu/ucar/unidata/converters/test/xlsToCsv/ilu01_07_10.xls";
 
         convert(xlsFile, null);
     }

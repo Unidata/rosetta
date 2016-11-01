@@ -1,37 +1,17 @@
 package edu.ucar.unidata.rosetta.controller;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import edu.ucar.unidata.rosetta.converters.EolSoundingComp;
-import edu.ucar.unidata.rosetta.domain.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +22,32 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import edu.ucar.unidata.rosetta.converters.EolSoundingComp;
 import edu.ucar.unidata.rosetta.converters.xlsToCsv;
+import edu.ucar.unidata.rosetta.domain.AsciiFile;
+import edu.ucar.unidata.rosetta.domain.UploadedAutoconvertFile;
+import edu.ucar.unidata.rosetta.domain.UploadedFile;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
 import edu.ucar.unidata.rosetta.service.FileParserManager;
 import edu.ucar.unidata.rosetta.service.FileValidator;
@@ -58,6 +63,8 @@ import edu.ucar.unidata.rosetta.util.ZipFileUtil;
 public class TemplateController implements HandlerExceptionResolver {
 
     protected static Logger logger = Logger.getLogger(TemplateController.class);
+    @Autowired
+    ServletContext servletContext;
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
     @Resource(name = "fileParserManager")
@@ -67,9 +74,6 @@ public class TemplateController implements HandlerExceptionResolver {
     @Resource(name = "fileValidator")
     private FileValidator fileValidator;
 
-	@Autowired
-	ServletContext servletContext; 
-		
     private String getDownloadDir() {
         String downloadDir = "";
         downloadDir = RosettaProperties.getDownloadDir();
@@ -88,10 +92,8 @@ public class TemplateController implements HandlerExceptionResolver {
      * View. Returns the view that walks the user through the steps of template
      * creation.
      *
-     * @param model
-     *            The Model object to be populated by Resources.
-     * @return The 'create' ModelAndView containing the Resource-populated
-     *         Model.
+     * @param model The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated Model.
      */
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView createTemplate(Model model) {
@@ -106,10 +108,8 @@ public class TemplateController implements HandlerExceptionResolver {
      * View. Returns the view that walks the user through the steps of template
      * creation.
      *
-     * @param model
-     *            The Model object to be populated by Resources.
-     * @return The 'create' ModelAndView containing the Resource-populated
-     *         Model.
+     * @param model The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated Model.
      */
     @RequestMapping(value = "/autoConvert", method = RequestMethod.GET)
     public ModelAndView autoConvertKnownFile(Model model) {
@@ -124,10 +124,8 @@ public class TemplateController implements HandlerExceptionResolver {
      * View. Returns the view that walks the user through the steps of template
      * creation.
      *
-     * @param model
-     *            The Model object to be populated by Resources.
-     * @return The 'create' ModelAndView containing the Resource-populated
-     *         Model.
+     * @param model The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated Model.
      */
     @RequestMapping(value = "/createTrajectory", method = RequestMethod.GET)
     public ModelAndView createTrajectoryTemplate(Model model) {
@@ -141,10 +139,8 @@ public class TemplateController implements HandlerExceptionResolver {
      * used in the View. Returns the view that walks the user through the steps
      * of template creation.
      *
-     * @param model
-     *            The Model object to be populated by Resources.
-     * @return The 'create' ModelAndView containing the Resource-populated
-     *         Model.
+     * @param model The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated Model.
      */
     @RequestMapping(value = "/restore", method = RequestMethod.GET)
     public ModelAndView restoreTemplate(Model model) {
@@ -159,13 +155,9 @@ public class TemplateController implements HandlerExceptionResolver {
      * and, returns the local (unique, alphanumeric) file name of the uploaded
      * ASCII file.
      *
-     * @param file
-     *            The UploadedFile form backing object containing the file.
-     * @param request
-     *            The HttpServletRequest with which to glean the client IP
-     *            address.
-     * @return A String of the local file name for the ASCII file (or null for
-     *         an error).
+     * @param file    The UploadedFile form backing object containing the file.
+     * @param request The HttpServletRequest with which to glean the client IP address.
+     * @return A String of the local file name for the ASCII file (or null for an error).
      */
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
@@ -187,7 +179,7 @@ public class TemplateController implements HandlerExceptionResolver {
                 logger.error("error while saving uploaded file to disk.");
                 return null;
             }
-			
+
             if ((file.getFileName().contains(".xls")) || (file.getFileName().contains(".xlsx"))) {
                 String xlsFilePath = FilenameUtils.concat(filePath, file.getFileName());
                 xlsToCsv.convert(xlsFilePath, null);
@@ -210,34 +202,27 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Accepts a GET request to see if an already uploaded file contains blank lines.
      *
-     * @param fileId
-     *            The UploadedFile form backing object containing the file.
-     * @return  The number of blank lines in the file.
+     * @param fileId The UploadedFile form backing object containing the file.
+     * @return The number of blank lines in the file.
      */
     @RequestMapping(value = "/getBlankLines", method = RequestMethod.GET)
-	@ResponseBody
+    @ResponseBody
     public String getBlankLines(@RequestParam("fileName") String fileName, @RequestParam("uniqueId") String uniqueId) {
-		int blankLineCount = 0;
+        int blankLineCount = 0;
         String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
-		File uploadedFile = new File(FilenameUtils.concat(filePath, fileName));
-		blankLineCount = fileParserManager.getBlankLines(uploadedFile);
-		return new Integer(blankLineCount).toString();
-	}
-		
+        File uploadedFile = new File(FilenameUtils.concat(filePath, fileName));
+        blankLineCount = fileParserManager.getBlankLines(uploadedFile);
+        return new Integer(blankLineCount).toString();
+    }
 
 
     /**
-     * Accepts a POST request for an uploaded file, stores that file to disk, auto converts the file,
-     * and, returns a zip file of the converted dataset
-     * ASCII file.
+     * Accepts a POST request for an uploaded file, stores that file to disk, auto converts the
+     * file, and, returns a zip file of the converted dataset ASCII file.
      *
-     * @param file
-     *            The UploadedFile form backing object containing the file.
-     * @param request
-     *            The HttpServletRequest with which to glean the client IP
-     *            address.
-     * @return A String of the local file name for the ASCII file (or null for
-     *         an error).
+     * @param file    The UploadedFile form backing object containing the file.
+     * @param request The HttpServletRequest with which to glean the client IP address.
+     * @return A String of the local file name for the ASCII file (or null for an error).
      */
     @RequestMapping(value = "/autoConvertKnownFile", method = RequestMethod.POST)
     @ResponseBody
@@ -264,7 +249,7 @@ public class TemplateController implements HandlerExceptionResolver {
                 if (convertFrom.equals("esc")) {
                     EolSoundingComp escConvertor = new EolSoundingComp();
                     convertedFiles = escConvertor.convert(fullFileName);
-                    if (!convertedFiles.isEmpty()){
+                    if (!convertedFiles.isEmpty()) {
                         logger.info("Success");
                     }
                 }
@@ -288,22 +273,19 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
 
-
     /**
      * Accepts a POST request Parse the uploaded file. The methods gets called
      * at various times and the file data is parsed according the data it
      * contains.
      *
-     * @param file
-     *            The AsciiFile form backing object.
-     * @param result
-     *            The BindingResult object for errors.
+     * @param file   The AsciiFile form backing object.
+     * @param result The BindingResult object for errors.
      * @return A String of the local file name for the ASCII file.
      */
     @RequestMapping(value = "/parse", method = RequestMethod.POST)
     @ResponseBody
     public String parseFile(AsciiFile file, BindingResult result) {
-        String filePath = FilenameUtils.concat(getUploadDir(),file.getUniqueId());
+        String filePath = FilenameUtils.concat(getUploadDir(), file.getUniqueId());
         filePath = FilenameUtils.concat(filePath, file.getFileName());
 
         // SCENARIO 1: no header lines yet (return the file contents to display in grid)
@@ -319,13 +301,13 @@ public class TemplateController implements HandlerExceptionResolver {
                  * fileValidator.validateList(delimiterList, result);
                  * fileValidator.validateList(file.getHeaderLineList(), result);
                  * fileValidator.validateDelimiterCount(filePath, file, result);
-                 * 
+                 *
                  * if (result.hasErrors()) { List<ObjectError> validationErrors
                  * = result.getAllErrors(); Iterator<ObjectError> iterator =
                  * validationErrors.iterator(); while (iterator.hasNext()) {
                  * logger.error("Validation Error: " +
                  * iterator.next().toString()); } return null;
-                 * 
+                 *
                  * } else {
                  **/
                 String normalizedFileData = fileParserManager.normalizeDelimiters(filePath, selectedDelimiter, delimiterList, file.getHeaderLineList());
@@ -352,7 +334,7 @@ public class TemplateController implements HandlerExceptionResolver {
                                 boolean chk3 = cvt.equals("dateOnly");
                                 boolean chk4 = cvt.equals("timeOnly");
                                 if (!(chk1 | chk2 | chk3 | chk4)) {
-                                    coords.put(cvt, file.getVariableNameMap().get(mmKey.replace("Metadata","")));
+                                    coords.put(cvt, file.getVariableNameMap().get(mmKey.replace("Metadata", "")));
                                     tmp.remove("_coordinateVariableType");
                                     tmp.put("_coordinateVariable", "non-coordinate");
                                     mm.put(mmKey, tmp);
@@ -413,9 +395,9 @@ public class TemplateController implements HandlerExceptionResolver {
                             FilenameUtils.removeExtension(file.getFileName())
                                     + ".nc");
 
-					String escapedDownloadDir = StringEscapeUtils.escapeJava(downloadDir + File.separator);
-					return fileOut.replaceAll(escapedDownloadDir, "") + "\n"
-							+ jsonOut.replaceAll(escapedDownloadDir, "");
+                    String escapedDownloadDir = StringEscapeUtils.escapeJava(downloadDir + File.separator);
+                    return fileOut.replaceAll(escapedDownloadDir, "") + "\n"
+                            + jsonOut.replaceAll(escapedDownloadDir, "");
                 }
                 // }
             } else {
@@ -428,10 +410,8 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Accepts a POST request to restore session from an NcML file,
      *
-     * @param file
-     *            The UploadedFile form backing object containing the file.
-     * @return A String of the local file name for the ASCII file (or null for
-     *         an error).
+     * @param file The UploadedFile form backing object containing the file.
+     * @return A String of the local file name for the ASCII file (or null for an error).
      */
     @RequestMapping(value = "/restoreFromZip", method = RequestMethod.POST)
     @ResponseBody
@@ -470,8 +450,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * Accepts a POST request to to initiate a quick save (download a temp save
      * template)
      *
-     * @return A String of the local file name for the ASCII file (or null for
-     *         an error).
+     * @return A String of the local file name for the ASCII file (or null for an error).
      */
     @RequestMapping(value = "/QuickSave", method = RequestMethod.POST)
     @ResponseBody
@@ -558,18 +537,14 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Accepts a GET request to download a file from the download directory.
      *
-     * @param uniqueID
-     *            the sessions unique ID.
-     * @param fileName
-     *            the name of the file the user wants to download from the
-     *            download directory
-     *
+     * @param uniqueID the sessions unique ID.
+     * @param fileName the name of the file the user wants to download from the download directory
      * @return IOStream of the file requested.
      */
     @RequestMapping(value = "/fileDownload/{uniqueID}/{file:.*}", method = RequestMethod.GET)
     public void fileDownload(@PathVariable(value = "uniqueID") String uniqueID,
-            @PathVariable(value = "file") String fileName,
-            HttpServletResponse response) {
+                             @PathVariable(value = "file") String fileName,
+                             HttpServletResponse response) {
         String relFileLoc = uniqueID + File.separator + fileName;
         String fullFilePath = FilenameUtils
                 .concat(getDownloadDir(), relFileLoc);
@@ -583,7 +558,7 @@ public class TemplateController implements HandlerExceptionResolver {
                 contentType = "application/rosetta";
             } else if (ext.equals("nc")) {
                 contentType = "application/x-netcdf";
-            }  else if (ext.equals("zip")) {
+            } else if (ext.equals("zip")) {
                 contentType = "application/zip";
             }
             response.setHeader("Content-Type", contentType);
@@ -607,8 +582,7 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Attempts to get the client IP address from the request.
      *
-     * @param request
-     *            The HttpServletRequest.
+     * @param request The HttpServletRequest.
      * @return The client's IP address.
      */
     private String getIpAddress(HttpServletRequest request) {
@@ -627,8 +601,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * Creates a unique id for the file name from the clients IP address and the
      * date.
      *
-     * @param request
-     *            The HttpServletRequest.
+     * @param request The HttpServletRequest.
      * @return The unique file name id.
      */
     private String createUniqueId(HttpServletRequest request) {
@@ -658,27 +631,22 @@ public class TemplateController implements HandlerExceptionResolver {
      * This method gracefully handles any uncaught exception that are fatal in
      * nature and unresolvable by the user.
      *
-     * @param arg0
-     *            The current HttpServletRequest request.
-     * @param arg1
-     *            The current HttpServletRequest response.
-     * @param arg2
-     *            The executed handler, or null if none chosen at the time of
-     *            the exception.
-     * @param exception
-     *            The exception that got thrown during handler execution.
+     * @param arg0      The current HttpServletRequest request.
+     * @param arg1      The current HttpServletRequest response.
+     * @param arg2      The executed handler, or null if none chosen at the time of the exception.
+     * @param exception The exception that got thrown during handler execution.
      * @return The error page containing the appropriate message to the user.
      */
     @Override
     public ModelAndView resolveException(HttpServletRequest arg0,
-            HttpServletResponse arg1, Object arg2, Exception exception) {
+                                         HttpServletResponse arg1, Object arg2, Exception exception) {
         String message = "";
         if (exception instanceof MaxUploadSizeExceededException) {
             // this value is declared in the /WEB-INF/rosetta-servlet.xml file
             // (we can move it elsewhere for convenience)
             message = "File size should be less than "
                     + ((MaxUploadSizeExceededException) exception)
-                            .getMaxUploadSize() + " byte.";
+                    .getMaxUploadSize() + " byte.";
         } else {
             message = "An error has occurred: "
                     + exception.getClass().getName() + ":"

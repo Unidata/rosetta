@@ -4,8 +4,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import ucar.unidata.util.StringUtil2;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -13,6 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import ucar.unidata.util.StringUtil2;
 
 /**
  * Service for parsing file data.
@@ -26,7 +26,7 @@ public class FileParserManagerImpl implements FileParserManager {
     /**
      * Returns each line of the file data parsed by delimiter into a
      * List<String> which is then stored into List<List<String>>.
-     * 
+     *
      * @return The parsed file data.
      */
     public List<List<String>> getParsedFileData() {
@@ -36,9 +36,8 @@ public class FileParserManagerImpl implements FileParserManager {
     /**
      * Sets each line of the file data parsed by delimiter into a List<String>
      * which is then stored into List<List<String>>.
-     * 
-     * @param parsedFileData
-     *            The parsed file data.
+     *
+     * @param parsedFileData The parsed file data.
      */
     public void setParsedFileData(List<List<String>> parsedFileData) {
         this.parsedFileData = parsedFileData;
@@ -49,9 +48,8 @@ public class FileParserManagerImpl implements FileParserManager {
      * character and appends to a StringBuffer, and returns the StringBuffer
      * string value. This method is used to parse the file data when no header
      * lines have been specified. TODO: refactor to return JSON
-     * 
-     * @param filePath
-     *            The path to the file on disk.
+     *
+     * @param filePath The path to the file on disk.
      * @return A String of the file data parsed by line.
      */
     public String parseByLine(String filePath) {
@@ -59,7 +57,7 @@ public class FileParserManagerImpl implements FileParserManager {
         String currentLine;
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             while ((currentLine = reader.readLine()) != null) {
-                if (StringUtils.isNotBlank(currentLine)) {  
+                if (StringUtils.isNotBlank(currentLine)) {
                     stringBuffer.append(currentLine + "\n");
                 }
             }
@@ -78,16 +76,12 @@ public class FileParserManagerImpl implements FileParserManager {
      * StringBuffer, and returns the StringBuffer string value. This method is
      * used to parse the file data when both the header lines and delimiter(s)
      * have been specified by the user. TODO: refactor to return JSON
-     * 
-     * @param filePath
-     *            The path to the file on disk.
-     * @param selectedDelimiter
-     *            The delimiter selected to which any other delimiters will be
-     *            normalized.
-     * @param delimiterList
-     *            The List<String> of delimiters specified by the user.
-     * @param headerLineList
-     *            The List<String> of header lines specified by the user.
+     *
+     * @param filePath          The path to the file on disk.
+     * @param selectedDelimiter The delimiter selected to which any other delimiters will be
+     *                          normalized.
+     * @param delimiterList     The List<String> of delimiters specified by the user.
+     * @param headerLineList    The List<String> of header lines specified by the user.
      * @return A String of the file data parsed by the delimiter(s).
      */
     public String normalizeDelimiters(String filePath, String selectedDelimiter, List<String> delimiterList, List<String> headerLineList) {
@@ -97,9 +91,9 @@ public class FileParserManagerImpl implements FileParserManager {
         String currentLine;
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             while ((currentLine = reader.readLine()) != null) {
-                
-                if (StringUtils.isNotBlank(currentLine)) {  
-                    
+
+                if (StringUtils.isNotBlank(currentLine)) {
+
                     // If a header line we don't have to deal with the delimiter
                     if (headerLineList.contains(new Integer(lineCount).toString())) {
                         stringBuffer.append(currentLine + "\n");
@@ -110,7 +104,7 @@ public class FileParserManagerImpl implements FileParserManager {
                             // "Normalize" delimiters for parsing purposes
                             for (int i = 1; i < delimiters.length; i++) {
                                 // Change all delimiters the selected delimiter
-                                String updatedLineData = currentLine.replaceAll(StringEscapeUtils.escapeHtml4(delimiters[i]),StringEscapeUtils.escapeHtml4(selectedDelimiter));
+                                String updatedLineData = currentLine.replaceAll(StringEscapeUtils.escapeHtml4(delimiters[i]), StringEscapeUtils.escapeHtml4(selectedDelimiter));
                                 stringBuffer.append(updatedLineData + "\n");
                                 String[] lineComponents = updatedLineData.split(selectedDelimiter);
                                 List<String> list = new ArrayList<String>(Arrays.asList(lineComponents));
@@ -136,9 +130,9 @@ public class FileParserManagerImpl implements FileParserManager {
                         }
                     }
                     lineCount++;
-                
-                } 
-                
+
+                }
+
             }
             setParsedFileData(parsedData);
         } catch (IOException e) {
@@ -147,14 +141,13 @@ public class FileParserManagerImpl implements FileParserManager {
         }
         return stringBuffer.toString();
     }
-    
+
     /**
      * A simple method that reads each line of a file, and looks for blank lines.
      * Blank line = empty, only whitespace, or null (as per StringUtils).
-     * 
-     * @param file
-     *            The path to the file on disk.
-     * @return  The number of blank lines in the file. 
+     *
+     * @param file The path to the file on disk.
+     * @return The number of blank lines in the file.
      */
     public int getBlankLines(File file) {
         String currentLine;
@@ -170,6 +163,6 @@ public class FileParserManagerImpl implements FileParserManager {
         }
         return blankLineCount;
     }
-    
-    
+
+
 }

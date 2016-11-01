@@ -1,9 +1,6 @@
 package edu.ucar.unidata.rosetta.converters;
 
 import org.apache.log4j.Logger;
-import ucar.ma2.*;
-import ucar.nc2.*;
-import ucar.nc2.units.SimpleUnit;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +12,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ucar.ma2.Array;
+import ucar.ma2.ArrayChar;
+import ucar.ma2.ArrayFloat;
+import ucar.ma2.DataType;
+import ucar.ma2.InvalidRangeException;
+import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
+import ucar.nc2.Group;
+import ucar.nc2.NetcdfFileWriter;
+import ucar.nc2.Variable;
+import ucar.nc2.units.SimpleUnit;
+
 /**
  * EOL Sounding Composite (ESC).
  *
@@ -24,37 +33,43 @@ import java.util.List;
  * will be converted into a single netCDF file of the format:
  *
  *
- *    "Launch Date"_"Site ID".nc
+ * "Launch Date"_"Site ID".nc
  *
  * An example description of this format can be found here:
  *
  * http://data.eol.ucar.edu/datafile/nph-get/485.043/readme_PECAN_FP2_radiosonde.pdf
  *
  * (thanks to Scot Loehrer <loehrer@ucar.edu>)
- *
  */
 
 public class EolSoundingComp {
 
+    private static final String LAUNCH_DATE_KEY = "UTC Release Time (y,m,d,h,m,s)".toLowerCase();
+    private static final String SITE_ID_KEY = "Release Site Type/Site ID".toLowerCase();
+    private static final String COORDS_ATTR_NAME = "coordinates";
+    private static final String AXIS_ATTR_NAME = "axis";
+    private static final String POSITIVE_ATTR_NAME = "positive";
+    private static final String STD_NAME_ATTR_NAME = "standard_name";
     static Logger log = Logger.getLogger(EolSoundingComp.class.getName());
-
-    private HashMap<String,List<String>> data;
+    private HashMap<String, List<String>> data;
     private List<String> variableNames;
     private List<String> variableUnits;
     private List<Attribute> globalAttrs;
     private String launchDateIsoStr;
     private String siteId;
 
-    private static final String LAUNCH_DATE_KEY = "UTC Release Time (y,m,d,h,m,s)".toLowerCase();
-    private static final String SITE_ID_KEY = "Release Site Type/Site ID".toLowerCase();
 
-    private static final String COORDS_ATTR_NAME = "coordinates";
-    private static final String AXIS_ATTR_NAME = "axis";
-    private static final String POSITIVE_ATTR_NAME = "positive";
-    private static final String STD_NAME_ATTR_NAME = "standard_name";
+    public EolSoundingComp() {
+    }
 
-
-    public EolSoundingComp() {}
+    public static void main(String[] args) {
+        String escFile = "/Users/lesserwhirls/dev/unidata/rosetta/src/test/testFiles/esc/ELLIS_20150610_reduced.cls";
+        escFile = "/Users/lesserwhirls/Downloads/nc/ELLIS_20150610.cls";
+        EolSoundingComp escConvertor = new EolSoundingComp();
+        if (!escConvertor.convert(escFile).isEmpty()) {
+            log.debug("Conversion successful");
+        }
+    }
 
     private String cleanUnit(String unitStr) {
         switch (unitStr) {
@@ -84,13 +99,13 @@ public class EolSoundingComp {
     }
 
     private List<Attribute> processLaunchHeaderLine(String line) {
-        String headerKey = line.substring(0,35).trim().replace("\\s+","-").replace(":","");
+        String headerKey = line.substring(0, 35).trim().replace("\\s+", "-").replace(":", "");
         String headerValue = line.substring(35).trim();
         if (headerKey.toLowerCase().equals(LAUNCH_DATE_KEY)) {
             String[] launchDateVals = headerValue.split(",");
             assert launchDateVals.length == 4;
-            launchDateIsoStr = launchDateVals[0]+"-"+launchDateVals[1]+"-"+launchDateVals[2]+"T"+launchDateVals[3];
-            launchDateIsoStr = launchDateIsoStr.trim().replace(" ","");
+            launchDateIsoStr = launchDateVals[0] + "-" + launchDateVals[1] + "-" + launchDateVals[2] + "T" + launchDateVals[3];
+            launchDateIsoStr = launchDateIsoStr.trim().replace(" ", "");
         } else if (headerKey.toLowerCase().equals(SITE_ID_KEY)) {
             String[] siteIdKeys = headerValue.split(",");
             if (siteIdKeys.length == 2) {
@@ -101,7 +116,7 @@ public class EolSoundingComp {
             siteId = siteId.trim();
             siteId = siteId.replace("\\s+", "_");
             siteId = siteId.replace("\\", "-");
-            siteId = siteId.replace("/","-");
+            siteId = siteId.replace("/", "-");
         }
         Attribute attr = new Attribute(headerKey, headerValue);
         if (!globalAttrs.contains(attr)) {
@@ -120,7 +135,7 @@ public class EolSoundingComp {
             }
         } else if (dataHeaderLineNum == 3) {
             // process the units
-            for(String unitStr : line.trim().split("\\s+")) {
+            for (String unitStr : line.trim().split("\\s+")) {
                 variableUnits.add(cleanUnit(unitStr));
             }
         }
@@ -151,7 +166,7 @@ public class EolSoundingComp {
 
             tmpDataList.add(datum);
             data.put(varName, tmpDataList);
-            varCount ++;
+            varCount++;
         }
     }
 
@@ -170,7 +185,7 @@ public class EolSoundingComp {
         // try to find lat, lon, height, and time variableName indexes
         for (int var = 0; var < variableNames.size(); var++) {
             varName = variableNames.get(var);
-            if(varName.toLowerCase().contains("lat")) {
+            if (varName.toLowerCase().contains("lat")) {
                 latIndex = var;
             } else if (varName.toLowerCase().contains("lon")) {
                 lonIndex = var;
@@ -182,8 +197,8 @@ public class EolSoundingComp {
         }
 
         // use the index info from above to create the coordinates attribute
-        String coordsStr = variableNames.get(timeIndex)+" "+variableNames.get(latIndex)+" "+
-                               variableNames.get(lonIndex)+" "+variableNames.get(altIndex);
+        String coordsStr = variableNames.get(timeIndex) + " " + variableNames.get(latIndex) + " " +
+                variableNames.get(lonIndex) + " " + variableNames.get(altIndex);
         Attribute coordsAttr = new Attribute(COORDS_ATTR_NAME, coordsStr);
 
 
@@ -256,7 +271,7 @@ public class EolSoundingComp {
 
             // write the data, yo!
             for (String dataVar : data.keySet()) {
-                Array thisData = ArrayFloat.makeArray(DataType.FLOAT,data.get(dataVar));
+                Array thisData = ArrayFloat.makeArray(DataType.FLOAT, data.get(dataVar));
                 Variable thisVar = ncfw.findVariable(dataVar);
                 ncfw.write(thisVar, thisData);
             }
@@ -274,7 +289,6 @@ public class EolSoundingComp {
 
         return success;
     }
-
 
     private void initNewDataBlock() {
         variableNames = new ArrayList<>();
@@ -298,7 +312,7 @@ public class EolSoundingComp {
             // read first line in file - should start off with the
             // launch header.
             line = br.readLine();
-            while(br.ready() && line != null) {
+            while (br.ready() && line != null) {
                 readSuccess = true;
                 // read through the lines in the esc file as long as
                 // there are data to read
@@ -372,14 +386,5 @@ public class EolSoundingComp {
         }
 
         return convertedFiles;
-    }
-
-    public static void main(String[] args) {
-        String escFile = "/Users/lesserwhirls/dev/unidata/rosetta/src/test/testFiles/esc/ELLIS_20150610_reduced.cls";
-        escFile = "/Users/lesserwhirls/Downloads/nc/ELLIS_20150610.cls";
-        EolSoundingComp escConvertor = new EolSoundingComp();
-        if (!escConvertor.convert(escFile).isEmpty()){
-            log.debug("Conversion successful");
-        }
     }
 }

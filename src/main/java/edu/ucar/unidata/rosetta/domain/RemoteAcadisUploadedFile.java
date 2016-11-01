@@ -8,7 +8,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -105,7 +110,7 @@ public class RemoteAcadisUploadedFile {
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         CloseableHttpClient httpClient = httpClientBuilder.build();
 
-        Map<String,String> fileNames = new HashMap<>();
+        Map<String, String> fileNames = new HashMap<>();
         fileNames.put(this.getFileName(), this.getRemoteAccessUrl());
         if (this.getTemplateName() != null) {
             fileNames.put(this.getTemplateName(), this.getTemplateAccessUrl());

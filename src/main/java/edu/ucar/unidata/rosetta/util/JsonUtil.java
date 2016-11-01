@@ -31,7 +31,7 @@ public class JsonUtil {
     }
 
     private void setName(String name) {
-        this.name =name;
+        this.name = name;
     }
 
     public JSONObject ssHashMapToJson(Map<String, HashMap> jsonHashMap) {
@@ -53,6 +53,7 @@ public class JsonUtil {
         }
         return json;
     }
+
     public void writeJsonStrToFile(String jsonStr) {
         JSONObject json = this.strToJson(jsonStr);
         this.writeJsonToFile(json);

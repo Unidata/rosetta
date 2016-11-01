@@ -1,15 +1,17 @@
 package edu.ucar.unidata.rosetta.util;
 
-import java.io.*;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
-
-import org.apache.commons.io.FilenameUtils;
-
-import org.apache.log4j.Logger;
 
 /**
  * Utils class to access data in the .properties files.
@@ -17,7 +19,7 @@ import org.apache.log4j.Logger;
 public class RosettaProperties {
 
     protected static Logger logger = Logger.getLogger(RosettaProperties.class);
-    
+
     private static String defaultConfigFileName = "defaultRosettaConfig.properties";
     private static String configFileName = "rosettaConfig.properties";
     private static String ROSETTA_HOME = System.getProperty("rosetta.content.root.path", "../content");  // set in $JAVA_OPTS
@@ -32,7 +34,7 @@ public class RosettaProperties {
         String downloadDirProp = props.getProperty("downloadDir");
         File downloadDir = new File(FilenameUtils.concat(getDefaultRosettaHome(), downloadDirProp));
         if (!downloadDir.exists()) {
-			logger.info("Creating downloads directory.");
+            logger.info("Creating downloads directory.");
             downloadDir.mkdirs();
         }
         return downloadDir.getAbsolutePath();
@@ -48,7 +50,7 @@ public class RosettaProperties {
         String uploadDirProp = props.getProperty("uploadDir");
         File uploadDir = new File(FilenameUtils.concat(getDefaultRosettaHome(), uploadDirProp));
         if (!uploadDir.exists()) {
-			logger.info("Creating uploads directory.");
+            logger.info("Creating uploads directory.");
             uploadDir.mkdirs();
         }
         return uploadDir.getAbsolutePath();
@@ -61,14 +63,14 @@ public class RosettaProperties {
      */
     public static String getMaxUploadSize(ServletContext servletContext) {
         Properties props = new Properties();
-		String maxUploadSize = "";
+        String maxUploadSize = "";
         try {
             props.load(servletContext.getResourceAsStream("/WEB-INF/classes/defaultRosettaConfig.properties"));
             maxUploadSize = props.getProperty("maxUploadSize");
         } catch (IOException e) {
             logger.error("Unable to load .properties file: " + e);
-    	}
-		return maxUploadSize;
+        }
+        return maxUploadSize;
     }
 
     /**
@@ -81,7 +83,7 @@ public class RosettaProperties {
     }
 
     /**
-     * Gets the configuration file for rosetta web application.  
+     * Gets the configuration file for rosetta web application.
      *
      * @return The configuration file.
      */
@@ -96,7 +98,7 @@ public class RosettaProperties {
     }
 
     /**
-     * Gets the default configuration file for rosetta web application.  
+     * Gets the default configuration file for rosetta web application.
      *
      * @return The default configuration file.
      */

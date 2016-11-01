@@ -1,14 +1,12 @@
 /**
  * SlickGrid/custom/headerLineSelection.js
- * 
- * Custom functions that create a SlickGrid instance containing the data 
- * from the file the user uploaded.  The user will use the SlickGrid 
+ *
+ * Custom functions that create a SlickGrid instance containing the data
+ * from the file the user uploaded.  The user will use the SlickGrid
  * instance to indicate which lines in the file are header lines.
  */
 
-
-
-/** 
+/**
  * This function creates a SlickGrid displaying the parsed file data by row.
  * The user will use the SlickGrid interface to indicate which rows of the
  * file are header lines (this information used in subsequent steps).
@@ -32,7 +30,7 @@ function gridForHeaderRowSelection(grid, fileData, columns, rows, step) {
     // Add another column for displaying the non-parsed line data.
     columns.push(
         {
-            id: "line_data", 
+            id: "line_data",
             name: "Line Data",
             field: "line_data",
             width: 1000,
@@ -43,9 +41,9 @@ function gridForHeaderRowSelection(grid, fileData, columns, rows, step) {
     // Populate rows[] with the fileData and create the grid.
     // Implement the SlickGrid checkboxSelector plugin. Bind 
     // any events associated with the checkboxSelector plugin. 
-    $(function() {      
+    $(function () {
         // loop through the fileData and populate rows[]     
-        for (var i = 0; i <fileData.length; i++) {
+        for (var i = 0; i < fileData.length; i++) {
             if (fileData[i] != "") {
                 rows[i] = {
                     line_number: i,
@@ -67,29 +65,33 @@ function gridForHeaderRowSelection(grid, fileData, columns, rows, step) {
 
         // add the checkboxSelector to the grid
         grid.registerPlugin(checkboxSelector);
-         
-        // if user has landed on this step before and specified what is checked, add that to the grid
-        if (sessionStorage.headerLineNumbers) { 
-			if (sessionStorage.headerLineNumbers == "none") { // user has specified that there are no header lines in the file
-				$("#step" + step + " #noHeaderLines").attr('checked', true); 
-			} else {  // contains actual header line number data
+
+        // if user has landed on this step before and specified what is checked, add that to the
+        // grid
+        if (sessionStorage.headerLineNumbers) {
+            if (sessionStorage.headerLineNumbers == "none") { // user has specified that there are no header lines in the file
+                $("#step" + step + " #noHeaderLines").attr('checked', true);
+            } else {  // contains actual header line number data
                 var lines = sessionStorage.getItem("headerLineNumbers").split(/,/g);
-                grid.setSelectedRows(lines.sort(function(a,b){return a-b}));
-		    }
+                grid.setSelectedRows(lines.sort(function (a, b) {
+                    return a - b
+                }));
+            }
         }
-        
+
         // hide the checkbox in the grid column header on initial grid load (for aesthetics reasons)
-        $(".slick-column-name :checkbox").addClass("hideMe"); 
+        $(".slick-column-name :checkbox").addClass("hideMe");
 
         // bind header line selection events to the grid 
         bindGridHeaderLineSelectionEvent(grid, step);
-		
-		// Uncheck the 'no header lines available in this file' checkbox if it's been previously checked.
-		bindNoHeaderLinesAvailableSelectionEvent(grid, step);
+
+        // Uncheck the 'no header lines available in this file' checkbox if it's been previously
+        // checked.
+        bindNoHeaderLinesAvailableSelectionEvent(grid, step);
     });
 }
 
-/** 
+/**
  * This function listens and binds events to the SlickGrid.
  * User input is collected and stored in the session.
  *
@@ -97,26 +99,29 @@ function gridForHeaderRowSelection(grid, fileData, columns, rows, step) {
  * @param step  The current step number in the jWizard interface.
  */
 function bindGridHeaderLineSelectionEvent(grid, step) {
-    grid.onSelectedRowsChanged.subscribe(function() { 
-		
-		// Uncheck the 'no header lines available in this file' checkbox if it's been previously checked.
-		$("#step" + step + " #noHeaderLines").attr('checked', false); 
-		
+    grid.onSelectedRowsChanged.subscribe(function () {
+
+        // Uncheck the 'no header lines available in this file' checkbox if it's been previously
+        // checked.
+        $("#step" + step + " #noHeaderLines").attr('checked', false);
+
         // Stash the user input in the session.
-        addToSession("headerLineNumbers", grid.getSelectedRows().sort(function(a,b){return a-b}));
-   
+        addToSession("headerLineNumbers", grid.getSelectedRows().sort(function (a, b) {
+            return a - b
+        }));
+
         // Activate the jWizard next button so the user can proceed.
         $("#faux").remove();
         $(".jw-button-next").removeClass("hideMe");
 
         // Hide the checkbox in the grid column header (for aesthetics reasons).
         $(".slick-column-name :checkbox").addClass("hideMe");  // needed for step 3
-				
+
     });
 }
 
-/** 
- * This function listens and binds events to the input box whose 
+/**
+ * This function listens and binds events to the input box whose
  * name and ID are  'noHeaderLines'.
  * User input is collected and stored in the session.
  *
@@ -124,18 +129,18 @@ function bindGridHeaderLineSelectionEvent(grid, step) {
  * @param step  The current step number in the jWizard interface.
  */
 function bindNoHeaderLinesAvailableSelectionEvent(grid, step) {
-	// if user specifies that the file contains no header data
+    // if user specifies that the file contains no header data
     var inputName = "#step" + step + " #noHeaderLines";
-    $(inputName).bind("click", function() {
-		// Uncheck any selected values in the grid if they exist.
-		grid.setSelectedRows([]);
-		
+    $(inputName).bind("click", function () {
+        // Uncheck any selected values in the grid if they exist.
+        grid.setSelectedRows([]);
+
         // Stash the user input in the session.
         addToSession("headerLineNumbers", "none");
-		
-		// Make sure checkbox is actually checked.
-		$("#step" + step + " #noHeaderLines").attr('checked', true); 
-		
+
+        // Make sure checkbox is actually checked.
+        $("#step" + step + " #noHeaderLines").attr('checked', true);
+
         // Activate the jWizard next button so the user can proceed.
         $("#faux").remove();
         $(".jw-button-next").removeClass("hideMe");

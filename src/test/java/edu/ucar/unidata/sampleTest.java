@@ -1,12 +1,9 @@
 package edu.ucar.unidata;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.junit.Test;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,7 +24,7 @@ public class sampleTest {
 
         // Check the title of the page
         System.out.println("Page title is: " + driver.getTitle());
-        
+
         assertEquals(driver.getTitle().toLowerCase(), "rosetta");
         assertTrue(driver.getTitle().toLowerCase().startsWith("rosetta"));
 
