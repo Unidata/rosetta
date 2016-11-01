@@ -1,15 +1,22 @@
 package edu.ucar.unidata.rosetta.dsg.util;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Set;
+
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayLong;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
-import ucar.nc2.*;
+import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
+import ucar.nc2.NetcdfFileWriter;
+import ucar.nc2.Variable;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateFormatter;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Holds information needed to construct dateTime objects
@@ -37,7 +44,8 @@ public class DateTimeBluePrint {
     private HashMap<String, ArrayList<String>> timeRelatedVars;
     private String isoFmt = "yyyy-MM-ddTHH:mm:ss.SSSZ";
 
-    public DateTimeBluePrint() {}
+    public DateTimeBluePrint() {
+    }
 
     public DateTimeBluePrint(HashMap<String, ArrayList<String>> timeRelatedVars, NetcdfFileWriter ncFileWriter) throws IOException {
         this.timeRelatedVars = timeRelatedVars;
@@ -54,14 +62,14 @@ public class DateTimeBluePrint {
             ArrayChar dateDataArray = (ArrayChar) dateOnlyVar.read();
             String dateFmt = dateOnlyVar.getUnitsString();
             String timeFmt = timeOnlyVar.getUnitsString();
-            CalendarDateFormatter fmt = new CalendarDateFormatter(dateFmt+timeFmt);
+            CalendarDateFormatter fmt = new CalendarDateFormatter(dateFmt + timeFmt);
             String date, time, dateTimeStr;
             CalendarDate dateTime;
             if ((numTimeObs == numDateObs) & (checkLongToIntConversion(numTimeObs))) {
                 numObs = (int) numTimeObs;
                 dateTimeArray = new long[numObs];
                 dateTimeIsoString = new String[numObs];
-                for(int ob = 0; ob < (int) numDateObs; ob++) {
+                for (int ob = 0; ob < (int) numDateObs; ob++) {
                     date = dateDataArray.getString(ob);
                     time = timeDataArray.getString(ob);
                     dateTimeStr = date + time;
@@ -80,7 +88,7 @@ public class DateTimeBluePrint {
                 numObs = (int) numFullDateTimeObs;
                 dateTimeArray = new long[numObs];
                 dateTimeIsoString = new String[numObs];
-                for(int ob = 0; ob < (int) numDateObs; ob++) {
+                for (int ob = 0; ob < (int) numDateObs; ob++) {
                     dateTimeStr = fullDateTimeArray.getString(ob);
                     dateTime = fmt.parse(dateTimeStr);
                     dateTimeArray[ob] = dateTime.getMillis() / 1000l; // make seconds instead of milliseconds
@@ -102,7 +110,7 @@ public class DateTimeBluePrint {
 
     public NetcdfFileWriter createNewVars(NetcdfFileWriter ncFileWriter) throws IOException {
         // create new variables and dimensions
-        if( (ncFileWriter.isDefineMode()) & (hasSingleDateAndTime)) {
+        if ((ncFileWriter.isDefineMode()) & (hasSingleDateAndTime)) {
             if (timeOnly && dateOnly) {
                 ArrayList<String> timeOnlyVarNames = timeRelatedVars.get("timeOnly");
                 ArrayList<String> dateOnlyVarNames = timeRelatedVars.get("dateOnly");
@@ -149,9 +157,9 @@ public class DateTimeBluePrint {
             assert dateTimeVarStr.getRank() == 2;
             ArrayChar.D2 strVals =
                     new ArrayChar.D2(numObs, isoFmt.length());
-            int      i                 = 0;
+            int i = 0;
             for (String dtStr : dateTimeIsoString) {
-                strVals.setString(i,dtStr);
+                strVals.setString(i, dtStr);
                 i++;
             }
             ncFileWriter.write(dateTimeVarStr, strVals);
@@ -161,7 +169,7 @@ public class DateTimeBluePrint {
 
             ArrayLong.D1 longVals =
                     new ArrayLong.D1(numObs);
-            i                 = 0;
+            i = 0;
             for (long dateTimeLong : dateTimeArray) {
                 longVals.set(i, dateTimeLong);
                 i++;

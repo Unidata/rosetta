@@ -24,13 +24,12 @@ import java.util.Map;
  */
 @Deprecated
 public class AcadisGatewayProjectReader {
+    protected static Logger logger = Logger
+            .getLogger(AcadisGatewayProjectReader.class);
     // private String server = "cadis.prototype.ucar.edu";
     private String server = "www.aoncadis.org";
     private int port = 443;
     private String scheme = "https";
-    protected static Logger logger = Logger
-            .getLogger(AcadisGatewayProjectReader.class);
-
     private HttpHost gatewayHost;
     private HttpClientBuilder gatewayClientBuilder;
     private String userAgent;
@@ -40,6 +39,36 @@ public class AcadisGatewayProjectReader {
     private Map<String, String> inventory;
 
     private String dsShortName;
+
+    public AcadisGatewayProjectReader(String datasetId) {
+        String dsShortName = null;
+        try {
+            init(datasetId);
+        } catch (URISyntaxException e) {
+            logger.error("Could not create an AcadisGatewayProjectReader for the dataset with a short name of "
+                    + dsShortName);
+            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) throws IOException,
+            URISyntaxException {
+        // ef653b66-a09f-11e3-b343-00c0f03d5b7c
+        // String datasetId = "0fd0b40d-cca6-11e3-b6a5-00c0f03d5b7c";
+        String datasetId = "9e8e03d6-cb31-11e3-b6a5-00c0f03d5b7c";
+        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(
+                datasetId);
+        projectReader.read();
+        Map<String, String> inventory = projectReader.getInventory();
+        for (String name : inventory.keySet()) {
+            String downloadUrl = inventory.get(name);
+            System.out.println("name: " + name + " access: " + downloadUrl);
+        }
+    }
 
     private HttpHost makeHost() {
         // create client for given host
@@ -141,21 +170,6 @@ public class AcadisGatewayProjectReader {
         return inventory;
     }
 
-    public AcadisGatewayProjectReader(String datasetId) {
-        String dsShortName = null;
-        try {
-            init(datasetId);
-        } catch (URISyntaxException e) {
-            logger.error("Could not create an AcadisGatewayProjectReader for the dataset with a short name of "
-                    + dsShortName);
-            logger.error(e.getMessage());
-            logger.error(e.getStackTrace());
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private String getDatasetShortName(URI datasetUri) {
         String datasetShortName = "NO DATASET FOUND";
         if (datasetUri != null) {
@@ -239,21 +253,6 @@ public class AcadisGatewayProjectReader {
             logger.debug(exc.getMessage());
         }
         return successful;
-    }
-
-    public static void main(String[] args) throws IOException,
-            URISyntaxException {
-        // ef653b66-a09f-11e3-b343-00c0f03d5b7c
-        // String datasetId = "0fd0b40d-cca6-11e3-b6a5-00c0f03d5b7c";
-        String datasetId = "9e8e03d6-cb31-11e3-b6a5-00c0f03d5b7c";
-        AcadisGatewayProjectReader projectReader = new AcadisGatewayProjectReader(
-                datasetId);
-        projectReader.read();
-        Map<String, String> inventory = projectReader.getInventory();
-        for (String name : inventory.keySet()) {
-            String downloadUrl = inventory.get(name);
-            System.out.println("name: " + name + " access: " + downloadUrl);
-        }
     }
 
 }

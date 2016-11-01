@@ -1,7 +1,12 @@
 package edu.ucar.unidata.rosetta.dsg;
 
-import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
+
+import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayScalar;
 import ucar.ma2.DataType;
@@ -11,10 +16,6 @@ import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
-
 
 /**
  * Service for parsing file data.
@@ -22,6 +23,11 @@ import java.util.Map;
 public class SingleStationTrajectory extends NetcdfFileManager {
 
     protected static Logger logger = Logger.getLogger(SingleStationTrajectory.class);
+
+    public SingleStationTrajectory() {
+        super.setMyCfRole("trajectory_id");
+        super.setMyDsgType("trajectory");
+    }
 
     @Override
     protected void createCoordinateAttr(boolean hasRelTime) {
@@ -60,7 +66,7 @@ public class SingleStationTrajectory extends NetcdfFileManager {
         //    coordVarVal = "-" + coordVarVal;
         //}
 
-        Variable theVar = ncFileWriter.addVariable(null, name.substring(0,3), DataType.FLOAT, "");
+        Variable theVar = ncFileWriter.addVariable(null, name.substring(0, 3), DataType.FLOAT, "");
 
         ncFileWriter.addVariableAttribute(theVar, new Attribute("Units", coordVarUnits));
         ncFileWriter.addVariableAttribute(theVar, new Attribute("standard_name", name));
@@ -92,7 +98,7 @@ public class SingleStationTrajectory extends NetcdfFileManager {
         //    coordVarVal = "-" + coordVarVal;
         //}
 
-        Variable theVar = ncFileWriter.findVariable(name.substring(0,3));
+        Variable theVar = ncFileWriter.findVariable(name.substring(0, 3));
 
         ncFileWriter.write(theVar, new ArrayScalar(Float.parseFloat(coordVarVal)));
 
@@ -102,7 +108,7 @@ public class SingleStationTrajectory extends NetcdfFileManager {
     protected NetcdfFileWriter createPlatformInfo(NetcdfFileWriter ncFileWriter, AsciiFile file) {
         String stationName = getPlatformMetadataMap().get("platformName").toString().replaceAll(" ", "_");
 
-        Variable theVar = ncFileWriter.addStringVariable(null,"station_name", new ArrayList<Dimension>(),
+        Variable theVar = ncFileWriter.addStringVariable(null, "station_name", new ArrayList<Dimension>(),
                 stationName.length());
 
         theVar.addAttribute(new Attribute("cf_role", getMyCfRole()));
@@ -113,13 +119,13 @@ public class SingleStationTrajectory extends NetcdfFileManager {
         return ncFileWriter;
     }
 
-    protected NetcdfFileWriter writePlatformInfo(NetcdfFileWriter ncFileWriter, AsciiFile file){
+    protected NetcdfFileWriter writePlatformInfo(NetcdfFileWriter ncFileWriter, AsciiFile file) {
         String stationName = getPlatformMetadataMap().get("platformName").toString().replaceAll(" ", "_");
         char[] stationNameCharArray = stationName.toCharArray();
         Variable theVar = ncFileWriter.findVariable("station_name");
 
         ArrayChar sa = new ArrayChar.D1(stationName.length());
-        for (int i = 0; i < stationName.length(); i++ ) {
+        for (int i = 0; i < stationName.length(); i++) {
             sa.setChar(i, stationNameCharArray[i]);
         }
 
@@ -132,10 +138,5 @@ public class SingleStationTrajectory extends NetcdfFileManager {
         }
 
         return ncFileWriter;
-    }
-
-    public SingleStationTrajectory() {
-        super.setMyCfRole("trajectory_id");
-        super.setMyDsgType("trajectory");
     }
 }

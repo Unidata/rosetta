@@ -1,9 +1,13 @@
 package edu.ucar.unidata.rosetta.domain;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.ResourceManagerImpl;
-
-import java.util.*;
 
 public class PublisherInfo {
     private String pubName;
@@ -33,11 +37,11 @@ public class PublisherInfo {
     }
 
     public void setGeneralMetadataMap(String generalMetadata) {
-        List <String> pairs = Arrays.asList(generalMetadata.split(","));
+        List<String> pairs = Arrays.asList(generalMetadata.split(","));
         Iterator<String> pairsIterator = pairs.iterator();
         while (pairsIterator.hasNext()) {
             String pairString = pairsIterator.next();
-            String[] items =  pairString.split(":");
+            String[] items = pairString.split(":");
             this.generalMetadataMap.put(items[0], items[1]);
         }
     }
@@ -70,7 +74,7 @@ public class PublisherInfo {
     /**
      * Returns the publisher name.
      *
-     * @return  The publisher name.
+     * @return The publisher name.
      */
     public String getPubName() {
         return pubName;
@@ -79,7 +83,7 @@ public class PublisherInfo {
     /**
      * Sets the publisher name.
      *
-     * @param pubName  The publisher name.
+     * @param pubName The publisher name.
      */
     public void setPubName(String pubName) {
         this.pubName = pubName;
@@ -89,7 +93,7 @@ public class PublisherInfo {
     /**
      * Returns the publisher username.
      *
-     * @return  The username for publishing login.
+     * @return The username for publishing login.
      */
     public String getUserName() {
         return userName;
@@ -98,7 +102,7 @@ public class PublisherInfo {
     /**
      * Sets the publisher username.
      *
-     * @param userName  The username for publishing login.
+     * @param userName The username for publishing login.
      */
     public void setUserName(String userName) {
         this.userName = userName;
@@ -107,7 +111,7 @@ public class PublisherInfo {
     /**
      * Returns the publisher auth.
      *
-     * @return  The auth for publishing login.
+     * @return The auth for publishing login.
      */
     public String getAuth() {
         return auth;
@@ -116,7 +120,7 @@ public class PublisherInfo {
     /**
      * Sets the publisher auth.
      *
-     * @param auth  The username for publishing login.
+     * @param auth The username for publishing login.
      */
     public void setAuth(String auth) {
         this.auth = auth;
@@ -125,7 +129,7 @@ public class PublisherInfo {
     /**
      * Returns a Map containing the variable metadata.
      *
-     * @return  The variable metadata in a map.
+     * @return The variable metadata in a map.
      */
     public Map<String, String> getPublisherInfoMap() {
         return publisherInfoMap;
@@ -138,7 +142,7 @@ public class PublisherInfo {
         publisherInfoMap = new HashMap<String, String>();
         Map resources = rs.loadResources();
         List publishers = (List) resources.get("publishers");
-        for(Object pub : publishers) {
+        for (Object pub : publishers) {
             HashMap<String, String> pubMap = (HashMap<String, String>) pub;
             String pubName = pubMap.get("pubName");
             if (pubName.equals(this.getPubName())) {

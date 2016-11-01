@@ -27,11 +27,10 @@ import java.net.URISyntaxException;
 @Deprecated
 public class AcadisGateway implements Publisher {
 
+    protected static Logger logger = Logger.getLogger(AcadisGateway.class);
     private String path = "/api/dataset";
     private int port = 443;
     private String scheme = "https";
-    protected static Logger logger = Logger.getLogger(AcadisGateway.class);
-
     private String server;
     private HttpHost gatewayHost;
     private HttpClientBuilder gatewayClientBuilder;
@@ -44,6 +43,17 @@ public class AcadisGateway implements Publisher {
     private String gatewayProjectUrl;
     private String parent;
 
+
+    public AcadisGateway(String server, String userId, String passwd, String shortName, String filePath) {
+        try {
+            init(server, userId, passwd, shortName, filePath);
+        } catch (URISyntaxException e) {
+            logger.error("Could not create an AcadisGateway Publisher for the project with a short name of " + shortName);
+            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
+            e.printStackTrace();
+        }
+    }
 
     private HttpHost makeHost() {
         // create client for given host
@@ -89,7 +99,7 @@ public class AcadisGateway implements Publisher {
 
     private String makeUserAgent() {
         String rosettaVersion = "0.2-SNAPSHOT";
-        String userAgent = "Unidata/Rosetta_"+ rosettaVersion;
+        String userAgent = "Unidata/Rosetta_" + rosettaVersion;
 
         return userAgent;
     }
@@ -129,24 +139,13 @@ public class AcadisGateway implements Publisher {
         return response;
     }
 
-    public AcadisGateway(String server, String userId, String passwd, String shortName, String filePath) {
-        try {
-            init(server, userId, passwd, shortName, filePath);
-        } catch (URISyntaxException e) {
-            logger.error("Could not create an AcadisGateway Publisher for the project with a short name of " + shortName);
-            logger.error(e.getMessage());
-            logger.error(e.getStackTrace());
-            e.printStackTrace();
-        }
-    }
-
     private void init(String server, String userId, String passwd, String parent, String filePath) throws URISyntaxException {
 
         this.server = server;
         fileToPublish = new File(filePath);
         String ncFileName = fileToPublish.getName();
         //String fullPutUrl = server + path + parent + "/files/" + ncFileName;
-        String putPath =  path + "/" + parent + "/file/" + ncFileName;
+        String putPath = path + "/" + parent + "/file/" + ncFileName;
 
         userAgent = makeUserAgent();
 
@@ -183,15 +182,14 @@ public class AcadisGateway implements Publisher {
         }
     }
 
-    private void setGatewayProjectUrl(String parent) {
-        //gatewayProjectUrl = "https://cadis.prototype.ucar.edu/dataset/" +  parent + "html";
-        gatewayProjectUrl = "https://www.aoncadis.org/dataset/" +  parent + "html";
-    }
-
     public String getGatewayProjectUrl() {
         return gatewayProjectUrl;
     }
 
+    private void setGatewayProjectUrl(String parent) {
+        //gatewayProjectUrl = "https://cadis.prototype.ucar.edu/dataset/" +  parent + "html";
+        gatewayProjectUrl = "https://www.aoncadis.org/dataset/" + parent + "html";
+    }
 
     public String getGatewayDownloadUrl() {
         return gatewayDownloadUrl;
@@ -219,12 +217,12 @@ public class AcadisGateway implements Publisher {
             }
         } catch (Exception exc) {
             logger.debug(exc.getMessage());
-        } 
-        
+        }
+
         if (successful) {
             setGatewayDownloadUrl();
             setGatewayProjectUrl(parent);
         }
-        return successful;        
+        return successful;
     }
 }

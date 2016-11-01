@@ -2,12 +2,15 @@
  * Restore script for rosetta.  Restoration starts here and is called via this script.
  */
 
-$(document).ready(function($) {
+$(document).ready(function ($) {
 
     // automagically make any image alt a tooltip
-    $(document).tooltip({ items: "img[alt]",
-        content: function() { return $(this).attr("alt") }
-    });
+    $(document).tooltip({
+                            items: "img[alt]",
+                            content: function () {
+                                return $(this).attr("alt")
+                            }
+                        });
 
     // our faux next button that is disabled
     var faux = '<div id="faux" class="ui-corner-all disabled">Next</div>';
@@ -19,15 +22,16 @@ $(document).ready(function($) {
     $w = $("#FORM");
     $w.validate();
     $w.jWizard({
-        menuEnable: true,
-        titleHide: false,
-        buttons : {
-            finishType : "button"
-        }
-    })
+                   menuEnable: true,
+                   titleHide: false,
+                   buttons: {
+                       finishType: "button"
+                   }
+               })
 
     /**
-     * The bindings below are event handlers, they will all be executed before proceeding to the callback
+     * The bindings below are event handlers, they will all be executed before proceeding to the
+     * callback
      *
      * ui = {
      *       type: "previous|next|first|last|manual",
@@ -39,14 +43,15 @@ $(document).ready(function($) {
     /**
      * Handling custom navigation through the wizard
      */
-        .bind("jwizardchangestep", function(event, ui) {
+        .bind("jwizardchangestep", function (event, ui) {
             // "manual" is always triggered by the user, never jWizard itself
             if (ui.type !== "manual") {
                 $("#faux").remove();
                 $(".jw-button-next").addClass("hideMe").after(faux);
                 var error;
-                // using currentStepIndex, we can intercept the user when they are *done* with a particular step
-                switch(ui.currentStepIndex) {
+                // using currentStepIndex, we can intercept the user when they are *done* with a
+                // particular step
+                switch (ui.currentStepIndex) {
                     case 0:
                         // upload template
                         uploadRosettaTemplate("stepValidation", ui);
@@ -57,7 +62,7 @@ $(document).ready(function($) {
                     case 1:
                         // upload data file
                         uploadDataFile("stepValidation", ui);
-                    break;
+                        break;
 
                     case 2:
                         specifyHeaderLines("stepValidation", ui);
@@ -79,15 +84,16 @@ $(document).ready(function($) {
                 }
             }
 
-            // by using nextStepIndex, we can intercept the user when they are *about to start* on a particular step
-            switch(ui.nextStepIndex) {
+            // by using nextStepIndex, we can intercept the user when they are *about to start* on
+            // a particular step
+            switch (ui.nextStepIndex) {
                 case 0:
                     uploadRosettaTemplate("repopulateStep", ui);
-                break;
+                    break;
 
                 case 1:
                     uploadDataFile("repopulateStep", ui);
-                break;
+                    break;
 
                 case 2:
                     specifyHeaderLines("repopulateStep", ui);
@@ -121,16 +127,14 @@ $(document).ready(function($) {
             }
         })
 
-
     /**
      * CUSTOM EVENT HANDLERS BY STEP
      */
 
-
     /**
      * INITIAL DOCUMENT LOAD
      */
-    $w.ready(function() {
+    $w.ready(function () {
         $(".jw-button-next").prop("disabled", true).addClass("disabled");
     });
 

@@ -8,18 +8,18 @@
                     obj["displayName"] = "<c:out value="${globalMetadataItem.displayName}" />";
                     <c:choose>
                     <c:when test="${globalMetadataItem.isRequired != null}">
-                            obj["isRequired"] = true;
+                    obj["isRequired"] = true;
                     </c:when>
                     <c:otherwise>
-                            obj["isRequired"] = false;
+                    obj["isRequired"] = false;
                     </c:otherwise>
-                            </c:choose>
+                    </c:choose>
                     <c:choose>
                     <c:when test="${globalMetadataItem.units != null}">
-                            obj["units"] = true;
+                    obj["units"] = true;
                     </c:when>
                     <c:otherwise>
-                            obj["units"] = false;
+                    obj["units"] = false;
                     </c:otherwise>
                     </c:choose>
                     generalMetadata.push(obj);
@@ -31,16 +31,19 @@
                                 *
                             </c:when>
                         </c:choose>
-                        <c:out value="${globalMetadataItem.displayName}" />
+                        <c:out value="${globalMetadataItem.displayName}"/>
                         <c:choose>
                             <c:when test="${globalMetadataItem.description != null}">
-                                <img src="resources/img/help.png" alt="<c:out value="${globalMetadataItem.description}" />"/>
+                                <img src="resources/img/help.png"
+                                     alt="<c:out value="${globalMetadataItem.description}" />"/>
                             </c:when>
                         </c:choose>
                         <br/>
-                        <input type="text" name="<c:out value="${globalMetadataItem.tagName}" />" value="" />
+                        <input type="text" name="<c:out value="${globalMetadataItem.tagName}" />"
+                               value=""/>
                     </label>
-                    <label for="<c:out value="${globalMetadataItem.tagName}" />" class="error"></label>
+                    <label for="<c:out value="${globalMetadataItem.tagName}" />"
+                           class="error"></label>
                 </li>
             </c:forEach>
         </ul>

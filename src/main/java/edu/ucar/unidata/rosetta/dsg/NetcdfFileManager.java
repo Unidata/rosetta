@@ -1,20 +1,33 @@
 package edu.ucar.unidata.rosetta.dsg;
 
-import edu.ucar.unidata.rosetta.domain.AsciiFile;
-import edu.ucar.unidata.rosetta.dsg.util.DateTimeBluePrint;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import ucar.ma2.*;
-import ucar.nc2.Attribute;
-import ucar.nc2.Dimension;
-import ucar.nc2.NetcdfFileWriter;
-import ucar.nc2.Variable;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import edu.ucar.unidata.rosetta.domain.AsciiFile;
+import edu.ucar.unidata.rosetta.dsg.util.DateTimeBluePrint;
+import ucar.ma2.Array;
+import ucar.ma2.ArrayChar;
+import ucar.ma2.ArrayFloat;
+import ucar.ma2.ArrayInt;
+import ucar.ma2.DataType;
+import ucar.ma2.InvalidRangeException;
+import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
+import ucar.nc2.NetcdfFileWriter;
+import ucar.nc2.Variable;
 
 /**
  * Handle writing out dsg netcdf file data.
@@ -27,22 +40,29 @@ public abstract class NetcdfFileManager {
     private String myDsgType;
 
     private Map<String, HashMap> variableMetadataMap;
-    private Map<String,String> variableNameMap;
+    private Map<String, String> variableNameMap;
     private Map<String, String> platformMetadataMap;
     private Map<String, String> generalMetadataMap;
     private Map<String, String> otherInfo;
-
-    public Map<String, String> getOtherInfo() {return this.otherInfo;}
-    public void setOtherInfo(Map<String, String> otherInfo) {this.otherInfo = otherInfo;}
-
     private HashMap<String, Integer> nameCounts;
     private String coordAttr;
     private List<String> usedVarNames = new ArrayList<String>();
     private List<String> allVarNames = new ArrayList<String>();
     private String shapeAttr;
-
     private List<String> coordVarList;
     private DateTimeBluePrint dateTimeBluePrint;
+    private HashMap<String, ArrayList<String>> coordVars;
+    private ArrayList<String> buildTimeTriggers;
+    private String relTimeVarName;
+    private List<String> nonCoordVarList;
+
+    public Map<String, String> getOtherInfo() {
+        return this.otherInfo;
+    }
+
+    public void setOtherInfo(Map<String, String> otherInfo) {
+        this.otherInfo = otherInfo;
+    }
 
     public String getMyDsgType() {
         return myDsgType;
@@ -67,8 +87,6 @@ public abstract class NetcdfFileManager {
     public void setDateTimeBluePrint(DateTimeBluePrint dateTimeBluePrint) {
         this.dateTimeBluePrint = dateTimeBluePrint;
     }
-
-    private HashMap<String, ArrayList<String>> coordVars;
 
     public HashMap<String, Integer> getNameCounts() {
         return nameCounts;
@@ -118,8 +136,6 @@ public abstract class NetcdfFileManager {
         this.buildTimeTriggers = buildTimeTriggers;
     }
 
-    private ArrayList<String> buildTimeTriggers;
-
     public String getRelTimeVarName() {
         return relTimeVarName;
     }
@@ -127,9 +143,6 @@ public abstract class NetcdfFileManager {
     public void setRelTimeVarName(String relTimeVarName) {
         this.relTimeVarName = relTimeVarName;
     }
-
-    private String relTimeVarName;
-    private List<String> nonCoordVarList;
 
     public HashMap<String, ArrayList<String>> getCoordVars() {
         return coordVars;
@@ -243,7 +256,7 @@ public abstract class NetcdfFileManager {
         return ncFileWriter;
     }
 
-    protected NetcdfFileWriter addCfAttributes(NetcdfFileWriter ncFileWriter){
+    protected NetcdfFileWriter addCfAttributes(NetcdfFileWriter ncFileWriter) {
         ncFileWriter.addGroupAttribute(null, new Attribute("Conventions", "CF-1.6"));
         ncFileWriter.addGroupAttribute(null, new Attribute("featureType", getMyDsgType()));
 
@@ -273,7 +286,7 @@ public abstract class NetcdfFileManager {
                 // check if variable is a coordinate variable!
                 if (variableMetadata.containsKey("_coordinateVariable")) {
                     String coordVarType = variableMetadata.get("_coordinateVariableType");
-                    if(variableMetadata.get("_coordinateVariable").equals("coordinate") && (!getBuildTimeTriggers().contains(coordVarType))){
+                    if (variableMetadata.get("_coordinateVariable").equals("coordinate") && (!getBuildTimeTriggers().contains(coordVarType))) {
                         if (coordVarType.toLowerCase().equals("reltime")) {
                             hasRelTime = true;
                             relTimeVarName = value;
@@ -400,7 +413,7 @@ public abstract class NetcdfFileManager {
                 dims.add(ncFileWriter.renameDimension(null, dimStr, dimStr));
             }
             theVar = ncFileWriter.addStringVariable(null, name, dims, charLen);
-        }   else {
+        } else {
             theVar = ncFileWriter.addVariable(null, name, ncType, shape);
         }
 
@@ -415,12 +428,12 @@ public abstract class NetcdfFileManager {
             metadataKey = variableMetadataKeysIterator.next();
             metadataValue = variableMetadata.get(metadataKey).toString();
             switch (metadataKey) {
-                case "dataType" :
+                case "dataType":
                     break;
-                case "missing_value" :
-                case "_FillValue" :
-                case "valid_min" :
-                case "valid_max" :
+                case "missing_value":
+                case "_FillValue":
+                case "valid_min":
+                case "valid_max":
                     // TODO: valid range?
                     // TODO: flag_values?
                     String[] arrayString = {metadataValue};
@@ -431,7 +444,7 @@ public abstract class NetcdfFileManager {
                     Attribute attribute = new Attribute(metadataKey, array);
                     ncFileWriter.addVariableAttribute(theVar, attribute);
                     break;
-                default :
+                default:
                     ncFileWriter.addVariableAttribute(theVar, new Attribute(metadataKey, metadataValue));
                     break;
             }
@@ -471,7 +484,7 @@ public abstract class NetcdfFileManager {
 
     protected NetcdfFileWriter createRosettaInfo(NetcdfFileWriter ncFileWriter, String rosettaJson) {
         //todo get version info from war file, similar to ServerInfoBean.java
-        Variable theVar = ncFileWriter.addStringVariable(null,"Rosetta", new ArrayList<Dimension>(),
+        Variable theVar = ncFileWriter.addStringVariable(null, "Rosetta", new ArrayList<Dimension>(),
                 rosettaJson.length());
 
         theVar.addAttribute(new Attribute("long_name", "Rosetta front-end sessionStorage JSON String"));
@@ -600,14 +613,14 @@ public abstract class NetcdfFileManager {
             if (theVar != null) {
                 Attribute attr = theVar.findAttributeIgnoreCase("_columnId");
                 if (attr != null) {
-                    String    varName = theVar.getFullName();
-                    DataType  dt      = theVar.getDataType();
+                    String varName = theVar.getFullName();
+                    DataType dt = theVar.getDataType();
                     int varIndex = Integer.parseInt(attr.getStringValue());
-                    int len      = outerList.size();
+                    int len = outerList.size();
                     if (dt.equals(DataType.FLOAT)) {
                         ArrayFloat.D1 vals =
                                 new ArrayFloat.D1(outerList.size());
-                        int      i                 = 0;
+                        int i = 0;
                         for (List<String> innerList : outerList) {
                             Number number = nFormat.parse(innerList.get(varIndex));
                             float f = number.floatValue();
@@ -618,7 +631,7 @@ public abstract class NetcdfFileManager {
                     } else if (dt.equals(DataType.INT)) {
                         ArrayInt.D1 vals =
                                 new ArrayInt.D1(outerList.size());
-                        int      i                 = 0;
+                        int i = 0;
                         for (List<String> innerList : outerList) {
                             int f = Integer.parseInt(
                                     innerList.get(
@@ -633,11 +646,11 @@ public abstract class NetcdfFileManager {
 
                         ArrayChar.D2 vals =
                                 new ArrayChar.D2(outerList.size(), elementLength);
-                        int      i                 = 0;
+                        int i = 0;
                         for (List<String> innerList : outerList) {
 
                             String f = innerList.get(varIndex);
-                            vals.setString(i,f);
+                            vals.setString(i, f);
                             i++;
                         }
                         ncFileWriter.write(theVar, vals);

@@ -3,10 +3,10 @@ package edu.ucar.unidata.rosetta.domain;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
- * Object representing an UploadedFile.  
+ * Object representing an UploadedFile.
  *
  * An arbitrary entity representing a CommonsMultipartFile
- * file uploaded to the local file system by a user. 
+ * file uploaded to the local file system by a user.
  */
 public class UploadedFile {
 
@@ -70,7 +70,6 @@ public class UploadedFile {
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
-
 
 
 }

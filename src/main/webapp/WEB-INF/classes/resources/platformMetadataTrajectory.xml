@@ -1,37 +1,40 @@
 <?xml version='1.0' encoding='utf-8'?>
 <platformMetedataTrajectoryItems>
 
-      <platformMetedataTrajectoryItem>
-         <displayName>Station or Platform Name</displayName>
-         <tagName>platformName</tagName>
-         <isRequired>true</isRequired>
-         <description>The ID or name of the station where the profile was collected.</description>
-      </platformMetedataTrajectoryItem>
+    <platformMetedataTrajectoryItem>
+        <displayName>Station or Platform Name</displayName>
+        <tagName>platformName</tagName>
+        <isRequired>true</isRequired>
+        <description>The ID or name of the station where the profile was collected.</description>
+    </platformMetedataTrajectoryItem>
 
-      <platformMetedataTrajectoryItem>
-         <displayName>Station Altitude</displayName>
-         <tagName>altitude</tagName>  
-         <isRequired>true</isRequired>
-         <description>The height or elevation of the station where the profile was collected.</description>
-         <units>verticalDistance</units>
-      </platformMetedataTrajectoryItem>
-
-
-      <platformMetedataTrajectoryItem>
-         <displayName>Station Latitude</displayName>
-         <tagName>latitude</tagName> 
-         <isRequired>true</isRequired>
-         <description>The north-south coordinates of the station where the profile was collected.</description>
-         <units>geoCoordinateSystemLatitude</units>
-      </platformMetedataTrajectoryItem>
+    <platformMetedataTrajectoryItem>
+        <displayName>Station Altitude</displayName>
+        <tagName>altitude</tagName>
+        <isRequired>true</isRequired>
+        <description>The height or elevation of the station where the profile was collected.
+        </description>
+        <units>verticalDistance</units>
+    </platformMetedataTrajectoryItem>
 
 
-      <platformMetedataTrajectoryItem>
-         <displayName>Station Longitude</displayName>
-         <tagName>longitude</tagName>   
-         <isRequired>true</isRequired>
-         <description>The east-west coordinates of the station where the profile was collected.</description>
-         <units>geoCoordinateSystemLongitude</units>
-      </platformMetedataTrajectoryItem>
+    <platformMetedataTrajectoryItem>
+        <displayName>Station Latitude</displayName>
+        <tagName>latitude</tagName>
+        <isRequired>true</isRequired>
+        <description>The north-south coordinates of the station where the profile was collected.
+        </description>
+        <units>geoCoordinateSystemLatitude</units>
+    </platformMetedataTrajectoryItem>
+
+
+    <platformMetedataTrajectoryItem>
+        <displayName>Station Longitude</displayName>
+        <tagName>longitude</tagName>
+        <isRequired>true</isRequired>
+        <description>The east-west coordinates of the station where the profile was collected.
+        </description>
+        <units>geoCoordinateSystemLongitude</units>
+    </platformMetedataTrajectoryItem>
 
 </platformMetedataTrajectoryItems>

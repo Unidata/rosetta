@@ -9,18 +9,18 @@
                     obj["isRequired"] = <c:out value="${platformMetadataItem.isRequired}" />;
                     <c:choose>
                     <c:when test="${platformMetadataItem.isRequired != null}">
-                            obj["isRequired"] = true;
+                    obj["isRequired"] = true;
                     </c:when>
                     <c:otherwise>
-                            obj["isRequired"] = false;
+                    obj["isRequired"] = false;
                     </c:otherwise>
-                            </c:choose>
+                    </c:choose>
                     <c:choose>
                     <c:when test="${platformMetadataItem.units != null}">
-                            obj["units"] = true;
+                    obj["units"] = true;
                     </c:when>
                     <c:otherwise>
-                            obj["units"] = false;
+                    obj["units"] = false;
                     </c:otherwise>
                     </c:choose>
                     platformMetadata.push(obj);
@@ -32,14 +32,16 @@
                                 *
                             </c:when>
                         </c:choose>
-                        <c:out value="${platformMetadataItem.displayName}" />
+                        <c:out value="${platformMetadataItem.displayName}"/>
                         <c:choose>
                             <c:when test="${platformMetadataItem.description != null}">
-                                <img src="resources/img/help.png" alt="<c:out value="${platformMetadataItem.description}" />"/>
+                                <img src="resources/img/help.png"
+                                     alt="<c:out value="${platformMetadataItem.description}" />"/>
                             </c:when>
                         </c:choose>
                         <br/>
-                        <input type="text" name="<c:out value="${platformMetadataItem.tagName}" />" value="" />
+                        <input type="text" name="<c:out value="${platformMetadataItem.tagName}" />"
+                               value=""/>
                         <c:choose>
                             <c:when test="${platformMetadataItem.units != null}">
                                 <c:choose>
@@ -48,23 +50,27 @@
                                             <c:choose>
                                                 <c:when test="${platformMetadataItem.units == unit.name}">
                                                     <select name="<c:out value="${platformMetadataItem.tagName}" />Units">
-                                                    <c:forEach items="${unit.value}" var="val">
-                                                        <option value="<c:out value="${val}" />"><c:out value="${val}" /></option>
-                                                    </c:forEach>
+                                                        <c:forEach items="${unit.value}" var="val">
+                                                            <option value="<c:out value="${val}" />">
+                                                                <c:out value="${val}"/></option>
+                                                        </c:forEach>
                                                     </select>
                                                 </c:when>
                                             </c:choose>
                                         </c:forEach>
                                     </c:when>
                                     <c:otherwise>
-                                        <c:out value="${platformMetadataItem.displayName}" /> Units *
-                                        <input type="text" name="<c:out value="${platformMetadataItem.tagName}" />Units" value="" />
+                                        <c:out value="${platformMetadataItem.displayName}"/> Units *
+                                        <input type="text"
+                                               name="<c:out value="${platformMetadataItem.tagName}" />Units"
+                                               value=""/>
                                     </c:otherwise>
                                 </c:choose>
                             </c:when>
                         </c:choose>
                     </label>
-                    <label for="<c:out value="${platformMetadataItem.tagName}" />" class="error"></label>
+                    <label for="<c:out value="${platformMetadataItem.tagName}" />"
+                           class="error"></label>
                 </li>
             </c:forEach>
         </ul>

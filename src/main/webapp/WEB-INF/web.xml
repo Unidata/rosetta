@@ -16,12 +16,12 @@
   limitations under the License.
 -->
 
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
                              http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0"
-         metadata-complete="true"> 
+         metadata-complete="true">
 
     <display-name>rosetta</display-name>
     <description>
@@ -50,7 +50,7 @@
     </context-param>
 
     <listener>
-      <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
     </listener>
 
 </web-app>
