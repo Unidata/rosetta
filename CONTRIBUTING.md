@@ -61,7 +61,9 @@ explanation and rationale behind Rosetta’s CLA.
 As part of the Pull Request, be sure to add yourself to the
 [list of contributors](https://github.com/Unidata/rosetta/blob/master/CONTRIBUTORS.md).
 We want to make sure we acknowledge the hard work you've generously contributed
-here.
+here. Note that the difference between "developer" and "contributor" is in most cases
+small, as all play an importiant role in the development of Rosetta. The people listed 
+specifically under "developers" have github permission to merge pull requests.
 
 ## Code Review
 Once you've submitted a Pull Request, at this point you're waiting on us. You
