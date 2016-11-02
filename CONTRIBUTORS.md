@@ -1,6 +1,6 @@
 # Contributors
+ * [Aleksander Vines](https://github.com/aleksandervines)
 
-
-# Main Developers
- * Sean Arms
- * Jennifer Oxelson
+# Developers
+ * [Sean Arms](https://github.com/lesserwhirls)
+ * [Jennifer Oxelson](https://github.com/oxelson)
