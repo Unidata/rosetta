@@ -431,7 +431,7 @@ function specifyGeneralMetadata(stepType, stepData) {
             }
         }
     } else if (stepType == "repopulateStep") {
-        if ((stepData[0].type == "previous") || (stepData[0].type == "next")) {
+        if ((stepData.type == "previous") || (stepData.type == "next")) {
             if (getItemEntered("generalMetadata", "title") != null) {
                 if (getItemEntered("generalMetadata", "institution") != null) {
                     if (getItemEntered("generalMetadata", "description") != null) {
@@ -441,7 +441,7 @@ function specifyGeneralMetadata(stepType, stepData) {
                 }
             }
         }
-        var stepElement = "#step" + stepData[1] + " input";
+        var stepElement = "#step" + stepData.nextStepIndex + " input";
         var inputElements = $(stepElement);
         for (var i = 0; i < inputElements.length; i++) {
             var name = $(inputElements[i]).attr("name");
@@ -493,7 +493,7 @@ function specifyPlatformMetadata(stepType, stepData) {
             }
         }
     } else if (stepType == "repopulateStep") {
-        if ((stepData[0].type == "previous") || (stepData[0].type == "next")) {
+        if ((stepData.type == "previous") || (stepData.type == "next")) {
             if (getItemEntered("platformMetadata", "platformName") != null) {
                 if (getItemEntered("platformMetadata", "latitude") != null) {
                     if (getItemEntered("platformMetadata", "longitude") != null) {
@@ -507,7 +507,7 @@ function specifyPlatformMetadata(stepType, stepData) {
         }
 
         // populate input elements from sessionStorage
-        var stepElement = "#step" + stepData[1] + " input";
+        var stepElement = "#step" + stepData.nextStepIndex + " input";
         var inputElements = $(stepElement);
         for (var i = 0; i < inputElements.length; i++) {
             var name = $(inputElements[i]).attr("name");
@@ -520,7 +520,7 @@ function specifyPlatformMetadata(stepType, stepData) {
         }
 
         // populate select elements from sessionStorage
-        var stepElementSelect = "#step" + stepData[1] + " select";
+        var stepElementSelect = "#step" + stepData.nextStepIndex + " select";
         var inputElementsSelect = $(stepElementSelect);
         for (var i = 0; i < inputElementsSelect.length; i++) {
             var name = $(inputElementsSelect[i]).attr("name");
