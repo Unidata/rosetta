@@ -82,32 +82,38 @@ function validateUploadedFile(file, currentStep) {
     // get file extension
     var fileExt = file.name.match(/\.[a-zA-Z]{3,4}$/);
 
-    // test valid regex patterns
-    var isExcel = excelPattern.test(fileExt[0]);
-    var isNcml = ncmlPattern.test(fileExt[0]);
-    var isZip = zipPattern.test(fileExt[0]);
-    var isFile = filePattern.test(file.type);
-    var isEcs = eolCompositeSountingPattern.test(fileExt[0]);
-    if (file.size > maxUploadSize) {
-        $(errorLabel).text(
-            "Error! File size should be less then " + (maxUploadSize / 1024 / 1000).toFixed(2)
-            + " MB");
-        $("#upload").addClass("hideMe");
-        boolean = false;
-    } else if (($("#file")[0].files[0].size / 1024) <= 0) {
-        $(errorLabel).text("Error! You are attempting to upload an empty file");
-        $("#upload").addClass("hideMe");
-        boolean = false;
-    } else {
-        // handle special cases first, then as last check see if it of type "file:
-        if (isExcel) {
-            $(".jw-step:eq(" + currentStep + ")").find("#notice").empty().append(
-                "Notice: Any date formatted cells in your spreadsheet will be reformatted in 'seconds since 1970-01-01'!");
-        } else if ((!isFile) && (!isNcml) && (!isZip) && (!isEcs)) {
-            $(errorLabel).text("Error! Incorrect file type selected for upload");
+    if (fileExt){
+        // test valid regex patterns
+        var isExcel = excelPattern.test(fileExt[0]);
+        var isNcml = ncmlPattern.test(fileExt[0]);
+        var isZip = zipPattern.test(fileExt[0]);
+        var isFile = filePattern.test(file.type);
+        var isEcs = eolCompositeSountingPattern.test(fileExt[0]);
+        if (file.size > maxUploadSize) {
+            $(errorLabel).text(
+                "Error! File size should be less then " + (maxUploadSize / 1024 / 1000).toFixed(2)
+                + " MB");
             $("#upload").addClass("hideMe");
             boolean = false;
+        } else if (($("#file")[0].files[0].size / 1024) <= 0) {
+            $(errorLabel).text("Error! You are attempting to upload an empty file");
+            $("#upload").addClass("hideMe");
+            boolean = false;
+        } else {
+            // handle special cases first, then as last check see if it of type "file:
+            if (isExcel) {
+                $(".jw-step:eq(" + currentStep + ")").find("#notice").empty().append(
+                    "Notice: Any date formatted cells in your spreadsheet will be reformatted in 'seconds since 1970-01-01'!");
+            } else if ((!isFile) && (!isNcml) && (!isZip) && (!isEcs)) {
+                $(errorLabel).text("Error! Incorrect file type selected for upload");
+                $("#upload").addClass("hideMe");
+                boolean = false;
+            }
         }
+    } else {
+        $(errorLabel).text("Error! The filename does not match the pattern \\.[a-zA-Z]{3,4}$");
+        $("#upload").addClass("hideMe"); 
+        boolean = false;
     }
     return boolean;
 }
@@ -122,32 +128,39 @@ function validateUploadedTemplateFile(file, currentStep) {
     var boolean = true;
     var errorLabel = $(".jw-step:eq(" + currentStep + ")").find("label.error");
     // RegEx patters for valid files (extensions, "type" from input variable `file`)
-    var zipPattern = /^\.zip$/i;
+    var templatePattern = /^\.template$/i;
 
     // get file extension
-    var fileExt = file.name.match(/\.[a-zA-Z]{3,4}$/);
+    var fileExt = file.name.match(/\.[a-zA-Z]{3,8}$/);
 
-    // test valid regex patterns
-    var isZip = zipPattern.test(fileExt[0]);
-
-    if (file.size > maxUploadSize) {
-        $(errorLabel).text(
-            "Error! File size should be less then " + (maxUploadSize / 1024 / 1000).toFixed(2)
-            + " MB");
-        $("#uploadTemplate").addClass("hideMe");
-        boolean = false;
-    } else if (($("#templateFile")[0].files[0].size / 1024) <= 0) {
-        $(errorLabel).text("Error! You are attempting to upload an empty file");
-        $("#uploadTemplate").addClass("hideMe");
-        boolean = false;
-    } else {
-        // handle special cases first, then as last check see if it of type "file:
-        if (!isZip) {
-            $(errorLabel).text("Error! Incorrect file type selected for upload");
+    if (fileExt){
+        // test valid regex patterns
+        var isTemplate = templatePattern.test(fileExt[0]);
+    
+        if (file.size > maxUploadSize) {
+            $(errorLabel).text(
+                "Error! File size should be less then " + (maxUploadSize / 1024 / 1000).toFixed(2)
+                + " MB");
             $("#uploadTemplate").addClass("hideMe");
             boolean = false;
+        } else if (($("#templateFile")[0].files[0].size / 1024) <= 0) {
+            $(errorLabel).text("Error! You are attempting to upload an empty file");
+            $("#uploadTemplate").addClass("hideMe");
+            boolean = false;
+        } else {
+            // handle special cases first, then as last check see if it of type "file:
+            if (!isTemplate) {
+                $(errorLabel).text("Error! Incorrect file type selected for upload");
+                $("#uploadTemplate").addClass("hideMe");
+                boolean = false;
+            }
         }
+    } else {
+        $(errorLabel).text("Error! The filename does not match the pattern \\.[a-zA-Z]{3,8}$");
+        $("#upload").addClass("hideMe"); 
+        boolean = false;
     }
+    return boolean;
     return boolean;
 }
 
