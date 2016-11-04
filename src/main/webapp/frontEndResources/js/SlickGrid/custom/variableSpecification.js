@@ -302,6 +302,16 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid, step
                                                 $(this).dialog("close");
 
                                             }
+                                        },
+                                        open: function() {
+                                            $(document).on("keypress", (function(e) {
+                                                if(e.which == 13) {
+                                                    $("button:contains('done')").trigger("click");
+                                                }
+                                            }));
+                                        },
+                                        close: function() {
+                                            $(document).off("keypress");
                                         }
                                     });
 
