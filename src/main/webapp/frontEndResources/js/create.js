@@ -170,9 +170,9 @@ $(document).ready(function ($) {
      */
 
     /**
-     * STEP 5
+     * STEP 5 generated on first visit, therefore this is handled in repopulate.
      */
-    specifyPlatformMetadata("stepFunctions", 5)
+    //specifyPlatformMetadata("stepFunctions", 5)
 
     /**
      * STEP 6
