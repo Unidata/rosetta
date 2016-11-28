@@ -111,40 +111,49 @@ function removeAllButTheseFromSession(keep) {
 function getItemEntered(sessionKey, dataSought) {
     var dataInSession = getFromSession(sessionKey);
     if (dataInSession) {
-        var pairs = dataInSession.split(/,/g);
-        for (var i = 0; i < pairs.length; i++) {
-            var keyValuePair = pairs[i].split(/:/);
-            if (keyValuePair[0] == dataSought) {
-                return keyValuePair[1];
-            } else {
-                if (i == (pairs.length - 1 )) {
-                    return null;
-                } else {
-                    continue;
-                }
+        var pairs = dataInSession.match(/(\\.|[^,])+/g);
+        for (var i = 0; i < pairs.length; i++) { 
+            var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
+            if (keyValuePair[0] == dataSought && typeof keyValuePair[1] == "string") {
+                return unescapeCharacters(keyValuePair[1]);
             }
         }
-    } else {
-        return null;
     }
+    return null;
+}
+
+function escapeCharacters(value){
+    value = value.replace(/:/g,"\\:");
+    value = value.replace(/,/g,"\\,");
+    return value;
+}
+
+function unescapeCharacters(value){
+    value = value.replace(/\\:/g,":");
+    value = value.replace(/\\,/g,",");
+    return value;
 }
 
 /**
  * Builds the string held in the session by concatenating data key/value pairs.
  * If this key aleady exists in the session string, its value is replaced.
+ * If they key is a string containing , or : it is escaped with a \
  *
  * @param sessionKey  The key used to store the data in the session.
  * @param key  The key for the metadata entry.
  * @param value  The value for the metadata entry.
  */
 function buildStringForSession(sessionKey, key, value) {
+    if (typeof value == "string"){
+        value = escapeCharacters(value);
+    }
     var sessionString = "";
     var dataInSession = getFromSession(sessionKey);
     var valueInSession = getItemEntered(sessionKey, key);
     if (valueInSession != null) { // exists so we need to replace old value with the new
-        var pairs = dataInSession.split(/,/g);
+        var pairs = dataInSession.match(/(\\.|[^,])+/g);
         for (var i = 0; i < pairs.length; i++) {
-            var keyValuePair = pairs[i].split(/:/);
+            var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
             if (keyValuePair[0] == key) {
                 var appendString = createSessionAppendString(keyValuePair[0], value);
                 if (sessionString == "") {
@@ -182,7 +191,7 @@ function getKeysFromSessionData(sessionData) {
     var sessionKeys = [];
     // make sure chars are correct and no blank entries
     for (var i = 0; i < sessionData.length; i++) {
-        var keyValuePair = sessionData[i].split(/:/);
+        var keyValuePair = sessionData[i].match(/(\\.|[^:])+/g);
         sessionKeys.push(keyValuePair[0]);
     }
     return sessionKeys;
@@ -198,9 +207,9 @@ function removeItemFromSessionString(sessionKey, itemToRemove) {
     var sessionString = "";
     var dataInSession = getFromSession(sessionKey);
     if (dataInSession != null) {
-        var pairs = dataInSession.split(/,/g);
+        var pairs = dataInSession.match(/(\\.|[^,])+/g);
         for (var i = 0; i < pairs.length; i++) {
-            var keyValuePair = pairs[i].split(/:/);
+            var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
             if (keyValuePair[0] != itemToRemove) {
                 var appendString = createSessionAppendString(keyValuePair[0], keyValuePair[1]);
                 if (sessionString == "") {
@@ -233,9 +242,9 @@ function removeItemFromSessionString(sessionKey, itemToRemove) {
 function removeAllButTheseFromSessionString(sessionKey, keep) {
     var sessionString = "";
     var dataInSession = getFromSession(sessionKey);
-    var pairs = dataInSession.split(/,/g);
+    var pairs = dataInSession.match(/(\\.|[^,])+/g);
     for (var i = 0; i < pairs.length; i++) {
-        var keyValuePair = pairs[i].split(/:/);
+        var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
         if (keep.indexOf(keyValuePair[0]) >= 0) {
             var appendString = createSessionAppendString(keyValuePair[0], keyValuePair[1]);
             if (sessionString == "") {
@@ -258,11 +267,15 @@ function removeAllButTheseFromSessionString(sessionKey, keep) {
 function getAllButTheseFromSessionString(sessionKey, exclusionList) {
     var sessionString = [];
     var dataInSession = getFromSession(sessionKey);
-    var pairs = dataInSession.split(/,/g);
+    var pairs = dataInSession.match(/(\\.|[^,])+/g);
     for (var i = 0; i < pairs.length; i++) {
-        var keyValuePair = pairs[i].split(/:/);
+        var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
         if (exclusionList.indexOf(keyValuePair[0]) < 0) {
-            sessionString.push(keyValuePair[0] + ":" + keyValuePair[1]);
+            var value = "";
+            if (keyValuePair.length > 1) {
+                value = keyValuePair[1];
+            }
+            sessionString.push(keyValuePair[0] + ":" + value);
         }
     }
     return sessionString;
