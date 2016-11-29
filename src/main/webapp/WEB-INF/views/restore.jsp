@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp" %>
+<%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean" %>
 <html>
 <head>
     <title><spring:message code="global.title"/></title>
