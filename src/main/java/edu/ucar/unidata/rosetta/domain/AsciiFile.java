@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 
 /**
@@ -269,12 +270,14 @@ public class AsciiFile {
      * Creates a Map containing the platform metadata as specified by the user.
      */
     public void setPlatformMetadataMap() {
-        List<String> pairs = Arrays.asList(platformMetadata.split(","));
+        String regexComma = "(?<!\\\\)" + Pattern.quote(",");
+        String regexColon = "(?<!\\\\)" + Pattern.quote(":");
+        List <String> pairs = Arrays.asList(platformMetadata.split(regexComma));
         Iterator<String> pairsIterator = pairs.iterator();
         while (pairsIterator.hasNext()) {
             String pairString = pairsIterator.next();
-            String[] items = pairString.split(":");
-            this.platformMetadataMap.put(items[0], items[1]);
+            String[] items =  pairString.split(regexColon);
+            this.platformMetadataMap.put(items[0], items[1].replaceAll("\\\\:", ":").replaceAll("\\\\,", ","));
         }
     }
 
@@ -312,12 +315,16 @@ public class AsciiFile {
      * @param generalMetadata The String of general metadata.
      */
     public void setGeneralMetadataMap(String generalMetadata) {
-        List<String> pairs = Arrays.asList(generalMetadata.split(","));
+        String regexComma = "(?<!\\\\)" + Pattern.quote(",");
+        String regexColon = "(?<!\\\\)" + Pattern.quote(":");
+        System.out.println("setGeneralMetadataMap:");
+        System.out.println(generalMetadata);
+        List<String> pairs = Arrays.asList(generalMetadata.split(regexComma));
         Iterator<String> pairsIterator = pairs.iterator();
         while (pairsIterator.hasNext()) {
             String pairString = pairsIterator.next();
-            String[] items = pairString.split(":");
-            this.generalMetadataMap.put(items[0], items[1]);
+            String[] items = pairString.split(regexColon);
+            this.generalMetadataMap.put(items[0], items[1].replaceAll("\\\\:", ":").replaceAll("\\\\,", ","));
         }
     }
 
@@ -394,25 +401,24 @@ public class AsciiFile {
      * Creates a Map containing the variable metadata as specified by the user.
      */
     public void setVariableMetadataMap() {
-        String colonReplacement = "DotDot";
-        List<String> pairs = Arrays.asList(variableMetadata.split(","));
+        String regexComma = "(?<!\\\\)" + Pattern.quote(",");
+        String regexColon = "(?<!\\\\)" + Pattern.quote(":");
+        String regexPlus = "(?<!\\\\)" + Pattern.quote("+");
+        List <String> pairs = Arrays.asList(variableMetadata.split(regexComma));
         Iterator<String> pairsIterator = pairs.iterator();
         while (pairsIterator.hasNext()) {
             HashMap<String, String> metadataMapping = new HashMap<String, String>();
             String pairString = pairsIterator.next();
             String[] items = pairString.split("=");
             if (!items[1].equals("Do Not Use")) {
-                List<String> values = Arrays.asList(items[1].split("\\+"));
+                List <String> values =  Arrays.asList(items[1].split(regexPlus));
                 Iterator<String> valuesIterator = values.iterator();
                 while (valuesIterator.hasNext()) {
                     String data = valuesIterator.next();
-                    String[] metadata = data.split(":");
+                    String[] metadata = data.split(regexColon);
                     String metadataName = metadata[0];
                     String value = metadata[1];
-                    if (value.contains(colonReplacement)) {
-                        value = value.replaceAll(colonReplacement, ":");
-                    }
-                    metadataMapping.put(metadataName, value);
+                    metadataMapping.put(metadataName, value.replaceAll("\\\\:", ":").replaceAll("\\\\,", ","));
                 }
             }
             this.variableMetadataMap.put(items[0], metadataMapping);

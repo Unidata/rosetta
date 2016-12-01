@@ -18,7 +18,7 @@
     </resource>
     <resource>
         <fileName>platformMetadataTrajectory.xml</fileName>
-        <type>platformMetedataTrajectoryItem</type>
+        <type>platformMetadataTrajectoryItem</type>
     </resource>
     <resource>
         <fileName>globalMetadata.xml</fileName>
