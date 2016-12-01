@@ -20,9 +20,6 @@ String.prototype.replaceAll = function (target, replacement) {
     return this.split(target).join(replacement);
 };
 
-// string to replace : in units...used for sessionStorage.
-var colonReplacement = "DotDot";
-
 /**
  * This function creates a SlickGrid displaying the parsed file data by by row
  * and delimiter. The user will use the SlickGrid interface and the HeaderButtons
@@ -305,6 +302,16 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid, step
                                                 $(this).dialog("close");
 
                                             }
+                                        },
+                                        open: function() {
+                                            $(document).on("keypress", (function(e) {
+                                                if(e.which == 13) {
+                                                    $("button:contains('done')").trigger("click");
+                                                }
+                                            }));
+                                        },
+                                        close: function() {
+                                            $(document).off("keypress");
                                         }
                                     });
 
@@ -517,10 +524,6 @@ function bindGeneralMetadataEvents(sessionKey) {
 
         // concatenation the entered value to any existing Metadata values pulled from the session
         var generalMetadataValue = $(this).attr("value");
-        if ($(this).attr("name") == "units") {
-            generalMetadataValue = generalMetadataValue.replaceAll(colonReplacement, ":");
-            generalMetadataValue = generalMetadataValue.replaceAll(":", colonReplacement);
-        }
         var metadataString = buildStringForSession(sessionKey + "Metadata", $(this).attr("name"),
                                                    generalMetadataValue);
 
@@ -687,8 +690,6 @@ function bindUnitBuildEvents(sessionKey) {
 
         // get the user selected values of the unit chooser
         var unitSelected = $("#dialog #unitBuilder select[name=\"unitSelected\"]").val();
-        // for time related units
-        unitSelected = unitSelected.replaceAll(":", colonReplacement);
 
         var prefixSelected = $("#dialog #unitBuilder select[name=\"unitPrefix\"]").val();
         if (prefixSelected != null) {
@@ -720,8 +721,8 @@ function bindUnitBuildEvents(sessionKey) {
             addToSession(sessionKey + "Metadata", metadataString);
 
             // update units display in dialog to show new value
-            $("#dialog #requiredMetadataAssignment input[name=\"units\"]")
-                .attr("value", unitsInSession.replaceAll(colonReplacement, ":"));
+            $("#dialog #requiredMetadataAssignment input[name=\"units\"]").attr("value",
+                                                                                unitsInSession);
 
             // Removing from units
         } else {

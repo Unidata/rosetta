@@ -304,14 +304,15 @@ function validateVariableData(sessionKey, finalCheck) {
                                     if (metadataProvided.length > 0) {
                                         // make sure chars are correct and no blank entries
                                         for (var i = 0; i < metadataProvided.length; i++) {
-                                            var metadataKeyValuePair = metadataProvided[i].split(
-                                                /:/);
+                                            var metadataKeyValuePair = metadataProvided[i].match(/(\\.|[^:])+/g);
 
-                                            // all entries have to pass this test
-                                            errorMessage =
-                                                lookForBadChars(metadataKeyValuePair[1],
-                                                                getMetadataDisplayName(
-                                                                    metadataKeyValuePair[0]));
+                                            // all entries have to pass this test if it has a value
+                                            if (metadataKeyValuePair.length > 1){
+                                                errorMessage =
+                                                    lookForBadChars(metadataKeyValuePair[1],
+                                                                    getMetadataDisplayName(
+                                                                        metadataKeyValuePair[0]));
+                                            }
                                             if (errorMessage != null) {
                                                 $("#dialog #variableAttributes label[for=\""
                                                   + metadataKeyValuePair[0] + "\"].error")
@@ -319,8 +320,12 @@ function validateVariableData(sessionKey, finalCheck) {
                                                 removeItemFromSessionString(sessionKey + "Metadata",
                                                                             metadataKeyValuePair[0]);
                                             } else {
+                                                var value = "";
+                                                if (metadataKeyValuePair.length > 1){
+                                                    value = metadataKeyValuePair[1];
+                                                }
                                                 errorMessage =
-                                                    lookForBlankEntries(metadataKeyValuePair[1],
+                                                    lookForBlankEntries(value,
                                                                         metadataKeyValuePair[0]);
                                                 if (errorMessage != null) {
                                                     // only required metadata must pass this
