@@ -431,7 +431,7 @@ function specifyGeneralMetadata(stepType, stepData) {
             }
         }
     } else if (stepType == "repopulateStep") {
-        if ((stepData[0].type == "previous") || (stepData[0].type == "next")) {
+        if ((stepData.type == "previous") || (stepData.type == "next")) {
             if (getItemEntered("generalMetadata", "title") != null) {
                 if (getItemEntered("generalMetadata", "institution") != null) {
                     if (getItemEntered("generalMetadata", "description") != null) {
@@ -441,7 +441,7 @@ function specifyGeneralMetadata(stepType, stepData) {
                 }
             }
         }
-        var stepElement = "#step" + stepData[1] + " input";
+        var stepElement = "#step" + stepData.nextStepIndex + " input";
         var inputElements = $(stepElement);
         for (var i = 0; i < inputElements.length; i++) {
             var name = $(inputElements[i]).attr("name");
