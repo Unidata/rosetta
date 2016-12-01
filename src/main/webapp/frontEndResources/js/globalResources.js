@@ -11,6 +11,7 @@ var cfStandards = [];
 var cfStandardUnits = {};
 var metadata = [];
 var unitBuilderData = [];
+var platform = null;
 
 /**
  * Populates the cfStandards array with data from the cf-standard-name-table.xml file.
@@ -270,3 +271,27 @@ function isCFStandardName(variableName) {
     }
 }
 
+/**
+ * Finds the platformType, currently based on the cfType variable set in the session.
+ * Returns a string with the platformType.
+ * Values implemented so far are: profile, trajectory and timeSeries
+ *
+ * TODO: implement an automatic check for platform based on coordinate variables specified
+ * instead of having the user input it in step0
+ */
+function findPlatformType(){
+    return getFromSession("cfType");
+}
+
+/**
+ * Returns an array with objects that describe the metadata for the platform 
+ */
+function getPlatformMetadataList(){
+    var metadataList = platformMetedataItems["default"];
+    if (platform){
+        if (platform in platformMetedataItems) {
+            metadataList = platformMetedataItems[platform];
+        }
+    }
+    return metadataList;
+}
