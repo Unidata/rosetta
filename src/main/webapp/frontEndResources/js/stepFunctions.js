@@ -431,7 +431,7 @@ function specifyGeneralMetadata(stepType, stepData) {
             }
         }
     } else if (stepType == "repopulateStep") {
-        if ((stepData[0].type == "previous") || (stepData[0].type == "next")) {
+        if ((stepData.type == "previous") || (stepData.type == "next")) {
             if (getItemEntered("generalMetadata", "title") != null) {
                 if (getItemEntered("generalMetadata", "institution") != null) {
                     if (getItemEntered("generalMetadata", "description") != null) {
@@ -441,7 +441,7 @@ function specifyGeneralMetadata(stepType, stepData) {
                 }
             }
         }
-        var stepElement = "#step" + stepData[1] + " input";
+        var stepElement = "#step" + stepData.nextStepIndex + " input";
         var inputElements = $(stepElement);
         for (var i = 0; i < inputElements.length; i++) {
             var name = $(inputElements[i]).attr("name");
@@ -493,52 +493,33 @@ function specifyPlatformMetadata(stepType, stepData) {
             }
         }
     } else if (stepType == "repopulateStep") {
-        if ((stepData[0].type == "previous") || (stepData[0].type == "next")) {
-            if (getItemEntered("platformMetadata", "platformName") != null) {
-                if (getItemEntered("platformMetadata", "latitude") != null) {
-                    if (getItemEntered("platformMetadata", "longitude") != null) {
-                        if (getItemEntered("platformMetadata", "altitude") != null) {
-                            $("#faux").remove();
-                            $(".jw-button-next").removeClass("hideMe");
-                        }
-                    }
-                }
-            }
+        //TODO: check the units!
+        var newPlatform = findPlatformType();
+        if (newPlatform != platform){
+            platform = newPlatform;
+            var metadataList = getPlatformMetadataList();
+            /* 
+             * TODO: The selectors are reset when HTML is (re)built.
+             * E.g. degrees_south becomes degrees_north.
+             * Previous session storage info is lost.
+             */
+            $("#platformMetadataDiv").html(createMetadataList(metadataList));
+            // We need to run this before stepfunctions to not overwrite these
+            // At least with how it works now. Should probably we reworked.
+            repopulatePlatformMetadata(stepData.nextStepIndex)
+            // TODO: Should move the code in here ?
+            // I don't see the need for a stepFunctions when the HTML is generated in place.
+            specifyPlatformMetadata("stepFunctions", 5)
+        } else {
+            repopulatePlatformMetadata(stepData.nextStepIndex)
         }
-
-        // populate input elements from sessionStorage
-        var stepElement = "#step" + stepData[1] + " input";
-        var inputElements = $(stepElement);
-        for (var i = 0; i < inputElements.length; i++) {
-            var name = $(inputElements[i]).attr("name");
-            var itemInSession = getItemEntered("platformMetadata", name);
-            if (itemInSession != null) {
-                $("input[name=\"" + name + "\"]").val(itemInSession);
-            } else {
-                $("input[name=\"" + name + "\"]").val("");
-            }
+        //What other types could there be, and why would we not check then?
+        if ((stepData.type == "previous") || (stepData.type == "next")) {
+            // see if we can expose the next button
+            checkAndExposeNext("platformMetadata");
         }
-
-        // populate select elements from sessionStorage
-        var stepElementSelect = "#step" + stepData[1] + " select";
-        var inputElementsSelect = $(stepElementSelect);
-        for (var i = 0; i < inputElementsSelect.length; i++) {
-            var name = $(inputElementsSelect[i]).attr("name");
-            var itemInSession = getItemEntered("platformMetadata", name);
-            if (itemInSession != null) {
-                $("select[name=\"" + name + "\"]").val(itemInSession);
-            } else {
-                var metadataString = buildStringForSession("platformMetadata", name,
-                                                           $("select[name=\"" + name + "\"]")
-                                                               .val());
-                addToSession("platformMetadata", metadataString);
-            }
-        }
-
     } else if (stepType == "stepFunctions") {
         var stepElement = "#step" + stepData + " input";
-        var moveAlongInput = false;
-        var moveAlongSelect = false;
         $(stepElement).on("focusout", function () {
             if ($(this).attr("value") != "") {
                 // add to the session
@@ -551,19 +532,7 @@ function specifyPlatformMetadata(stepType, stepData) {
             }
 
             // see if we can expose the next button
-            if (getItemEntered("platformMetadata", "platformName") != null) {
-                if (getItemEntered("platformMetadata", "latitude") != null) {
-                    if (getItemEntered("platformMetadata", "longitude") != null) {
-                        if (getItemEntered("platformMetadata", "altitude") != null) {
-                            moveAlongInput = true;
-                            if (moveAlongSelect) {
-                                $("#faux").remove();
-                                $(".jw-button-next").removeClass("hideMe");
-                            }
-                        }
-                    }
-                }
-            }
+            checkAndExposeNext("platformMetadata");
         });
 
         var stepElementSelect = "#step" + stepData + " select";
@@ -576,17 +545,7 @@ function specifyPlatformMetadata(stepType, stepData) {
                 addToSession("platformMetadata", metadataString);
             }
             // see if we can expose the next button
-            if (getItemEntered("platformMetadata", "altitudeUnits") != null) {
-                if (getItemEntered("platformMetadata", "latitudeUnits") != null) {
-                    if (getItemEntered("platformMetadata", "longitudeUnits") != null) {
-                        moveAlongSelect = true
-                        if (moveAlongInput) {
-                            $("#faux").remove();
-                            $(".jw-button-next").removeClass("hideMe");
-                        }
-                    }
-                }
-            }
+            checkAndExposeNext("platformMetadata");
         });
 
         $(stepElementSelect).change(function () {
@@ -598,18 +557,116 @@ function specifyPlatformMetadata(stepType, stepData) {
             }
 
             // see if we can expose the next button
-            if (getItemEntered("platformMetadata", "altitudeUnits") != null) {
-                if (getItemEntered("platformMetadata", "latitudeUnits") != null) {
-                    if (getItemEntered("platformMetadata", "longitudeUnits") != null) {
-                        moveAlongSelect = true
-                        if (moveAlongInput) {
-                            $("#faux").remove();
-                            $(".jw-button-next").removeClass("hideMe");
-                        }
+            checkAndExposeNext("platformMetadata");
+        });
+    }
+}
+
+function createMetadataList(metadata){
+    var list = "";
+    for (var i in metadata){
+        var element = "";
+        // Add required-mark
+        if (metadata[i].isRequired)
+            element += "*";
+        element += metadata[i].displayName;
+        // Add help-text
+        if (metadata[i].description){
+            element += "<img src=\"resources/img/help.png\" alt=\"";
+            element += metadata[i].description;
+            element += "\"/>";
+        }
+        element += "<br>";
+        // Add the input field
+        element += "<input type=\"text\" name=\"";
+        element += metadata[i].tagName;
+        element += "\" />";
+        // Add the units selector
+        if (metadata[i].units){
+            if (metadata[i].units in units){
+                element += "<select name=\"";
+                element += metadata[i].tagName;
+                element += "Units\">"
+                element += units[metadata[i].units];
+                element += "</select>";
+            }
+        } else {
+            element += "<input type=\"text\" name=\"";
+            element += metadata[i].tagName;
+            element += "Units\" value=\"\" hidden />";
+        }
+        element = packElement(element, "label");
+        var errorLabel = "<label for=\"";
+        errorLabel += metadata[i].tagName;
+        errorLabel += "\" class=\"error\"></label>"
+        list += packElement(element+errorLabel, "li");
+    }
+    list = packElement(list, "ul");
+    return list;
+}
+
+function packElement(content, element){
+    return "<"+element+">"+content+"</"+element+">";
+}
+
+function checkAndExposeNext(metadata){
+    //TODO: implement for other than "platformMetadata"
+    var expose = true;
+    switch(metadata) {
+        case "platformMetadata":
+            var metadataList = getPlatformMetadataList();
+            for (var i in metadataList){
+                if (metadataList[i].isRequired){
+                    if (getItemEntered(metadata, metadataList[i].tagName) == null){
+                        expose = false;
+                    }
+                }
+                //Do we really need this? No units should ever be null as it's not an option
+                if (metadataList[i].units){
+                    if (getItemEntered(metadata, metadataList[i].tagName+"Units") == null){
+                        expose = false;
                     }
                 }
             }
-        });
+            break;
+        default:
+            return false;
+    }
+    if (expose){
+        $("#faux").addClass("hideMe");
+        $(".jw-button-next").removeClass("hideMe");
+    } else {
+        $("#faux").removeClass("hideMe");
+        $(".jw-button-next").addClass("hideMe");
+    }
+}
+
+function repopulatePlatformMetadata(step) {
+    // populate input elements from sessionStorage
+    var stepElement = "#step" + step + " input";
+    var inputElements = $(stepElement);
+    for (var i = 0; i < inputElements.length; i++) {
+        var name = $(inputElements[i]).attr("name");
+        var itemInSession = getItemEntered("platformMetadata", name);
+        if (itemInSession != null) {
+            $("input[name=\"" + name + "\"]").val(itemInSession);
+        } else {
+            $("input[name=\"" + name + "\"]").val("");
+        }
+    }
+
+    // populate select elements from sessionStorage
+    var stepElementSelect = "#step" + step + " select";
+    var inputElementsSelect = $(stepElementSelect);
+    for (var i = 0; i < inputElementsSelect.length; i++) {
+        var name = $(inputElementsSelect[i]).attr("name");
+        var itemInSession = getItemEntered("platformMetadata", name);
+        if (itemInSession != null) {
+            $("select[name=\"" + name + "\"]").val(itemInSession);
+        } else {
+            var metadataString = buildStringForSession("platformMetadata", name, $("select[name=\"" + name + "\"]").val());
+            addToSession("platformMetadata", metadataString);
+        }
     }
 }
 
