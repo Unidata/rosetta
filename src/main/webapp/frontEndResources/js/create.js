@@ -104,17 +104,11 @@ $(document).ready(function ($) {
                     break;
 
                 case 5:
-                    var stepDataCase5 = new Array()
-                    stepDataCase5[0] = ui;
-                    stepDataCase5[1] = 5;
-                    specifyPlatformMetadata("repopulateStep", stepDataCase5);
+                    specifyPlatformMetadata("repopulateStep", ui);
                     break;
 
                 case 6:
-                    var stepDataCase6 = new Array()
-                    stepDataCase6[0] = ui;
-                    stepDataCase6[1] = 6;
-                    specifyGeneralMetadata("repopulateStep", stepDataCase6);
+                    specifyGeneralMetadata("repopulateStep", ui);
                     break;
 
                 case 7:
@@ -170,9 +164,9 @@ $(document).ready(function ($) {
      */
 
     /**
-     * STEP 5
+     * STEP 5 generated on first visit, therefore this is handled in repopulate.
      */
-    specifyPlatformMetadata("stepFunctions", 5)
+    //specifyPlatformMetadata("stepFunctions", 5)
 
     /**
      * STEP 6
