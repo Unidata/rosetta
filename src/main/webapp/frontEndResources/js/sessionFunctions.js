@@ -121,6 +121,21 @@ function getItemEntered(sessionKey, dataSought) {
     }
     return null;
 }
+function searchForValue(sessionKey, valueSought, exceptFrom) {
+    var escapedValueSought = escapeCharacters(valueSought);
+    var dataInSession = getFromSession(sessionKey);
+    if (dataInSession) {
+        var pairs = dataInSession.match(/(\\.|[^,])+/g);
+        for (var i = 0; i < pairs.length; i++) { 
+            var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
+            if (keyValuePair[1] == escapedValueSought &&
+                    keyValuePair[0] != exceptFrom) {
+                return keyValuePair[0];
+            }
+        }
+    }
+    return false;
+}
 
 function escapeCharacters(value){
     value = value.replace(/:/g,"\\:");
@@ -182,10 +197,10 @@ function buildStringForSession(sessionKey, key, value) {
 }
 
 /**
- * Utility function that just loops through the a string of concatenated
+ * Utility function that just loops through an array of 
  * key/value pairs in the session and returns an array of the keys.
  *
- * @param sessionData  The string of concatenated key/value pairs in the session.
+ * @param sessionData  The array of key/value pairs in the session.
  */
 function getKeysFromSessionData(sessionData) {
     var sessionKeys = [];
@@ -196,7 +211,22 @@ function getKeysFromSessionData(sessionData) {
     }
     return sessionKeys;
 }
-
+/**
+ * Utility function that just loops through a string of concatenated
+ * key/value pairs in the session and returns an array of the values.
+ *
+ * @param sessionString  The string of concatenated key/value pairs in the session.
+ */
+function getValuesFromSessionString(sessionString) {
+    var sessionValues = [];
+    sessionString = sessionString.match(/(\\.|[^,])+/g);
+    // make sure chars are correct and no blank entries
+    for (var i = 0; i < sessionString.length; i++) {
+        var keyValuePair = sessionString[i].match(/(\\.|[^:])+/g);
+        sessionValues.push(unescapeCharacters(keyValuePair[1]));
+    }
+    return sessionValues;
+}
 /**
  * Removes a specific item from the string of concatenated key/value pairs stored in the session.
  *

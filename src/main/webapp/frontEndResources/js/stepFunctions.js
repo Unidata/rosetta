@@ -431,28 +431,61 @@ function specifyGeneralMetadata(stepType, stepData) {
             }
         }
     } else if (stepType == "repopulateStep") {
-        if ((stepData.type == "previous") || (stepData.type == "next")) {
-            if (getItemEntered("generalMetadata", "title") != null) {
-                if (getItemEntered("generalMetadata", "institution") != null) {
-                    if (getItemEntered("generalMetadata", "description") != null) {
-                        $("#faux").remove();
-                        $(".jw-button-next").removeClass("hideMe");
+        if ( stepData.type && ((stepData.type == "previous") || (stepData.type == "next"))) {
+            checkAndExposeNext("generalMetadata");
+        } else {
+            //We only want to actually "repopulate" on the first run, which is called from 
+            //the stepFunctions - why we have this here, and what repopulate really means
+            //should be reworked imo.
+            if (nCustomAttributes == 0){
+                //Add custom attributes if none have been added
+                //and there are some in the sessionstorage
+                //The way sessionstorage and customattributes works atm, it is possible to reload
+                //the page or quicksave while having a non-consistent custom attribute
+                // numbering saved in sessiong storage
+                // this will first be fixed here by re-indexing the custom attributes:
+                var customAttributes = getFromSession("customAttributes");
+                    if (customAttributes){
+                    customAttributes = getValuesFromSessionString(customAttributes);
+                    removeFromSession("customAttributes");
+                    for (var i = 0; i<customAttributes.length;i++){
+                        var id = "customAttribute" + nCustomAttributes;
+                        var cAS = buildStringForSession("customAttributes", id, customAttributes[i]);
+                        addToSession("customAttributes", cAS);
+                        addCustomGeneralAttribute();
+                    }
+                }
+            }
+            var stepElement = "#step" + stepData.nextStepIndex + " input";
+            var inputElements = $(stepElement);
+            for (var i = 0; i < inputElements.length; i++) {
+                var name = $(inputElements[i]).attr("name");
+                if (name){
+                    var itemInSession = getItemEntered("generalMetadata", name);
+                    if (itemInSession != null) {
+                        $("input[name=\"" + name + "\"]").val(itemInSession);
+                    } else {
+                        $("input[name=\"" + name + "\"]").val("");
+                    }
+                } else {
+                    //if no name, its a custom attribute
+                    var id = $(inputElements[i]).attr("id");
+                    if (id.substr(id.length - 4) == "Name"){
+                        baseID = id.substr(0,id.length - 4);
+                        name = getItemEntered("customAttributes", baseID);
+                        $("#"+id).val(name);
+                    } else {
+                        baseID = id.substr(0,id.length - 5);
+                        name = getItemEntered("customAttributes", baseID);
+                        $("#"+id).val(getItemEntered("generalMetadata", name));
                     }
                 }
             }
         }
-        var stepElement = "#step" + stepData.nextStepIndex + " input";
-        var inputElements = $(stepElement);
-        for (var i = 0; i < inputElements.length; i++) {
-            var name = $(inputElements[i]).attr("name");
-            var itemInSession = getItemEntered("generalMetadata", name);
-            if (itemInSession != null) {
-                $("input[name=\"" + name + "\"]").val(itemInSession);
-            } else {
-                $("input[name=\"" + name + "\"]").val("");
-            }
-        }
     } else if (stepType == "stepFunctions") {
+        var customAttDiv = $("#containerForCustomAttributes");
+        customAttDiv.after("<button type='button' onclick='addCustomGeneralAttribute()'>"
+                + "Add custom attribute</button>");
         var stepElement = "#step" + stepData + " input";
         var stepCheck = ".jw-step:eq(" + stepData + ")";
         $(stepElement).on("focusout", function () {
@@ -467,16 +500,130 @@ function specifyGeneralMetadata(stepType, stepData) {
             }
 
             // see if we can expose the next button
-            if (getItemEntered("generalMetadata", "title") != null) {
-                if (getItemEntered("generalMetadata", "institution") != null) {
-                    if (getItemEntered("generalMetadata", "description") != null) {
-                        $("#faux").remove();
-                        $(".jw-button-next").removeClass("hideMe");
-                    }
-                }
-            }
+            checkAndExposeNext("generalMetadata");
         });
+        specifyGeneralMetadata("repopulateStep",{"nextStepIndex":stepData});
     }
+}
+var nCustomAttributes = 0;
+function addCustomGeneralAttribute() {
+    var id = "customAttribute" + nCustomAttributes;
+    var label1 = "Custom Attribute #"+nCustomAttributes+"<br>"
+                    +"Name<img src='resources/img/help.png'alt="
+                    +"'Must begin with a letter, allowed characters are:"
+                    + " letters(a-z,A-Z), digits, and underscores.'"+
+                    "/>:"
+                    +"<input type='text' id='"+id+"Name' value=''/>"
+                    +"<br>"
+                    +"Value:" + "<input type='text' id='"+id+"Value' value=''/>";
+    label1 = wrap(label1, "label")
+    var label2 = "<label for='" + id + "' class='error'></label>";
+    var liElement = wrap(label1 + label2, "li", id);
+    $('#containerForCustomAttributes').append(liElement);
+    $("#"+id+"Name").keyup(function (event) {
+        // We dont't want to remove the errormessage when
+        // alt,ctrl,shift,caps,windows,cmd or arrows are released
+        // These are buttons that should not change the input,
+        // and users might use them. 
+        if ([16,17,18,20,91,92,93,37,38,39,40].indexOf(event.keyCode) < 0){
+            var errorText = "";
+            if (this.value.match(/[^0-9a-zA-Z_]/)) {
+                this.value = this.value.replace(/[^0-9a-zA-Z_]/g, '');
+                errorText = "\nAllowed characters for the name are: letters(a-z,A-Z),"
+                    + " digits, and underscores. ";
+            }
+            while(this.value.length > 0 && !this.value[0].match(/[a-zA-Z]/)){
+                this.value = this.value.substring(1);
+                errorText = "\nThe name must begin with a letter(a-z,A-Z).";
+            }
+            $("#"+id).find("label.error").text(validateCustomAttribute(id)+errorText);
+        }
+    });
+    $("#"+id+"Name").on("focusout", function () {
+        var newName = this.value;
+        $("#"+id).find("label.error").text();
+        var previousName = getItemEntered("customAttributes", id);
+        if (previousName) {
+            removeItemFromSessionString("customAttributes", id);
+            removeItemFromSessionString("generalMetadata", previousName);
+        }
+        var errorMessage = validateCustomAttribute(id);
+        if (errorMessage){
+            $("#"+id).find("label.error").text(errorMessage);
+        } else {
+            var customAttributesString = buildStringForSession("customAttributes", id, newName);
+            addToSession("customAttributes", customAttributesString);
+            var currentValue = $("#"+id+"Value")[0].value;
+            var metadataString = buildStringForSession("generalMetadata", newName, currentValue);
+            addToSession("generalMetadata", metadataString);
+        }
+        checkAndExposeNext("generalMetadata");
+    });
+    $("#"+id+"Value").on("focusout", function () {
+        var errorMessage = validateCustomAttribute(id);
+        $("#"+id).find("label.error").text(errorMessage);
+        if (!errorMessage) {
+            var name = getItemEntered("customAttributes", id);
+            if (name) {
+                removeItemFromSessionString("generalMetadata", name);
+            } else {
+                name = $("#"+id+"Name").val();
+            }
+            var metadataString = buildStringForSession("generalMetadata", name, this.value);
+            addToSession("generalMetadata", metadataString);
+            checkAndExposeNext("generalMetadata");
+        }
+    });
+    nCustomAttributes++;
+    // When adding a new custom attr - always disable the next
+    checkAndExposeNext(false);
+}
+
+function validateCustomAttribute(baseID){
+    var errorMessage = "";
+    errorMessage += validateName(baseID);
+    errorMessage += validateValue(baseID);
+    return errorMessage;
+}
+
+function validateValue(baseID){
+    var value = $("#"+baseID+"Value").val();
+    if (!value) {
+        return "\nValue can not be empty.";
+    }
+    return "";
+}
+
+function validateName(baseID) {
+    //TODO: Should also check for things that are reserved/generated
+    //like Conventions cf_role or created_date etc?
+    //Perhaps you want to add to e.g. the Conventions attribute also?
+    var name = $("#"+baseID+"Name").val();
+    if (!name) {
+        return "Name can not be empty.";
+    } else {
+        var existsInGeneralMetadata = false;
+        for ( var i in generalMetadata) {
+            if (generalMetadata[i].tagName == name) {
+                return "Name already in use by: "
+                        + generalMetadata[i].displayName
+                        + ".";
+            }
+        }
+    }
+    var existsInCustAtt = searchForValue("customAttributes", name, baseID);
+    if (existsInCustAtt) {
+        return "Name already in use by: " + existsInCustAtt;
+    }
+    return "";
+}
+
+function wrap(el, wrapType, id) {
+    var idStr = "";
+    if (id){
+        idStr = " id='"+id+"'";
+    }
+    return "<" + wrapType + idStr+">" + el + "</" + wrapType + ">";
 }
 
 function specifyPlatformMetadata(stepType, stepData) {
@@ -610,27 +757,38 @@ function packElement(content, element){
 }
 
 function checkAndExposeNext(metadata){
-    //TODO: implement for other than "platformMetadata"
     var expose = true;
+    var metadataList = [];
     switch(metadata) {
         case "platformMetadata":
-            var metadataList = getPlatformMetadataList();
-            for (var i in metadataList){
-                if (metadataList[i].isRequired){
-                    if (getItemEntered(metadata, metadataList[i].tagName) == null){
-                        expose = false;
-                    }
-                }
-                //Do we really need this? No units should ever be null as it's not an option
-                if (metadataList[i].units){
-                    if (getItemEntered(metadata, metadataList[i].tagName+"Units") == null){
-                        expose = false;
-                    }
+            metadataList = getPlatformMetadataList();
+            break;
+        case "generalMetadata":
+            metadataList = generalMetadata;
+            for (var i = 0; i < nCustomAttributes; i++){
+                var id = "customAttribute" + i;
+                var errorMessage = validateCustomAttribute(id);
+                $("#"+id).find("label.error").text(errorMessage);
+                if (errorMessage){
+                    expose = false;
+                    metadataList = [];
+                    break;
                 }
             }
             break;
+        case false:
+            expose = false;
+            break;
         default:
             return false;
+    }
+    for (var i in metadataList){
+        if (metadataList[i].isRequired){
+            if (getItemEntered(metadata, metadataList[i].tagName) == null){
+                expose = false;
+                break;
+            }
+        }
     }
     if (expose){
         $("#faux").addClass("hideMe");
