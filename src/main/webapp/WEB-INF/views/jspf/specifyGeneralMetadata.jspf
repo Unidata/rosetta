@@ -46,6 +46,7 @@
                            class="error"></label>
                 </li>
             </c:forEach>
+            <div id="containerForCustomAttributes"/>
         </ul>
     </c:when>
     <c:otherwise>
