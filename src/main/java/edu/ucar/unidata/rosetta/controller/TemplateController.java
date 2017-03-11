@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import edu.ucar.unidata.rosetta.converters.EolSoundingComp;
-import edu.ucar.unidata.rosetta.converters.xlsToCsv;
+import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import edu.ucar.unidata.rosetta.domain.UploadedAutoconvertFile;
 import edu.ucar.unidata.rosetta.domain.UploadedFile;
@@ -182,12 +182,14 @@ public class TemplateController implements HandlerExceptionResolver {
 
             if ((file.getFileName().contains(".xls")) || (file.getFileName().contains(".xlsx"))) {
                 String xlsFilePath = FilenameUtils.concat(filePath, file.getFileName());
-                xlsToCsv.convert(xlsFilePath, null);
+                boolean conversionSuccessful = XlsToCsv.convert(xlsFilePath, null);
                 String csvFilePath = null;
-                if (xlsFilePath.contains(".xlsx")) {
-                    csvFilePath = xlsFilePath.replace(".xlsx", ".csv");
-                } else if (xlsFilePath.contains(".xls")) {
-                    csvFilePath = xlsFilePath.replace(".xls", ".csv");
+                if (conversionSuccessful) {
+                    if (xlsFilePath.contains(".xlsx")) {
+                        csvFilePath = xlsFilePath.replace(".xlsx", ".csv");
+                    } else if (xlsFilePath.contains(".xls")) {
+                        csvFilePath = xlsFilePath.replace(".xls", ".csv");
+                    }
                 }
                 file.setFileName(csvFilePath);
             }
@@ -202,7 +204,8 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Accepts a GET request to see if an already uploaded file contains blank lines.
      *
-     * @param fileId The UploadedFile form backing object containing the file.
+     * @param fileName The UploadedFile form backing object containing the file.
+     * @param uniqueId The UploadedFile form backing object containing the file.     *
      * @return The number of blank lines in the file.
      */
     @RequestMapping(value = "/getBlankLines", method = RequestMethod.GET)
@@ -317,7 +320,7 @@ public class TemplateController implements HandlerExceptionResolver {
                     // SCENARIO 3: we have variable data!
 
                     // pull out sessionStorage data
-                    Map<String, HashMap> mm = file.getVariableMetadataMap();
+                    HashMap<String, HashMap<String,String>> mm = file.getVariableMetadataMap();
                     HashMap<String, String> coords = new HashMap<String, String>();
 
                     // fix where session storage where necessairy
@@ -328,7 +331,7 @@ public class TemplateController implements HandlerExceptionResolver {
 
                         for (String mmKey : mm.keySet()) {
                             if (mm.get(mmKey).containsKey("_coordinateVariableType")) {
-                                HashMap<String, Object> tmp = mm.get(mmKey);
+                                HashMap<String, String> tmp = mm.get(mmKey);
                                 String cvt = tmp.get("_coordinateVariableType").toString();
                                 boolean chk1 = cvt.equals("relTime");
                                 boolean chk2 = cvt.equals("fullDateTime");

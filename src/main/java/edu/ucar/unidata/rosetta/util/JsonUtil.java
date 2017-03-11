@@ -34,7 +34,7 @@ public class JsonUtil {
         this.name = name;
     }
 
-    public JSONObject ssHashMapToJson(Map<String, HashMap> jsonHashMap) {
+    public JSONObject ssHashMapToJson(HashMap<String, HashMap<String,String>> jsonHashMap) {
 
         JSONObject json = null;
         json = new JSONObject(jsonHashMap);

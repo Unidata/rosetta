@@ -143,6 +143,8 @@ public class PublisherInfo {
         Map resources = rs.loadResources();
         List publishers = (List) resources.get("publishers");
         for (Object pub : publishers) {
+            // we are reading these kvp out of a file - will always be <String,String>\
+            @SuppressWarnings("unchecked")
             HashMap<String, String> pubMap = (HashMap<String, String>) pub;
             String pubName = pubMap.get("pubName");
             if (pubName.equals(this.getPubName())) {

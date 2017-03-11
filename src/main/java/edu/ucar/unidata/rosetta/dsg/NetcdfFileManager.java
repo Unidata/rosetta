@@ -41,7 +41,7 @@ public abstract class NetcdfFileManager {
     private String myCfRole;
     private String myDsgType;
 
-    private Map<String, HashMap> variableMetadataMap;
+    private Map<String, HashMap<String,String>> variableMetadataMap;
     private Map<String, String> variableNameMap;
     private Map<String, String> platformMetadataMap;
     private Map<String, String> generalMetadataMap;
@@ -65,7 +65,7 @@ public abstract class NetcdfFileManager {
         return this.otherInfo;
     }
 
-    public void setOtherInfo(Map<String, String> otherInfo) {
+    public void setOtherInfo(HashMap<String,String> otherInfo) {
         this.otherInfo = otherInfo;
     }
     public List<String> getHeader() {
@@ -180,11 +180,11 @@ public abstract class NetcdfFileManager {
         this.coordVarList = coordVarList;
     }
 
-    public Map<String, HashMap> getVariableMetadataMap() {
+    public Map<String, HashMap<String,String>> getVariableMetadataMap() {
         return variableMetadataMap;
     }
 
-    public void setVariableMetadataMap(Map<String, HashMap> variableMetadataMap) {
+    public void setVariableMetadataMap(HashMap<String, HashMap<String,String>> variableMetadataMap) {
         this.variableMetadataMap = variableMetadataMap;
     }
 
@@ -312,7 +312,7 @@ public abstract class NetcdfFileManager {
         Set<String> variableNameKeys = getVariableNameMap().keySet();
         Iterator<String> variableNameKeysIterator = variableNameKeys.iterator();
         String key, value;
-        Map<String, String> variableMetadata;
+        HashMap<String, String> variableMetadata = new HashMap<String,String>();
         // check to see if user supplied a relTime (i.e. days since yyyy-mm-dd) If so,
         // then we do not need to construct a time variable. If not, then we need to create
         // a time dimension.
@@ -466,6 +466,8 @@ public abstract class NetcdfFileManager {
         if (!userName.equals(varName)) {
             ncFileWriter.addVariableAttribute(theVar, new Attribute("_userSuppliedName", userName));
         }
+        // These Keys will always be strings
+        @SuppressWarnings("unchecked")
         Set<String> variableMetadataKeys = variableMetadata.keySet();
         Iterator<String> variableMetadataKeysIterator = variableMetadataKeys.iterator();
         String metadataKey;

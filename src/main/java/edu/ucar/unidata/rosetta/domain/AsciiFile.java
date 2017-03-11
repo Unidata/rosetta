@@ -39,11 +39,11 @@ public class AsciiFile {
     private String variableNames = null;
     private Map<String, String> variableNameMap = new HashMap<String, String>();
     private String variableMetadata = null;
-    private Map<String, HashMap> variableMetadataMap = new HashMap<String, HashMap>();
+    private HashMap<String, HashMap<String,String>> variableMetadataMap = new HashMap<String, HashMap<String,String>>();
     private String parseHeaderForMetadata = null;
     private List<String> parseHeaderForMetadataList = new ArrayList<String>();
     private String jsonStrSessionStorage = null;
-    private Map otherInfo = null;
+    private HashMap<String,String> otherInfo = new HashMap<String,String>();
 
 
     /**
@@ -52,7 +52,7 @@ public class AsciiFile {
      *
      * @return The other info associated with the file.
      */
-    public Map getOtherInfo() {
+    public HashMap<String,String> getOtherInfo() {
         return otherInfo;
     }
 
@@ -60,7 +60,7 @@ public class AsciiFile {
      * Sets "other info" associated with this file. Allows for modifications and additions
      * to the file object in the TemplateController.
      */
-    public void setOtherInfo(Map otherInfo) {
+    public void setOtherInfo(HashMap<String,String> otherInfo) {
         this.otherInfo = otherInfo;
     }
 
@@ -415,7 +415,7 @@ public class AsciiFile {
      *
      * @return The variable metadata in a map.
      */
-    public Map<String, HashMap> getVariableMetadataMap() {
+    public HashMap<String, HashMap<String,String>> getVariableMetadataMap() {
         return variableMetadataMap;
     }
 

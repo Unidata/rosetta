@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,15 +37,23 @@ public class ResourceManagerImpl implements ResourceManager {
      */
     public Map<String, Object> loadResources() {
         Map<String, Object> model = new HashMap<String, Object>();
+        String fileName = "";
+        String type = "";
         try {
             Resource r = new ClassPathResource("resources/index.xml");
             File file = r.getFile();
             List<Map> resources = fetchResources(file, "resource");
             Iterator<Map> iterator = resources.iterator();
             while (iterator.hasNext()) {
-                Map<String, String> resource = iterator.next();
-                String fileName = resource.get("fileName");
-                String type = resource.get("type");
+                Map resource = iterator.next();
+                Object ob = resource.get("filename");
+                if (ob instanceof String) {
+                    fileName = (String) ob;
+                }
+                ob = resource.get("type");
+                if (ob instanceof String) {
+                    type = (String) ob;
+                }
                 r = new ClassPathResource("resources/" + fileName);
                 file = r.getFile();
                 List<Map> resourceList = fetchResources(file, type);
@@ -86,11 +95,15 @@ public class ResourceManagerImpl implements ResourceManager {
                                 values.add((String) ob);
                             }
                             if (ob instanceof List) {
-                                List<String> l = (List) ob;
-                                Iterator<String> iterator = l.iterator();
+                                Iterator iterator = ((List) ob).iterator();
                                 while (iterator.hasNext()) {
-                                    String val = iterator.next();
-                                    values.add(val);
+                                    Object valOb = iterator.next();
+                                    if (valOb instanceof String) {
+                                        String val = (String) valOb;
+                                        values.add(val);
+                                    } else {
+                                        logger.warn("Could not convert value in list to String");
+                                    }
                                 }
                             }
                             values.add(n.getTextContent());
