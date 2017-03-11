@@ -46,7 +46,7 @@ public class ResourceManagerImpl implements ResourceManager {
             Iterator<Map> iterator = resources.iterator();
             while (iterator.hasNext()) {
                 Map resource = iterator.next();
-                Object ob = resource.get("filename");
+                Object ob = resource.get("fileName");
                 if (ob instanceof String) {
                     fileName = (String) ob;
                 }
