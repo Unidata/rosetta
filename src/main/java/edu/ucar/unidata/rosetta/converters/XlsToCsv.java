@@ -53,25 +53,26 @@ import java.util.Locale;
 
 
 /**
- * Class description
+ * Convert xls, xlsx files to a csv file
  *
- * @author Enter your name here...
- * @version Enter version here..., Tue, Dec 18, '12
+ * @author Sean Arms
  */
-public class xlsToCsv {
+public class XlsToCsv {
 
     /**
-     * _more_
+     * If a cell is empty, set the value in the CSV file to -999
      */
     private static final String missingFillValue = "-999";
 
     /**
      * _more_
      *
-     * @param xlsFile _more_
-     * @param csvFile _more_
+     * @param xlsFile Path to xls/xlsx file
+     * @param csvFile Path where csv file should be created. If null, csv file will
+     *                be created in the same location as @param xlsFile
      */
-    public static void convert(String xlsFile, String csvFile) {
+    public static boolean convert(String xlsFile, String csvFile) {
+        boolean successful = false;
         try {
             //Excel document to be imported
             WorkbookSettings ws = new WorkbookSettings();
@@ -88,7 +89,10 @@ public class xlsToCsv {
             }
 
             File f = new File(csvFile);
-
+            // if file doesnt exists, then create it
+            if (!f.exists()) {
+                f.createNewFile();
+            }
             OutputStream os = new FileOutputStream(f);
             String encoding = "UTF8";
             OutputStreamWriter osw = new OutputStreamWriter(os,
@@ -144,6 +148,7 @@ public class xlsToCsv {
             }
             bw.flush();
             bw.close();
+            successful = true;
         } catch (UnsupportedEncodingException e) {
             System.err.println(e.toString());
         } catch (IOException e) {
@@ -151,13 +156,16 @@ public class xlsToCsv {
         } catch (Exception e) {
             System.err.println(e.toString());
         }
+
+        return successful;
     }
 
     /**
-     * _more_
+     * Get the contents of a cell. If the cell @param row is formatted as a date,
+     * then convert the value to seconds since 1970-01-01.
      *
-     * @param row _more_
-     * @return _more_
+     * @param row Cell object representing a row
+     * @return String reprensetation of value contained within the row
      */
     private static String getCellContents(Cell row) {
         String contents = "";
@@ -177,10 +185,11 @@ public class xlsToCsv {
     }
 
     /**
-     * _more_
+     * Check the cell contents for a missing value. If cell is empty
+     * set the cell content value to missingFillValue.
      *
-     * @param contents _more_
-     * @return _more_
+     * @param contents the contents of a cell of the spreadsheet
+     * @return contents with the missing value replaced
      */
     private static String checkCellContents(String contents) {
         if (contents.endsWith(",")) {
@@ -191,17 +200,4 @@ public class xlsToCsv {
         }
         return contents;
     }
-
-    /**
-     * _more_
-     *
-     * @param args _more_
-     */
-    public static void main(String[] args) {
-        String xlsFile =
-                "/Users/lesserwhirls/dev/unidata/rosetta/rosetta/src/edu/ucar/unidata/converters/test/xlsToCsv/ilu01_07_10.xls";
-
-        convert(xlsFile, null);
-    }
-
 }
