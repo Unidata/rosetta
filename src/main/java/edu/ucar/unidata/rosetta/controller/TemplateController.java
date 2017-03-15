@@ -356,6 +356,9 @@ public class TemplateController implements HandlerExceptionResolver {
                             file.getUniqueId());
 
                     // create JSON file that holds sessionStorage information
+                    // Should be using file.getJsonStrSessionStorage()
+                    // use jsonUtil.strToJson(file.getJsonStrSessionStorage()) to remove
+                    // connection specific metadata, like uniqueid,
                     Boolean isQuickSave = false;
                     String userFile = file.getFileName();
                     String jsonFileName = getTemplateFileName(userFile,
@@ -365,10 +368,11 @@ public class TemplateController implements HandlerExceptionResolver {
                             FilenameUtils.getFullPath(file.getFileName()));
                     jsonOut = FilenameUtils.concat(jsonOut, jsonFileName);
                     JsonUtil jsonUtil = new JsonUtil(jsonOut);
-                    JSONObject jsonObj = jsonUtil.ssHashMapToJson(mm);
+                    //JSONObject jsonObj = jsonUtil.ssHashMapToJson(mm);
+                    JSONObject jsonObj = jsonUtil.strToJson(file.getJsonStrSessionStorage());
                     jsonObj.remove("uniqueId");
                     jsonObj.remove("fileName");
-                    jsonObj.remove("varCoords");
+                    //jsonObj.remove("varCoords");
                     jsonUtil.writeJsonToFile(jsonObj);
 
                     // zip JSON and NcML files
