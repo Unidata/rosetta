@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import edu.ucar.unidata.rosetta.dsg.util.DateTimeBluePrint;
@@ -44,6 +46,8 @@ public abstract class NetcdfFileManager {
     private Map<String, String> platformMetadataMap;
     private Map<String, String> generalMetadataMap;
     private Map<String, String> otherInfo;
+    private List<String> header;
+
     private HashMap<String, Integer> nameCounts;
     private String coordAttr;
     private List<String> usedVarNames = new ArrayList<String>();
@@ -55,6 +59,7 @@ public abstract class NetcdfFileManager {
     private ArrayList<String> buildTimeTriggers;
     private String relTimeVarName;
     private List<String> nonCoordVarList;
+    private List<String> parseHeaderForMetadataList;
 
     public Map<String, String> getOtherInfo() {
         return this.otherInfo;
@@ -62,6 +67,13 @@ public abstract class NetcdfFileManager {
 
     public void setOtherInfo(Map<String, String> otherInfo) {
         this.otherInfo = otherInfo;
+    }
+    public List<String> getHeader() {
+        return header;
+    }
+
+    public void setHeader(List<String> header) {
+        this.header = header;
     }
 
     public String getMyDsgType() {
@@ -176,6 +188,14 @@ public abstract class NetcdfFileManager {
         this.variableMetadataMap = variableMetadataMap;
     }
 
+    private void setParseHeaderForMetadataList(List<String> parseHeaderForMetadataList) {
+        this.parseHeaderForMetadataList = parseHeaderForMetadataList;
+    }
+
+    private List<String> getParseHeaderForMetadataList() {
+        return this.parseHeaderForMetadataList;
+    }
+
     public Map<String, String> getVariableNameMap() {
         return variableNameMap;
     }
@@ -189,7 +209,29 @@ public abstract class NetcdfFileManager {
     }
 
     public void setPlatformMetadataMap(Map<String, String> platformMetadataMap) {
+        processPatternsOnMetadataMap(platformMetadataMap);
         this.platformMetadataMap = platformMetadataMap;
+    }
+
+    private void processPatternsOnMetadataMap(Map<String, String> metadataMap) {
+        for (String key : this.getParseHeaderForMetadataList()) {
+            String pattern = metadataMap.get(key);
+            if (pattern != null){
+                boolean found = false;
+                for (String line : header){
+                    Pattern p = Pattern.compile(pattern);
+                    Matcher m = p.matcher(line);
+                    if (m.find() && m.groupCount() > 0){
+                        metadataMap.put(key, m.group(1));
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found){
+                    throw new IllegalArgumentException("The pattern for '"+key+"':'"+pattern+"' did not match any line");
+                }
+            }
+        }
     }
 
     public Map<String, String> getGeneralMetadataMap() {
@@ -197,6 +239,7 @@ public abstract class NetcdfFileManager {
     }
 
     public void setGeneralMetadataMap(Map<String, String> generalMetadataMap) {
+        processPatternsOnMetadataMap(generalMetadataMap);
         this.generalMetadataMap = generalMetadataMap;
     }
 
@@ -208,11 +251,13 @@ public abstract class NetcdfFileManager {
         return mine;
     }
 
-    protected void init(AsciiFile file) {
+    protected void init(AsciiFile file, List<String> header) {
 
         setUsedVarNames(new ArrayList<String>());
         setAllVarNames(new ArrayList<String>());
 
+        setHeader(header);
+        setParseHeaderForMetadataList(file.getParseHeaderForMetadataList());
         setVariableNameMap(file.getVariableNameMap());
         setVariableMetadataMap(file.getVariableMetadataMap());
         setPlatformMetadataMap(file.getPlatformMetadataMap());
@@ -388,6 +433,7 @@ public abstract class NetcdfFileManager {
 
         if (getCoordVars().containsKey(coordVarType)) {
             if (getCoordVars().get(coordVarType).contains(sessionStorageKey)) {
+                // FIXME: efficient line
                 name = name;
                 shape = coordVarType;
             }
@@ -681,7 +727,7 @@ public abstract class NetcdfFileManager {
         return dsgWriters;
     }
 
-    public String createNetcdfFile(AsciiFile file, List<List<String>> parseFileData, String downloadDirPath) throws IOException {
+    public String createNetcdfFile(AsciiFile file, List<List<String>> parseFileData, List<String> header, String downloadDirPath) throws IOException {
         try {
             String ncFilePath = downloadDirPath + File.separator + FilenameUtils.removeExtension(file.getFileName()) + ".nc";
             logger.warn("create ncFilePath: " + ncFilePath);
@@ -689,7 +735,7 @@ public abstract class NetcdfFileManager {
             // make sure downloadDir exists and, if not, create it
             checkDownloadDir(downloadDirPath);
 
-            init(file);
+            init(file, header);
 
             // look for coordinate and non-coordinate variables
             Boolean hasRelTime = findCoordAndNonCoordVars();
@@ -740,7 +786,10 @@ public abstract class NetcdfFileManager {
                 return null;
             }
 
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
+            //TODO: Using this broad catch is not very good practice
             logger.error(e.getMessage());
             logger.error(e.getStackTrace());
             return null;

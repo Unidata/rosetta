@@ -40,6 +40,8 @@ public class AsciiFile {
     private Map<String, String> variableNameMap = new HashMap<String, String>();
     private String variableMetadata = null;
     private Map<String, HashMap> variableMetadataMap = new HashMap<String, HashMap>();
+    private String parseHeaderForMetadata = null;
+    private List<String> parseHeaderForMetadataList = new ArrayList<String>();
     private String jsonStrSessionStorage = null;
     private Map otherInfo = null;
 
@@ -238,6 +240,28 @@ public class AsciiFile {
         this.headerLineList = Arrays.asList(headerLineNumbers.split(","));
     }
 
+    public void setParseHeaderForMetadataList(String parseHeaderForMetadata){
+        String[] headers = parseHeaderForMetadata.split(",");
+        for (String s: headers){
+            String[] header = s.split(":");
+            if (header.length == 2 && header[1].equals("true"))
+                parseHeaderForMetadataList.add(header[0]);
+        }
+    }
+
+    public void setParseHeaderForMetadata(String parseHeaderForMetadata){
+        this.parseHeaderForMetadata = parseHeaderForMetadata;
+        setParseHeaderForMetadataList(parseHeaderForMetadata);
+    }
+
+    public String getParseHeaderForMetadata(){
+        return parseHeaderForMetadata;
+    }
+
+    public List<String> getParseHeaderForMetadataList(){
+        return parseHeaderForMetadataList;
+    }
+
     /**
      * Returns the platform metadata in String format.
      *
@@ -317,8 +341,6 @@ public class AsciiFile {
     public void setGeneralMetadataMap(String generalMetadata) {
         String regexComma = "(?<!\\\\)" + Pattern.quote(",");
         String regexColon = "(?<!\\\\)" + Pattern.quote(":");
-        System.out.println("setGeneralMetadataMap:");
-        System.out.println(generalMetadata);
         List<String> pairs = Arrays.asList(generalMetadata.split(regexComma));
         Iterator<String> pairsIterator = pairs.iterator();
         while (pairsIterator.hasNext()) {

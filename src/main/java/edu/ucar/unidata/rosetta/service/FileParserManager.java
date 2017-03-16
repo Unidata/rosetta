@@ -65,6 +65,19 @@ public interface FileParserManager {
      */
     public int getBlankLines(File file);
 
+    /**
+     * Returns the lines in the header as List<String>
+     *
+     * @return The header.
+     */
+    public List<String> getHeader();
+
+    /**
+     * Sets the lines in the header as List<String>
+     *
+     * @param header The header.
+     */
+    public void setHeader(List<String> header);
 }
 
 

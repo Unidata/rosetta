@@ -321,6 +321,7 @@ public class TemplateController implements HandlerExceptionResolver {
                     HashMap<String, String> coords = new HashMap<String, String>();
 
                     // fix where session storage where necessairy
+                    // FIXME: hardcoded stuff that should not be in here?
                     if (file.getCfType().equals("trajectory")) {
                         // only the time variable should be a coordinate variable, so
                         // clean up session storage to reflect that.
@@ -345,6 +346,7 @@ public class TemplateController implements HandlerExceptionResolver {
                     }
                     List<List<String>> parseFileData = fileParserManager
                             .getParsedFileData();
+                    List<String> header = fileParserManager.getHeader();
 
                     // Create the NCML file using the file data
                     String downloadDir = FilenameUtils.concat(getDownloadDir(),
@@ -381,7 +383,7 @@ public class TemplateController implements HandlerExceptionResolver {
                         for (NetcdfFileManager potentialDsgWriter : netcdfFileManager.asciiToDsg()) {
                             if (potentialDsgWriter.isMine(file.getCfType())) {
                                 netcdfFile = potentialDsgWriter.createNetcdfFile(file,
-                                        parseFileData, downloadDir);
+                                        parseFileData, header, downloadDir);
                                 break;
                             }
                         }
@@ -389,6 +391,9 @@ public class TemplateController implements HandlerExceptionResolver {
                         System.err.println("Caught IOException: "
                                 + e.getMessage());
                         return netcdfFile;
+                    } catch (IllegalArgumentException e) {
+                        //FIXME: possible security issue with revealing too much?
+                        return e.getMessage();
                     }
 
                     String fileOut = FilenameUtils.concat(downloadDir,

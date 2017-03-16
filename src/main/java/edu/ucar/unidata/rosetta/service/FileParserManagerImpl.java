@@ -22,6 +22,7 @@ public class FileParserManagerImpl implements FileParserManager {
     protected static Logger logger = Logger.getLogger(FileParserManagerImpl.class);
 
     public List<List<String>> parsedFileData = new ArrayList<List<String>>();
+    public List<String> header = new ArrayList<>();
 
     /**
      * Returns each line of the file data parsed by delimiter into a
@@ -86,6 +87,7 @@ public class FileParserManagerImpl implements FileParserManager {
      */
     public String normalizeDelimiters(String filePath, String selectedDelimiter, List<String> delimiterList, List<String> headerLineList) {
         List<List<String>> parsedData = new ArrayList<List<String>>();
+        List<String> headerData = new ArrayList<>();
         StringBuffer stringBuffer = new StringBuffer();
         int lineCount = 0;
         String currentLine;
@@ -97,6 +99,7 @@ public class FileParserManagerImpl implements FileParserManager {
                     // If a header line we don't have to deal with the delimiter
                     if (headerLineList.contains(new Integer(lineCount).toString())) {
                         stringBuffer.append(currentLine + "\n");
+                        headerData.add(currentLine);
                     } else {
                         // Parse line data based on delimiter count
                         if (delimiterList.size() != 1) { // more than one delimiter
@@ -135,11 +138,20 @@ public class FileParserManagerImpl implements FileParserManager {
 
             }
             setParsedFileData(parsedData);
+            setHeader(headerData);
         } catch (IOException e) {
             logger.error(e.getMessage());
             return null;
         }
         return stringBuffer.toString();
+    }
+
+    public List<String> getHeader() {
+        return header;
+    }
+
+    public void setHeader(List<String> header) {
+        this.header = header;
     }
 
     /**
