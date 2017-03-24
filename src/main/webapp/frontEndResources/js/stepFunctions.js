@@ -445,7 +445,7 @@ function specifyGeneralMetadata(stepType, stepData) {
                 // numbering saved in sessiong storage
                 // this will first be fixed here by re-indexing the custom attributes:
                 var customAttributes = getFromSession("customAttributes");
-                    if (customAttributes){
+                if (customAttributes){
                     customAttributes = getValuesFromSessionString(customAttributes);
                     removeFromSession("customAttributes");
                     for (var i = 0; i<customAttributes.length;i++){
@@ -456,7 +456,8 @@ function specifyGeneralMetadata(stepType, stepData) {
                     }
                 }
             }
-            var stepElement = "#step" + stepData.nextStepIndex + " input";
+            // populate text input elements from sessionStorage
+            var stepElement = "#step" + stepData.nextStepIndex + " input[type=\"text\"]";
             var inputElements = $(stepElement);
             for (var i = 0; i < inputElements.length; i++) {
                 var name = $(inputElements[i]).attr("name");
@@ -481,24 +482,98 @@ function specifyGeneralMetadata(stepType, stepData) {
                     }
                 }
             }
+            // populate pattern checkboxes from sessionStorage
+            var stepElementCb = "#step" + stepData.nextStepIndex + " input[type=\"checkbox\"]";
+            var inputElements = $(stepElementCb);
+            for (var i = 0; i < inputElements.length; i++) {
+                var name = $(inputElements[i]).attr("name");
+                if (name){
+                    var itemInSession = getItemEntered("parseHeaderForMetadata", name);
+                    if (itemInSession == "true") {
+                        $("input[name=\"" + name + "\"][type=\"checkbox\"]").prop('checked', true);
+                    } else {
+                        $("input[name=\"" + name + "\"][type=\"checkbox\"]").prop('checked', false);
+                    }
+                } else {
+                    var id = $(inputElements[i]).attr("id");
+                    var baseID = id.substr(0,id.length - 2);
+                    name = getItemEntered("customAttributes", baseID);
+                    var itemInSession = getItemEntered("parseHeaderForMetadata", name);
+                    if (itemInSession == "true") {
+                        $("#"+id).prop('checked', true);
+                    } else {
+                        $("#"+id).prop('checked', false);
+                    }
+                }
+            }
         }
     } else if (stepType == "stepFunctions") {
         var customAttDiv = $("#containerForCustomAttributes");
         customAttDiv.after("<button type='button' onclick='addCustomGeneralAttribute()'>"
                 + "Add custom attribute</button>");
-        var stepElement = "#step" + stepData + " input";
+        var stepElement = "#step" + stepData + " input[type='text']";
         var stepCheck = ".jw-step:eq(" + stepData + ")";
         $(stepElement).on("focusout", function () {
-            if ($(this).attr("value") != "") {
-                // add to the session
-                var metadataString = buildStringForSession("generalMetadata", $(this).attr("name"),
-                                                           $(this).attr("value"));
-                addToSession("generalMetadata", metadataString);
+            var value = $(this).attr("value");
+            var name = $(this).attr("name");
+            if (value != "") {
+                var isPattern = getItemEntered("parseHeaderForMetadata", name);
+                var validPattern = validatePattern(value);
+                if (isPattern && ( !validPattern || value.indexOf("(") <0 )) {
+                    //Pattern is not valid
+                    removeItemFromSessionString("generalMetadata", name);
+                    var errorMessage = "Pattern is not valid";
+                    if (validPattern) {
+                        errorMessage = "Pattern must contain at least one capturing group. It does not even contain a '('";
+                    }
+                    $(this).closest("li").find("label.error").text(errorMessage);
+                } else {
+                    $(this).closest("li").find("label.error").text("");
+                    // add to the session
+                    var metadataString = buildStringForSession("generalMetadata", name,
+                                                               value);
+                    addToSession("generalMetadata", metadataString);
+                }
             } else {
                 // entered a blank value so get rid of it in the session
-                removeItemFromSessionString("generalMetadata", $(this).attr("name"));
+                removeItemFromSessionString("generalMetadata", name);
             }
 
+            // see if we can expose the next button
+            checkAndExposeNext("generalMetadata");
+        });
+
+        // When pattern/regex checkbox is toggled
+        var stepElementCheckbox = "#step" + stepData + " input[type='checkbox']";
+        $(stepElementCheckbox).on("change", function(){
+            var name = $(this).attr("name");
+            var li = $(this).closest("li");
+            var value = li.find("input[type='text']").attr("value");
+            if ($(this).is(':checked')){
+                //add to session
+                var sessionString = buildStringForSession("parseHeaderForMetadata",
+                                                          name,
+                                                          "true");
+                addToSession("parseHeaderForMetadata", sessionString);
+                //validate the text
+                if (!validatePattern(value)){
+                    removeItemFromSessionString("generalMetadata", name);
+                    li.find("label.error").text("Pattern is not valid");
+                } else if (value.indexOf("(") <0){
+                    removeItemFromSessionString("generalMetadata", name);
+                    li.find("label.error").text("Pattern must contain at least one capturing group. It does not even contain a '('");
+                }
+            } else {
+                //remove from session
+                li.find("label.error").text("");
+                removeItemFromSessionString("parseHeaderForMetadata", name);
+                // Add text to session, it would not be saved if it was an invalid pattern
+                if (value != "") {
+                    var metadataString = buildStringForSession("generalMetadata", name,
+                            value);
+                    addToSession("generalMetadata", metadataString);
+                }
+            }
             // see if we can expose the next button
             checkAndExposeNext("generalMetadata");
         });
@@ -509,13 +584,15 @@ var nCustomAttributes = 0;
 function addCustomGeneralAttribute() {
     var id = "customAttribute" + nCustomAttributes;
     var label1 = "Custom Attribute #"+nCustomAttributes+"<br>"
-                    +"Name<img src='resources/img/help.png'alt="
-                    +"'Must begin with a letter, allowed characters are:"
+                    + "Name<img src='resources/img/help.png'alt="
+                    + "'Must begin with a letter, allowed characters are:"
                     + " letters(a-z,A-Z), digits, and underscores.'"+
-                    "/>:"
-                    +"<input type='text' id='"+id+"Name' value=''/>"
-                    +"<br>"
-                    +"Value:" + "<input type='text' id='"+id+"Value' value=''/>";
+                    " />:"
+                    + "<input type='text' id='"+id+"Name' value=''/>"
+                    + "<br>"
+                    + "<input type='checkbox' id="+id+"CB> is a regex"
+                    + "<br>"
+                    + "Value:" + "<input type='text' id='"+id+"Value' value=''/>";
     label1 = wrap(label1, "label")
     var label2 = "<label for='" + id + "' class='error'></label>";
     var liElement = wrap(label1 + label2, "li", id);
@@ -546,6 +623,7 @@ function addCustomGeneralAttribute() {
         if (previousName) {
             removeItemFromSessionString("customAttributes", id);
             removeItemFromSessionString("generalMetadata", previousName);
+            removeItemFromSessionString("parseHeaderForMetadata", previousName);
         }
         var errorMessage = validateCustomAttribute(id);
         if (errorMessage){
@@ -556,6 +634,11 @@ function addCustomGeneralAttribute() {
             var currentValue = $("#"+id+"Value")[0].value;
             var metadataString = buildStringForSession("generalMetadata", newName, currentValue);
             addToSession("generalMetadata", metadataString);
+            var isPattern = $("#"+id+"CB").is(':checked');
+            if (isPattern){
+                var metadataString = buildStringForSession("parseHeaderForMetadata", newName, "true");
+                addToSession("parseHeaderForMetadata", metadataString);
+            }
         }
         checkAndExposeNext("generalMetadata");
     });
@@ -571,8 +654,30 @@ function addCustomGeneralAttribute() {
             }
             var metadataString = buildStringForSession("generalMetadata", name, this.value);
             addToSession("generalMetadata", metadataString);
-            checkAndExposeNext("generalMetadata");
         }
+        checkAndExposeNext("generalMetadata");
+    });
+    $("#"+id+"CB").on("change", function(){
+        var name = getItemEntered("customAttributes", id);
+        if (name){
+            if ($(this).is(':checked')){
+                //add to session
+                var sessionString = buildStringForSession("parseHeaderForMetadata",
+                                                          name,
+                                                          "true");
+                addToSession("parseHeaderForMetadata", sessionString);
+            } else {
+                //remove from session
+                removeItemFromSessionString("parseHeaderForMetadata", name);
+            }
+        }
+        var errorMessage = validateCustomAttribute(id);
+        if (errorMessage) {
+            removeItemFromSessionString("generalMetadata", name);
+        }
+        $("#"+id).find("label.error").text(errorMessage);
+        // see if we can expose the next button
+        checkAndExposeNext("generalMetadata");
     });
     nCustomAttributes++;
     // When adding a new custom attr - always disable the next
@@ -590,6 +695,16 @@ function validateValue(baseID){
     var value = $("#"+baseID+"Value").val();
     if (!value) {
         return "\nValue can not be empty.";
+    } else {
+        var name = getItemEntered("customAttributes", baseID);
+        var pattern = getItemEntered("parseHeaderForMetadata", name)
+        if (pattern){
+            if (!validatePattern(value)){
+                return "Pattern is not valid";
+            } else if (value.indexOf("(") <0){
+                return "Pattern must contain at least one capturing group. It does not even contain a '('";
+            }
+        }
     }
     return "";
 }
@@ -666,24 +781,56 @@ function specifyPlatformMetadata(stepType, stepData) {
             checkAndExposeNext("platformMetadata");
         }
     } else if (stepType == "stepFunctions") {
-        var stepElement = "#step" + stepData + " input";
+        var stepElement = "#step" + stepData + " input[type='text']";
         $(stepElement).on("focusout", function () {
-            if ($(this).attr("value") != "") {
-                // add to the session
-                var metadataString = buildStringForSession("platformMetadata", $(this).attr("name"),
-                                                           $(this).attr("value"));
-                addToSession("platformMetadata", metadataString);
+            var value = $(this).attr("value");
+            var name = $(this).attr("name");
+            if (value != "") {
+                var isPattern = getItemEntered("parseHeaderForMetadata", name);
+                var validPattern = validatePattern(value);
+                if (isPattern && ( !validPattern || value.indexOf("(") <0 )) {
+                    //Pattern is not valid
+                    removeItemFromSessionString("platformMetadata", name);
+                    var errorMessage = "Pattern is not valid";
+                    if (validPattern) {
+                        errorMessage = "Pattern must contain at least one capturing group. It does not even contain a '('";
+                    }
+                    $(this).closest("li").find("label.error").text(errorMessage);
+                } else {
+                    $(this).closest("li").find("label.error").text("");
+                    // add to the session
+                    var metadataString = buildStringForSession("platformMetadata", name,
+                                                               value);
+                    addToSession("platformMetadata", metadataString);
+                }
             } else {
                 // entered a blank value so get rid of it in the session
-                removeItemFromSessionString("platformMetadata", $(this).attr("name"));
+                removeItemFromSessionString("platformMetadata", name);
             }
 
             // see if we can expose the next button
             checkAndExposeNext("platformMetadata");
         });
+        // When pattern/regex checkbox is toggled
+        var stepElementCheckbox = "#step" + stepData + " input[type='checkbox']";
+        $(stepElementCheckbox).on("change", function(){
+            if ($(this).is(':checked')){
+                //add to session
+                var sessionString = buildStringForSession("parseHeaderForMetadata",
+                                                          $(this).attr("name"),
+                                                          "true");
+                addToSession("parseHeaderForMetadata", sessionString);
+            } else {
+                //remove from session
+                $(this).closest("li").find("label.error").text("");
+                removeItemFromSessionString("parseHeaderForMetadata", $(this).attr("name"));
+            }
+            // see if we can expose the next button
+            checkAndExposeNext("platformMetadata");
+        });
 
         var stepElementSelect = "#step" + stepData + " select";
-        // grab initial values for tje select elements
+        // grab initial values for the select elements
         $(stepElementSelect).each(function () {
             if ($(this).attr("value") != "") {
                 // add to the session
@@ -724,6 +871,10 @@ function createMetadataList(metadata){
             element += "\"/>";
         }
         element += "<br>";
+        // Add pattern checkbox
+        element += "<input type='checkbox' name='" + metadata[i].tagName + "'>";
+        element += " is a regex";
+        element += "<br>";
         // Add the input field
         element += "<input type=\"text\" name=\"";
         element += metadata[i].tagName;
@@ -743,9 +894,7 @@ function createMetadataList(metadata){
             element += "Units\" value=\"\" hidden />";
         }
         element = packElement(element, "label");
-        var errorLabel = "<label for=\"";
-        errorLabel += metadata[i].tagName;
-        errorLabel += "\" class=\"error\"></label>"
+        var errorLabel = "<label class=\"error\"></label>"
         list += packElement(element+errorLabel, "li");
     }
     list = packElement(list, "ul");
@@ -783,8 +932,17 @@ function checkAndExposeNext(metadata){
             return false;
     }
     for (var i in metadataList){
+        var value = getItemEntered(metadata, metadataList[i].tagName);
         if (metadataList[i].isRequired){
-            if (getItemEntered(metadata, metadataList[i].tagName) == null){
+            if (value == null){
+                expose = false;
+                break;
+            }
+        }
+        // if its a search pattern, validate it
+        if (getItemEntered("parseHeaderForMetadata",
+                           metadataList[i].tagName)){
+            if (!value || !validatePattern(value) || value.indexOf("(") <0 ){
                 expose = false;
                 break;
             }
@@ -799,17 +957,27 @@ function checkAndExposeNext(metadata){
     }
 }
 
+function validatePattern(pattern) {
+    var isValid = true;
+    try {
+        new RegExp(pattern);
+    } catch(e) {
+        isValid = false;
+    }
+    return isValid;
+}
+
 function repopulatePlatformMetadata(step) {
-    // populate input elements from sessionStorage
-    var stepElement = "#step" + step + " input";
-    var inputElements = $(stepElement);
+    // populate text input elements from sessionStorage
+    var stepElementText = "#step" + step + " input[type=\"text\"]";
+    var inputElements = $(stepElementText);
     for (var i = 0; i < inputElements.length; i++) {
         var name = $(inputElements[i]).attr("name");
         var itemInSession = getItemEntered("platformMetadata", name);
         if (itemInSession != null) {
-            $("input[name=\"" + name + "\"]").val(itemInSession);
+            $("input[name=\"" + name + "\"][type=\"text\"]").val(itemInSession);
         } else {
-            $("input[name=\"" + name + "\"]").val("");
+            $("input[name=\"" + name + "\"][type=\"text\"]").val("");
         }
     }
 
@@ -824,6 +992,19 @@ function repopulatePlatformMetadata(step) {
         } else {
             var metadataString = buildStringForSession("platformMetadata", name, $("select[name=\"" + name + "\"]").val());
             addToSession("platformMetadata", metadataString);
+        }
+    }
+    
+    // populate pattern checkboxes from sessionStorage
+    var stepElementCb = "#step" + step + " input[type=\"checkbox\"]";
+    var inputElements = $(stepElementCb);
+    for (var i = 0; i < inputElements.length; i++) {
+        var name = $(inputElements[i]).attr("name");
+        var itemInSession = getItemEntered("parseHeaderForMetadata", name);
+        if (itemInSession == "true") {
+            $("input[name=\"" + name + "\"][type=\"checkbox\"]").prop('checked', true);
+        } else {
+            $("input[name=\"" + name + "\"][type=\"checkbox\"]").prop('checked', false);
         }
     }
 }
