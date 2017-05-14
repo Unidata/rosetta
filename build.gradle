@@ -8,12 +8,6 @@ compileJava {
     options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
 }
 
-ext {
-    springVersion = "4.2.4.RELEASE"
-    springSecurityVersion = "4.0.3.RELEASE"
-}
-
-
 group = 'edu.ucar.unidata'
 version = '0.3-SNAPSHOT'
 
@@ -43,6 +37,12 @@ war {
     }
 }
 
+ext {
+    springVersion = "4.3.8.RELEASE"
+    springSecurityVersion = "4.2.2.RELEASE"
+    cdmVersion = "4.6.10"
+}
+
 dependencies {
     // format -> configurationName "group:name:version:classifier@extension"
     // Spring Framework
@@ -57,6 +57,9 @@ dependencies {
     compile "org.springframework.security:spring-security-web:$springSecurityVersion"
     compile "org.springframework.security:spring-security-config:$springSecurityVersion"
     compile "org.springframework.security:spring-security-taglibs:$springSecurityVersion"
+
+    // netCDF-Java/CDM deps
+    compile "edu.ucar:cdm:$cdmVersion"
 
     // others
 
@@ -84,17 +87,19 @@ dependencies {
 
     compile "net.sourceforge.jexcelapi:jxl:2.6.12"
 
-    compile "edu.ucar:netcdfAll:4.6.4"
-
     compile "com.googlecode.json-simple:json-simple:1.1.1"
 
     compile "org.codehaus.jackson:jackson-mapper-asl:1.5.3"
-
-    testCompile "org.seleniumhq.selenium:selenium-java:2.33.0"
 
     testCompile "junit:junit:4.11"
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.12'
+    gradleVersion = '3.5'
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
 }
