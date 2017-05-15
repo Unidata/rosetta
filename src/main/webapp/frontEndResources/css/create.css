@@ -102,6 +102,10 @@ ul li {
     bottom: 0;
 }
 
+ul.oiipGlobalMetadata li {
+    width: 45%;
+}
+
 ul li label {
     margin: 0;
     padding: 0;
