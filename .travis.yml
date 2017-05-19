@@ -4,7 +4,7 @@ jdk:
   - oraclejdk8
 
 script:
-  - ./gradlew clean jekyllBuild
+  - ./gradlew clean test jekyllBuild
 
 after_script:
   - touch build/_site/.nojekyll
