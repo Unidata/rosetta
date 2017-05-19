@@ -25,6 +25,10 @@
         <type>globalMetadataItem</type>
     </resource>
     <resource>
+        <fileName>oiip/globalMetadata.xml</fileName>
+        <type>oiipGlobalMetadataItem</type>
+    </resource>
+    <resource>
         <fileName>publishers.xml</fileName>
         <type>publisher</type>
     </resource>

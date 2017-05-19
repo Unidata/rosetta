@@ -1,5 +1,6 @@
 package edu.ucar.unidata.rosetta.controller;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -44,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import edu.ucar.unidata.rosetta.converters.EolSoundingComp;
+import edu.ucar.unidata.rosetta.converters.TagBaseArchivalTag;
 import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import edu.ucar.unidata.rosetta.domain.UploadedAutoconvertFile;
@@ -117,6 +119,21 @@ public class TemplateController implements HandlerExceptionResolver {
         return new ModelAndView("autoConvert");
     }
 
+    /**
+     * Accepts a GET request for workflow to augment metadata of a known file,
+     * fetches resource information from file system and injects that data into
+     * the Model to be used in the View
+     * Returns the view that walks the user through the steps of template
+     * creation.
+     *
+     * @param model The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated Model.
+     */
+    @RequestMapping(value = "/augmentMetadata", method = RequestMethod.GET)
+    public ModelAndView augmentMetadata(Model model) {
+        model.addAllAttributes(resourceManager.loadResources());
+        return new ModelAndView("augmentMetadata");
+    }
 
     /**
      * Accepts a GET request for template creation, fetches resource information
@@ -255,8 +272,15 @@ public class TemplateController implements HandlerExceptionResolver {
                     if (!convertedFiles.isEmpty()) {
                         logger.info("Success");
                     }
+                } else if (convertFrom.equals("tbaff")) {
+                    TagBaseArchivalTag tbat = new TagBaseArchivalTag();
+                    tbat.parse(fullFileName);
+                    String fullFileNameExt = FilenameUtils.getExtension(fullFileName);
+                    String ncfile = fileName.replace(fullFileNameExt, "nc");
+                    ncfile = FilenameUtils.concat(downloadDir, ncfile);
+                    returnFile = tbat.convert(ncfile);
+                    returnFile = ncfile;
                 }
-
             }
         } catch (Exception e) {
             logger.error("A file conversion error has occurred: " + e.getMessage());
@@ -417,6 +441,53 @@ public class TemplateController implements HandlerExceptionResolver {
                 return null;
             }
         }
+    }
+
+
+    /**
+     * Accepts a POST request Get global metadata from the uploaded file.
+     *
+     * @param file   The AsciiFile form backing object.
+     * @param request The BindingResult object for errors.
+     * @return A String of the local file name for the ASCII file.
+     */
+    @RequestMapping(value = "/getMetadataKnownFile", method = RequestMethod.POST)
+    @ResponseBody
+    public String getMetadataKnownFile(UploadedAutoconvertFile file, HttpServletRequest request) {
+        String uniqueId = file.getUniqueId();
+        String convertFrom = file.getConvertFrom();
+
+        String metadataStr = "";
+
+        String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
+        String fileName = file.getFileName();
+        String fullFileName = FilenameUtils.concat(filePath, fileName);
+
+        String downloadDir = FilenameUtils.concat(getDownloadDir(), uniqueId);
+        File downloadFileDir = new File(downloadDir);
+        if (!downloadFileDir.exists()) {
+            downloadFileDir.mkdir();
+        }
+        HashMap<String,String> globalMetadata = new HashMap<String, String>();
+        // get metadata
+        if (convertFrom != null) {
+            // tag base archive flat file
+            if (convertFrom.equals("tbaff")) {
+                TagBaseArchivalTag tbaffConverter = new TagBaseArchivalTag();
+                tbaffConverter.parse(fullFileName);
+                globalMetadata = tbaffConverter.getGlobalMetadata();
+            }
+
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String key : globalMetadata.keySet()) {
+            sb.append(key + ":" + globalMetadata.get(key).trim().replace("\"","") + ",");
+        }
+        sb.deleteCharAt(sb.length()-1);
+        metadataStr = sb.toString();
+        // need to return something like this:
+        // "title:title here,description:des here,institution:inst here,dataAuthor:data aut here,version:version here,dataSource:source here"
+        return metadataStr;
     }
 
     /**

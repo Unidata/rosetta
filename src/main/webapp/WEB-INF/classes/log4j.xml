@@ -21,7 +21,26 @@
         </layout>
     </appender>
 
+    <!-- rosetta loggers -->
+
     <logger name="edu.ucar.unidata.rosetta" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="rosettaLogger"/>
+    </logger>
+
+    <logger name="edu.ucar.unidata.rosetta.converters.EolSoundingComp">
+        <level value="INFO"/>
+        <appender-ref ref="converterLogger"/>
+    </logger>
+
+    <logger name="edu.ucar.unidata.rosetta.converters.TagBaseArchivalTag">
+        <level value="INFO"/>
+        <appender-ref ref="converterLogger"/>
+    </logger>
+
+    <!-- spring loggers -->
+
+    <logger name="org.springframework.web" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="rosettaLogger"/>
     </logger>
@@ -46,16 +65,6 @@
         <appender-ref ref="rosettaLogger"/>
     </logger>
 
-    <!-- below alternate between DEBUG and INFO -->
-    <logger name="org.springframework.web" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="rosettaLogger"/>
-    </logger>
-
-    <logger name="edu.ucar.unidata.rosetta.converters.EolSoundingComp">
-        <level value="INFO"/>
-        <appender-ref ref="converterLogger"/>
-    </logger>
 
     <root>
         <level value="DEBUG, file, stdout"/>

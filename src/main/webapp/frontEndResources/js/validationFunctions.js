@@ -75,12 +75,12 @@ function validateUploadedFile(file, currentStep) {
     // RegEx patters for valid files (extensions, "type" from input variable `file`)
     var excelPattern = /^\.(xls|xlsx)$/i;
     var ncmlPattern = /^\.ncml$/i;
-    var zipPattern = /^\.zip$/i;
+    var zipPattern = /^\.(gz|zip)$/i;
     var filePattern = /(text)/i;
     var eolCompositeSountingPattern = /^\.cls$/i;
 
     // get file extension
-    var fileExt = file.name.match(/\.[a-zA-Z]{3,4}$/);
+    var fileExt = file.name.match(/\.[a-zA-Z]{2,4}$/);
 
     if (fileExt){
         // test valid regex patterns
@@ -89,6 +89,7 @@ function validateUploadedFile(file, currentStep) {
         var isZip = zipPattern.test(fileExt[0]);
         var isFile = filePattern.test(file.type);
         var isEcs = eolCompositeSountingPattern.test(fileExt[0]);
+        var maxUploadSize = 10000000000;
         if (file.size > maxUploadSize) {
             $(errorLabel).text(
                 "Error! File size should be less then " + (maxUploadSize / 1024 / 1000).toFixed(2)
@@ -104,14 +105,15 @@ function validateUploadedFile(file, currentStep) {
             if (isExcel) {
                 $(".jw-step:eq(" + currentStep + ")").find("#notice").empty().append(
                     "Notice: Any date formatted cells in your spreadsheet will be reformatted in 'seconds since 1970-01-01'!");
-            } else if ((!isFile) && (!isNcml) && (!isZip) && (!isEcs)) {
-                $(errorLabel).text("Error! Incorrect file type selected for upload");
-                $("#upload").addClass("hideMe");
-                boolean = false;
             }
+            //else if ((!isFile) && (!isNcml) && (!isZip) && (!isEcs)) {
+            //    $(errorLabel).text("Error! Incorrect file type selected for upload");
+            //    $("#upload").addClass("hideMe");
+            //    boolean = false;
+           // }
         }
     } else {
-        $(errorLabel).text("Error! The filename does not match the pattern \\.[a-zA-Z]{3,4}$");
+        $(errorLabel).text("Error! The filename does not match the pattern \\.[a-zA-Z]{2,4}$");
         $("#upload").addClass("hideMe"); 
         boolean = false;
     }
@@ -136,7 +138,8 @@ function validateUploadedTemplateFile(file, currentStep) {
     if (fileExt){
         // test valid regex patterns
         var isTemplate = templatePattern.test(fileExt[0]);
-    
+        var maxUploadSize = 10000000000;
+
         if (file.size > maxUploadSize) {
             $(errorLabel).text(
                 "Error! File size should be less then " + (maxUploadSize / 1024 / 1000).toFixed(2)

@@ -71,6 +71,9 @@
             <a href="autoConvert"><img src="resources/img/add.png" alt="Works!"/></a>
             Autoconvert a new data file and transform automatically
             <br>
+            <a href="augmentMetadata"><img src="resources/img/add.png" alt="Works!"/></a>
+            Augment the metadata of a known format type and transform automatically
+            <br>
             <img src="resources/img/remove.png" alt="Future Work."/>
             Upload template and new data file, transform automatically
             </p>

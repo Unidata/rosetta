@@ -431,7 +431,7 @@ function specifyGeneralMetadata(stepType, stepData) {
             }
         }
     } else if (stepType == "repopulateStep") {
-        if ( stepData.type && ((stepData.type == "previous") || (stepData.type == "next"))) {
+        if ( stepData.type && stepData.type == "previous") {
             checkAndExposeNext("generalMetadata");
         } else {
             //We only want to actually "repopulate" on the first run, which is called from 
@@ -465,6 +465,7 @@ function specifyGeneralMetadata(stepType, stepData) {
                     var itemInSession = getItemEntered("generalMetadata", name);
                     if (itemInSession != null) {
                         $("input[name=\"" + name + "\"]").val(itemInSession);
+                        $(inputElements[i]).parent().removeClass("empty")
                     } else {
                         $("input[name=\"" + name + "\"]").val("");
                     }
@@ -533,10 +534,15 @@ function specifyGeneralMetadata(stepType, stepData) {
                     var metadataString = buildStringForSession("generalMetadata", name,
                                                                value);
                     addToSession("generalMetadata", metadataString);
+                    var thisLableElement = $(this).closest("lable");
+                    $(thisLableElement).removeClass("empty");
                 }
             } else {
                 // entered a blank value so get rid of it in the session
                 removeItemFromSessionString("generalMetadata", name);
+                var thisLableElement = $(this).closest("lable");
+                $(thisLableElement).addClass("empty");
+
             }
 
             // see if we can expose the next button
@@ -1025,7 +1031,7 @@ function convertAndDownload(stepType, stepData) {
                    //console.warn("here 2");
                    $(download).empty();
                    for (var i = 0; i < urls.length; i++) {
-                       var fileExt = urls[i].match(/\.[a-zA-Z]{3,4}$/);
+                       var fileExt = urls[i].match(/\.[a-zA-Z]{2,4}$/);
                        if (templatePattern.test(fileExt)) {
                            var linkName = "Rosetta transaction receipt"
                        } else if (ncPattern.test(fileExt)) {
@@ -1054,6 +1060,9 @@ function autoconvertAndDownload(stepType, stepData) {
     } else if (stepType == "repopulateStep") {
         autoconvertAndDownload("stepFunctions", stepData);
     } else if (stepType == "stepFunctions") {
+        var download = $("ul#download");
+        $(download).empty();
+        $(download).html("<img id=\"parsing-img\" src=\"resources/img/pacman.gif\">");
         $.post("autoConvertKnownFile", stepData,
                function (data) {
                    var download = $("ul#download");
@@ -1152,6 +1161,28 @@ function restoreSession(stepType, stepData) {
         $(".jw-button-finish").addClass("hideMe");
 
     }
+}
+
+function getMetadataFromKnownFile() {
+    // we are simply requesting the globalMetadata string, as needed
+    // to be stored in the session storage, from the server, from a known
+    // file.
+    $("#finished-parsing").hide();
+    var sessionData = getAllDataInSession();
+    if (!isInSession(generalMetadata)) {
+        $.post("getMetadataKnownFile", sessionData,
+               function (returnData) {
+                   addToSession("generalMetadata", returnData);
+                   // Show 'Next' button after user makes a selection
+                   $("#parsing-img").hide();
+                   $("#finished-parsing").text("Finished Parsing!").show();
+                   $("#faux").remove();
+                   $(".jw-button-next").removeAttr("disabled").removeClass("disabled")
+                       .removeClass("hideMe");
+               },
+               "text");
+    }
+
 }
 
 function stepTemplate(stepType, stepData) {

@@ -69,9 +69,11 @@ function getBlankLines(fileName, uniqueId) {
     var blankLines = 0;
     $.get("getBlankLines", {fileName: fileName, uniqueId: uniqueId})
         .done(function (data) {
-            if (data > 0) {
-                $("#notice").empty().append(
-                    "Note: The uploaded file contains <b>blank lines</b> (i.e., empty of characters or only contains white space). These lines will be removed during the data transformation process.");
+            if (!fileName.includes(".gz")) {
+                if (data > 0) {
+                    $("#notice").empty().append(
+                        "Note: The uploaded file contains <b>blank lines</b> (i.e., empty of characters or only contains white space). These lines will be removed during the data transformation process.");
+                }
             }
         });
 }
