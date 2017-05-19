@@ -1,13 +1,11 @@
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/1593/badge.svg)]()
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f80ccf60a33c4ed7a1b5e29695de6021)]()
+[![Travis Badge](https://travis-ci.org/Unidata/rosetta.svg?branch=master)]()
+[![license](https://img.shields.io/github/license/unidata/rosetta.svg)]()
+
 <div class=doxHideMe>
 <img src="http://www.unidata.ucar.edu/images/logos/rosetta-150x150.png">
 </div>
-
-<a href="https://scan.coverity.com/projects/1593">
-  <img alt="Coverity Scan Build Status"
-       src="https://scan.coverity.com/projects/1593/badge.svg"/>
-</a> [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f80ccf60a33c4ed7a1b5e29695de6021)](https://www.codacy.com/app/Unidata/rosetta?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Unidata/rosetta&amp;utm_campaign=Badge_Grade)
-
-[![license](https://img.shields.io/github/license/unidata/rosetta.svg)]()
 
 Overview
 --------
