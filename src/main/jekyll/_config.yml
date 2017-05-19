@@ -98,3 +98,5 @@ description: "This is a documentation site for the netCDF-Java and THREDDS Data 
 
 # needed for sitemap.xml file only
 url: www.unidata.ucar.edu
+
+google_analytics: UA-92978945-1
