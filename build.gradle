@@ -117,13 +117,15 @@ test {
 
 /////////////
 
+repositories {
+    maven {
+        url "https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/"
+    }
+}
+
 buildscript {
     repositories {
         jcenter()
-
-        maven {
-            url "https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/"
-        }
     }
 
     dependencies {
