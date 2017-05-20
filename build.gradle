@@ -3,7 +3,10 @@ apply plugin: 'maven'
 apply plugin: 'eclipse'
 apply plugin: 'eclipse-wtp'
 apply plugin: 'war'
+apply plugin: 'org.sonarqube'
+apply plugin: 'jacoco'
 apply plugin: 'com.github.jruby-gradle.base'
+
 // Adds 'assemble', 'check', 'build', and 'clean' tasks.
 // See: https://docs.gradle.org/current/userguide/standard_plugins.html#sec:base_plugins
 apply plugin: 'base'
@@ -130,6 +133,7 @@ buildscript {
 
     dependencies {
         classpath "com.github.jruby-gradle:jruby-gradle-plugin:1.3.3"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.1"
     }
 }
 
@@ -163,6 +167,14 @@ task jekyllServe(type: JRubyExec, group: 'Jekyll', description: 'Serve your site
     scriptArgs commonFlags
 }
 
+
 task wrapper(type: Wrapper) {
     gradleVersion = '3.5'
 }
+
+// run coverage with jacoco before sonarqube analysis so that coverabe report
+// will be ready for sonarqube submission
+project.tasks["sonarqube"].dependsOn jacocoTestReport
+
+// need to run test task before jacocoTestReport
+jacocoTestReport.dependsOn test

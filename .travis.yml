@@ -3,12 +3,6 @@ language: java
 jdk:
   - oraclejdk8
 
-script:
-  - ./gradlew clean test jekyllBuild
-
-after_script:
-  - touch build/_site/.nojekyll
-
 deploy:
   provider: pages
   skip_cleanup: true
@@ -16,3 +10,19 @@ deploy:
   local_dir: build/_site/ 
   on:
     branch: master
+
+addons:
+  sonarqube:
+    organization: "unidata_org"
+    token:
+      secure: $SONAR_TOKEN # Set in travis-ci.org dashboard
+    github_token:
+          secure: $GITHUB_TOKEN # Set in travis-ci.org dashboard
+    branches:
+          - master
+
+script:
+  - ./gradlew clean test sonarqube jekyllBuild
+
+after_script:
+  - touch build/_site/.nojekyll
