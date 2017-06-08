@@ -1,6 +1,5 @@
 package edu.ucar.unidata.rosetta.controller;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -45,7 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import edu.ucar.unidata.rosetta.converters.EolSoundingComp;
-import edu.ucar.unidata.rosetta.converters.TagBaseArchivalTag;
+import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import edu.ucar.unidata.rosetta.domain.UploadedAutoconvertFile;
@@ -272,13 +271,13 @@ public class TemplateController implements HandlerExceptionResolver {
                     if (!convertedFiles.isEmpty()) {
                         logger.info("Success");
                     }
-                } else if (convertFrom.equals("tbaff")) {
-                    TagBaseArchivalTag tbat = new TagBaseArchivalTag();
-                    tbat.parse(fullFileName);
+                } else if (convertFrom.equals("tuff")) {
+                    TagUniversalFileFormat tuff = new TagUniversalFileFormat();
+                    tuff.parse(fullFileName);
                     String fullFileNameExt = FilenameUtils.getExtension(fullFileName);
                     String ncfile = fileName.replace(fullFileNameExt, "nc");
                     ncfile = FilenameUtils.concat(downloadDir, ncfile);
-                    returnFile = tbat.convert(ncfile);
+                    returnFile = tuff.convert(ncfile);
                     returnFile = ncfile;
                 }
             }
@@ -344,7 +343,7 @@ public class TemplateController implements HandlerExceptionResolver {
                     // SCENARIO 3: we have variable data!
 
                     // pull out sessionStorage data
-                    HashMap<String, HashMap<String,String>> mm = file.getVariableMetadataMap();
+                    HashMap<String, HashMap<String, String>> mm = file.getVariableMetadataMap();
                     HashMap<String, String> coords = new HashMap<String, String>();
 
                     // fix where session storage where necessairy
@@ -447,7 +446,7 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Accepts a POST request Get global metadata from the uploaded file.
      *
-     * @param file   The AsciiFile form backing object.
+     * @param file    The AsciiFile form backing object.
      * @param request The BindingResult object for errors.
      * @return A String of the local file name for the ASCII file.
      */
@@ -468,22 +467,22 @@ public class TemplateController implements HandlerExceptionResolver {
         if (!downloadFileDir.exists()) {
             downloadFileDir.mkdir();
         }
-        HashMap<String,String> globalMetadata = new HashMap<String, String>();
+        HashMap<String, String> globalMetadata = new HashMap<String, String>();
         // get metadata
         if (convertFrom != null) {
             // tag base archive flat file
-            if (convertFrom.equals("tbaff")) {
-                TagBaseArchivalTag tbaffConverter = new TagBaseArchivalTag();
-                tbaffConverter.parse(fullFileName);
-                globalMetadata = tbaffConverter.getGlobalMetadata();
+            if (convertFrom.equals("tuff")) {
+                TagUniversalFileFormat tuffConverter = new TagUniversalFileFormat();
+                tuffConverter.parse(fullFileName);
+                globalMetadata = tuffConverter.getGlobalMetadata();
             }
 
         }
         StringBuilder sb = new StringBuilder();
         for (String key : globalMetadata.keySet()) {
-            sb.append(key + ":" + globalMetadata.get(key).trim().replace("\"","") + ",");
+            sb.append(key + ":" + globalMetadata.get(key).trim().replace("\"", "") + ",");
         }
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
         metadataStr = sb.toString();
         // need to return something like this:
         // "title:title here,description:des here,institution:inst here,dataAuthor:data aut here,version:version here,dataSource:source here"

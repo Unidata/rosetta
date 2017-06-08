@@ -4,63 +4,47 @@
 
 package edu.ucar.unidata.rosetta.converters;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
-import edu.ucar.unidata.rosetta.util.RosettaProperties;
-import ucar.ma2.Array;
-import ucar.ma2.ArrayChar;
-import ucar.ma2.ArrayFloat;
-import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFileWriter;
-import ucar.nc2.Variable;
 import ucar.nc2.time.CalendarDate;
 
 import static java.nio.file.Files.copy;
 
 /**
- * Tag Base Archival Tags (flat file).
+ * Tag Base Archival Tags (flat file) following the OIIP Tag Universal File Format (TUFF)
  *
  * This class controls the conversion of Archival Tags as exported by TagBase.
  */
 
-public class TagBaseArchivalTag {
+public class TagUniversalFileFormat {
 
     //static Logger log = Logger.getLogger(TagBaseArchivalTag.class.getName());
 
-    private String tagBaseArchivalFile = "";
+    private String tuflFile = "";
     private List<Attribute> globalAttrs = new ArrayList<>();
     private HashMap<String, TreeMap<Long, Ob>> data = new HashMap<>();
     private HashMap<String, TreeMap<Integer, HistBin>> binInfoMin = new HashMap<>();
     private HashMap<String, TreeMap<Integer, HistBin>> binInfoMax = new HashMap<>();
 
-    public TagBaseArchivalTag() {}
+    public TagUniversalFileFormat() {}
 
     class HistBin {
         private float binValue;
@@ -220,16 +204,16 @@ public class TagBaseArchivalTag {
         return false;
     }
 
-    public void parse(String tagBaseArchiveFile) {
+    public void parse(String tuflFile) {
         System.out.println("start conversion, baby!");
-        this.tagBaseArchivalFile = tagBaseArchiveFile;
+        this.tuflFile = tuflFile;
         String line;
         boolean readSuccess;
 
-        Path tbFilePath = Paths.get(tagBaseArchiveFile);
+        Path tbFilePath = Paths.get(tuflFile);
         try {
             BufferedReader br;
-            if (tagBaseArchiveFile.endsWith(".gz")) {
+            if (tuflFile.endsWith(".gz")) {
                 InputStream fileStream = new FileInputStream(tbFilePath.toString());
                 InputStream gzipStream = new GZIPInputStream(fileStream);
                 Reader decoder = new InputStreamReader(gzipStream, StandardCharsets.ISO_8859_1);
@@ -326,7 +310,7 @@ public class TagBaseArchivalTag {
     public static void main(String[] args) {
         String file = "/Users/sarms/dev/unidata/repos/rosetta/src/test/data/conversions/TagBaseArchiveFlatFile/TagDataFlatFileExample.txt";
         String zipfile = "/Users/sarms/dev/unidata/repos/rosetta/src/test/data/conversions/TagBaseArchiveFlatFile/TagDataFlatFileExample.gz";
-        TagBaseArchivalTag converter = new TagBaseArchivalTag();
+        TagUniversalFileFormat converter = new TagUniversalFileFormat();
         converter.parse(zipfile);
         String ncfile = converter.convert("/Users/sarms/dev/unidata/repos/rosetta/src/test/data/conversions/TagBaseArchiveFlatFile/TagDataFlatFileExample.nc");
         System.out.println(ncfile);
