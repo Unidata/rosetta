@@ -39,15 +39,15 @@
     <div id="step3" title="Augment Metadata">
         <h5><Add or Change the Metadata/></h5>
         <c:choose>
-            <c:when test="${fn:length(oiipGlobalMetadataItems) gt 0}">
-                <ul class="oiipGlobalMetadata">
-                    <c:forEach items="${oiipGlobalMetadataItems}" var="oiipGlobalMetadataItem">
+            <c:when test="${fn:length(etagGlobalMetadataItems) gt 0}">
+                <ul class="globalMetadata">
+                    <c:forEach items="${etagGlobalMetadataItems}" var="etagGlobalMetadataItem">
                         <script type="text/javascript">
                             var obj = {};
-                            obj["tagName"] = "<c:out value="${oiipGlobalMetadataItem.tagName}" />";
-                            obj["displayName"] = "<c:out value="${oiipGlobalMetadataItem.displayName}" />";
+                            obj["tagName"] = "<c:out value="${etagGlobalMetadataItem.tagName}" />";
+                            obj["displayName"] = "<c:out value="${etagGlobalMetadataItem.displayName}" />";
                             <c:choose>
-                            <c:when test="${oiipGlobalMetadataItem.isRequired != null}">
+                            <c:when test="${etagGlobalMetadataItem.isRequired != null}">
                             obj["isRequired"] = true;
                             </c:when>
                             <c:otherwise>
@@ -55,7 +55,7 @@
                             </c:otherwise>
                             </c:choose>
                             <c:choose>
-                            <c:when test="${oiipGlobalMetadataItem.units != null}">
+                            <c:when test="${etagGlobalMetadataItem.units != null}">
                             obj["units"] = true;
                             </c:when>
                             <c:otherwise>
@@ -66,7 +66,7 @@
                         </script>
                         <li>
                             <c:choose>
-                                <c:when test="${oiipGlobalMetadataItem.isRequired}">
+                                <c:when test="${etagGlobalMetadataItem.isRequired}">
                                     <lable class="empty required">
                                 </c:when>
                                 <c:otherwise>
@@ -74,19 +74,19 @@
                                 </c:otherwise>
                             </c:choose>
                                 <c:choose>
-                                    <c:when test="${oiipGlobalMetadataItem.isRequired}">
+                                    <c:when test="${etagGlobalMetadataItem.isRequired}">
                                         *
                                     </c:when>
                                 </c:choose>
-                                <c:out value="${oiipGlobalMetadataItem.displayName}"/>
+                                <c:out value="${etagGlobalMetadataItem.displayName}"/>
                                 <c:choose>
-                                    <c:when test="${oiipGlobalMetadataItem.description != null}">
+                                    <c:when test="${etagGlobalMetadataItem.description != null}">
                                         <img src="resources/img/help.png"
-                                             alt="<c:out value="${oiipGlobalMetadataItem.description}" />"/>
+                                             alt="<c:out value="${etagGlobalMetadataItem.description}" />"/>
                                     </c:when>
                                 </c:choose>
                                 <br/>
-                                <input type="text" name="<c:out value="${oiipGlobalMetadataItem.tagName}" />"
+                                <input type="text" name="<c:out value="${etagGlobalMetadataItem.tagName}" />"
                                        value=""/>
                             </label>
                             <label class="error"></label>

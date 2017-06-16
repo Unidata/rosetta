@@ -25,8 +25,8 @@
         <type>globalMetadataItem</type>
     </resource>
     <resource>
-        <fileName>oiip/globalMetadata.xml</fileName>
-        <type>oiipGlobalMetadataItem</type>
+        <fileName>oiip/eTag_1.0_all_attributes.xml</fileName>
+        <type>etagGlobalMetadataItem</type>
     </resource>
     <resource>
         <fileName>publishers.xml</fileName>
