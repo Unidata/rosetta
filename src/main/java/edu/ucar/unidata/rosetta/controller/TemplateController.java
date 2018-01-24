@@ -115,6 +115,7 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/autoConvert", method = RequestMethod.GET)
     public ModelAndView autoConvertKnownFile(Model model) {
         model.addAllAttributes(resourceManager.loadResources());
+        model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
         return new ModelAndView("autoConvert");
     }
 
@@ -278,7 +279,7 @@ public class TemplateController implements HandlerExceptionResolver {
                     String ncfile = fileName.replace(fullFileNameExt, "nc");
                     ncfile = FilenameUtils.concat(downloadDir, ncfile);
                     returnFile = tuff.convert(ncfile);
-                    returnFile = ncfile;
+                    //returnFile = ncfile;
                 }
             }
         } catch (Exception e) {
