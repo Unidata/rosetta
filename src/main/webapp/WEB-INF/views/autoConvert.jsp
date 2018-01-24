@@ -13,6 +13,7 @@
         var generalMetadata = [];
         var publisherInfo = [];
         $.metadata.setType("attr", "validate");
+        var maxUploadSize = ${maxUploadSize};
     </script>
 </head>
 <body>
