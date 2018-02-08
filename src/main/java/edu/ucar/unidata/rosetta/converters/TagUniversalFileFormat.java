@@ -59,9 +59,9 @@ public class TagUniversalFileFormat {
     private String latDimName = "latitude";
     private String lonDimName = "longitude";
     private String depthDimName = "depth";
-    private String dateTimehDimName = "datetime";
     private String trajectoryIdName = "trajectory";
     private String freshnessVarName = "location_freshness";
+    private String maxTimeVar;
     private String trajCoordVarNames = String.join(" ", timeDimName, latDimName, lonDimName, depthDimName, trajectoryIdName);
 
     private String timeUnit = "seconds since 1970-01-01T00:00:00 UTC";
@@ -113,11 +113,24 @@ public class TagUniversalFileFormat {
      * if true, matchup will be one ob per location
      *
      * if false, matchup will be many obs per location
-     * 
+     *
      * @param matchupOneLocOneOb
      */
     public void setMatchupOneLocOneOb(boolean matchupOneLocOneOb) {
         this.matchupOneLocOneOb = matchupOneLocOneOb;
+    }
+
+    public int getMaxNumRecords() {
+        int maxRecords = -1;
+        maxTimeVar = "";
+        for (Object name : data.keySet()) {
+            int numRecords = data.get(name).size();
+            if (numRecords > maxRecords) {
+                maxRecords = numRecords;
+                maxTimeVar = name.toString();
+            }
+        }
+        return maxRecords;
     }
 
     private String cleanVarName(String name) {
@@ -359,7 +372,7 @@ public class TagUniversalFileFormat {
             Group group = null;
 
             int numTrajRecords = data.get(latDimName).size();
-            int numTimeRecords = data.get(dateTimehDimName).size();
+            int numTimeRecords = getMaxNumRecords();
             String trajectoryId = getTrajId();
 
             // create coordinate dimensions
@@ -516,11 +529,13 @@ public class TagUniversalFileFormat {
     private String convertOneLocManyObs(String ncfile) throws InvalidRangeException {
         // here we try to matchup all obs to a location. The location data is obtained much less recently
         // than the observations, so it's a one to many matchup.
+
         try (NetcdfFileWriter ncfw = NetcdfFileWriter.createNew(NetcdfFileWriter.Version.netcdf3, ncfile)) {
 
             Group group = null;
 
-            int numTimeRecords = data.get(dateTimehDimName).size();
+            int numTimeRecords = getMaxNumRecords();
+
             String trajectoryId = getTrajId();
 
             // create coordinate dimensions
@@ -615,7 +630,7 @@ public class TagUniversalFileFormat {
 
             // get latitude variable
 
-            TreeMap<Long, Ob> dateTimeVar = data.get(dateTimehDimName);
+            TreeMap<Long, Ob> dateTimeVar = data.get(maxTimeVar);
 
             // because we use a TreeMap, the iterator of the Setreturned by keySet() are sorted
             // in ascending order.
