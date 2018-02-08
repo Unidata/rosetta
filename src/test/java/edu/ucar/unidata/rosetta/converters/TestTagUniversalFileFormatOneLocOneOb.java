@@ -4,8 +4,8 @@
 
 package edu.ucar.unidata.rosetta.converters;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -28,17 +28,18 @@ import static org.junit.Assert.assertFalse;
 /**
  * Test the conversion of an eTUFF file
  */
-public class TestTagUniversalFileFormat {
-    private String etuffDir = String.join(File.separator, "conversions", "TagUniversalFileFormat");
-    private String etuffFileTld = TestDir.rosettaLocalTestDataDir + etuffDir;
-    private TagUniversalFileFormat etuffConvertor = new TagUniversalFileFormat();
-    //private String etuffFile = String.join(File.separator, etuffFileTld, "eTUFF-tuna-590051.gz");
-    private String etuffFile = String.join(File.separator, etuffFileTld, "TagDataFlatFileExample.gz");
-    private String etuffFileNc = String.join(File.separator, etuffFileTld, "eTUFF-tuna-590051.nc");
-    private NetcdfDataset ncd;
+public class TestTagUniversalFileFormatOneLocOneOb {
+    private static String etuffDir = String.join(File.separator, "conversions", "TagUniversalFileFormat");
+    private static String etuffFileTld = TestDir.rosettaLocalTestDataDir + etuffDir;
+    //private static String etuffFile = String.join(File.separator, etuffFileTld, "eTUFF-tuna-590051.gz");
+    private static String etuffFile = String.join(File.separator, etuffFileTld, "TagDataFlatFileExample.gz");
+    private static String etuffFileNc = String.join(File.separator, etuffFileTld, "eTUFF-tuna-590051.nc");
+    private static NetcdfDataset ncd;
 
-    @Before
-    public void sanityCheckAndOutputRead() {
+    private TagUniversalFileFormat etuffConvertor = new TagUniversalFileFormat();
+
+    @BeforeClass
+    public static void sanityCheckAndOutputRead() {
         TagUniversalFileFormat converter = new TagUniversalFileFormat();
         // check to make sure no global metadata has been set
         assertEquals(converter.getGlobalMetadata().size(), 0);
@@ -49,7 +50,7 @@ public class TestTagUniversalFileFormat {
 
         try {
             String ncfile = converter.convert(etuffFileNc);
-            this.ncd = NetcdfDataset.openDataset(ncfile);
+            ncd = NetcdfDataset.openDataset(ncfile);
 
         } catch (InvalidRangeException e) {
             e.printStackTrace();
@@ -61,7 +62,7 @@ public class TestTagUniversalFileFormat {
     @Test
     public void testCoordinateAxes() {
         List<CoordinateAxis> cas = ncd.getCoordinateAxes();
-        assertEquals(cas.size(), 4);
+        assertEquals(cas.size(), 5);
         Dimension timeDim = ncd.findDimension("time");
         assertEquals(timeDim.getLength(), 25);
     }
@@ -127,8 +128,8 @@ public class TestTagUniversalFileFormat {
         assertEquals(tempVals.getFloat(foundIndex), 15.10, 0.001);
     }
 
-    @After
-    public void cleanup() {
+    @AfterClass
+    public static void cleanup() {
         File tmp = new File(etuffFileNc);
         tmp.delete();
     }
