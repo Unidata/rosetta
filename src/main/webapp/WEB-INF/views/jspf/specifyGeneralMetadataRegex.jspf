@@ -39,11 +39,12 @@
                             </c:when>
                         </c:choose>
                         <br/>
+                        <input type='checkbox' name="${globalMetadataItem.tagName}"> is a regex
+                        <br/>
                         <input type="text" name="<c:out value="${globalMetadataItem.tagName}" />"
                                value=""/>
                     </label>
-                    <label for="<c:out value="${globalMetadataItem.tagName}" />"
-                           class="error"></label>
+                    <label class="error"></label>
                 </li>
             </c:forEach>
             <div id="containerForCustomAttributes"/>

@@ -16,6 +16,8 @@
     <script type="text/javascript">
         var generalMetadata = [];
         $.metadata.setType("attr", "validate");
+        // disable the use of regular expressions for header mining
+        var useRegex = false;
     </script>
 </head>
 <body>

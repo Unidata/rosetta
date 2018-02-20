@@ -419,6 +419,7 @@ function specifyVariableMetadata(stepType, stepData) {
 }
 
 function specifyGeneralMetadata(stepType, stepData) {
+
     if (stepType == "stepValidation") {
         if (stepData.type == "next") {
             error =
@@ -550,56 +551,71 @@ function specifyGeneralMetadata(stepType, stepData) {
         });
 
         // When pattern/regex checkbox is toggled
-        var stepElementCheckbox = "#step" + stepData + " input[type='checkbox']";
-        $(stepElementCheckbox).on("change", function(){
-            var name = $(this).attr("name");
-            var li = $(this).closest("li");
-            var value = li.find("input[type='text']").attr("value");
-            if ($(this).is(':checked')){
-                //add to session
-                var sessionString = buildStringForSession("parseHeaderForMetadata",
-                                                          name,
-                                                          "true");
-                addToSession("parseHeaderForMetadata", sessionString);
-                //validate the text
-                if (!validatePattern(value)){
-                    removeItemFromSessionString("generalMetadata", name);
-                    li.find("label.error").text("Pattern is not valid");
-                } else if (value.indexOf("(") <0){
-                    removeItemFromSessionString("generalMetadata", name);
-                    li.find("label.error").text("Pattern must contain at least one capturing group. It does not even contain a '('");
+        if (useRegex) {
+            var stepElementCheckbox = "#step" + stepData + " input[type='checkbox']";
+            $(stepElementCheckbox).on("change", function(){
+                var name = $(this).attr("name");
+                var li = $(this).closest("li");
+                var value = li.find("input[type='text']").attr("value");
+                if ($(this).is(':checked')){
+                    //add to session
+                    var sessionString = buildStringForSession("parseHeaderForMetadata",
+                                                              name,
+                                                              "true");
+                    addToSession("parseHeaderForMetadata", sessionString);
+                    //validate the text
+                    if (!validatePattern(value)){
+                        removeItemFromSessionString("generalMetadata", name);
+                        li.find("label.error").text("Pattern is not valid");
+                    } else if (value.indexOf("(") <0){
+                        removeItemFromSessionString("generalMetadata", name);
+                        li.find("label.error").text("Pattern must contain at least one capturing group. It does not even contain a '('");
+                    }
+                } else {
+                    //remove from session
+                    li.find("label.error").text("");
+                    removeItemFromSessionString("parseHeaderForMetadata", name);
+                    // Add text to session, it would not be saved if it was an invalid pattern
+                    if (value != "") {
+                        var metadataString = buildStringForSession("generalMetadata", name,
+                                                                   value);
+                        addToSession("generalMetadata", metadataString);
+                    }
                 }
-            } else {
-                //remove from session
-                li.find("label.error").text("");
-                removeItemFromSessionString("parseHeaderForMetadata", name);
-                // Add text to session, it would not be saved if it was an invalid pattern
-                if (value != "") {
-                    var metadataString = buildStringForSession("generalMetadata", name,
-                            value);
-                    addToSession("generalMetadata", metadataString);
-                }
-            }
-            // see if we can expose the next button
-            checkAndExposeNext("generalMetadata");
-        });
-        specifyGeneralMetadata("repopulateStep",{"nextStepIndex":stepData});
+                // see if we can expose the next button
+                checkAndExposeNext("generalMetadata");
+            });
+            specifyGeneralMetadata("repopulateStep",{"nextStepIndex":stepData});
+        }
     }
 }
+
 var nCustomAttributes = 0;
 function addCustomGeneralAttribute() {
     var id = "customAttribute" + nCustomAttributes;
-    var label1 = "Custom Attribute #"+nCustomAttributes+"<br>"
-                    + "Name<img src='resources/img/help.png'alt="
-                    + "'Must begin with a letter, allowed characters are:"
-                    + " letters(a-z,A-Z), digits, and underscores.'"+
-                    " />:"
-                    + "<input type='text' id='"+id+"Name' value=''/>"
-                    + "<br>"
-                    + "<input type='checkbox' id="+id+"CB> is a regex"
-                    + "<br>"
-                    + "Value:" + "<input type='text' id='"+id+"Value' value=''/>";
-    label1 = wrap(label1, "label")
+    if (useRegex) {
+        var label1 = "Custom Attribute #" + nCustomAttributes + "<br>"
+                     + "Name<img src='resources/img/help.png'alt="
+                     + "'Must begin with a letter, allowed characters are:"
+                     + " letters(a-z,A-Z), digits, and underscores.'" +
+                     " />:"
+                     + "<input type='text' id='" + id + "Name' value=''/>"
+                     + "<br>"
+                     + "<input type='checkbox' id=" + id + "CB> is a regex"
+                     + "<br>"
+                     + "Value:" + "<input type='text' id='" + id + "Value' value=''/>";
+        label1 = wrap(label1, "label")
+    } else {
+        var label1 = "Custom Attribute #" + nCustomAttributes + "<br>"
+                     + "Name<img src='resources/img/help.png'alt="
+                     + "'Must begin with a letter, allowed characters are:"
+                     + " letters(a-z,A-Z), digits, and underscores.'" +
+                     " />:"
+                     + "<input type='text' id='" + id + "Name' value=''/>"
+                     + "<br>"
+                     + "Value:" + "<input type='text' id='" + id + "Value' value=''/>";
+        label1 = wrap(label1, "label")
+    }
     var label2 = "<label for='" + id + "' class='error'></label>";
     var liElement = wrap(label1 + label2, "li", id);
     $('#containerForCustomAttributes').append(liElement);
@@ -818,22 +834,24 @@ function specifyPlatformMetadata(stepType, stepData) {
             checkAndExposeNext("platformMetadata");
         });
         // When pattern/regex checkbox is toggled
-        var stepElementCheckbox = "#step" + stepData + " input[type='checkbox']";
-        $(stepElementCheckbox).on("change", function(){
-            if ($(this).is(':checked')){
-                //add to session
-                var sessionString = buildStringForSession("parseHeaderForMetadata",
-                                                          $(this).attr("name"),
-                                                          "true");
-                addToSession("parseHeaderForMetadata", sessionString);
-            } else {
-                //remove from session
-                $(this).closest("li").find("label.error").text("");
-                removeItemFromSessionString("parseHeaderForMetadata", $(this).attr("name"));
-            }
-            // see if we can expose the next button
-            checkAndExposeNext("platformMetadata");
-        });
+        if (useRegex) {
+            var stepElementCheckbox = "#step" + stepData + " input[type='checkbox']";
+            $(stepElementCheckbox).on("change", function(){
+                if ($(this).is(':checked')){
+                    //add to session
+                    var sessionString = buildStringForSession("parseHeaderForMetadata",
+                                                              $(this).attr("name"),
+                                                              "true");
+                    addToSession("parseHeaderForMetadata", sessionString);
+                } else {
+                    //remove from session
+                    $(this).closest("li").find("label.error").text("");
+                    removeItemFromSessionString("parseHeaderForMetadata", $(this).attr("name"));
+                }
+                // see if we can expose the next button
+                checkAndExposeNext("platformMetadata");
+            });
+        }
 
         var stepElementSelect = "#step" + stepData + " select";
         // grab initial values for the select elements
@@ -864,23 +882,25 @@ function specifyPlatformMetadata(stepType, stepData) {
 
 function createMetadataList(metadata){
     var list = "";
-    for (var i in metadata){
+    for (var i in metadata) {
         var element = "";
         // Add required-mark
         if (metadata[i].isRequired)
             element += "*";
         element += metadata[i].displayName;
         // Add help-text
-        if (metadata[i].description){
+        if (metadata[i].description) {
             element += "<img src=\"resources/img/help.png\" alt=\"";
             element += metadata[i].description;
             element += "\"/>";
         }
         element += "<br>";
         // Add pattern checkbox
-        element += "<input type='checkbox' name='" + metadata[i].tagName + "'>";
-        element += " is a regex";
-        element += "<br>";
+        if (useRegex) {
+            element += "<input type='checkbox' name='" + metadata[i].tagName + "'>";
+            element += " is a regex";
+            element += "<br>";
+        }
         // Add the input field
         element += "<input type=\"text\" name=\"";
         element += metadata[i].tagName;

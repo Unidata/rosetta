@@ -14,6 +14,8 @@
         var publisherInfo = [];
         $.metadata.setType("attr", "validate");
         var maxUploadSize = ${maxUploadSize};
+        // disable the use of regular expressions for header mining
+        var useRegex = false;
     </script>
 </head>
 <body>
