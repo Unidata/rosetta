@@ -60,19 +60,20 @@
     </entry>
 
     <entry id="full date/time string">
-        <unit>YYYY-MM-DDThh:mm:ss.sTZD</unit>
-        <unit>MM/DD/YYYY HH:mm:SS</unit>
-        <unit>MM/DD/YY HH:mm:SS</unit>
-        <unit>YYYY/MM/DD HH:mm:SS</unit>
-        <unit>YY:MM:DD:HH:mm:SS</unit>
+        <unit>yyyy-MM-ddThh:mm:ss.sTZD</unit>
+        <unit>MM/dd/yyyy HH:mm:ss</unit>
+        <unit>MM/dd/yy HH:mm:ss</unit>
+        <unit>yyyy/MM/dd HH:mm:ss</unit>
+        <unit>yy:MM:dd:HH:mm:ss</unit>
     </entry>
 
 
     <entry id="date only">
-        <unit>YYYY-MM-DD</unit>
-        <unit>YYYY/MM/DD</unit>
-        <unit>MM/DD/YYYY</unit>
-        <unit>MM-DD-YYYY</unit>
+        <unit>yyyy-MM-dd</unit>
+        <unit>yyyy/MM/dd</unit>
+        <unit>MM/dd/yyyy</unit>
+        <unit>MM-dd-yyyy</unit>
+        <unit>yyyy-DDD</unit>
     </entry>
 
     <entry id="time only">

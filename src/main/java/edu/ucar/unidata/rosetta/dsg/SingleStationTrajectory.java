@@ -44,7 +44,7 @@ public class SingleStationTrajectory extends NetcdfFileManager {
         if (hasRelTime) {
             setCoordAttr(getRelTimeVarName() + ca);
         } else {
-            setCoordAttr("time" + ca);
+            setCoordAttr("dateTime" + ca);
         }
     }
 
@@ -68,7 +68,7 @@ public class SingleStationTrajectory extends NetcdfFileManager {
 
         Variable theVar = ncFileWriter.addVariable(null, name.substring(0, 3), DataType.FLOAT, "");
 
-        ncFileWriter.addVariableAttribute(theVar, new Attribute("Units", coordVarUnits));
+        ncFileWriter.addVariableAttribute(theVar, new Attribute("units", coordVarUnits));
         ncFileWriter.addVariableAttribute(theVar, new Attribute("standard_name", name));
         ncFileWriter.addVariableAttribute(theVar, new Attribute("_platformMetadata", "true"));
 

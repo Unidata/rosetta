@@ -2,39 +2,10 @@
 <platformMetadataTrajectoryItems>
 
     <platformMetadataTrajectoryItem>
-        <displayName>Station or Platform Name</displayName>
+        <displayName>Platform Name</displayName>
         <tagName>platformName</tagName>
         <isRequired>true</isRequired>
-        <description>The ID or name of the station where the profile was collected.</description>
-    </platformMetadataTrajectoryItem>
-
-    <platformMetadataTrajectoryItem>
-        <displayName>Station Altitude</displayName>
-        <tagName>altitude</tagName>
-        <isRequired>true</isRequired>
-        <description>The height or elevation of the station where the profile was collected.
-        </description>
-        <units>verticalDistance</units>
-    </platformMetadataTrajectoryItem>
-
-
-    <platformMetadataTrajectoryItem>
-        <displayName>Station Latitude</displayName>
-        <tagName>latitude</tagName>
-        <isRequired>true</isRequired>
-        <description>The north-south coordinates of the station where the profile was collected.
-        </description>
-        <units>geoCoordinateSystemLatitude</units>
-    </platformMetadataTrajectoryItem>
-
-
-    <platformMetadataTrajectoryItem>
-        <displayName>Station Longitude</displayName>
-        <tagName>longitude</tagName>
-        <isRequired>true</isRequired>
-        <description>The east-west coordinates of the station where the profile was collected.
-        </description>
-        <units>geoCoordinateSystemLongitude</units>
+        <description>The ID or name of the platform which collected the trajectory data.</description>
     </platformMetadataTrajectoryItem>
 
 </platformMetadataTrajectoryItems>

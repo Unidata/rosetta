@@ -60,8 +60,8 @@ public class DateTimeBluePrint {
         if (timeOnly && dateOnly) {
             ArrayChar timeDataArray = (ArrayChar) timeOnlyVar.read();
             ArrayChar dateDataArray = (ArrayChar) dateOnlyVar.read();
-            String dateFmt = dateOnlyVar.getUnitsString();
-            String timeFmt = timeOnlyVar.getUnitsString();
+            String dateFmt = dateOnlyVar.findAttributeIgnoreCase("format").getStringValue();
+            String timeFmt = timeOnlyVar.findAttributeIgnoreCase("format").getStringValue();
             CalendarDateFormatter fmt = new CalendarDateFormatter(dateFmt + timeFmt);
             String date, time, dateTimeStr;
             CalendarDate dateTime;
@@ -80,7 +80,7 @@ public class DateTimeBluePrint {
             }
         } else if (fullDateTime) {
             ArrayChar fullDateTimeArray = (ArrayChar) fullDateTimeVar.read();
-            String dateFmt = fullDateTimeVar.getUnitsString();
+            String dateFmt = fullDateTimeVar.findAttributeIgnoreCase("format").toString();
             CalendarDateFormatter fmt = new CalendarDateFormatter(dateFmt);
             String dateTimeStr;
             CalendarDate dateTime;

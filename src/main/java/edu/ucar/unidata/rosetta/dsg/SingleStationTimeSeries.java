@@ -30,11 +30,11 @@ public class SingleStationTimeSeries extends NetcdfFileManager {
     @Override
     protected void createCoordinateAttr(boolean hasRelTime) {
         // if we have a relTime (a complete time variable), use that variable name
-        // otherwise, use a (yet-to-be-created) variable called "time"
+        // otherwise, use a (yet-to-be-created) variable called "dateTime"
         if (hasRelTime) {
             setCoordAttr(getRelTimeVarName() + " lat lon alt");
         } else {
-            setCoordAttr("time lat lon alt");
+            setCoordAttr("dateTime lat lon alt");
         }
     }
 
@@ -58,7 +58,8 @@ public class SingleStationTimeSeries extends NetcdfFileManager {
 
         Variable theVar = ncFileWriter.addVariable(null, name.substring(0, 3), DataType.FLOAT, "");
 
-        ncFileWriter.addVariableAttribute(theVar, new Attribute("Units", coordVarUnits));
+
+        ncFileWriter.addVariableAttribute(theVar, new Attribute("units", coordVarUnits));
         ncFileWriter.addVariableAttribute(theVar, new Attribute("standard_name", name));
         ncFileWriter.addVariableAttribute(theVar, new Attribute("_platformMetadata", "true"));
 

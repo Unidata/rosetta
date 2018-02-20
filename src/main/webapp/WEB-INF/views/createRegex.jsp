@@ -7,15 +7,15 @@
     <%@ include file="/WEB-INF/views/includes/css.jsp" %>
     <link type="text/css" rel="stylesheet" href="resources/css/create.css"/>
     <%@ include file="/WEB-INF/views/includes/javascript.jsp" %>
-    <script type="text/javascript" src="resources/js/create.js"></script>
+    <script type="text/javascript" src="resources/js/createRegex.js"></script>
     <script type="text/javascript">
         var platformMetadata = [];
         var generalMetadata = [];
         var publisherInfo = [];
         $.metadata.setType("attr", "validate");
         var maxUploadSize = ${maxUploadSize};
-        // disable the use of regular expressions for header mining
-        var useRegex = false;
+        // enable the use of regular expressions for header mining
+        var useRegex = true;
     </script>
 </head>
 <body>
@@ -55,7 +55,7 @@
 
     <div id="step6" title="<spring:message code="step6.title"/>">
         <h5><spring:message code="step6.description"/></h5>
-        <%@include file="/WEB-INF/views/jspf/specifyGeneralMetadata.jspf" %>
+        <%@include file="/WEB-INF/views/jspf/specifyGeneralMetadataRegex.jspf" %>
     </div>
 
     <div id="step7" title="<spring:message code="step7.title"/>">

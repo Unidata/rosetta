@@ -328,6 +328,7 @@ public abstract class NetcdfFileManager {
             value = getVariableNameMap().get(key);
             if (!value.equals("Do Not Use")) {
                 variableMetadata = getVariableMetadataMap().get(key + "Metadata");
+                boolean updatedMetadataMap = false;
                 // check if variable is a coordinate variable!
                 if (variableMetadata.containsKey("_coordinateVariable")) {
                     String coordVarType = variableMetadata.get("_coordinateVariableType");
@@ -343,10 +344,26 @@ public abstract class NetcdfFileManager {
                         coordVarList.add(key);
                         coordVars.put(coordVarType, (ArrayList<String>) coordVarList);
                     } else {
+                        if (coordVarType != null) {
+                            if (coordVarType.toLowerCase().contains("only") ||
+                                    coordVarType.toLowerCase().equals("fulldatetime")) {
+                                // this is a time variable that does not have udunit compliant unit,
+                                // so rename the unit attribute to format
+                                if (variableMetadata.containsKey("units")) {
+                                    variableMetadata.put("format", variableMetadata.get("units"));
+                                    variableMetadata.remove("units");
+                                    updatedMetadataMap = true;
+                                }
+                            }
+                        }
                         nonCoordVarList.add(key);
                     }
                 } else {
                     nonCoordVarList.add(key);
+                }
+
+                if (updatedMetadataMap) {
+                    variableMetadataMap.put(key + "Metadata", variableMetadata);
                 }
             }
         }
@@ -789,9 +806,11 @@ public abstract class NetcdfFileManager {
             }
 
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             throw e;
         } catch (Exception e) {
             //TODO: Using this broad catch is not very good practice
+            e.printStackTrace();
             logger.error(e.getMessage());
             logger.error(e.getStackTrace());
             return null;

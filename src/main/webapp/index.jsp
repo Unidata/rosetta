@@ -65,6 +65,9 @@
             <a href="create"><img src="resources/img/add.png" alt="Works!"/></a>
             Create a new template
             <br>
+            <a href="createRegex"><img src="resources/img/add.png" alt="Works!"/></a>
+            Create a new template using regular expressions to mine the data file header
+            <br>
             <a href="restore"><img src="resources/img/add.png" alt="Works!"/></a>
             Upload, modify, and use an existing template
             <br>
