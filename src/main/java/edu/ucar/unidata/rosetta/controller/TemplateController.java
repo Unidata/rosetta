@@ -104,6 +104,22 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     /**
+     * Accepts a GET request for template creation, fetches resource information
+     * from file system and inject that data into the Model to be used in the
+     * View. Returns the view that walks the user through the steps of template
+     * creation.
+     *
+     * @param model The Model object to be populated by Resources.
+     * @return The 'create' ModelAndView containing the Resource-populated Model.
+     */
+    @RequestMapping(value = "/createRegex", method = RequestMethod.GET)
+    public ModelAndView createRegexTemplate(Model model) {
+        model.addAllAttributes(resourceManager.loadResources());
+        model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
+        return new ModelAndView("createRegex");
+    }
+
+    /**
      * Accepts a GET request for autoconversion of a known file, fetches resource information
      * from file system and inject that data into the Model to be used in the
      * View. Returns the view that walks the user through the steps of template
