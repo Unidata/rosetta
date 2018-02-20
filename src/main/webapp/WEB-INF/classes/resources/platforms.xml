@@ -11,6 +11,11 @@
         <type>profile</type>
     </platform>
     <platform>
+        <name>CTD (Coming Soon)</name>
+        <img>resources/img/platforms/ctd.jpeg</img>
+        <type>profile</type>
+    </platform>
+    <platform>
         <name>Radiosonde</name>
         <img>resources/img/platforms/baloon.jpeg</img>
         <type>trajectory</type>
@@ -23,6 +28,11 @@
     <platform>
         <name>Aircraft</name>
         <img>resources/img/platforms/aircraft.jpeg</img>
+        <type>trajectory</type>
+    </platform>
+    <platform>
+        <name>Glider</name>
+        <img>resources/img/platforms/glider.jpeg</img>
         <type>trajectory</type>
     </platform>
 </platforms>
