@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<platformMetadataTrajectoryItems>
+
+    <platformMetadataTrajectoryItem>
+        <displayName>Platform Name</displayName>
+        <tagName>platformName</tagName>
+        <isRequired>true</isRequired>
+        <description>The ID or name of the platform which collected the trajectory data.</description>
+    </platformMetadataTrajectoryItem>
+
+</platformMetadataTrajectoryItems>

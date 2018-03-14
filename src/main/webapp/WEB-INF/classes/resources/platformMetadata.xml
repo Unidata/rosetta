@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<platformMetadataItems>
+
+    <platformMetadataItem>
+        <displayName>Station or Platform Name</displayName>
+        <tagName>platformName</tagName>
+        <isRequired>true</isRequired>
+        <description>The ID or name of the platform used to collect the data.</description>
+    </platformMetadataItem>
+
+    <platformMetadataItem>
+        <displayName>Altitude</displayName>
+        <tagName>altitude</tagName>
+        <isRequired>true</isRequired>
+        <description>The height or elevation at which the data was collected.</description>
+        <units>verticalDistance</units>
+    </platformMetadataItem>
+
+
+    <platformMetadataItem>
+        <displayName>Latitude</displayName>
+        <tagName>latitude</tagName>
+        <isRequired>true</isRequired>
+        <description>The north-south coordinates of the location where the data was collected.
+        </description>
+        <units>geoCoordinateSystemLatitude</units>
+    </platformMetadataItem>
+
+
+    <platformMetadataItem>
+        <displayName>Longitude</displayName>
+        <tagName>longitude</tagName>
+        <isRequired>true</isRequired>
+        <description>The east-west coordinates of the location where the data was collected.
+        </description>
+        <units>geoCoordinateSystemLongitude</units>
+    </platformMetadataItem>
+
+
+</platformMetadataItems>

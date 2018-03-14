@@ -1,0 +1,275 @@
+/**
+ * main.css
+ * 
+ * General CSS that does not specifically override or apply to elements handled by
+ * jQuery or plugin CSS (e.g., uploader, SlickGrid and jWizard).
+ */
+/* import custom CSS */
+@import url("jQuery/custom.css");
+@import url("jWizard/custom.css");
+@import url("SlickGrid/custom.css");
+@import url("uploader/custom.css");
+
+/* OVERWRITE step content wrapper (height of wizard interface) */
+.jw-steps-wrap {
+    padding: 0 0 0 20px;
+    margin: 40px 0 0 0;
+    height: 100px;
+}
+
+/* OVERWRITE location of Step Buttons (next, previous, finished, etc.) */
+.jw-footer {
+    position: absolute;
+    left: 0px;
+    top: 180px;
+    padding: 0;
+    margin: 0 0 0 10px;
+    background: none;
+    border: none;
+}
+
+/* document body */
+body {
+    font-size: 10pt;
+    font-family: Verdana, Arial, sans-serif;
+}
+
+/* step descriptions */
+h5 {
+    margin: 0 0 10px 0;
+    padding: 0;
+}
+
+/* link decoration */
+a[href$='.nc'] {
+    padding-left: 18px;
+    line-height: 18px;
+    background: transparent url('../img/icon/netcdf.png') center left no-repeat;
+}
+
+a[href$='.template'] {
+    padding-left: 18px;
+    line-height: 18px;
+    background: transparent url('../img/icon/rosetta-12x12.png') center left no-repeat;
+}
+
+/* fake/disabled next button */
+#faux {
+    background: #E6E6E6 url('../img/ui-bg_glass_75_e6e6e6_1x400.png') 50% 50% repeat-x;
+    color: #CFCFCF !important;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    border-radius: 4px;
+    border: 1px solid #D3D3D3;
+    font-weight: normal;
+    padding: .5em 1em;
+    margin-left: 1em;
+    display: inline-block;
+}
+
+/* commonly used class used to hide elements */
+.hideMe {
+    display: none !important;
+}
+
+/* formats script-generated notices that are not errors */
+.notice {
+    color: #0000FF !important;
+}
+
+/* general format for error messages */
+label.error {
+    display: block;
+    margin: 10px 0;
+    padding: 0;
+    color: #FF0000;
+}
+
+/* The delimiter list needs this to have decimal separator selection placed properly */
+ul#delimiterList {
+    width: 100%;
+    position: relative;
+}
+
+/* unordered lists are used to display/format form items in the jWizard */
+ul {
+    width: 70%;
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    float: left;
+    position: absolute;
+}
+
+ul li {
+    width: 15%;
+    display: inline;
+    margin: 0 15px 10px 0;
+    padding: 0;
+    float: left;
+    position: relative;
+    bottom: 0;
+}
+
+ul li label {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+/* general image format (help icon)*/
+ul li label img {
+    width: 10px;
+    height: 10px;
+    margin: 0;
+    padding: 0;
+}
+
+/* dialog box section titles */
+#dialog h3 {
+    width: 450px;
+    font-size: 10pt;
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px dotted #000000;
+}
+
+/* dialog box form labels */
+#dialog label {
+    font-size: 8pt;
+    margin: 0;
+    padding: 0 10px 0 0;
+}
+
+/* dialog box image formatting */
+#dialog img {
+    margin: 0 10px 0 0;
+    padding: 0;
+}
+
+/* dialog box error formatting */
+#dialog .error {
+    display: block;
+    margin: 0 0 8px 0;
+    padding: 0;
+}
+
+/* hiding inactive elements in the dialog box */
+#dialog .inactive {
+    display: none;
+}
+
+/* dialog box section formatting */
+#dialog #variableNameTypeAssignment,
+#dialog #variableAttributes {
+    width: 100%;
+    float: left;
+    clear: left;
+}
+
+#dialog #variableNameSelected {
+    height: 16px;
+}
+
+#dialog #requiredMetadataAssignment,
+#dialog #additionalMetadataAssignment,
+#dialog #recommendedMetadataAssignment {
+    width: 80%;
+}
+
+#dialog #variableAttributes div {
+    float: left;
+    clear: left;
+    padding: 0;
+    margin: 0 0 10px 0;
+}
+
+/* dialog box section input tag formatting */
+#dialog #variableNameAssignment input {
+    padding: 0;
+    margin: 5px 0 10px 25px;
+    height: 16px;
+}
+
+#dialog #requiredMetadataAssignment input,
+#dialog #additionalMetadataAssignment input,
+#dialog #recommendedMetadataAssignment input {
+    float: right;
+    clear: right;
+    padding: 0;
+    margin: 0 0 10px 0;
+}
+
+/* dialog box unit builder formatting */
+#dialog #unitBuilder {
+    width: 100%;
+    padding: 5px !important;
+    margin: 0;
+    border: 1px solid #AAAAAA;
+    background-color: #EFEFEF;
+}
+
+/* dialog box unit builder label formatting (general) */
+#dialog #unitBuilder label {
+    padding: 0;
+    margin: 5px;
+}
+
+/* dialog box unit builder label formatting for show unit builder section */
+#dialog label.unitBuilder {
+    margin: 10px 0;
+    display: block;
+}
+
+/* dialog box unit builder label formatting for data type section */
+#dialog #unitBuilder label.whole {
+    display: block;
+}
+
+/* dialog box unit builder input tag formatting */
+#dialog label.unitBuilder input,
+#dialog #unitBuilder input {
+    float: left !important;
+    clear: left !important;
+    padding: 0 !important;
+    margin: 0 10px 0 0 !important;
+}
+
+/* unordered lists are used to display/format form items in the dialog box */
+#dialog ul {
+    width: 100%;
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    float: left;
+    position: relative;
+}
+
+/* li has width of 100% */
+#dialog ul li {
+    width: 100%;
+    display: inline;
+    margin: 2px 0 0 0;
+    padding: 0;
+    float: left;
+}
+
+/* li has half width */
+#dialog ul.half li {
+    width: 45%;
+}
+
+/* li has third width */
+#dialog ul.third li {
+    width: 33%;
+}
+
+/* li has quarter width */
+#dialog ul.quarter li {
+    width: 25%;
+}
+
+
+
+

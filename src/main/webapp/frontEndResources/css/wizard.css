@@ -1,0 +1,35 @@
+/**
+ * wizard.css
+ * 
+ * For rosetta wizard.
+ */
+
+nav {
+    margin: 10px 10px 10px 0;
+    font-size: 9pt;
+    width: 220px;
+    float:left;
+}
+
+ul#steps {
+    list-style:none; 
+    width:100%; 
+    overflow:hidden;
+    margin:0px; 
+    padding:0px;
+}
+
+ul#steps li {
+    padding: 5px 0 5px 20px;
+    margin: 5px 0;
+    background: #FFFFFF url('../img/step.png') 0 5px no-repeat !important;
+}
+
+ul#steps li.current {
+    background: #FFFFFF url('../img/current.png') 0 5px no-repeat !important;
+    font-weight: bold;
+}
+
+.wizardNav {
+    border:1px solid #FF0000;
+}

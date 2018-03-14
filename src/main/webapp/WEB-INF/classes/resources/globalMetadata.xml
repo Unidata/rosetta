@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<globalMetadataItems>
+    <globalMetadataItem>
+        <displayName>Title</displayName>
+        <tagName>title</tagName>
+        <isRequired>true</isRequired>
+        <description>The title of this data set.</description>
+    </globalMetadataItem>
+
+
+    <globalMetadataItem>
+        <displayName>Description</displayName>
+        <tagName>description</tagName>
+        <isRequired>true</isRequired>
+        <description>General description of this dataset.</description>
+    </globalMetadataItem>
+
+
+    <globalMetadataItem>
+        <displayName>Institution</displayName>
+        <tagName>institution</tagName>
+        <isRequired>true</isRequired>
+        <description>The name of the institution or organization providing the dataset.
+        </description>
+    </globalMetadataItem>
+
+    <globalMetadataItem>
+        <displayName>Data Author</displayName>
+        <tagName>dataAuthor</tagName>
+        <description>The name of the person collecting the data.</description>
+    </globalMetadataItem>
+
+    <globalMetadataItem>
+        <displayName>Version</displayName>
+        <tagName>version</tagName>
+        <description>The version number of this dataset.</description>
+    </globalMetadataItem>
+
+    <globalMetadataItem>
+        <displayName>Data Source</displayName>
+        <tagName>dataSource</tagName>
+        <description>The data logger/instrumentation make and model.</description>
+    </globalMetadataItem>
+
+    <globalMetadataItem>
+        <displayName>Comment</displayName>
+        <tagName>comment</tagName>
+        <description>Any comments applicable to this dataset.</description>
+    </globalMetadataItem>
+
+    <globalMetadataItem>
+        <displayName>History</displayName>
+        <tagName>history</tagName>
+        <description>History of this dataset.</description>
+    </globalMetadataItem>
+
+    <globalMetadataItem>
+        <displayName>References</displayName>
+        <tagName>references</tagName>
+        <description>Any references applicable to this dataset.</description>
+    </globalMetadataItem>
+
+
+</globalMetadataItems>

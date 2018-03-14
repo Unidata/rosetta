@@ -1,0 +1,7 @@
+To generate the docs and documentation website, run:
+
+bash buildDocs.sh -b
+
+To sync to the webserver, run:
+
+bash buildDocs.sh -bs

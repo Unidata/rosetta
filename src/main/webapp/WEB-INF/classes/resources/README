@@ -1,0 +1,10 @@
+This directory contains xml files that are read by Spring as a Resource  (see Spring Resoure Interface).
+Contents of the xml files are read in and placed in the Model to be used by the View.  The corresponding
+View files will display the data contained in these files.  
+
+To add a Resource to be used in the View:
+
+1) Have a look at the TemplateController.java to see how these files are parsed.
+2) Make your own XML file. 
+3) Document your new file in index.xml.
+4) Add the appropriate JSTL in the corresponding View file.

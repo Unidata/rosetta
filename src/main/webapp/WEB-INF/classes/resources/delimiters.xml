@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<delimiters>
+    <delimiter>
+        <name>Tab</name>
+        <character>\t</character>
+    </delimiter>
+    <delimiter>
+        <name>Comma</name>
+        <character>,</character>
+    </delimiter>
+    <delimiter>
+        <name>Whitespace</name>
+        <character></character>
+    </delimiter>
+    <delimiter>
+        <name>Colon</name>
+        <character>:</character>
+    </delimiter>
+    <delimiter>
+        <name>Semicolon</name>
+        <character>;</character>
+    </delimiter>
+    <delimiter>
+        <name>Single Quote</name>
+        <character>'</character>
+    </delimiter>
+    <delimiter>
+        <name>Double Quote</name>
+        <character>"</character>
+    </delimiter>
+</delimiters>

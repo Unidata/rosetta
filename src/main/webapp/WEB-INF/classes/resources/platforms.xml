@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<platforms>
+    <platform>
+        <name>Single Station or Tower</name>
+        <img>resources/img/platforms/tower.jpeg</img>
+        <type>timeSeries</type>
+    </platform>
+    <platform>
+        <name>Moored Buoy (Coming Soon)</name>
+        <img>resources/img/platforms/buoy_NA.gif</img>
+        <type>profile</type>
+    </platform>
+    <platform>
+        <name>CTD (Coming Soon)</name>
+        <img>resources/img/platforms/ctd.jpeg</img>
+        <type>profile</type>
+    </platform>
+    <platform>
+        <name>Radiosonde</name>
+        <img>resources/img/platforms/baloon.jpeg</img>
+        <type>trajectory</type>
+    </platform>
+    <platform>
+        <name>Wind Profiler (Coming Soon)</name>
+        <img>resources/img/platforms/windprofiler_NA.gif</img>
+        <type>profile</type>
+    </platform>
+    <platform>
+        <name>Aircraft</name>
+        <img>resources/img/platforms/aircraft.jpeg</img>
+        <type>trajectory</type>
+    </platform>
+    <platform>
+        <name>Glider</name>
+        <img>resources/img/platforms/glider.jpeg</img>
+        <type>trajectory</type>
+    </platform>
+</platforms>

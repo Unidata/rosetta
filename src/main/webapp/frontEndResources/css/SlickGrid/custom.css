@@ -1,0 +1,93 @@
+/**
+ * SlickGrid/custom.css
+ * 
+ * Content found here are either changes to the standard CSS found in SlickGrid directory 
+ * that comes with SlickGrid distribution or custom jWizard-related style changes. The primary 
+ * content of this file handles the format/display of the SlickGrid and the SlickGrid  
+ * HeaderButtonsPlugin.  Also enables custom row toggle events using the RowSelectionModel.
+ */
+
+/* our SlickGrid instance */
+.rosettaGrid {
+    background: white;
+    outline: 0;
+    border: 1px solid #CFCFCF;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 9pt;
+    width: auto;
+    height: 320px;
+    margin: 0 20px 0 0;
+}
+
+/* header row */
+.slick-header-columns,
+.slick-headerrow-columns {
+    background: none !important;
+}
+
+/* format of the line number column */
+.lineNumber {
+    color: #CFCFCF;
+    text-align: right;
+}
+
+/* header row format */
+.headerRow {
+    color: #9C9C9C;
+    background: #E1E2ED !important;
+}
+
+/* header row toggle button (general) */
+.toggle {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    margin: 0 15px 0 0;
+    display: inline-block;
+}
+
+/* header row toggle button expanded */
+.toggle.expand {
+    background: url('../../img/expand.png') no-repeat 0px 0px !important;
+}
+
+/* header row toggle button collapsed */
+.toggle.collapse {
+    background: url('../../img/collapse.png') no-repeat 0px 0px !important;
+}
+
+/* disabled data column formatting */
+.columnDisabled {
+    color: #CFCFCF !important;
+    background: #E6E6E6 !important;
+}
+
+/* column header button (HeaderButtonsPlugin) formatting (general) */
+.slick-header-button {
+    margin: 0 0 0 2px;
+    padding: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 95% !important;
+    height: 20px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+/* column header button (HeaderButtonsPlugin) with empty with tick box */
+.todo {
+    background: transparent url('../../img/todo.png') 0 2px no-repeat !important;
+}
+
+/* column header button (HeaderButtonsPlugin) with checked tick box */
+.done {
+    background: transparent url('../../img/tick.png') 0 2px no-repeat !important;
+}
+
+/* positioning of title in column header with respect to tick box */
+.slick-header-column span.slick-column-name {
+    position: absolute !important;
+    left: 20px;
+}

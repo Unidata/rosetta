@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Implementation-Version: 0.3-SNAPSHOT
+Implementation-Title: rosetta
+Implementation-Vendor: UCAR/Unidata
+Implementation-Vendor-Id: edu.ucar.unidata
+Built-On: Tue Mar 13 16:50:06 MDT 2018
+Build-Jdk: 1.9
+

@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <resource>
+        <fileName>platforms.xml</fileName>
+        <type>platform</type>
+    </resource>
+    <resource>
+        <fileName>delimiters.xml</fileName>
+        <type>delimiter</type>
+    </resource>
+    <resource>
+        <fileName>units.xml</fileName>
+        <type>unit</type>
+    </resource>
+    <resource>
+        <fileName>platformMetadata.xml</fileName>
+        <type>platformMetadataItem</type>
+    </resource>
+    <resource>
+        <fileName>platformMetadataTrajectory.xml</fileName>
+        <type>platformMetadataTrajectoryItem</type>
+    </resource>
+    <resource>
+        <fileName>globalMetadata.xml</fileName>
+        <type>globalMetadataItem</type>
+    </resource>
+    <resource>
+        <fileName>oiip/eTag_1.0_all_attributes.xml</fileName>
+        <type>etagGlobalMetadataItem</type>
+    </resource>
+    <resource>
+        <fileName>publishers.xml</fileName>
+        <type>publisher</type>
+    </resource>
+</resources>
