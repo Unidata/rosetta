@@ -15,26 +15,19 @@
         $(element).before("<nav><ul id='steps'></ul></nav>");
         steps.each(function(i) {
             $(this).wrap("<div id='step" + i + "'></div>");
-            
-            $('nav').append("<p id='step" + i + "commands' class='wizardNav'></p>");
+            $(this).append("<p id='step" + i + "commands'></p>");
 
-            // 2
             let name = $(this).find("legend").html();
             $("#steps").append("<li id='stepDesc" + i + "'>Step " + (i + 1) + " <span>" + name + "</span></li>");
             let currentStep =  $("nav p#step"+ i +"commands");
             
-            if (i == 0) {
+            if (i == 0) { // first
                 createNextButton(i);
                 selectStep(i);
-            }
-            else if (i == count - 1) {
+            } else if (i == count - 1) { // last
                 $("#step" + i).hide();
-               // console.log($("#step" + i));
                 createPrevButton(i);
-            }
-            else {
-                 console.log(i);
-                 console.log($("#step" + i));
+            } else { // everything else
                 $("#step" + i).hide();
                 createPrevButton(i);
                 createNextButton(i);
@@ -43,7 +36,7 @@
 
         function createPrevButton(i) {
             let stepName = "step" + i;
-            $("#" + stepName + "commands").append("<a href='#' id='" + stepName + "Prev' class='prev'>< Back</a>");
+            $("#" + stepName + "commands").append("<button type='button' id='" + stepName + "Prev' class='previous'>Previous</button>");
 
             $("#" + stepName + "Prev").bind("click", function(e) {
                 $("#" + stepName).hide();
@@ -55,7 +48,7 @@
 
         function createNextButton(i) {
             let stepName = "step" + i;
-            $("#" + stepName + "commands").append("<a href='#' id='" + stepName + "Next' class='next'>Next ></a>");
+            $("#" + stepName + "commands").append("<button type='button' id='" + stepName + "Next' class='next'>Next</button>");
 
             $("#" + stepName + "Next").bind("click", function(e) {
                 $("#" + stepName).hide();

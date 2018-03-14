@@ -87,6 +87,24 @@ public class TemplateController implements HandlerExceptionResolver {
         return uploadDir;
     }
 
+
+    /**
+     * Accepts a POST request for template selection by the user.
+     *
+     * @param template    The Template form backing object.
+     * @param request The HttpServletRequest with which to glean the client IP address.
+     * @return A String of the local file name for the ASCII file (or null for an error).
+     */
+    @RequestMapping(value = "/template", method = RequestMethod.POST)
+    public ModelAndView selectTemplate(Template template, HttpServletRequest request) {
+
+
+        model.addAllAttributes(resourceManager.loadResources());
+        model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
+        return new ModelAndView("wizard");
+    }
+
+
     /**
      * Accepts a GET request for template creation, fetches resource information
      * from file system and inject that data into the Model to be used in the

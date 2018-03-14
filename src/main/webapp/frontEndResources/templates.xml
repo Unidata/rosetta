@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<templates>
+    <template name="create">
+        <unit>Pa</unit>
+        <unit>bar</unit>
+        <unit>at</unit>
+        <unit>atm</unit>
+        <unit>Torr</unit>
+        <unit>psi</unit>
+    </template>
+</templates>

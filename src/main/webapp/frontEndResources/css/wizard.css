@@ -30,6 +30,13 @@ ul#steps li.current {
     font-weight: bold;
 }
 
-.wizardNav {
-    border:1px solid #FF0000;
+.next {
+    float:right;
+    margin-right: 10px;
 }
+
+.previous {
+    float:left;
+    margin-left: 10px;
+}
+

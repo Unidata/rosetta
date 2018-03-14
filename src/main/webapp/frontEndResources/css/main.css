@@ -77,7 +77,10 @@ footer .right img {
 	padding: 10px;
 	margin: 10px 0;
 	border: 1px solid #E3E4E6;
-    border-radius: 25px;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -khtml-border-radius: 20px;
+    border-radius: 20px;
 	background-image: linear-gradient(to top, #cdcdcd, #d9d9d9, #e6e6e6, #f2f2f2, #ffffff);
 	width: 45%; /*56%; */
 	float: left;
@@ -118,6 +121,21 @@ fieldset legend {
     font-weight:bold;
 }
 
+button {
+    background: #f2f6f8; /* Old browsers */
+    background: -moz-linear-gradient(top, #f2f6f8 0%, #d8e1e7 49%, #d8e1e7 49%, #b5c6d0 100%, #e0eff9 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #f2f6f8 0%,#d8e1e7 49%,#d8e1e7 49%,#b5c6d0 100%,#e0eff9 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #f2f6f8 0%,#d8e1e7 49%,#d8e1e7 49%,#b5c6d0 100%,#e0eff9 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f6f8', endColorstr='#e0eff9',GradientType=0 ); /* IE6-9 */
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    border-radius: 4px;
+    border: 1px solid #D3D3D3;
+    font-size:9pt;
+    padding:6px;
+    margin-left:0;
+}
 
 
 
@@ -168,6 +186,28 @@ ul#delimiterList {
     width: 100%;
     position: relative;
 }
+
+
+/* list of radio buttons  for template selection */
+ul.template {
+    list-style: none;
+    margin: 0 0 15px 0;
+    padding: 0;
+    float: left;
+    width:100%;
+    border:1px solid #FF0000;
+}
+
+ul.template li {
+    margin: 0 15px 10px 0;
+    padding: 0;
+    float: left;
+    position: relative;
+    bottom: 0;
+}
+
+
+
 
 /* unordered lists are used to display/format form items in the jWizard */
 /*
