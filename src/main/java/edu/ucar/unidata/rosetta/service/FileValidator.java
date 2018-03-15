@@ -105,7 +105,7 @@ public class FileValidator implements Validator {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             while ((currentLine = reader.readLine()) != null) {
                 // If NOT a header line
-                if (!headerLineList.contains(new Integer(lineCount).toString())) {
+                if (!headerLineList.contains(String.valueOf(lineCount))) {
                     // Check to make sure the delimiter count per line is the same for each line.
                     Iterator<String> delimiterIterator = delimiterList.iterator();
                     while (delimiterIterator.hasNext()) {
@@ -119,7 +119,7 @@ public class FileValidator implements Validator {
                             dataLine = true;
                         } else {
                             if (delimiterRunningTotal != delimiterCount) {
-                                errors.reject("File line of data contains an irregular delimiter count at line number: " + new Integer(lineCount).toString() + " for delimiter: " + delimiter);
+                                errors.reject("File line of data contains an irregular delimiter count at line number: " + String.valueOf(lineCount) + " for delimiter: " + delimiter);
                             }
                         }
                     }

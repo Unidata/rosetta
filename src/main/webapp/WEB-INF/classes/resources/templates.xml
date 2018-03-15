@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<templates>
+    <template>
+        <name>create</name>
+        <description>Create a new template</description>
+        <view>selectPlatform</view>
+        <view>uploadFile</view>
+        <view>specifyHeaderLines</view>
+        <view>specifyDelimiters</view>
+        <view>specifyVariableMetadata</view>
+        <view>specifyPlatformMetadata</view>
+        <view>specifyGeneralMetadata</view>
+        <view>convertAndDownload</view>
+    </template>
+    <template>
+        <name>createRegexp</name>
+        <description>Create a new template using regular expressions to mine the data file header</description>
+        <view>selectPlatform</view>
+        <view>uploadFile</view>
+        <view>specifyHeaderLines</view>
+        <view>specifyDelimiters</view>
+        <view>specifyVariableMetadata</view>
+        <view>specifyPlatformMetadata</view>
+        <view>specifyGeneralMetadata</view>
+        <view>convertAndDownload</view>
+    </template>
+    <template>
+        <name>restore</name>
+        <description>Upload, modify, and use an existing template</description>
+        <view>restoreSessions</view>
+        <view>selectPlatform</view>
+        <view>uploadFile</view>
+        <view>specifyHeaderLines</view>
+        <view>specifyDelimiters</view>
+        <view>specifyVariableMetadata</view>
+        <view>specifyPlatformMetadata</view>
+        <view>specifyGeneralMetadata</view>
+        <view>convertAndDownload</view>
+        <view>publish</view>
+    </template>
+    <template>
+        <name>autoConvert</name>
+        <description>Autoconvert a new data file and transform automatically</description>
+        <view>uploadKnownFile</view>
+        <view>selectKnownFileType</view>
+        <view>convertAndDownload</view>
+    </template>
+    <template>
+        <name>augmentMetadata</name>
+        <description>Augment the metadata of a known format type and transform automatically</description>
+        <view>uploadKnownFile</view>
+        <view>selectKnownFileType</view>
+        <view>augmentMetadata</view>
+        <view>convertAndDownload</view>
+    </template>
+</templates>

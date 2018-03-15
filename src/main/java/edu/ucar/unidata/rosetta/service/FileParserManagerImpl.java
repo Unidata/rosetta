@@ -97,7 +97,7 @@ public class FileParserManagerImpl implements FileParserManager {
                 if (StringUtils.isNotBlank(currentLine)) {
 
                     // If a header line we don't have to deal with the delimiter
-                    if (headerLineList.contains(new Integer(lineCount).toString())) {
+                    if (headerLineList.contains(String.valueOf(lineCount))) {
                         stringBuffer.append(currentLine + "\n");
                         headerData.add(currentLine);
                     } else {

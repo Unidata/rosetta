@@ -32,4 +32,8 @@
         <fileName>publishers.xml</fileName>
         <type>publisher</type>
     </resource>
+    <resource>
+        <fileName>templates.xml</fileName>
+        <type>template</type>
+    </resource>
 </resources>

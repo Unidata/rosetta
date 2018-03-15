@@ -6,8 +6,7 @@
 
 nav {
     margin: 10px 10px 10px 0;
-    font-size: 9pt;
-    width: 220px;
+    width: 240px;
     float:left;
 }
 
@@ -22,7 +21,7 @@ ul#steps {
 ul#steps li {
     padding: 5px 0 5px 20px;
     margin: 5px 0;
-    background: #FFFFFF url('../img/step.png') 0 5px no-repeat !important;
+    background: #FFFFFF url('../img/step.png') 1 5px no-repeat !important;
 }
 
 ul#steps li.current {

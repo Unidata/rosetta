@@ -34,8 +34,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 import javax.annotation.Resource;
@@ -47,6 +49,7 @@ import edu.ucar.unidata.rosetta.converters.EolSoundingComp;
 import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
+import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.UploadedAutoconvertFile;
 import edu.ucar.unidata.rosetta.domain.UploadedFile;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
@@ -88,19 +91,15 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
 
+
     /**
-     * Accepts a POST request for template selection by the user.
+     * Accepts a GET request for access to the wizard.
      *
-     * @param template    The Template form backing object.
-     * @param request The HttpServletRequest with which to glean the client IP address.
-     * @return A String of the local file name for the ASCII file (or null for an error).
+     * @param request  The HttpServletRequest with which to glean the client IP address.
+     * @return         Model and view for the wizard.
      */
-    @RequestMapping(value = "/template", method = RequestMethod.POST)
-    public ModelAndView selectTemplate(Template template, HttpServletRequest request) {
-
-
-        model.addAllAttributes(resourceManager.loadResources());
-        model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
+    @RequestMapping(value = "/template", method = RequestMethod.GET)
+    public ModelAndView selectTemplate(HttpServletRequest request) {
         return new ModelAndView("wizard");
     }
 
@@ -266,7 +265,7 @@ public class TemplateController implements HandlerExceptionResolver {
         String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
         File uploadedFile = new File(FilenameUtils.concat(filePath, fileName));
         blankLineCount = fileParserManager.getBlankLines(uploadedFile);
-        return new Integer(blankLineCount).toString();
+        return String.valueOf(blankLineCount);
     }
 
 
@@ -722,12 +721,12 @@ public class TemplateController implements HandlerExceptionResolver {
      * @return The unique file name id.
      */
     private String createUniqueId(HttpServletRequest request) {
-        String id = new Integer(new Date().hashCode()).toString();
+        String id = String.valueOf(new Date().hashCode());
         String ipAddress = getIpAddress(request);
         if (ipAddress != null) {
             id = ipAddress + id;
         } else {
-            id = new Integer(new Random().nextInt()).toString() + id;
+            id = String.valueOf(new Random().nextInt()) + id;
         }
         return id.replaceAll(":", "_");
     }

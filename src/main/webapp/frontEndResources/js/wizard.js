@@ -18,7 +18,7 @@
             $(this).append("<p id='step" + i + "commands'></p>");
 
             let name = $(this).find("legend").html();
-            $("#steps").append("<li id='stepDesc" + i + "'>Step " + (i + 1) + " <span>" + name + "</span></li>");
+            $("#steps").append("<li id='stepDesc" + i + "'>" + name + "</li>");
             let currentStep =  $("nav p#step"+ i +"commands");
             
             if (i == 0) { // first

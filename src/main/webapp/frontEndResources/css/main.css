@@ -4,7 +4,8 @@
  * General CSS that does not specifically override or apply to elements handled by
  * jQuery or plugin CSS (e.g., uploader, SlickGrid and jWizard).
  */
-/* import custom CSS */
+@import url("header.css");
+@import url("footer.css");
 @import url("jQuery/custom.css");
 @import url("wizard.css");
 @import url("SlickGrid/custom.css");
@@ -13,17 +14,7 @@
 /* document body */
 body {
     font-size: 10pt;
-    font-family: "UbuntuBold", "Lucida Grande", Verdana, Arial, sans-serif;
-}
-
-h1, h2, h3, h4, h5 {
-    font-family: 'Exo 2', sans-serif;
-}
-
-h1 {
-    background: transparent url('../img/logo/rosetta-32x32.png') top left no-repeat;
-    margin:0;
-    padding:0 0 5px 40px;
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
 /* step descriptions */
@@ -45,83 +36,51 @@ a[href$='.template'] {
     background: transparent url('../img/logo/rosetta-12x12.png') center left no-repeat;
 }
 
-header{
-    border-bottom:1px solid #06778F;
-}
-footer {
-    border-top:1px solid #06778F;
-    padding-top:5px;
-    font-size:9pt;
-    color:#666666;
-    font-style:italic;
-}
-
-footer .left {
-    background: transparent url('../img/logo/rosetta-32x32.png') top left no-repeat !important;
-    margin:10px 0;
-    padding:0 0 5px 40px;
-}
-
-footer .right {
-    text-align:right;
-    margin:0;
-}
-
-footer .right img {
-    float:right;
-    padding-left: 15px;
+main {
+    width:100%;
+    float:left;
+    clear:left;
 }
 
 /* some divs to format a page into left & right */
 .left, .right {
-	padding: 10px;
-	margin: 10px 0;
-	border: 1px solid #E3E4E6;
-    -moz-border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -khtml-border-radius: 20px;
-    border-radius: 20px;
-	background-image: linear-gradient(to top, #cdcdcd, #d9d9d9, #e6e6e6, #f2f2f2, #ffffff);
-	width: 45%; /*56%; */
-	float: left;
-	top: 0;
-	height: 100%;
-}
-
-.right {
-	width: 43%;
-	float: right;
-	clear: right;
-}
-
-.nodec {
-	border: none !important;
-	background: none !important;
+    padding: 10px;
+    margin: 10px 0;
+    width: 45%; /*56%; */
+    float: left;
+    top: 0;
+    height: 100%;
+    border: none !important;
+    background: none !important;
     border-radius:0px;
 }
 
+.right {
+    width: 43%;
+    float: right;
+    clear: right;
+}
 
 
 
 /* form */
 fieldset {
     margin: 10px 0;
-    padding:0;
+    padding-left:10px;
     border: none;
     border-left:1px solid #CFCFCF;
+    min-height:200px;
 }
 
 fieldset legend {
     position: relative;
     top:5px;
-    margin-left: 10px;
     padding:0;
-    font-family: 'Exo 2', sans-serif;
-    font-size: 1.3em;
-    font-weight:bold;
+    font-size: 1.4em;
 }
 
-button {
+button,
+.button {
     background: #f2f6f8; /* Old browsers */
     background: -moz-linear-gradient(top, #f2f6f8 0%, #d8e1e7 49%, #d8e1e7 49%, #b5c6d0 100%, #e0eff9 100%); /* FF3.6-15 */
     background: -webkit-linear-gradient(top, #f2f6f8 0%,#d8e1e7 49%,#d8e1e7 49%,#b5c6d0 100%,#e0eff9 100%); /* Chrome10-25,Safari5.1-6 */
@@ -195,7 +154,6 @@ ul.template {
     padding: 0;
     float: left;
     width:100%;
-    border:1px solid #FF0000;
 }
 
 ul.template li {
