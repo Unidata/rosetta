@@ -76,7 +76,7 @@ fieldset legend {
     position: relative;
     top:5px;
     padding:0;
-    font-size: 1.4em;
+    font-size: 1.5em;
 }
 
 button,
@@ -125,7 +125,7 @@ button,
 }
 
 /* general format for error messages */
-label.error {
+.error {
     display: block;
     margin: 10px 0;
     padding: 0;

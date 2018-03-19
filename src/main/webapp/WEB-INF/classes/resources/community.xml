@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<communities>
+    <community>
+        <name>Atmospheric Sciences</name>
+        <platform>Single Station or Tower</platform>
+        <platform>Radiosonde</platform>
+        <platform>Wind Profiler</platform>
+        <platform>Aircraft</platform>
+        <platform>Glider</platform>
+    </community>
+    <community>
+        <name>Physical Ocean Sciences</name>
+        <platform>Moored Buoy</platform>
+        <platform>Conductivity, Temperature, and Depth Sonde</platform>
+    </community>
+    <community>
+        <name>Bio-Logging</name>
+        <platform>eTag</platform>
+    </community>
+</communities>

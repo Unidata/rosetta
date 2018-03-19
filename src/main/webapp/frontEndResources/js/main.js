@@ -1,4 +1,25 @@
 $(document).ready(function ($) {
+
+    /**
+     * Hide the CF Type div (will be shown 
+     * after user selects a community type).
+     */
+    $('#cfType').addClass('hideMe');
+
+
+    /**
+     * Community type selection triggers listing of
+     * platform types and CF DSG selection options.
+     */
+    $('input#communityType').click(function() {
+        $('#cfType').removeClass('hideMe');
+        makeCommunityPlatformAjaxRequest($(this).val().replace(/\s/g, ''));
+    });
+
+
+
+
+
       function quickSave() {
         $.post("QuickSave", getAllDataInSession(),
             function (data) {
@@ -20,3 +41,26 @@ $(document).ready(function ($) {
         ;
       }
 });
+
+
+
+/**
+ * Sends and AJAX request to get platforms
+ * corresponding to the selected community.
+ *
+ * @param community  The community selected.
+ */
+function makeCommunityPlatformAjaxRequest(community) {
+    let url = baseUrl + '/getPlatforms/' + community;
+    $.ajax({
+        url: url
+    }).done(function(data) {
+        console.log(data);
+    }).fail(function(request) {
+        // create error message
+        console.log($('platforms'));
+      //  <p class="error">Unable to load community list.  <spring:message code="fatal.error.message"/></p>
+        
+        //console.log('fail');
+    });
+}

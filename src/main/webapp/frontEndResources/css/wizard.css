@@ -25,7 +25,7 @@ ul#steps li {
 }
 
 ul#steps li.current {
-    background: #FFFFFF url('../img/current.png') 0 5px no-repeat !important;
+    background: #FFFFFF url('../img/current.png') 1 5px no-repeat !important;
     font-weight: bold;
 }
 

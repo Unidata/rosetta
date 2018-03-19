@@ -6,12 +6,12 @@
         <type>timeSeries</type>
     </platform>
     <platform>
-        <name>Moored Buoy (Coming Soon)</name>
+        <name>Moored Buoy</name>
         <img>resources/img/platforms/buoy_NA.gif</img>
         <type>profile</type>
     </platform>
     <platform>
-        <name>CTD (Coming Soon)</name>
+        <name>Conductivity, Temperature, and Depth Sonde</name>
         <img>resources/img/platforms/ctd.jpeg</img>
         <type>profile</type>
     </platform>
@@ -21,7 +21,7 @@
         <type>trajectory</type>
     </platform>
     <platform>
-        <name>Wind Profiler (Coming Soon)</name>
+        <name>Wind Profiler</name>
         <img>resources/img/platforms/windprofiler_NA.gif</img>
         <type>profile</type>
     </platform>

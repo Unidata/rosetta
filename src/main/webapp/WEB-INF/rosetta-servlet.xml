@@ -34,7 +34,7 @@
             </list>
         </property>
     </bean>
-
+    <bean id="jsonManager" class="edu.ucar.unidata.rosetta.service.JsonManagerImpl"/>
     <bean id="resourceManager" class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl"/>
     <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.FileParserManagerImpl"/>
     <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.FileValidator"/>

@@ -55,6 +55,7 @@ import edu.ucar.unidata.rosetta.domain.UploadedFile;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
 import edu.ucar.unidata.rosetta.service.FileParserManager;
 import edu.ucar.unidata.rosetta.service.FileValidator;
+import edu.ucar.unidata.rosetta.service.JsonManager;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.util.JsonUtil;
 import edu.ucar.unidata.rosetta.util.RosettaProperties;
@@ -69,6 +70,8 @@ public class TemplateController implements HandlerExceptionResolver {
     protected static Logger logger = Logger.getLogger(TemplateController.class);
     @Autowired
     ServletContext servletContext;
+    @Resource(name = "jsonManager")
+    private JsonManager jsonManager;
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
     @Resource(name = "fileParserManager")
@@ -95,13 +98,53 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Accepts a GET request for access to the wizard.
      *
-     * @param request  The HttpServletRequest with which to glean the client IP address.
-     * @return         Model and view for the wizard.
+     * @param model  The Model object to be populated by community data.
+     * @return  View and the Model for the wizard to process.
      */
-    @RequestMapping(value = "/template", method = RequestMethod.GET)
-    public ModelAndView selectTemplate(HttpServletRequest request) {
+    @RequestMapping(value = "/convert", method = RequestMethod.GET)
+    public ModelAndView selectTemplate(Model model) {
+        model.addAttribute("communities", resourceManager.loadResources().get("communitys"));
         return new ModelAndView("wizard");
     }
+
+    /**
+     * Accepts a GET AJAX request for specific platform data corresponding to a community.
+     *
+     * @param community  The community selected by the user.
+     * @param model  The Model object to be populated by platform data.
+     * @return  The platforms in JSON string format.
+     */
+    @RequestMapping(value = "/getPlatforms/{community}", method = RequestMethod.GET)
+    @ResponseBody
+    public String getPlatforms(@PathVariable String community, Model model) {
+        List communities = (List) resourceManager.loadResources().get("communitys");
+        List allPlatforms = (List) resourceManager.loadResources().get("platforms");
+        List<Map> matchingPlatforms = new ArrayList<Map>();
+        for (Object comm : communities) {
+            Map c = (Map)comm;
+            String communityName = (String) c.get("name");
+            if (Objects.equals​(communityName.replaceAll("\\p{Z}", ""), community)) {
+                List platforms = (List) c.get("platform");
+                for (Object platform : platforms) {
+                    String platformName = (String) platform;
+                    for (Object plat : allPlatforms) {
+                        Map p = (Map)plat;
+                        String pName = (String) p.get("name");
+                        if (Objects.equals​(pName, platformName)) {
+                            matchingPlatforms.add(p);
+                        }
+                        
+                    }
+                }
+            }
+        }
+        return jsonManager.convertToJsonString(matchingPlatforms);
+    }
+
+
+
+
+
 
 
     /**

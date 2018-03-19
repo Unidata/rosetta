@@ -33,7 +33,7 @@
         <type>publisher</type>
     </resource>
     <resource>
-        <fileName>templates.xml</fileName>
-        <type>template</type>
+        <fileName>community.xml</fileName>
+        <type>community</type>
     </resource>
 </resources>

@@ -1,0 +1,24 @@
+<p><spring:message code="step0.subTitle1"/></p>
+<c:choose>
+    <c:when test="${fn:length(communities) gt 0}">
+        <ul>
+            <c:forEach items="${communities}" var="community">
+                <li>
+                    <label>
+                        <input type="radio" id="communityType" value="<c:out value="${community.name}" />" validate="required:true"><c:out value="${community.name}" /></input>
+                    </label>
+                </li>
+            </c:forEach>
+        </ul>
+    </c:when>
+    <c:otherwise>
+       <p class="error">Unable to load community list.  <spring:message code="fatal.error.message"/></p>
+    </c:otherwise>
+</c:choose>
+
+<div id="cfType">
+    <p><spring:message code="step0.subTitle2"/></p>
+    <div id="platforms"></div>
+    <p><spring:message code="step0.subTitle3"/></p>
+    <div id="cfDSG"></div>
+</div>
