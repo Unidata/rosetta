@@ -34,10 +34,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 
 import javax.annotation.Resource;
@@ -49,7 +47,6 @@ import edu.ucar.unidata.rosetta.converters.EolSoundingComp;
 import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
-import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.UploadedAutoconvertFile;
 import edu.ucar.unidata.rosetta.domain.UploadedFile;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
@@ -109,6 +106,7 @@ public class TemplateController implements HandlerExceptionResolver {
 
     /**
      * Accepts a GET AJAX request for specific platform data corresponding to a community.
+     * Called during STEP 0 in the wizard.
      *
      * @param community  The community selected by the user.
      * @param model  The Model object to be populated by platform data.
@@ -116,29 +114,55 @@ public class TemplateController implements HandlerExceptionResolver {
      */
     @RequestMapping(value = "/getPlatforms/{community}", method = RequestMethod.GET)
     @ResponseBody
-    public String getPlatforms(@PathVariable String community, Model model) {
+    public List getPlatforms(@PathVariable String community, Model model) {
+        // Get list of community resources.
         List communities = (List) resourceManager.loadResources().get("communitys");
+        // Get list of platform resources.
         List allPlatforms = (List) resourceManager.loadResources().get("platforms");
+
+        // Map to act as placeholder for data that will be returned to the client.
         List<Map> matchingPlatforms = new ArrayList<Map>();
+
+
         for (Object comm : communities) {
+
             Map c = (Map)comm;
             String communityName = (String) c.get("name");
-            if (Objects.equals​(communityName.replaceAll("\\p{Z}", ""), community)) {
-                List platforms = (List) c.get("platform");
-                for (Object platform : platforms) {
-                    String platformName = (String) platform;
+
+            if (community.equals(communityName.replaceAll("\\p{Z}", ""))) {
+
+                // The number of platforms a community has will determine the resulting type: 
+                if (String.class.isInstance(c.get("platform"))) {
+                    // If there is only one platform for the community, then it will be a String
+                    String platformName = (String) c.get("platform");
+
                     for (Object plat : allPlatforms) {
                         Map p = (Map)plat;
                         String pName = (String) p.get("name");
-                        if (Objects.equals​(pName, platformName)) {
+                        if (pName.equals(platformName)) {
                             matchingPlatforms.add(p);
                         }
-                        
+                            
+                    }
+                } else {
+                    // More than one platform will be a List.
+                    List platforms = (List) c.get("platform");
+
+                    for (Object platform : platforms) {
+                        String platformName = (String) platform;
+                        for (Object plat : allPlatforms) {
+                            Map p = (Map)plat;
+                            String pName = (String) p.get("name");
+                            if (pName.equals(platformName)) {
+                                matchingPlatforms.add(p);
+                            }
+                            
+                        }
                     }
                 }
             }
         }
-        return jsonManager.convertToJsonString(matchingPlatforms);
+        return matchingPlatforms;
     }
 
 

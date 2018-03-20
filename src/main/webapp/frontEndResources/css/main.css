@@ -205,19 +205,7 @@ ul li label img {
     padding: 0;
 }
 
-/* step 0: cf type selection images */
-#step0 ul li label img {
-    width: 60px;
-    height: 60px;
-    margin: 0 0 10px 5px;
-    padding: 10px;
-    border: 1px solid #EEEEEE;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    -khtml-border-radius: 4px;
-    border-radius: 4px;
-    display: block;
-}
+
 
 /* step 3: delimiter selection */
 #step3 ul li {
@@ -396,5 +384,96 @@ ul li label img {
 #dialog ul.quarter li {
     width: 25%;
 }
+
+
+/** step 0 **/
+
+#cfType {
+    width:100%;
+    float:left;
+}
+
+#step0 #cfType #platforms {
+    width:50%;
+    float:left;
+}
+
+
+#step0 #cfType #cfdsg {
+    margin-left:20px;
+    float:right;
+    width:46%;
+}
+
+#step0 #cfType #cfdsg .or {
+    width:20%;
+    float:left;
+    padding-top:30px;
+    font-size:2em;
+    font-weight: bold;
+}
+
+#step0 #cfType #cfdsg .right {
+    margin:0;
+    padding:0;
+    float:right;
+    width:70%;
+}
+
+
+
+
+
+#step0 ul {
+    width:100%;
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    float: left;
+}
+
+#step0 ul li {
+    display: inline;
+    margin: 0 15px 10px 0;
+    padding: 0;
+    float: left;
+    position: relative;
+    bottom: 0;
+}
+
+
+#step0 ul li label {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+
+#step0 #platforms ul li {
+    width:80px;
+    display: inline;
+    margin: 0 10px 10px 0;
+    padding: 0;
+    float: left;
+    position: relative;
+    bottom: 0;
+}
+
+
+
+/* step 0: cf type selection images */
+#step0 ul li label img {
+    width: 60px;
+    height: 60px;
+    margin: 0 0 10px 0px;
+    padding: 10px;
+    border: 1px solid #EEEEEE;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    border-radius: 4px;
+    display: block;
+}
+
 
 
