@@ -13,6 +13,7 @@
  * @param fileTag The ID of the file button
  */
 function instantiateUploader(progressBarId, errorLabel, uploadButton, fileId, clearId) {
+
     var up = new uploader($(fileId).get(0), {
         url: 'upload',
         progress: function (ev) {
@@ -25,10 +26,12 @@ function instantiateUploader(progressBarId, errorLabel, uploadButton, fileId, cl
         },
         success: function (data) {
             $(uploadButton).addClass("hideMe");
+            $(fileId).addClass("hideMe");
             $(progressBarId).html("100%");
-            $(progressBarId).effect("fade", 1000, progressBarCallback(progressBarId, clearId));
-            getBlankLines(getFromSession("fileName"), data);
+            $(progressBarId).effect("fade", 1000, progressBarCallback(progressBarId, clearId, fileId));
+            getBlankLines(getFromSession($(fileId).attr('id') + "Name"), data);
             addToSession("uniqueId", data);
+
             $("#faux").remove();
             $(".jw-button-next").removeClass("hideMe");
         }
@@ -39,9 +42,9 @@ function instantiateUploader(progressBarId, errorLabel, uploadButton, fileId, cl
 /**
  * A callback function to bring a display the clearFileUpload button.
  */
-function progressBarCallback(progressBarId, clearId) {
+function progressBarCallback(progressBarId, clearId, fileId) {
     setTimeout(function () {
-        $(progressBarId).html(getFromSession("fileName") + " successfully uploaded")
+        $(progressBarId).html(getFromSession($(fileId).attr('id') + "Name") + " successfully uploaded")
             .removeClass("progress").fadeIn("fast");
         $(clearId).removeClass("hideMe");
     }, 1000);

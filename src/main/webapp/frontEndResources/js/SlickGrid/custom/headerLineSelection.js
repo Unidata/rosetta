@@ -100,7 +100,6 @@ function gridForHeaderRowSelection(grid, fileData, columns, rows, step) {
  */
 function bindGridHeaderLineSelectionEvent(grid, step) {
     grid.onSelectedRowsChanged.subscribe(function () {
-
         // Uncheck the 'no header lines available in this file' checkbox if it's been previously
         // checked.
         $("#step" + step + " #noHeaderLines").attr('checked', false);

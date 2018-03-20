@@ -14,6 +14,13 @@
    <%@ include file="/WEB-INF/views/jspf/css.jspf" %>
    <%@ include file="/WEB-INF/views/jspf/javascript.jspf" %>
 
+   <script type="text/javascript">
+        var platformMetadata = [];
+        var generalMetadata = [];
+        var publisherInfo = [];
+        $.metadata.setType("attr", "validate");
+        var maxUploadSize = 1243000;
+   </script>
 
    <script type="text/javascript">
     $(document).ready(function(){
@@ -40,23 +47,23 @@
      <legend><spring:message code="step2.title"/></legend>
      <p><spring:message code="step2.description"/></p>
      <%@ include file="/WEB-INF/views/jspf/specifyHeaderLines.jspf" %>
-     <button type="button" id="quickSaveButton"/>Quick Save</button>
+     <button type="button" id="quickSaveButton" class="nonNav"/>Quick Save</button>
     </fieldset>
 
     <fieldset>
      <legend><spring:message code="step3.title"/></legend>
      <p><spring:message code="step3.description"/></p>
      <%@ include file="/WEB-INF/views/jspf/specifyVariableMetadata.jspf" %>
-     <button type="button" id="quickSaveButton"/>Quick Save</button>
-     <button type="button" id="showHeaderButton"/>Show Header</button>
+     <button type="button" id="quickSaveButton" class="nonNav"/>Quick Save</button>
+     <button type="button" id="showHeaderButton" class="nonNav"/>Show Header</button>
     </fieldset>
 
     <fieldset>
      <legend><spring:message code="step4.title"/></legend>
      <p><spring:message code="step4.description"/></p>
      <%@ include file="/WEB-INF/views/jspf/specifyGeneralMetadata.jspf" %>
-     <button type="button" id="quickSaveButton"/>Quick Save</button>
-     <button type="button" id="showHeaderButton"/>Show Header</button>
+     <button type="button" id="quickSaveButton" class="nonNav"/>Quick Save</button>
+     <button type="button" id="showHeaderButton" class="nonNav"/>Show Header</button>
     </fieldset>
 
     <fieldset>

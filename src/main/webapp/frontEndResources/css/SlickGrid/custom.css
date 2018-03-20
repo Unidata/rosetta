@@ -14,9 +14,10 @@
     border: 1px solid #CFCFCF;
     font-family: "Courier New", Courier, monospace;
     font-size: 9pt;
-    width: auto;
+    width:800px;
     height: 320px;
     margin: 0 20px 0 0;
+
 }
 
 /* header row */

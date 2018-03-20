@@ -412,7 +412,9 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/parse", method = RequestMethod.POST)
     @ResponseBody
     public String parseFile(AsciiFile file, BindingResult result) {
+
         String filePath = FilenameUtils.concat(getUploadDir(), file.getUniqueId());
+
         filePath = FilenameUtils.concat(filePath, file.getFileName());
 
         // SCENARIO 1: no header lines yet (return the file contents to display in grid)

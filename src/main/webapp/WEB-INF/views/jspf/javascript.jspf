@@ -17,8 +17,8 @@
 <script type="text/javascript" src="resources/js/uploader/custom.js"></script>
 
 <!-- SlickGrid -->
-<!--
-<script type="text/javascript" src="resources/js/plugins/jquery.event.drag-2.2.js"></script>
+
+<script type="text/javascript" src="resources/js/plugins/jquery.event.drag-2.3.0.js"></script>
 <script type="text/javascript" src="resources/js/plugins/jquery.jsonp.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/slick.cellrangedecorator.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/slick.cellrangeselector.js"></script>
@@ -34,7 +34,7 @@
 <script type="text/javascript" src="resources/js/SlickGrid/custom/headerLineSelection.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/custom/delimiterSelection.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/custom/variableSpecification.js"></script>
--->
+
 
 <!-- custom -->
 <script type="text/javascript" src="resources/js/wizard.js"></script>

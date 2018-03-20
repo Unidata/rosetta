@@ -47,6 +47,7 @@
         }
 
         function createNextButton(i) {
+
             let stepName = "step" + i;
             $("#" + stepName + "commands").append("<button type='button' id='" + stepName + "Next' class='next'>Next</button>");
 
@@ -54,8 +55,19 @@
                 $("#" + stepName).hide();
                 $("#step" + (i + 1)).show();
                 if (i + 2 == count)
-                    $(submmitButtonName).show();
+                $(submmitButtonName).show();
                 selectStep(i + 1);
+
+                if (i === 1) {
+                    $.post("parse", {uniqueId: getFromSession("uniqueId"), fileName: getFromSession("dataFileName")},
+                        function (data) {
+                            drawGrid(data, "2")
+                        }, "text");
+                }
+                if (i === 2) {
+                    
+                }
+
             });
         }
 

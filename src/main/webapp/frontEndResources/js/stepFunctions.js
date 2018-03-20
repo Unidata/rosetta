@@ -16,6 +16,7 @@
  * @param stepData  Optional data needed in this function.
  */
 function selectPlatform(stepType, stepData) {
+    console.log('here');
     if (stepType == "stepValidation") {
         // If we land on this page and user has already enter something
         // (e.g., clicked previous or used the menu to navigate)
@@ -42,6 +43,7 @@ function selectPlatform(stepType, stepData) {
         }
     } else if (stepType == "stepFunctions") {  // Initialization.  
         var inputName = "#step" + stepData + " input";
+        console.log(inputName);
         $(inputName).bind("click", function () {    // Bind any click events and capture user input.
             addToSession("cfType", $(this).val());
             // Show 'Next' button after user makes a selection
