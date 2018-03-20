@@ -57,7 +57,7 @@
                 if (i + 2 == count)
                 $(submmitButtonName).show();
                 selectStep(i + 1);
-
+                console.log(i);
                 if (i === 1) {
                     $.post("parse", {uniqueId: getFromSession("uniqueId"), fileName: getFromSession("dataFileName")},
                         function (data) {
@@ -65,7 +65,17 @@
                         }, "text");
                 }
                 if (i === 2) {
-                    
+                    $.post("parse", {
+                        uniqueId: getFromSession("uniqueId"),
+                        fileName: getFromSession("dataFileName"),
+                        otherDelimiter: getFromSession("otherDelimiter"),
+                        headerLineNumbers: getFromSession("headerLineNumbers"),
+                        delimiters: getFromSession("delimiters")
+                    },
+                    function (data) {
+                        console.log(data);
+                        drawGrid(data, "4")
+                    }, "text");
                 }
 
             });

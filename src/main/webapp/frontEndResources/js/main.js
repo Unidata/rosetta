@@ -117,22 +117,48 @@ $(document).ready(function ($) {
             $("#templateFileNotice").empty();
     });
 
+$('#delimiterList input:checkbox').bind("click", function () {
+
+            // create array from selected values
+            var checkedDelimiters = $("input:checkbox").serializeArray();
+            var delimiterArray = [];
+            $.each(checkedDelimiters, function (index, field) {
+                delimiterArray[index] = field.value;
+            });
+
+            // add to session
+            addToSession("delimiters", delimiterArray);
+            if (delimiterArray.length <= 0) {
+                removeFromSession("delimiters");
+            } else {
+                // Show 'Next' button after user makes a selection
+                $("#faux").remove();
+                $(".jw-button-next").removeClass("hideMe");
+            }
+
+            // if Other is selected
+            if ($(this).val() == "Other") {
+                if (jQuery.inArray("Other", delimiterArray) < 0) {
+                    // toggled off
+                    $("#otherDelimiter").addClass("hideMe");
+                    $("#otherDelimiter").val("");
+                    removeFromSession("otherDelimiter");
+                } else {
+                    // toggled on
+                    $("#otherDelimiter").removeClass("hideMe");
+                }
+            }
+        });
 
 
-    /**
-     *
-     */
-     $('#step1Next').click(function(evt) {
-        console.log('here');
-        /*
-     $.post("parse",
-               {uniqueId: getFromSession("uniqueId"), fileName: getFromSession("dataFileName")},
-               function (data) {
-                   drawGrid(data, "2")
-               },
-               "text");
-               */
-    });
+
+        $("#otherDelimiter").on("focusout", function () {
+            addToSession("otherDelimiter", $(this).val());
+            if (getFromSession("delimiters")) {
+            }
+        });
+
+
 
       function quickSave() {
         $.post("QuickSave", getAllDataInSession(),

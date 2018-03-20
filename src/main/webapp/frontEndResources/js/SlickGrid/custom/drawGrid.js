@@ -59,6 +59,7 @@ function drawGrid(data, step) {
     } else if (step == "3") { // Specify Delimiters
         gridForDelimiterSelection(grid, fileData, columns, rows, LineNumberFormatter);
     } else {  // Specify Variable Attributes
+        console.log('here');
         gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, step);
     }
 }
