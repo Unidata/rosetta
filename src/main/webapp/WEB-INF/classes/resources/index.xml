@@ -36,4 +36,8 @@
         <fileName>community.xml</fileName>
         <type>community</type>
     </resource>
+    <resource>
+        <fileName>steps.xml</fileName>
+        <type>step</type>
+    </resource>
 </resources>

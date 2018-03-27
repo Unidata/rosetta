@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <platforms>
     <platform>
-        <name>Single Station or Tower</name>
+        <name>Single Station</name>
         <img>resources/img/platforms/tower.jpeg</img>
         <type>timeSeries</type>
     </platform>
@@ -11,7 +11,7 @@
         <type>profile</type>
     </platform>
     <platform>
-        <name>Conductivity, Temperature, and Depth Sonde</name>
+        <name>CTD Sonde</name>
         <img>resources/img/platforms/ctd.jpeg</img>
         <type>profile</type>
     </platform>

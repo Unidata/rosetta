@@ -42,18 +42,22 @@ import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import edu.ucar.unidata.rosetta.converters.EolSoundingComp;
 import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
+import edu.ucar.unidata.rosetta.domain.CFType;
 import edu.ucar.unidata.rosetta.domain.UploadedAutoconvertFile;
 import edu.ucar.unidata.rosetta.domain.UploadedFile;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
+import edu.ucar.unidata.rosetta.service.DataManager;
 import edu.ucar.unidata.rosetta.service.FileParserManager;
-import edu.ucar.unidata.rosetta.service.FileValidator;
 import edu.ucar.unidata.rosetta.service.JsonManager;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
+import edu.ucar.unidata.rosetta.service.validators.CFTypeValidator;
+import edu.ucar.unidata.rosetta.service.validators.FileValidator;
 import edu.ucar.unidata.rosetta.util.JsonUtil;
 import edu.ucar.unidata.rosetta.util.RosettaProperties;
 import edu.ucar.unidata.rosetta.util.ZipFileUtil;
@@ -67,6 +71,9 @@ public class TemplateController implements HandlerExceptionResolver {
     protected static Logger logger = Logger.getLogger(TemplateController.class);
     @Autowired
     ServletContext servletContext;
+
+    @Resource(name = "dataManager")
+    private DataManager dataManager;
     @Resource(name = "jsonManager")
     private JsonManager jsonManager;
     @Resource(name = "resourceManager")
@@ -75,8 +82,12 @@ public class TemplateController implements HandlerExceptionResolver {
     private FileParserManager fileParserManager;
     @Resource(name = "netcdfFileManager")
     private NetcdfFileManager netcdfFileManager;
+    @Resource(name = "cfTypeValidator")
+    private CFTypeValidator cfTypeValidator;
     @Resource(name = "fileValidator")
     private FileValidator fileValidator;
+
+
 
     private String getDownloadDir() {
         String downloadDir = "";
@@ -93,16 +104,60 @@ public class TemplateController implements HandlerExceptionResolver {
 
 
     /**
-     * Accepts a GET request for access to the wizard.
+     * Accepts a GET request for access to step 1 of the wizard.
      *
-     * @param model  The Model object to be populated by community data.
+     * @param model  The Model object to be populated by CF type data.
      * @return  View and the Model for the wizard to process.
      */
-    @RequestMapping(value = "/convert", method = RequestMethod.GET)
+    @RequestMapping(value = "/step1", method = RequestMethod.GET)
     public ModelAndView selectTemplate(Model model) {
+        // Add current step to the Model.
+        model.addAttribute("currentStep", "1");
+        // Add a list of all steps to the Model for rendering left nav menu.
+        model.addAttribute("steps", resourceManager.loadResources().get("steps"));
+        // Add communities data to Model (for platform display).
         model.addAttribute("communities", resourceManager.loadResources().get("communitys"));
+        // Add platforms data to Model (for platform selection).
+        model.addAttribute("platforms", resourceManager.loadResources().get("platforms"));
+        // Add cfType data to Model.
+        model.addAttribute("cfType", new CFType());
+
         return new ModelAndView("wizard");
     }
+
+    /**
+     /**
+     * Accepts a POST request from step 1 of the wizard.
+     * Collects the CF type data entered by the user in step 1.
+     *
+     * @param cfType    The form-backing object containing the CF type data.
+     * @param result    The BindingResult for error handling.
+     * @param model     The Model object to be populated by file upload data in the next step.
+     * @return          View and the Model for the wizard to process.
+     */
+    @RequestMapping(value = "/step1", method = RequestMethod.POST)
+    public ModelAndView selectTemplate(@Valid CFType cfType, BindingResult result, Model model) {
+
+
+        if (!result.hasErrors()) {  // No validation errors
+            if (!cfType.getPlatform().equals("")) {
+
+            }
+            logger.info(cfType.getSpecifiedCFType());
+        }
+
+
+
+        return new ModelAndView("wizard");
+    }
+
+
+
+
+
+
+
+
 
     /**
      * Accepts a GET AJAX request for specific platform data corresponding to a community.

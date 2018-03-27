@@ -1,14 +1,15 @@
-    </main>
-    <footer>
-     <div class="left nodec">
-      <img src="<spring:message code="global.logo.path"/>" alt="<spring:message code="global.logo.alt"/>"/>
-      Version : <%=ServerInfoBean.getVersion()%> <br/>
-      Build Date: <%=ServerInfoBean.getBuildDate()%>
-     </div>
-     <div class="right nodec">
-        <a href="<spring:message code="footer.image.url"/>"><img src="<spring:message code="footer.image.path"/>" alt="<spring:message code="footer.image.alt"/>"/></a>
-        <spring:message code="footer.text1"/><br/>
-        <spring:message code="footer.text2"/>
-     </div>
-    </footer>
+            </div> <!--/#center-wrapper -->
+        </main>
+        <footer>
+            <div class="left nodec">
+                <img src="<spring:message code="global.logo.path"/>" alt="<spring:message code="global.logo.alt"/>"/>
+                Version : <%=ServerInfoBean.getVersion()%> <br/>
+                Build Date: <%=ServerInfoBean.getBuildDate()%>
+            </div>
+            <div class="right nodec">
+                <a href="<spring:message code="footer.image.url"/>"><img src="<spring:message code="footer.image.path"/>" alt="<spring:message code="footer.image.alt"/>"/></a>
+                <spring:message code="footer.text1"/><br/>
+                <spring:message code="footer.text2"/>
+            </div>
+        </footer>
 

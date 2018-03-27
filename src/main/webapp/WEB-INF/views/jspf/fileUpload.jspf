@@ -1,0 +1,55 @@
+<table>
+	<tr>
+		<td>
+			Data File (Required)
+		</td>
+		<td>
+			<label for="dataFile" class="error"></label>
+			<input id="dataFile" name="dataFile" type="file" value=""/>
+			<input type="button" id="uploadDataFile" value="Upload" class="hideMe"/>
+			<span id="dataFileProgress" class="progress">0%</span>
+	    	<input type="button" id="clearDataFileUpload" value="Clear data file upload" class="hideMe"/>
+	    	<div id="dataFileNotice"></div>
+	    </td>
+	</tr>
+	<tr>
+		<td>
+			Data File Type (Required)
+		</td>
+		<td>
+	    	<select id="fileType">
+            	<option value="">Select a FileType</option>
+            	<option value="custom">Custom</option>
+            	<option value="etuff">eTuff</option>
+            	<option value="eol">EOL Composite Sounding File</option>
+            	<option value="geocsv">GeoCSV</option>
+        	</select>
+	    </td>
+	</tr>
+	<tr>
+		<td>
+			External Positional File (Optional)
+		</td>
+		<td>
+			<label for="positionalFile" class="error"></label>
+			<input id="positionalFile" name="positionalFile" type="file" value=""/>
+			<input type="button" id="uploadPositionalFile" value="Upload" class="hideMe"/>
+			<span id="positionalFileProgress" class="progress">0%</span>
+    		<input type="button" id="clearPositionalFileUpload" value="Clear positional file upload" class="hideMe">
+    		<div id="positionalFileNotice"></div>
+	    </td>
+	</tr>
+	<tr>
+		<td>
+			Rosetta Template (Optional)
+		</td>
+		<td>
+			<label for="templateFile" class="error"></label>
+			<input id="templateFile" name="templateFile" type="file" value=""/>
+			<input type="button" id="uploadTemplateFile" value="Upload" class="hideMe"/>
+			<span id="templateFileProgress" class="progress">0%</span>
+    		<input type="button" id="clearTemplateFileUpload" value="Clear template file upload" class="hideMe">
+    		<div id="templateFileNotice"></div>
+	    </td>
+	</tr>
+</table>

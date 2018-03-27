@@ -2,80 +2,109 @@
 <%@ include file="/WEB-INF/views/jspf/taglibs.jspf" %>
 <%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean" %>
 <!DOCTYPE HTML>
- <html>
-  <head>
-   <title><spring:message code="global.title"/></title>
-   <link rel="shortcut icon" href="${baseUrl}/favicon.ico" type="image/x-icon" />
-   <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
-   <script>
-    var baseUrl = '<c:out value="${baseUrl}" />';
-   </script>
+    <html>
+        <head>
+            <title><spring:message code="global.title"/></title>
+            <link rel="shortcut icon" href="${baseUrl}/favicon.ico" type="image/x-icon" />
 
-   <%@ include file="/WEB-INF/views/jspf/css.jspf" %>
-   <%@ include file="/WEB-INF/views/jspf/javascript.jspf" %>
+            <script>
+                var baseUrl = '<c:out value="${baseUrl}" />';
+            </script>
 
-   <script type="text/javascript">
-        var platformMetadata = [];
-        var generalMetadata = [];
-        var publisherInfo = [];
-        $.metadata.setType("attr", "validate");
-        var maxUploadSize = 1243000;
-   </script>
+            <%@ include file="/WEB-INF/views/jspf/css.jspf" %>
+            <%@ include file="/WEB-INF/views/jspf/javascript.jspf" %>
 
-   <script type="text/javascript">
-    $(document).ready(function(){
-        $("#FORM").rosettaWizard({ submitButton: 'SaveAccount' })
-    });
-   </script>
-  </head>
-  <body>
-   <%@ include file="/WEB-INF/views/jspf/header.jspf" %>
-   <form id="FORM" action="/rosetta/convert" method="POST" enctype="multipart/form-data">
-    <fieldset>
-     <legend><spring:message code="step0.title"/></legend>
-     <p><spring:message code="step0.description"/></p>
-     <%@ include file="/WEB-INF/views/jspf/selectPlatform.jspf" %>
-    </fieldset>
+            <script type="text/javascript">
+                var platformMetadata = [];
+                var generalMetadata = [];
+                var publisherInfo = [];
+                $.metadata.setType("attr", "validate");
+                var maxUploadSize = 1243000;
+            </script>
+        </head>
+        <body>
+            <%@ include file="/WEB-INF/views/jspf/header.jspf" %>
 
-    <fieldset>
-     <legend><spring:message code="step1.title"/></legend>
-     <p><spring:message code="step1.description"/></p>
-     <%@ include file="/WEB-INF/views/jspf/uploadFile.jspf" %>
-    </fieldset>
+            <c:choose>
+                <c:when test="${not empty currentStep}">
 
-    <fieldset>
-     <legend><spring:message code="step2.title"/></legend>
-     <p><spring:message code="step2.description"/></p>
-     <%@ include file="/WEB-INF/views/jspf/specifyHeaderLines.jspf" %>
-     <button type="button" id="quickSaveButton" class="nonNav"/>Quick Save</button>
-    </fieldset>
+                <form id="FORM" action="/rosetta/step${currentStep}" method="POST" enctype="multipart/form-data">
 
-    <fieldset>
-     <legend><spring:message code="step3.title"/></legend>
-     <p><spring:message code="step3.description"/></p>
-     <%@ include file="/WEB-INF/views/jspf/specifyVariableMetadata.jspf" %>
-     <button type="button" id="quickSaveButton" class="nonNav"/>Quick Save</button>
-     <button type="button" id="showHeaderButton" class="nonNav"/>Show Header</button>
-    </fieldset>
+                    <nav>
+                        <c:choose>
+                            <c:when test="${fn:length(steps) gt 0}">
+                                <ul id="steps">
+                                    <c:forEach items="${steps}" var="step">
+                                        <%-- Assign the variables associated with current step. --%>
+                                        <c:if test="${currentStep eq step.id}">
+                                            <c:set var="currentStepTitle" value="${step.title}" />
+                                            <c:set var="currentStepView" value="${step.view}" />
+                                        </c:if>
 
-    <fieldset>
-     <legend><spring:message code="step4.title"/></legend>
-     <p><spring:message code="step4.description"/></p>
-     <%@ include file="/WEB-INF/views/jspf/specifyGeneralMetadata.jspf" %>
-     <button type="button" id="quickSaveButton" class="nonNav"/>Quick Save</button>
-     <button type="button" id="showHeaderButton" class="nonNav"/>Show Header</button>
-    </fieldset>
 
-    <fieldset>
-     <legend><spring:message code="step5.title"/></legend>
-     <p><spring:message code="step5.description"/></p>
-     <%@ include file="/WEB-INF/views/jspf/convertAndDownload.jspf" %>
-    </fieldset>
+                                        <%-- Create left nav step menu. --%>
+                                        <li id="step${step.id}"
+                                                <c:if test="${currentStep eq step.id}">
+                                                    class="current"
+                                                </c:if>
+                                        >
+                                            ${step.title}
+                                        </li>
+                                    </c:forEach>
+                                </ul>
 
-    </form> 
-   <%@ include file="/WEB-INF/views/jspf/footer.jspf" %>
-  </body>
- </html>
+                                <%-- Show the next button for all steps except the last. --%>
+                                <c:if test="${currentStep < fn:length(steps)}">
+                                    <input type="submit" name="step${currentStep}Next" value="Next" class="button"/>
+                                </c:if>
+
+                                <%-- Show the previous button for all steps except the first. --%>
+                                <c:if test="${currentStep > 1}">
+                                    <input type="submit" name="step${currentStep}Previous" value="Previous" class="button"/>
+                                </c:if>
+
+                            </c:when>
+                            <c:otherwise>
+                                <p class="error">Unable to load wizard navigation.</p>
+                            </c:otherwise>
+                        </c:choose>
+                    </nav>
+
+                    <section>
+                         <div id="step${currentStep}">
+                            <h3>${currentStepTitle}</h3>
+                            <c:choose>
+                                 <c:when test="${currentStepView eq 'cfType'}">
+                                     <%@ include file="/WEB-INF/views/jspf/cfType.jspf" %>
+                                 </c:when>
+                                 <c:when test="${currentStepView eq 'fileUpload'}">
+                                     <%@ include file="/WEB-INF/views/jspf/fileUpload.jspf" %>
+                                 </c:when>
+                                 <c:when test="${currentStepView eq 'headerLinesAndDelimiters'}">
+                                     <%@ include file="/WEB-INF/views/jspf/headerLinesAndDelimiters.jspf" %>
+                                 </c:when>
+                                 <c:when test="${currentStepView eq 'variableMetadata'}">
+                                     <%@ include file="/WEB-INF/views/jspf/variableMetadata.jspf" %>
+                                 </c:when>
+                                 <c:when test="${currentStepView eq 'generalMetadata'}">
+                                     <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
+                                 </c:when>
+                                 <c:otherwise>
+                                     <%@ include file="/WEB-INF/views/jspf/convertAndDownload.jspf" %>
+                                 </c:otherwise>
+                            </c:choose>
+                         </div>
+                    </section>
+
+                </c:when>
+                <c:otherwise>
+                    <p class="error">Unable to load the Rosetta wizard.  <spring:message code="fatal.error.message"/></p>
+                </c:otherwise>
+            </c:choose>
+
+            <%@ include file="/WEB-INF/views/jspf/footer.jspf" %>
+        </body>
+    </html>
 
 
 

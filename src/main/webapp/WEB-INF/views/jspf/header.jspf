@@ -1,8 +1,9 @@
-    <header>
-     <a href="${baseUrl}/">
-      <img src="<spring:message code="global.logo.path"/>" alt="<spring:message code="global.logo.alt"/>"/>
-      <h1><spring:message code="global.title"/></h1>
-     </a>
-      <%-- future login & account links will go here --%>
-    </header>
-    <main>
+        <header>
+            <a href="${baseUrl}/">
+                <img src="<spring:message code="global.logo.path"/>" alt="<spring:message code="global.logo.alt"/>"/>
+                <h1><spring:message code="global.title"/></h1>
+            </a>
+            <%-- future login & account links will go here --%>
+        </header>
+        <main>
+            <div id="center-wrapper" class="clearfix">

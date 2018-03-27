@@ -1,0 +1,61 @@
+<p>Select your community:</p>
+
+<c:choose>
+    <c:when test="${fn:length(communities) gt 0}">
+        <script>
+            $( function() {
+                $( "#tabs" ).tabs();
+                $( ".platforms" ).selectable();
+            } );
+        </script>
+        <div id="tabs">
+            <ul>
+                <c:forEach items="${communities}" var="community">
+                    <%-- Create tabs --%>
+                    <li><a href="#${fn:replace(community.name, ' ', '_')}">${community.name}</a></li>
+                </c:forEach>
+                <li class="cfType"><a href="#cfType"><small>advanced:</small> Input CF Type</a></li>
+            </ul>
+            <c:forEach items="${communities}" var="community">
+                <div id="${fn:replace(community.name, ' ', '_')}">
+                    <p>Select a platform:</p>
+                    <ul class="platforms">
+                    <c:forEach items="${community.platform}" var="communityPlatforms">
+                        <c:choose>
+                            <c:when test="${fn:length(platforms) gt 0}">
+                                <c:forEach items="${platforms}" var="platform">
+                                    <c:if test="${platform.name eq communityPlatforms}">
+                                        <li class="ui-state-default">
+                                            <img src="${platform.img}" alt="${platform.name}" />
+                                            <small>${platform.name}</small>
+                                            <input type="radio" name="platform" value="${fn:replace(platform.name, ' ', '_')}" />
+                                        </li>
+                                    </c:if>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <p class="error">Unable to load platform selection.  <spring:message code="fatal.error.message"/></p>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                    </ul>
+
+                </div> <!--/#${community.name} -->
+            </c:forEach>
+            <div id="cfType">
+                <p>I know what I'm doing and I want to directly select a CF Type:</p>
+                <select name="cfType">
+                    <option value="">Select a CF Type</option>
+                    <option value="point">Point</option>
+                    <option value="trajectory">Trajectory</option>
+                    <option value="profile">Profile</option>
+                    <option value="timeseries">Time Series</option>
+                </select>
+            </div> <!-- /#cfType -->
+        </div> <!-- /#tabs -->
+
+    </c:when>
+    <c:otherwise>
+       <p class="error">Unable to load CF type selection.  <spring:message code="fatal.error.message"/></p>
+    </c:otherwise>
+</c:choose>

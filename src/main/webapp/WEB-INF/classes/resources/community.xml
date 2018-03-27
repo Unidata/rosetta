@@ -2,7 +2,7 @@
 <communities>
     <community>
         <name>Atmospheric Sciences</name>
-        <platform>Single Station or Tower</platform>
+        <platform>Single Station</platform>
         <platform>Radiosonde</platform>
         <platform>Wind Profiler</platform>
         <platform>Aircraft</platform>
@@ -11,7 +11,7 @@
     <community>
         <name>Physical Ocean Sciences</name>
         <platform>Moored Buoy</platform>
-        <platform>Conductivity, Temperature, and Depth Sonde</platform>
+        <platform>CTD Sonde</platform>
     </community>
     <community>
         <name>Bio-Logging</name>

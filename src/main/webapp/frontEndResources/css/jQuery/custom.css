@@ -1,9 +1,43 @@
 /**
  * jQuery/custom.css
  * 
- * Content found here are either changes to the standard CSS that comes with jWizard UI
- * (no-theme) distribution, or custom jQuery UI-related style changes. 
+ * Content found here changes to the standard CSS that comes with the
+ * custom jQuery UI-related style changes.
  */
+
+/* tabs */
+
+#tabs {
+    border:none !important;
+    border-radius:0;
+    width:100%;
+    float:left;
+    background: #F6F6F6; /* Old browsers */
+    background: -moz-linear-gradient(top, #F6F6F6 0%, #F6F6F6 53%, #FFFFFF 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #F6F6F6 0%,#F6F6F6 53%,#FFFFFF 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #F6F6F6 0%,#F6F6F6 53%,#FFFFFF 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F6F6F6', endColorstr='#FFFFFF',GradientType=0 ); /* IE6-9 *//
+}
+
+.ui-tabs {
+    padding:0;
+    margin:0;
+}
+
+#tabs .ui-corner-top {
+    border-radius:0;
+}
+
+#tabs .ui-tabs-nav {
+    background: #FFFFFF;
+    border-radius: 0;
+    border-top:none;
+    border-left:none;
+    border-right:1px solid #FFFFFF;
+}
+
+
+
 
 /* UI dialog widget */
 .ui-dialog {
@@ -97,3 +131,4 @@
 .ui-tooltip {
     background-color: #EFEFEF;
 }
+

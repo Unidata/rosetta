@@ -2,12 +2,13 @@
  * main.css
  * 
  * General CSS that does not specifically override or apply to elements handled by
- * jQuery or plugin CSS (e.g., uploader, SlickGrid and jWizard).
+ * jQuery or plugin CSS (e.g., uploader and SlickGrid).
  */
 @import url("header.css");
 @import url("footer.css");
+@import url("clearfix.css");
+@import url("nav.css");
 @import url("jQuery/custom.css");
-@import url("wizard.css");
 @import url("SlickGrid/custom.css");
 @import url("uploader/custom.css");
 
@@ -17,10 +18,14 @@ body {
     font-family: 'Source Sans Pro', sans-serif;
 }
 
-/* step descriptions */
-h5 {
+h3 {
+    margin:8px 0 10px 0;
+}
+
+h4 {
     margin: 0 0 10px 0;
     padding: 0;
+    color:#666666;
 }
 
 /* link decoration */
@@ -40,6 +45,15 @@ main {
     width:100%;
     float:left;
     clear:left;
+    margin:10px 0;
+}
+
+
+section {
+    padding-left:10px;
+    float:left;
+    width:75%;
+    border-left:1px solid #CFCFCF;
 }
 
 /* some divs to format a page into left & right */
@@ -96,23 +110,6 @@ button,
     margin-left:0;
 }
 
-
-
-/* fake/disabled next button */
-#faux {
-    background: #E6E6E6 url('../img/ui-bg_glass_75_e6e6e6_1x400.png') 50% 50% repeat-x;
-    color: #CFCFCF !important;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    -khtml-border-radius: 4px;
-    border-radius: 4px;
-    border: 1px solid #D3D3D3;
-    font-weight: normal;
-    padding: .5em 1em;
-    margin-left: 1em;
-    display: inline-block;
-    font-size: 11px;
-}
 
 /* commonly used class used to hide elements */
 .hideMe {
@@ -393,43 +390,12 @@ ul li label img {
 
 /** step 0 **/
 
-#cfType {
+#step1 {
     width:100%;
-    float:left;
 }
 
-#step0 #cfType #platforms {
-    width:50%;
-    float:left;
-}
-
-
-#step0 #cfType #cfdsg {
-    margin-left:20px;
-    float:right;
-    width:46%;
-}
-
-#step0 #cfType #cfdsg .or {
-    width:20%;
-    float:left;
-    padding-top:30px;
-    font-size:2em;
-    font-weight: bold;
-}
-
-#step0 #cfType #cfdsg .right {
-    margin:0;
-    padding:0;
-    float:right;
-    width:70%;
-}
-
-
-
-
-
-#step0 ul {
+/* tabs */
+#step1 ul {
     width:100%;
     list-style: none;
     margin: 0 0 10px 0;
@@ -437,55 +403,72 @@ ul li label img {
     float: left;
 }
 
-#step0 ul li {
+#step1 ul li {
     display: inline;
-    margin: 0 15px 10px 0;
+    margin: 0 5px 0 0;
     padding: 0;
     float: left;
     position: relative;
     bottom: 0;
 }
-
-
-#step0 ul li label {
+#step1 ul li.cfType {
     margin: 0;
-    padding: 0;
-    text-align: left;
+    float: right;
+}
+
+#step1 ul li.cfType small {
+    font-size:7pt;
 }
 
 
-#step0 #platforms ul li {
-    width:80px;
+
+/* platform display */
+#step1 ul.platforms {
+    margin: 0;
+    padding: 0;
+}
+
+#step1 ul.platforms li {
     display: inline;
     margin: 0 10px 10px 0;
     padding: 0;
     float: left;
-    position: relative;
-    bottom: 0;
+    font-size:9pt;
+    text-align:center;
+    background:#FFFFFF;
 }
 
+#step1 ul.platforms li.ui-selected{
+    background-color: #F39814;
+}
 
-
-/* step 0: cf type selection images */
-#step0 ul li label img {
-    width: 60px;
-    height: 60px;
+#step1 ul.platforms li img {
+    width: 75px;
+    height: 75px;
     margin: 0 0 10px 0px;
     padding: 10px;
-    border: 1px solid #EEEEEE;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    -khtml-border-radius: 4px;
-    border-radius: 4px;
     display: block;
 }
 
-#step1 table {
+#step1 ul.platforms li small {
+    display:block;
+    margin: 0 0 5px 0;
+}
+
+#step1 ul.platforms li input {
+    display: none;
+}
+
+
+
+
+
+#step2 table {
     border-collapse: collapse;
     width: auto;
     margin: 0;
 }
-#step1 table td {
+#step2 table td {
     padding: 10px;
     vertical-align: text-top;
 }

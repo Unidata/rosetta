@@ -126,4 +126,5 @@ public class ResourceManagerImpl implements ResourceManager {
         }
         return resources;
     }
-}
+
+  }

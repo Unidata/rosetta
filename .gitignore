@@ -1,0 +1,60 @@
+###############
+# Rosetta files #
+###############
+build.properties
+docs/javadoc
+docs/jsdoc
+docs/site
+docs/dox
+
+# Ignore maven stuff
+target/
+
+# Ignore gradle stuff
+.gradle/
+build/
+
+#############
+# IDE files #
+#############
+#
+# intelliJ
+#
+.idea/
+ide/intellij/
+rosetta.iml
+#
+# Eclipse files
+#
+.classpath
+.project
+.settings
+
+######################
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+*.swp
+*.*~
+._*
+
+######################
+# class files        #
+######################
+*.class
+
+##################
+# Coverity files #
+##################
+cov-int
+rosetta.tgz
+/build/
+/bin/
+
+#####################
+# Output Test Files #
+#####################
+src/test/resources/testData/esc/*.nc

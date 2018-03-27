@@ -1,47 +1,42 @@
 $(document).ready(function ($) {
 
     /**
-     * STEP 0
-     * Hide the CF Type div (will be shown 
-     * after user selects a community type).
+     * STEP 1
+     * cfType selection via clicking on platform images.
      */
-    $('#cfType').addClass('hideMe');
+    $(".platforms").on( "selectableselected", function( event, ui ) {
+        // get li corresponding to selected platform (for use below).
+        var selectedLi = $(this).find(".ui-selected");
+        // get the radio button corresponding to the selected platform.
+        var selectedInput = $(this).find(".ui-selected input");
 
-    /**
-     * STEP 0
-     * Remove any prior platform display (or error) if page is reloaded
-     */
-   // $('#platforms ul').remove();
-   // $('#platforms p').remove();
+        // uncheck all other platform radio buttons.
+        $(".platforms li input").prop("checked", false);
+        // make sure all other platform li are not highlighted (workaround for jQuery quirk).
+        $(".platforms li").removeClass("ui-selected");
+        // unselect any selected cfTypes in the dropdown menu.
+        $('#cfType select option:selected').prop('selected', false);
 
-    /**
-     * STEP 0
-     * Community type selection triggers listing of
-     * platform types and CF DSG selection options.
-     */
-    $('#communityType li').click(function(evt) {
-        $(this).find('input').prop('checked', true);
-        var community = $(this).find('input').val().replace(/\s/g, '');
-        
-        // unselect the other input options
-        $(this).siblings().each(function(){
-            $(this).find('input').prop('checked', false);
-        });
-        // remove any prior platform display (or error) if it exists
-        $('#platforms ul').remove();
-        $('#platforms p').remove();
-        $('#cfType').removeClass('hideMe');
-
-        makeCommunityPlatformAjaxRequest(community);
-
-        // need the following to prevent from being fired in duplicate 
-        evt.stopPropagation();
-        evt.preventDefault();
-    });
+        // check the selected radio button.
+        $(selectedInput).prop("checked", true);
+        // highlight the selected li
+        $(selectedLi).addClass("ui-selected");
+    } );
 
     /**
      * STEP 1
+     * cfType selection via dropdown menu.
      */
+    $("#cfType select").change(function( event, ui ) {
+        // uncheck all other platform radio buttons.
+        $(".platforms li input").prop("checked", false);
+        // make sure all other platform li are not highlighted (workaround for jQuery quirk).
+        $(".platforms li").removeClass("ui-selected");
+    });
+
+
+
+
     $('#dataFile').change(function(evt) {
         $('#uploadDataFile').removeClass('hideMe');
     });
