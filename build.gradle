@@ -12,6 +12,11 @@ apply plugin: 'com.github.jruby-gradle.base'
 apply plugin: 'base'
 
 apply plugin: 'com.github.jruby-gradle.base'
+apply plugin: 'org.gretty'
+
+import org.akhikhl.gretty.AppAfterIntegrationTestTask
+import org.apache.commons.io.FileUtils
+import com.github.jrubygradle.JRubyExec
 
 compileJava {
     options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
@@ -136,10 +141,10 @@ buildscript {
     dependencies {
         classpath "com.github.jruby-gradle:jruby-gradle-plugin:1.5.0"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.1"
+        classpath 'org.gretty:gretty:+'
     }
 }
 
-import com.github.jrubygradle.JRubyExec
 
 task jekyllBuild(type: JRubyExec, group: 'Jekyll', description: 'Build your site.') {
     // Enable task to be UP-TO-DATE.
@@ -169,6 +174,30 @@ task jekyllServe(type: JRubyExec, group: 'Jekyll', description: 'Serve your site
     scriptArgs commonFlags
 }
 
+gretty {
+    servletContainer = 'tomcat8'
+
+    httpPort = 8888
+
+    contextPath = '/rosetta'
+
+    jvmArgs = ["-Drosetta.content.root.path=$rootDir/src/test/rosetta_home",
+               "-Dlog4j.configuration=$rootDir/src/main/webapp/WEB-INF/classes/log4j.xml"]
+
+    integrationTestTask = 'test'
+
+    configurations {
+        grettyRunnerTomcat8 {
+            exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
+        }
+    }
+}
+
+test.doLast {
+        print "Cleaning up"
+        File folder = new File("$rootDir/src/test/rosetta_home")
+        FileUtils.cleanDirectory(folder)
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.5.1'
