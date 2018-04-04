@@ -14,7 +14,6 @@ apply plugin: 'base'
 apply plugin: 'com.github.jruby-gradle.base'
 apply plugin: 'org.gretty'
 
-import org.akhikhl.gretty.AppAfterIntegrationTestTask
 import org.apache.commons.io.FileUtils
 import com.github.jrubygradle.JRubyExec
 
