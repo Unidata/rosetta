@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,8 @@ import edu.ucar.unidata.rosetta.domain.UploadedFile;
 import edu.ucar.unidata.rosetta.util.RosettaProperties;
 import edu.ucar.unidata.rosetta.util.ZipFileUtil;
 import ucar.ma2.InvalidRangeException;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Main controller for Rosetta application.
@@ -62,6 +65,19 @@ public class AutoConvertController implements HandlerExceptionResolver {
         return uploadDir;
     }
 
+    private ArrayList<String> cleanupInventory(ArrayList<String> inventory) {
+        // first pass based on typical .gitignore for OS generated files
+        Stream<String> cleanInventory = inventory.stream()
+                //.map(inventoryFile -> inventoryFile.toUpperCase())
+                .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, ".Spotlight-V100"))
+                .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, ".Trashes"))
+                .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, "ehthumbs.db"))
+                .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, "Thumbs.db"))
+                .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, "/__MACOSX/"))
+                .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, ".DS_STORE"));
+
+        return new ArrayList<String>(cleanInventory.collect(toList()));
+    }
 
     /**
      * Accepts a POST request for an uploaded file, stores that file to disk, auto converts the
@@ -76,6 +92,8 @@ public class AutoConvertController implements HandlerExceptionResolver {
     public Resource batchProcess(UploadedFile file, HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<String> convertedFiles = new ArrayList<>();
         String uniqueId = createUniqueId(request);
+
+
 
         String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
         String extractToDir = FilenameUtils.concat(filePath, "extracted");
@@ -101,6 +119,11 @@ public class AutoConvertController implements HandlerExceptionResolver {
         if (uploadedFile.getName().endsWith(".zip")) {
             inventory = ZipFileUtil.unzipAndInventory(uploadedFile, toDirectory);
         }
+
+        // clean up inventory - some auto-generated OS files can really play havoc
+        // if they are not accounted for. For example: "__MACOSX/"
+
+        inventory = cleanupInventory(inventory);
 
         String template = "";
         for (String inventoryFile : inventory) {
