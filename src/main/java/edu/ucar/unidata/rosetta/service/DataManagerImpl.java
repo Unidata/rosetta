@@ -1,5 +1,6 @@
 package edu.ucar.unidata.rosetta.service;
 
+
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -14,6 +15,9 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import edu.ucar.unidata.rosetta.domain.CFType;
+import edu.ucar.unidata.rosetta.util.RosettaProperties;
 
 
 public class DataManagerImpl implements DataManager {
@@ -32,7 +36,7 @@ public class DataManagerImpl implements DataManager {
         BufferedReader bufferedReader = null;
         try {
             // Get the expressions from the file.
-            File file = new File(DATA_FILE);
+            File file = new File(getDownloadDir() + DATA_FILE);
 
             fileReader = new FileReader(file);
             bufferedReader = new BufferedReader(fileReader);
@@ -72,7 +76,7 @@ public class DataManagerImpl implements DataManager {
         FileWriter fileWriter = null;
         try {
             // Create the File object for the data file.
-            File file = new File(DATA_FILE);
+            File file = new File(getDownloadDir() + DATA_FILE);
 
             // Finish instantiating the FileWriter with the data file.
             fileWriter = new FileWriter(file);
@@ -112,7 +116,7 @@ public class DataManagerImpl implements DataManager {
         return cfType;
     }
 
-    public void setCFData(String cfType) {
+    public void setCFData(CFType cfType) {
 
         Map<String,Object> fileData = getData();
         StringBuilder stringBuilder = new StringBuilder(fileData.size());
@@ -120,9 +124,19 @@ public class DataManagerImpl implements DataManager {
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             if (pair.getKey().equals("cfType")) {
-                stringBuilder.append("" + "=>" + cfType);
+                stringBuilder.append("cfType=>");
+                stringBuilder.append(cfType); // replace what's there
+                stringBuilder.append("\n");
             } else {
-                stringBuilder.append(pair.getKey() + "=>" + pair.getValue());
+                stringBuilder.append(pair.getKey());
+                stringBuilder.append("=>");
+                stringBuilder.append(pair.getValue());
+                stringBuilder.append("\n");
+                if (!it.hasNext()) {
+                    stringBuilder.append("cfType=>");
+                    stringBuilder.append(cfType); // cfType not in file yet so add.
+                    stringBuilder.append("\n");
+                }
             }
             it.remove(); // avoids a ConcurrentModificationException
         }
@@ -130,7 +144,11 @@ public class DataManagerImpl implements DataManager {
     }
 
 
-
+    private String getDownloadDir() {
+        String downloadDir = "";
+        downloadDir = RosettaProperties.getDownloadDir();
+        return downloadDir;
+    }
 
 
     /**

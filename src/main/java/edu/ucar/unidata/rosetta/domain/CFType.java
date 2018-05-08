@@ -43,4 +43,13 @@ public class CFType {
     public void setPlatform(String platform) {
         this.platform = platform;
     }
+
+    public String toString() {
+        if (specifiedCFType != null) {
+            return specifiedCFType;
+        } else {
+            return platform;
+        }
+
+    }
 }

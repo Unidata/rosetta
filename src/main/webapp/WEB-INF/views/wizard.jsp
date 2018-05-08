@@ -1,12 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/views/jspf/taglibs.jspf" %>
 <%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean" %>
+<c:set var="baseUrl" value="${pageContext.request.contextPath}" />
 <!DOCTYPE HTML>
     <html>
         <head>
-            <title><spring:message code="global.title"/></title>
-            <link rel="shortcut icon" href="${baseUrl}/favicon.ico" type="image/x-icon" />
-
+            <title><spring:message code="global.title"/> ${baseUrl}</title>
             <script>
                 var baseUrl = '<c:out value="${baseUrl}" />';
             </script>

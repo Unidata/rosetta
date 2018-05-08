@@ -1,5 +1,7 @@
 package edu.ucar.unidata.rosetta.service;
 
+import edu.ucar.unidata.rosetta.domain.CFType;
+
 import java.util.Map;
 
 public interface DataManager {
@@ -8,6 +10,6 @@ public interface DataManager {
 
     public String getCFData();
 
-    public void setCFData(String cfType);
+    public void setCFData(CFType cfType) ;
 
 }

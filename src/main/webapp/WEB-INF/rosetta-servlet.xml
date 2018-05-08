@@ -30,7 +30,7 @@
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>classpath:defaultRosettaConfig.properties</value>
+                <value>classpath:rosetta.properties</value>
             </list>
         </property>
     </bean>
@@ -43,6 +43,7 @@
     <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean"
           init-method="init"/>
     <bean id="netcdfFileManager" class="edu.ucar.unidata.rosetta.dsg.SingleStationTimeSeries"/>
+    <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.init.repository.Derby"/>
 
     <!-- File upload multipart resolver -->
     <bean id="multipartResolver"

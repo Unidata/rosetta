@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -110,7 +111,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step1", method = RequestMethod.GET)
-    public ModelAndView selectTemplate(Model model) {
+    public ModelAndView specifyCFType(Model model) {
         // Add current step to the Model.
         model.addAttribute("currentStep", "1");
         // Add a list of all steps to the Model for rendering left nav menu.
@@ -133,26 +134,33 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param cfType    The form-backing object containing the CF type data.
      * @param result    The BindingResult for error handling.
      * @param model     The Model object to be populated by file upload data in the next step.
-     * @return          View and the Model for the wizard to process.
+     * @return          Redirect to next step.
      */
     @RequestMapping(value = "/step1", method = RequestMethod.POST)
-    public ModelAndView selectTemplate(@Valid CFType cfType, BindingResult result, Model model) {
-
-
-        if (!result.hasErrors()) {  // No validation errors
-            if (!cfType.getPlatform().equals("")) {
-
-            }
-            logger.info(cfType.getSpecifiedCFType());
+    public ModelAndView specifyCFType(@Valid CFType cfType, BindingResult result, Model model) {
+        if (result.hasErrors()) {   // validation errors
+            logger.error("Validation errors detected in CF type form data.");
+            return new ModelAndView("wizard");
+        } else {
+            return new ModelAndView(new RedirectView("/step2", true));
         }
-
-
-
-        return new ModelAndView("wizard");
     }
 
 
-
+    /**
+     * Accepts a GET request for access to step 1 of the wizard.
+     *
+     * @param model  The Model object to be populated by CF type data.
+     * @return  View and the Model for the wizard to process.
+     */
+    @RequestMapping(value = "/step2", method = RequestMethod.GET)
+    public ModelAndView fileUpload(Model model) {
+        // Add current step to the Model.
+        model.addAttribute("currentStep", "2");
+        // Add a list of all steps to the Model for rendering left nav menu.
+        model.addAttribute("steps", resourceManager.loadResources().get("steps"));
+        return new ModelAndView("wizard");
+    }
 
 
 
