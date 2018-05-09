@@ -8,8 +8,6 @@
            http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
 	       http://www.springframework.org/schema/beans 
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-
-
 	       http://www.springframework.org/schema/context 
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
@@ -18,6 +16,9 @@
          These are front end resources (css, etc.) and xml files -->
     <mvc:resources mapping="/resources/**" location="/frontEndResources/"/>
     <mvc:resources mapping="/resources/**" location="/WEB-INF/classes/resources/"/>
+
+    <!-- Activates various annotations to be detected in bean classes -->
+    <context:annotation-config />
 
     <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="edu.ucar.unidata.rosetta"/>
@@ -30,25 +31,28 @@
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>classpath:rosetta.properties</value>
+                <value>classpath:application.properties</value>
             </list>
         </property>
     </bean>
-    <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl"/>
-    <bean id="jsonManager" class="edu.ucar.unidata.rosetta.service.JsonManagerImpl"/>
-    <bean id="resourceManager" class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl"/>
-    <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.FileParserManagerImpl"/>
-    <bean id="cfTypeValidator" class="edu.ucar.unidata.rosetta.service.validators.CFTypeValidator"/>
-    <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.validators.FileValidator"/>
-    <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean"
-          init-method="init"/>
-    <bean id="netcdfFileManager" class="edu.ucar.unidata.rosetta.dsg.SingleStationTimeSeries"/>
-    <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.init.repository.Derby"/>
+
+    <!-- Taming the pesky derby.log file -->
+    <bean id="setDerbyLog" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"><value>java.lang.System</value></property>
+        <property name="targetMethod"><value>setProperty</value></property>
+        <property name="arguments">
+            <list>
+                <value>derby.stream.error.file</value>
+                <value>${derby.stream.error.file}</value>
+            </list>
+        </property>
+    </bean>
+
 
     <!-- File upload multipart resolver -->
     <bean id="multipartResolver"
           class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize" value="${maxUploadSize}"/>
+        <property name="maxUploadSize" value="${rosetta.maxUpload}"/>
     </bean>
 
     <!-- Message source resolver to use messages.properties file in the 'war/WEB-INF/classes' directory -->
@@ -62,6 +66,35 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
         <property name="prefix" value="/WEB-INF/views/"></property>
         <property name="suffix" value=".jsp"></property>
+    </bean>
+
+    <!-- Declaration for Resource use -->
+
+    <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl"/>
+    <bean id="jsonManager" class="edu.ucar.unidata.rosetta.service.JsonManagerImpl"/>
+    <bean id="resourceManager" class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl"/>
+    <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.FileParserManagerImpl"/>
+    <bean id="cfTypeValidator" class="edu.ucar.unidata.rosetta.service.validators.CFTypeValidator"/>
+    <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.validators.FileValidator"/>
+    <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean"
+          init-method="init"/>
+    <bean id="netcdfFileManager" class="edu.ucar.unidata.rosetta.dsg.SingleStationTimeSeries"/>
+
+    <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.service.EmbeddedDerbyDbInitManager"/>
+
+
+
+    <!-- Declare a datasource that has pooling capabilities-->
+    <bean id="dbDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="initialSize" value="10" />
+        <property name="maxActive" value="20" />
+        <property name="maxIdle" value="-1" />
+        <property name="maxWait" value="-1" />
+        <property name="validationQuery" value="${jdbc.validationQuery}" />
     </bean>
 
 </beans>

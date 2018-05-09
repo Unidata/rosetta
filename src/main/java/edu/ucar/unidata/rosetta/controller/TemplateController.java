@@ -73,8 +73,8 @@ public class TemplateController implements HandlerExceptionResolver {
     @Autowired
     ServletContext servletContext;
 
-    @Resource(name = "dataManager")
-    private DataManager dataManager;
+   // @Resource(name = "dataManager")
+   // private DataManager dataManager;
     @Resource(name = "jsonManager")
     private JsonManager jsonManager;
     @Resource(name = "resourceManager")
@@ -89,7 +89,7 @@ public class TemplateController implements HandlerExceptionResolver {
     private FileValidator fileValidator;
 
 
-
+/*
     private String getDownloadDir() {
         String downloadDir = "";
         downloadDir = RosettaProperties.getDownloadDir();
@@ -101,7 +101,7 @@ public class TemplateController implements HandlerExceptionResolver {
         uploadDir = RosettaProperties.getUploadDir();
         return uploadDir;
     }
-
+*/
 
 
     /**
@@ -243,12 +243,14 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param model The Model object to be populated by Resources.
      * @return The 'create' ModelAndView containing the Resource-populated Model.
      */
+    /*
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView createTemplate(Model model) {
         model.addAllAttributes(resourceManager.loadResources());
         model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
         return new ModelAndView("create");
     }
+    */
 
     /**
      * Accepts a GET request for template creation, fetches resource information
@@ -259,12 +261,14 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param model The Model object to be populated by Resources.
      * @return The 'create' ModelAndView containing the Resource-populated Model.
      */
+    /*
     @RequestMapping(value = "/createRegex", method = RequestMethod.GET)
     public ModelAndView createRegexTemplate(Model model) {
         model.addAllAttributes(resourceManager.loadResources());
         model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
         return new ModelAndView("createRegex");
     }
+    */
 
     /**
      * Accepts a GET request for autoconversion of a known file, fetches resource information
@@ -275,12 +279,14 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param model The Model object to be populated by Resources.
      * @return The 'create' ModelAndView containing the Resource-populated Model.
      */
+    /*
     @RequestMapping(value = "/autoConvert", method = RequestMethod.GET)
     public ModelAndView autoConvertKnownFile(Model model) {
         model.addAllAttributes(resourceManager.loadResources());
         model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
         return new ModelAndView("autoConvert");
     }
+    */
 
     /**
      * Accepts a GET request for workflow to augment metadata of a known file,
@@ -322,6 +328,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param model The Model object to be populated by Resources.
      * @return The 'create' ModelAndView containing the Resource-populated Model.
      */
+    /*
     @RequestMapping(value = "/restore", method = RequestMethod.GET)
     public ModelAndView restoreTemplate(Model model) {
         BasicConfigurator.configure();
@@ -329,6 +336,7 @@ public class TemplateController implements HandlerExceptionResolver {
         model.addAttribute("maxUploadSize", RosettaProperties.getMaxUploadSize(servletContext));
         return new ModelAndView("restore");
     }
+    */
 
     /**
      * Accepts a POST request for an uploaded file, stores that file to disk
@@ -339,6 +347,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param request The HttpServletRequest with which to glean the client IP address.
      * @return A String of the local file name for the ASCII file (or null for an error).
      */
+    /*
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public String processUpload(UploadedFile file, HttpServletRequest request) {
@@ -379,6 +388,7 @@ public class TemplateController implements HandlerExceptionResolver {
         }
         return uniqueId;
     }
+    */
 
 
     /**
@@ -388,6 +398,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param uniqueId The UploadedFile form backing object containing the file.     *
      * @return The number of blank lines in the file.
      */
+    /*
     @RequestMapping(value = "/getBlankLines", method = RequestMethod.GET)
     @ResponseBody
     public String getBlankLines(@RequestParam("fileName") String fileName, @RequestParam("uniqueId") String uniqueId) {
@@ -397,7 +408,7 @@ public class TemplateController implements HandlerExceptionResolver {
         blankLineCount = fileParserManager.getBlankLines(uploadedFile);
         return String.valueOf(blankLineCount);
     }
-
+*/
 
     /**
      * Accepts a POST request for an uploaded file, stores that file to disk, auto converts the
@@ -407,6 +418,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param request The HttpServletRequest with which to glean the client IP address.
      * @return A String of the local file name for the ASCII file (or null for an error).
      */
+    /*
     @RequestMapping(value = "/autoConvertKnownFile", method = RequestMethod.POST)
     @ResponseBody
     public String autoConvertKnownFile(UploadedAutoconvertFile file, HttpServletRequest request) {
@@ -462,7 +474,7 @@ public class TemplateController implements HandlerExceptionResolver {
         return returnFile;
     }
 
-
+*/
     /**
      * Accepts a POST request Parse the uploaded file. The methods gets called
      * at various times and the file data is parsed according the data it
@@ -472,6 +484,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param result The BindingResult object for errors.
      * @return A String of the local file name for the ASCII file.
      */
+    /*
     @RequestMapping(value = "/parse", method = RequestMethod.POST)
     @ResponseBody
     public String parseFile(AsciiFile file, BindingResult result) {
@@ -488,6 +501,8 @@ public class TemplateController implements HandlerExceptionResolver {
             if (!file.getDelimiterList().isEmpty()) {
                 List<String> delimiterList = file.getDelimiterList();
                 String selectedDelimiter = delimiterList.get(0);
+
+ */
                 /**
                  * // Time for some validation
                  * fileValidator.validateList(delimiterList, result);
@@ -502,6 +517,8 @@ public class TemplateController implements HandlerExceptionResolver {
                  *
                  * } else {
                  **/
+
+                /*
                 String normalizedFileData = fileParserManager.normalizeDelimiters(filePath, selectedDelimiter, delimiterList, file.getHeaderLineList());
                 if (file.getVariableNameMap().isEmpty()) {
                     return StringEscapeUtils.escapeHtml4(selectedDelimiter + "\n" + normalizedFileData);
@@ -607,7 +624,7 @@ public class TemplateController implements HandlerExceptionResolver {
             }
         }
     }
-
+*/
 
     /**
      * Accepts a POST request Get global metadata from the uploaded file.
@@ -616,6 +633,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param request The BindingResult object for errors.
      * @return A String of the local file name for the ASCII file.
      */
+    /*
     @RequestMapping(value = "/getMetadataKnownFile", method = RequestMethod.POST)
     @ResponseBody
     public String getMetadataKnownFile(UploadedAutoconvertFile file, HttpServletRequest request) {
@@ -654,13 +672,14 @@ public class TemplateController implements HandlerExceptionResolver {
         // "title:title here,description:des here,institution:inst here,dataAuthor:data aut here,version:version here,dataSource:source here"
         return metadataStr;
     }
-
+*/
     /**
      * Accepts a POST request to restore session from an NcML file,
      *
      * @param file The UploadedFile form backing object containing the file.
      * @return A String of the local file name for the ASCII file (or null for an error).
      */
+    /*
     @RequestMapping(value = "/restoreFromZip", method = RequestMethod.POST)
     @ResponseBody
     public String processZip(UploadedFile file) {
@@ -693,13 +712,14 @@ public class TemplateController implements HandlerExceptionResolver {
         }
         return jsonStrSessionStorage;
     }
-
+*/
     /**
      * Accepts a POST request to to initiate a quick save (download a temp save
      * template)
      *
      * @return A String of the local file name for the ASCII file (or null for an error).
      */
+    /*
     @RequestMapping(value = "/QuickSave", method = RequestMethod.POST)
     @ResponseBody
     public String quickSave(String jsonStrSessionStorage) {
@@ -735,6 +755,7 @@ public class TemplateController implements HandlerExceptionResolver {
         String returnString = JSONObject.toJSONString(infoForDownload);
         return returnString;
     }
+    */
 
 /*
     @RequestMapping(value = "/publish", method = RequestMethod.POST)
@@ -789,6 +810,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param fileName the name of the file the user wants to download from the download directory
      * @return IOStream of the file requested.
      */
+    /*
     @RequestMapping(value = "/fileDownload/{uniqueID}/{file:.*}", method = RequestMethod.GET)
     public void fileDownload(@PathVariable(value = "uniqueID") String uniqueID,
                              @PathVariable(value = "file") String fileName,
@@ -826,13 +848,14 @@ public class TemplateController implements HandlerExceptionResolver {
             }
         }
     }
-
+*/
     /**
      * Attempts to get the client IP address from the request.
      *
      * @param request The HttpServletRequest.
      * @return The client's IP address.
      */
+    /*
     private String getIpAddress(HttpServletRequest request) {
         String ipAddress = null;
         if (request.getRemoteAddr() != null) {
@@ -844,7 +867,7 @@ public class TemplateController implements HandlerExceptionResolver {
         }
         return ipAddress;
     }
-
+*/
     /**
      * Creates a unique id for the file name from the clients IP address and the
      * date.
@@ -852,6 +875,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param request The HttpServletRequest.
      * @return The unique file name id.
      */
+    /*
     private String createUniqueId(HttpServletRequest request) {
         String id = String.valueOf(new Date().hashCode());
         String ipAddress = getIpAddress(request);
@@ -874,6 +898,7 @@ public class TemplateController implements HandlerExceptionResolver {
         }
         return jsonFileName;
     }
+    */
 
     /**
      * This method gracefully handles any uncaught exception that are fatal in

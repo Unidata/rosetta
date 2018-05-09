@@ -22,7 +22,7 @@ import edu.ucar.unidata.rosetta.util.RosettaProperties;
 
 public class DataManagerImpl implements DataManager {
 
-    protected static Logger logger = Logger.getLogger(DataManagerImpl.class);
+    protected static final Logger logger = Logger.getLogger(DataManagerImpl.class);
 
     private static final String DATA_FILE = "data.txt";
 
@@ -30,7 +30,7 @@ public class DataManagerImpl implements DataManager {
     public Map<String,Object> getData() {
 
         Map<String,Object> data = new HashMap<>();
-
+/*
         // Get the file data.
         FileReader fileReader = null;
         BufferedReader bufferedReader = null;
@@ -67,11 +67,13 @@ public class DataManagerImpl implements DataManager {
                 printExceptionStackTrace(e);
             }
         }
+                */
         return data;
+
     }
 
     private void setData(String data) {
-
+/*
         // Declare a FileWriter.
         FileWriter fileWriter = null;
         try {
@@ -99,6 +101,7 @@ public class DataManagerImpl implements DataManager {
                 printExceptionStackTrace(e);
             }
         }
+        */
 
     }
 
@@ -143,13 +146,13 @@ public class DataManagerImpl implements DataManager {
         setData(stringBuilder.toString());
     }
 
-
+/*
     private String getDownloadDir() {
         String downloadDir = "";
         downloadDir = RosettaProperties.getDownloadDir();
         return downloadDir;
     }
-
+*/
 
     /**
      * Prints the full stack trace of an exception.
