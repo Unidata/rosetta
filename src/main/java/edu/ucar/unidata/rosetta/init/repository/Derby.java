@@ -2,24 +2,15 @@ package edu.ucar.unidata.rosetta.init.repository;
 
 import edu.ucar.unidata.rosetta.util.RosettaProperties;
 
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
-
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -96,8 +87,31 @@ public class Derby implements DatabaseInitializationManager {
             }
 
         } else {
-            logger.info("Database already exists.");
+            logger.info("Nothing to do here... Database already exists.");
         }
+    }
+
+
+    /**
+     * Shuts down the embedded derby database by de-registering the driver.
+     *
+     * @param props Properties from rosetta.properties that may be used for database shutdown.
+     * @throws SQLException   If an SQL exceptions occurs during database shutdown.
+     */
+    public void shutdownDatabase(Properties props) throws SQLException {
+
+        String rosettaHome = props.getProperty("rosettaHome");
+        String dbResourcePath = FilenameUtils.concat(rosettaHome, RESOURCE_PATH);
+
+        Properties dbProps = RosettaProperties.getProperties(FilenameUtils.concat(dbResourcePath,  PROPERTIES_FILE));
+        String databaseName = props.getProperty("databaseName");
+
+        // Create connection URL.
+        String url = "jdbc:derby:" + rosettaHome + "/" + databaseName;
+
+        Driver driver = DriverManager.getDriver(url);
+        logger.info("De-registering jdbc driver.");
+        DriverManager.deregisterDriver(driver);
     }
 
     /**
@@ -135,7 +149,6 @@ public class Derby implements DatabaseInitializationManager {
 
         if (connection != null)
             connection.close();
-
     }
 
 

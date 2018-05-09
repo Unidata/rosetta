@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-
-import java.nio.charset.StandardCharsets;
-
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -26,9 +23,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
 
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
@@ -39,7 +34,7 @@ import org.springframework.dao.NonTransientDataAccessResourceException;
  */
 public class ApplicationInitialization implements ServletContextListener {
 
-
+    // Handles creation of the rosetta database.
     @Resource(name = "dbInitManager")
     private DatabaseInitializationManager dbInitManager;
 
@@ -54,16 +49,22 @@ public class ApplicationInitialization implements ServletContextListener {
     /**
      * Receives notification that the web application initialization process is starting.
      *
-     * Find the application home ROSETTA_HOME and make sure it exists.  If not, create it.
-     * Find out what database was selected for use and create the database if it doesn't exist.
+     * Information from the rosetta.properties file and JAVA_OPTS is read and used to create
+     * the following resources needed by rosetta if they do not already exit:
      *
-     * @param servletContextEvent  The event class.
+     *      - ROSETTA_HOME
+     *      - uploads & downloads directory
+     *      - rosetta database
+     *
+     * @param servletContextEvent  Event notifications regarding changes to the ServletContext lifecycle.
      */
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent)  {
 
-        ServletContext servletContext = servletContextEvent.getServletContext();
         logger.info("Application context initialization...");
+
+        // If a rosetta.properties file exists, get the contents.
+        Properties props = RosettaProperties.getProperties(FilenameUtils.concat(ROSETTA_HOME, CONFIG_FILE));
 
         File rosettaHomeLocation = new File(ROSETTA_HOME);
         try {
@@ -77,104 +78,120 @@ public class ApplicationInitialization implements ServletContextListener {
                     contextDestroyed(servletContextEvent); // Can't proceed without ROSETTA_HOME, so die.
                 }
 
-                // If a rosetta.properties file exists, get the contents.
-                Properties props = RosettaProperties.getProperties(FilenameUtils.concat(ROSETTA_HOME, CONFIG_FILE));
-                props.setProperty("rosettaHome", ROSETTA_HOME); // Add ROSETTA_HOME.
-                String downloadDirProp = props.getProperty("downloadDir");
-                String uploadDirProp = props.getProperty("uploadDir");
-                String maxUploadProp = props.getProperty("maxUpload");
-                if (maxUploadProp == null)
-                    props.setProperty("maxUpload", String.valueOf(DEFAULT_MAX_UPLOAD_SIZE));
-                String databaseProp = props.getProperty("database");
+                // Add ROSETTA_HOME to props.
+                props.setProperty("rosettaHome", ROSETTA_HOME);
 
+                // If file max upload size is not specified, use the default.
+                if (props.getProperty("maxUpload") == null)
+                    props.setProperty("maxUpload", String.valueOf(DEFAULT_MAX_UPLOAD_SIZE));
 
                 // Create directory where downloads are stashed.
-                File downloadDir;
-                if (downloadDirProp != null)
-                    downloadDir = new File(FilenameUtils.concat(ROSETTA_HOME, downloadDirProp));
-                else
-                    downloadDir = new File(FilenameUtils.concat(ROSETTA_HOME, DEFAULT_DOWNLOAD_DIR));
-
-                if (!downloadDir.exists()) {
-                    logger.info("Creating downloads directory...");
-                    if (!downloadDir.mkdirs()) {
-                        logger.error("Unable to create downloads directory.");
-                        contextDestroyed(servletContextEvent); // Shouldn't proceed without downloads directory, so die.
-                    }
-                }
+                createDownloadsDirectory(props.getProperty("downloadDir"));
 
                 // Create directory where uploads are stashed.
-                File uploadDir;
-                if (uploadDirProp != null)
-                    uploadDir = new File(FilenameUtils.concat(ROSETTA_HOME, uploadDirProp));
-                else
-                    uploadDir = new File(FilenameUtils.concat(ROSETTA_HOME, DEFAULT_UPLOAD_DIR));
+                createUploadDirectory(props.getProperty("uploadDir"));
 
-                if (!uploadDir.exists()) {
-                    logger.info("Creating uploads directory...");
-                    if (!uploadDir.mkdirs()) {
-                        logger.error("Unable to create uploads directory.");
-                        contextDestroyed(servletContextEvent); // Shouldn't proceed without uploads directory, so die.
-                    }
-                }
+                // Create the database and populate with the relevant prop values.
+                dbInitManager.createDatabase(props);
 
-                // Create the database.
-                try {
-                    dbInitManager.createDatabase(props);
-                } catch (SQLException | NonTransientDataAccessResourceException e) {
-                    StringWriter errors = new StringWriter();
-                    e.printStackTrace(new PrintWriter(errors));
-                    logger.error(errors);
-                    contextDestroyed(servletContextEvent); // Can't continue if have database issues, so die.
-                }
 
-            } else {
-                // ROSETTA_HOME exists.
+            } else {  // ROSETTA_HOME already exists.
+
+                // Create directory where downloads are stashed if it doesn't already exist.
+                createDownloadsDirectory(props.getProperty("downloadDir"));
+
+                // Create directory where uploads are stashed if it doesn't already exist.
+                createUploadDirectory(props.getProperty("uploadDir"));
+
+                // Create the database and populate with the relevant prop values if it doesn't already exist.
+                dbInitManager.createDatabase(props);
+
             }
-        } catch (SecurityException e) {
+        } catch (SecurityException | IOException | SQLException | NonTransientDataAccessResourceException e) {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             logger.error(errors);
-            contextDestroyed(servletContextEvent); // Important directories needed by rosetta do not exist, so die.
+            // Can't continue if important directories do not exist or if we have database issues, so die.
+            contextDestroyed(servletContextEvent);
         }
-
-
-
-        // if home doesn't exist, create the whole thing
-            // create home
-            // if config file exists
-                // create upload and download dirs
-                // create db and populate it
-            // if config file doesn't exist, use defaults
-            // create db and populate
-        // if home does exist
-            // if upload & download dirs dont exist
-                // create
-            // if
-
-
     }
 
     /**
-     * Shutdown the database if it hasn't already been shutdown.
+     * Receives notification that the ServletContext is about to be shut down.
      *
-     * @param servletContextEvent  The event class.
+     * @param servletContextEvent  Event notifications regarding changes to the ServletContext lifecycle.
      */
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         logger.info("Application context destruction...");
-        if (databaseSelected.equals("derby")) {
-            Enumeration<Driver> drivers = DriverManager.getDrivers();
-            while (drivers.hasMoreElements()) {
-                Driver driver = drivers.nextElement();
-                try {
-                    DriverManager.deregisterDriver(driver);
-                    logger.info("De-registering jdbc driver.");
-                } catch (SQLException e) {
-                    logger.error("Error de-registering driver: " + e.getMessage());
-                }
-            }
+
+        // If a rosetta.properties file exists, get the contents.
+        Properties props = RosettaProperties.getProperties(FilenameUtils.concat(ROSETTA_HOME, CONFIG_FILE));
+        // Add ROSETTA_HOME to props.
+        props.setProperty("rosettaHome", ROSETTA_HOME);
+
+        try {
+            dbInitManager.shutdownDatabase(props);
+        } catch (SQLException  e) {
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            logger.error(errors);
         }
         logger.error("Goodbye.");
     }
+
+
+    /**
+     * Create directory where rosetta stashes files uploaded by users. The name of this
+     * directory can be customized by specified the name in the rosetta.properties file
+     * (see documentation for more information). If no custom name is provided, the
+     * default directory name is used.
+     *
+     * @param uploadDirProp The user-specified uploads directory name.
+     * @throws IOException  If unable to create the uploads directory.
+     */
+    public void createUploadDirectory(String uploadDirProp) throws IOException{
+        File uploadDir;
+        if (uploadDirProp != null)
+            uploadDir = new File(FilenameUtils.concat(ROSETTA_HOME, uploadDirProp));
+        else
+            uploadDir = new File(FilenameUtils.concat(ROSETTA_HOME, DEFAULT_UPLOAD_DIR));
+
+        // If this directory doesn't exist, create it.
+        if (!uploadDir.exists()) {
+            logger.info("Creating uploads directory...");
+            if (!uploadDir.mkdirs()) {
+                throw new IOException("Unable to create uploads directory.");
+            }
+        }
+    }
+
+
+    /**
+     * Create directory where rosetta stashes files that will be downloaded by users.
+     * The name of this directory can be customized by specified the name in the
+     * rosetta.properties file (see documentation for more information). If no custom
+     * name is provided, the default directory name is used.
+     *
+     * @param downloadDirProp  The user-specified downloads directory name.
+     * @throws IOException     If unable to create the downloads directory.
+     */
+    public void createDownloadsDirectory(String downloadDirProp) throws IOException{
+        File downloadDir;
+        if (downloadDirProp != null)
+            downloadDir = new File(FilenameUtils.concat(ROSETTA_HOME, downloadDirProp));
+        else
+            downloadDir = new File(FilenameUtils.concat(ROSETTA_HOME, DEFAULT_DOWNLOAD_DIR));
+
+        // If this directory doesn't exist, create it.
+        if (!downloadDir.exists()) {
+            logger.info("Creating downloads directory...");
+            if (!downloadDir.mkdirs()) {
+                throw new IOException("Unable to create downloads directory.");
+            }
+        }
+    }
+
+
+
 }
