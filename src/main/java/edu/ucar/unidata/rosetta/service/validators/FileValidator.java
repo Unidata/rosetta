@@ -13,7 +13,7 @@ import java.util.List;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 
 @Component
-public class FileValidator implements Validator {
+public class FileValidator extends CommonValidator implements Validator {
     /*
         private String cfType = null;
         private String uniqueId = null;
@@ -26,8 +26,6 @@ public class FileValidator implements Validator {
         private HashMap<String, HashMap> variableMetadataMap = new HashMap<String, HashMap> ();
 
     */
-    private static final String[] NAUGHTY_STRINGS = {"<script>", "../", "svg", "javascript", "::", "&quot;", "fromcharCode", "%3", "$#", "alert(", ".js", ".source", "\\", "scriptlet", ".css", "binding:", ".htc", "vbscript", "mocha:", "livescript:", "base64", "\00", "xss:", "%77", "0x", "IS NULL;", "1;", "; --", "1=1"};
-    private static final String[] NAUGHTY_CHARS = {"<", ">", "`", "^", "|", "}", "{"};
 
 
     public boolean supports(Class clazz) {
@@ -44,42 +42,10 @@ public class FileValidator implements Validator {
 
     }
 
-
     private void validateList(List<String> list, Errors errors) {
         for (String input : list) {
             validateInput(input, errors);
         }
-    }
-
-
-    private void validateInput(String input, Errors errors) {
-        String badChar = checkForNaughtyChars(input);
-        if (badChar != null) {
-            errors.reject("Bad value submitted: " + badChar);
-        }
-        String badString = checkForNaughtyStrings(input);
-        if (badString != null) {
-            errors.reject("Bad value submitted: " + badString);
-        }
-    }
-
-
-    private String checkForNaughtyStrings(String itemToCheck) {
-        for (String item : NAUGHTY_STRINGS) {
-            if (StringUtils.contains(StringUtils.lowerCase(itemToCheck), item)) {
-                return item;
-            }
-        }
-        return null;
-    }
-
-    private String checkForNaughtyChars(String itemToCheck) {
-        for (String item : NAUGHTY_CHARS) {
-            if (StringUtils.contains(itemToCheck, item)) {
-                return item;
-            }
-        }
-        return null;
     }
 
     /**
