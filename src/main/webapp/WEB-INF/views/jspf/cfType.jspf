@@ -1,7 +1,7 @@
-<p>Select your community:</p>
+<p>To determine your CF type, please select your community:</p>
 
 <c:choose>
-    <c:when test="${fn:length(communities) gt 0}">
+    <c:when test="${fn:length(domains) gt 0}">
         <script>
             $( function() {
                 $( "#tabs" ).tabs();
@@ -10,17 +10,17 @@
         </script>
         <div id="tabs">
             <ul>
-                <c:forEach items="${communities}" var="community">
+                <c:forEach items="${domains}" var="domain">
                     <%-- Create tabs --%>
-                    <li><a href="#${fn:replace(community.name, ' ', '_')}">${community.name}</a></li>
+                    <li><a href="#${fn:replace(domain.name, ' ', '_')}">${domain.name}</a></li>
                 </c:forEach>
                 <li class="cfType"><a href="#cfType"><small>advanced:</small> Input CF Type</a></li>
             </ul>
-            <c:forEach items="${communities}" var="community">
-                <div id="${fn:replace(community.name, ' ', '_')}">
+            <c:forEach items="${domains}" var="domain">
+                <div id="${fn:replace(domain.name, ' ', '_')}">
                     <p>Select a platform:</p>
                     <ul class="platforms">
-                    <c:forEach items="${community.platform}" var="communityPlatforms">
+                    <c:forEach items="${domain.platform}" var="communityPlatforms">
                         <c:choose>
                             <c:when test="${fn:length(platforms) gt 0}">
                                 <c:forEach items="${platforms}" var="platform">
@@ -40,7 +40,7 @@
                     </c:forEach>
                     </ul>
 
-                </div> <!--/#${community.name} -->
+                </div> <!--/#${domain.name} -->
             </c:forEach>
             <div id="cfType">
                 <p>I know what I'm doing and I want to directly select a CF Type:</p>
@@ -53,6 +53,11 @@
                 </select>
             </div> <!-- /#cfType -->
         </div> <!-- /#tabs -->
+
+        <c:if test="${not empty error}">
+           <p class="error">${error}</p>
+        </c:if>
+
 
     </c:when>
     <c:otherwise>

@@ -1,43 +1,14 @@
 package edu.ucar.unidata.rosetta.controller;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
+import edu.ucar.unidata.rosetta.domain.Data;
+import edu.ucar.unidata.rosetta.service.DataManager;
+import edu.ucar.unidata.rosetta.service.ResourceManager;
+import edu.ucar.unidata.rosetta.service.validators.CFTypeValidator;
+import edu.ucar.unidata.rosetta.service.validators.FileValidator;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
@@ -45,23 +16,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import edu.ucar.unidata.rosetta.converters.EolSoundingComp;
-import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
-import edu.ucar.unidata.rosetta.converters.XlsToCsv;
-import edu.ucar.unidata.rosetta.domain.AsciiFile;
-import edu.ucar.unidata.rosetta.domain.CFType;
-import edu.ucar.unidata.rosetta.domain.UploadedAutoconvertFile;
-import edu.ucar.unidata.rosetta.domain.UploadedFile;
-import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
-import edu.ucar.unidata.rosetta.service.DataManager;
-import edu.ucar.unidata.rosetta.service.FileParserManager;
-import edu.ucar.unidata.rosetta.service.JsonManager;
-import edu.ucar.unidata.rosetta.service.ResourceManager;
-import edu.ucar.unidata.rosetta.service.validators.CFTypeValidator;
-import edu.ucar.unidata.rosetta.service.validators.FileValidator;
-import edu.ucar.unidata.rosetta.util.JsonUtil;
-import edu.ucar.unidata.rosetta.util.RosettaProperties;
-import edu.ucar.unidata.rosetta.util.ZipFileUtil;
+
+import org.apache.log4j.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
 
 /**
  * Main controller for Rosetta application.
@@ -70,76 +41,86 @@ import edu.ucar.unidata.rosetta.util.ZipFileUtil;
 public class TemplateController implements HandlerExceptionResolver {
 
     protected static Logger logger = Logger.getLogger(TemplateController.class);
+
     @Autowired
     ServletContext servletContext;
 
-   // @Resource(name = "dataManager")
-   // private DataManager dataManager;
+    @Resource(name = "dataManager")
+    private DataManager dataManager;
+    /*
     @Resource(name = "jsonManager")
     private JsonManager jsonManager;
+    */
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
+    /*
     @Resource(name = "fileParserManager")
     private FileParserManager fileParserManager;
     @Resource(name = "netcdfFileManager")
     private NetcdfFileManager netcdfFileManager;
-    @Resource(name = "cfTypeValidator")
+
+    */
+    // Validators
+    @Autowired
     private CFTypeValidator cfTypeValidator;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        StringTrimmerEditor stringtrimmer = new StringTrimmerEditor(true);
+        binder.registerCustomEditor(String.class, stringtrimmer);
+        binder.setValidator(cfTypeValidator);
+    }
+
+
     @Resource(name = "fileValidator")
     private FileValidator fileValidator;
 
 
-/*
-    private String getDownloadDir() {
-        String downloadDir = "";
-        downloadDir = RosettaProperties.getDownloadDir();
-        return downloadDir;
-    }
-
-    private String getUploadDir() {
-        String uploadDir = "";
-        uploadDir = RosettaProperties.getUploadDir();
-        return uploadDir;
-    }
-*/
-
-
     /**
-     * Accepts a GET request for access to step 1 of the wizard.
+     * Accepts a GET request for access to step 1 of the wizard (shows a web form to collect CF type data).
      *
      * @param model  The Model object to be populated by CF type data.
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step1", method = RequestMethod.GET)
     public ModelAndView specifyCFType(Model model) {
-        // Add current step to the Model.
+        // Add current step to the Model (used by view to keep track of where we are in the wizard).
         model.addAttribute("currentStep", "1");
         // Add a list of all steps to the Model for rendering left nav menu.
         model.addAttribute("steps", resourceManager.loadResources().get("steps"));
-        // Add communities data to Model (for platform display).
-        model.addAttribute("communities", resourceManager.loadResources().get("communitys"));
+        // Add domains data to Model (for platform display).
+        model.addAttribute("domains", resourceManager.loadResources().get("domains"));
         // Add platforms data to Model (for platform selection).
         model.addAttribute("platforms", resourceManager.loadResources().get("platforms"));
-        // Add cfType data to Model.
-        model.addAttribute("cfType", new CFType());
+        // Add data object to Model.
+        model.addAttribute("data", new Data());
 
         return new ModelAndView("wizard");
     }
 
     /**
-     /**
-     * Accepts a POST request from step 1 of the wizard.
-     * Collects the CF type data entered by the user in step 1.
+     * Accepts a POST request from step 1 of the wizard. Collects the CF type data entered by the user
+     * and validates it.  If it passes validation,
      *
-     * @param cfType    The form-backing object containing the CF type data.
+     * @param data      The form-backing object containing the CF type data.
      * @param result    The BindingResult for error handling.
      * @param model     The Model object to be populated by file upload data in the next step.
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/step1", method = RequestMethod.POST)
-    public ModelAndView specifyCFType(@Valid CFType cfType, BindingResult result, Model model) {
+    public ModelAndView specifyCFType(@Valid Data data, BindingResult result, Model model) {
         if (result.hasErrors()) {   // validation errors
             logger.error("Validation errors detected in CF type form data.");
+            model.addAttribute("error", result.getGlobalError().getDefaultMessage());
+            //model.addAttribute("error", result.getGlobalError());
+            // Add current step to the Model (used by view to keep track of where we are in the wizard).
+            model.addAttribute("currentStep", "1");
+            // Add a list of all steps to the Model for rendering left nav menu.
+            model.addAttribute("steps", resourceManager.loadResources().get("steps"));
+            // Add domains data to Model (for platform display).
+            model.addAttribute("domains", resourceManager.loadResources().get("domains"));
+            // Add platforms data to Model (for platform selection).
+            model.addAttribute("platforms", resourceManager.loadResources().get("platforms"));
             return new ModelAndView("wizard");
         } else {
             return new ModelAndView(new RedirectView("/step2", true));
@@ -148,7 +129,7 @@ public class TemplateController implements HandlerExceptionResolver {
 
 
     /**
-     * Accepts a GET request for access to step 1 of the wizard.
+     * Accepts a GET request for access to step 2 of the wizard.
      *
      * @param model  The Model object to be populated by CF type data.
      * @return  View and the Model for the wizard to process.
@@ -175,6 +156,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param model  The Model object to be populated by platform data.
      * @return  The platforms in JSON string format.
      */
+    /*
     @RequestMapping(value = "/getPlatforms/{community}", method = RequestMethod.GET)
     @ResponseBody
     public List getPlatforms(@PathVariable String community, Model model) {
@@ -229,7 +211,7 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
 
-
+*/
 
 
 

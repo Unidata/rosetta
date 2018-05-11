@@ -61,7 +61,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
             String createDataTable = "CREATE TABLE data " +
                     "(" +
-                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                    "id INTEGER primary key not null, " +
+                    "platform VARCHAR(100) not null, " +
                     "cfType VARCHAR(100) not null, " +
                     "fileName VARCHAR(100) not null, " +
                     "headerLineNumbers INTEGER not null, " +
@@ -80,7 +81,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                 }
             } catch(SQLException e) {
                 // As per the Derby docs, the shutdown commands always raise SQLExceptions. (lame!)
-                logger.info("Shutting down database...");
+                logger.info("Finished creating database. Shutting down database...");
             }
 
 

@@ -1,12 +1,35 @@
 package edu.ucar.unidata.rosetta.domain;
 
 /**
- * Form-backing object for CF Type data.
+ *
  */
-public class CFType {
+public class Data {
 
-    private String cfType = null;    // user knows about cf types and explicitly set the cf type.
-    private String platform = null;  // user doesn't know what cf type to use and selected a platform.
+    private int id;
+    private String cfType;
+    private String platform;
+    private String fileName;
+    private int headerLineNumbers;
+    private String delimiter;
+
+
+    /*
+     * Returns the unique id associated with this object.
+     *
+     * @return  The unique id.
+     */
+    public int getId() {
+        return id;
+    }
+
+    /*
+     * Sets the unique id associated with this object.
+     *
+     * @param id  The unique id.
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
 
     /*
      * Returns the cfType.
@@ -42,6 +65,30 @@ public class CFType {
      */
     public void setPlatform(String platform) {
         this.platform = platform;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public int getHeaderLineNumbers() {
+        return headerLineNumbers;
+    }
+
+    public void setHeaderLineNumbers(int headerLineNumbers) {
+        this.headerLineNumbers = headerLineNumbers;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 
     public String toString() {
