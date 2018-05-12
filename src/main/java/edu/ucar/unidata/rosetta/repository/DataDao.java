@@ -12,7 +12,7 @@ public interface DataDao {
      * @return      The Data object corresponding to the given id.
      * @throws DataRetrievalFailureException  If unable to lookup Data with the given id.
      */
-    public Data lookupById(int id) throws DataRetrievalFailureException;
+    public Data lookupById(String id) throws DataRetrievalFailureException;
 
     /**
      * Persists the information in the given data object.
@@ -36,5 +36,5 @@ public interface DataDao {
      * @param id    The id of the Data object to delete.
      * @throws DataRetrievalFailureException  If unable to delete persisted Data object.
      */
-    public void deletePersistedData(int id) throws DataRetrievalFailureException;
+    public void deletePersistedData(String id) throws DataRetrievalFailureException;
 }

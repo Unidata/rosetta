@@ -1,15 +1,18 @@
 package edu.ucar.unidata.rosetta.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  *
  */
 public class Data {
 
-    private int id;
+    private String id;
     private String cfType;
+    private String community;
     private String platform;
     private String fileName;
-    private int headerLineNumbers;
+    private String headerLineNumbers;
     private String delimiter;
 
 
@@ -18,7 +21,7 @@ public class Data {
      *
      * @return  The unique id.
      */
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -27,7 +30,7 @@ public class Data {
      *
      * @param id  The unique id.
      */
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -47,6 +50,14 @@ public class Data {
      */
     public void setCfType(String cfType) {
         this.cfType = cfType;
+    }
+
+    public String getCommunity() {
+        return community;
+    }
+
+    public void setCommunity(String community) {
+        this.community = community;
     }
 
     /*
@@ -75,11 +86,11 @@ public class Data {
         this.fileName = fileName;
     }
 
-    public int getHeaderLineNumbers() {
+    public String getHeaderLineNumbers() {
         return headerLineNumbers;
     }
 
-    public void setHeaderLineNumbers(int headerLineNumbers) {
+    public void setHeaderLineNumbers(String headerLineNumbers) {
         this.headerLineNumbers = headerLineNumbers;
     }
 
@@ -91,11 +102,8 @@ public class Data {
         this.delimiter = delimiter;
     }
 
+    @Override
     public String toString() {
-        if (cfType != null) {
-            return cfType;
-        } else {
-            return platform;
-        }
+        return ToStringBuilder.reflectionToString(this);
     }
 }
