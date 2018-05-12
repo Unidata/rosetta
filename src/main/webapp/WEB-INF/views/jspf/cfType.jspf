@@ -1,12 +1,25 @@
-<p>To determine your CF type, please select your community:</p>
-
+<p>To determine the most appropriate CF type, please select your community:</p>
 <c:choose>
     <c:when test="${fn:length(domains) gt 0}">
         <script>
             $( function() {
-                $( "#tabs" ).tabs();
+                var tabIndex = 0;
+                <%-- If platform or cfType selection exists, find the index number of the tab to activate it. --%>
+                <c:if test="${not empty data.cfType}">
+                    tabIndex = ${fn:length(domains)};
+                </c:if>
+                <%-- Start at index 1 as 0 is already declared. --%>
+                <c:forEach begin="1" end="${fn:length(domains) - 1 }" varStatus="loop">
+                    <c:forEach items="${domains[loop.index].platform}" var="p">
+                        <c:if test="${not empty data.platform && data.platform == fn:replace(p, ' ', '_')}">
+                            tabIndex = ${loop.index};
+                        </c:if>
+                    </c:forEach>
+                </c:forEach>
+
+                $( "#tabs" ).tabs({active:tabIndex});
                 $( ".platforms" ).selectable();
-            } );
+            });
         </script>
         <div id="tabs">
             <ul>
@@ -25,10 +38,19 @@
                             <c:when test="${fn:length(platforms) gt 0}">
                                 <c:forEach items="${platforms}" var="platform">
                                     <c:if test="${platform.name eq communityPlatforms}">
-                                        <li class="ui-state-default">
+                                        <li class="ui-state-default
+                                            <c:if test="${not empty data.platform && data.platform == fn:replace(platform.name, ' ', '_')}">
+                                                ui-selected
+                                            </c:if>
+                                            ">
                                             <img src="${platform.img}" alt="${platform.name}" />
                                             <small>${platform.name}</small>
-                                            <input type="radio" name="platform" value="${fn:replace(platform.name, ' ', '_')}" />
+                                            <input type="radio" name="platform" value="${fn:replace(platform.name, ' ', '_')}"
+                                            <%-- Mark as selected if platform has already been chosen. --%>
+                                            <c:if test="${not empty data.platform && data.platform == fn:replace(platform.name, ' ', '_')}">
+                                              selected
+                                            </c:if>
+                                            />
                                         </li>
                                     </c:if>
                                 </c:forEach>
@@ -46,10 +68,34 @@
                 <p>I know what I'm doing and I want to directly select a CF Type:</p>
                 <select name="cfType">
                     <option value="">Select a CF Type</option>
-                    <option value="point">Point</option>
-                    <option value="trajectory">Trajectory</option>
-                    <option value="profile">Profile</option>
-                    <option value="timeseries">Time Series</option>
+                        <%-- Populate the cfType field if the data exists & it matches point --%>
+                    <option
+                            <c:if test="${not empty data.cfType && data.cfType == 'point'}">
+                                selected
+                            </c:if>
+                            value="point">Point</option>
+
+                        <%-- Populate the cfType field if the data exists & it matches trajectory --%>
+                    <option
+                            <c:if test="${not empty data.cfType && data.cfType == 'trajectory'}">
+                                selected
+                            </c:if>
+                            value="trajectory">Trajectory</option>
+
+                        <%-- Populate the cfType field if the data exists & it matches profile --%>
+                    <option
+                            <c:if test="${not empty data.cfType && data.cfType == 'profile'}">
+                                selected
+                            </c:if>
+                            value="profile">Profile</option>
+
+
+                        <%-- Populate the cfType field if the data exists & it matches timerseries --%>
+                    <option
+                            <c:if test="${not empty data.cfType && data.cfType == 'timeseries'}">
+                                selected
+                            </c:if>
+                            value="timeseries">Time Series</option>
                 </select>
             </div> <!-- /#cfType -->
         </div> <!-- /#tabs -->
@@ -57,6 +103,17 @@
         <c:if test="${not empty error}">
            <p class="error">${error}</p>
         </c:if>
+
+        <%-- Show the next button. --%>
+        <input type="submit" name="submit" value="Next"
+            <c:if test="${empty data.platform && empty data.cfType }">
+                disabled
+            </c:if>
+            class="button
+            <c:if test="${empty data.platform && empty data.cfType }">
+                disabled
+            </c:if>
+        "/>
 
 
     </c:when>
