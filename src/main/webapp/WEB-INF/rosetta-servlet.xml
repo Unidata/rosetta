@@ -70,7 +70,7 @@
 
     <!-- Declaration for Resource use -->
 
-    <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl"/>
+
     <bean id="jsonManager" class="edu.ucar.unidata.rosetta.service.JsonManagerImpl"/>
     <bean id="resourceManager" class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl"/>
     <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.FileParserManagerImpl"/>
@@ -84,7 +84,7 @@
 
 
     <!-- DAO injection -->
-    <bean id="dataManagerManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl">
+    <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl">
         <property name="dataDao" ref="dataDao"/>
     </bean>
 
