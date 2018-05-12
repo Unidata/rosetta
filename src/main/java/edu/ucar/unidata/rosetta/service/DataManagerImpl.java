@@ -34,7 +34,7 @@ public class DataManagerImpl implements DataManager {
      * @return      The Data object corresponding to the given id.
      */
     @Override
-    public Data lookupById(int id) {
+    public Data lookupById(String id) {
         return dataDao.lookupById(id);
     }
 
@@ -45,7 +45,7 @@ public class DataManagerImpl implements DataManager {
      */
     @Override
     public void persistData(Data data, HttpServletRequest request) {
-        data.setId(createUniqueDataId(request));
+        data.setId(createUniqueDataId(request)); // Create a unqiue ID for this object.
         dataDao.persistData(data);
     }
 
@@ -65,7 +65,7 @@ public class DataManagerImpl implements DataManager {
      * @param id    The id of the Data object to delete.
      */
     @Override
-    public void deleteData(int id) {
+    public void deleteData(String id) {
         dataDao.deletePersistedData(id);
     }
 
@@ -75,7 +75,7 @@ public class DataManagerImpl implements DataManager {
      * @param request   The HttpServletRequest used to get the IP address.
      * @return          The unique id.
     */
-    private int createUniqueDataId(HttpServletRequest request) {
+    private String createUniqueDataId(HttpServletRequest request) {
         String id = String.valueOf(new Date().hashCode());
         String ipAddress = getIpAddress(request);
         if (ipAddress != null) {
@@ -83,7 +83,7 @@ public class DataManagerImpl implements DataManager {
         } else {
             id = String.valueOf(new Random().nextInt() + id);
         }
-        return Integer.parseInt(id.replaceAll(":", "_"));
+        return id.replaceAll(":", "");
     }
 
     /**

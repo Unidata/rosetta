@@ -12,7 +12,7 @@ public interface DataManager {
      * @param id    The id of the Data object.
      * @return      The Data object corresponding to the given id.
      */
-    public Data lookupById(int id);
+    public Data lookupById(String id);
 
     /**
      * Persists the information in the given data object.
@@ -33,6 +33,6 @@ public interface DataManager {
      *
      * @param id    The id of the Data object to delete.
      */
-    public void deleteData(int id);
+    public void deleteData(String id);
 
 }
