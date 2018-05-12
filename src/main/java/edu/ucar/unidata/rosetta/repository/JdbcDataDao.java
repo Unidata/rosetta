@@ -30,8 +30,8 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
      * @throws DataRetrievalFailureException  If unable to lookup Data with the given id.
      */
     @Override
-    public Data lookupById(int id) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM data WHERE userId = ?";
+    public Data lookupById(String id) throws DataRetrievalFailureException {
+        String sql = "SELECT * FROM data WHERE id = ?";
         List<Data> data = getJdbcTemplate().query(sql, new DataMapper(), id);
         if (data.isEmpty()) {
             String message = "Unable to find persisted Data object corresponding to id " + id;
@@ -49,12 +49,12 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
      * @throws DataRetrievalFailureException  If unable to persist the Data object.
      */
     @Override
-    public void persistData(Data data) throws DataRetrievalFailureException{
+    public void persistData(Data data) throws DataRetrievalFailureException {
         // Verify entry doesn't already exist (it shouldn't).
         String sql = "SELECT * FROM data WHERE id = ?";
         List<Data> persisted = getJdbcTemplate().query(sql, new DataMapper(), data.getId());
         if (!persisted.isEmpty()) {
-            throw new DataRetrievalFailureException("Data corresponding to id \"" +  data.getId() + "\" already exists.");
+            throw new DataRetrievalFailureException("Data corresponding to id " +  data.getId() + " already exists.");
         } else {
             // Persist the data object.
             this.insertActor = new SimpleJdbcInsert(getDataSource()).withTableName("data");
@@ -80,6 +80,7 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
     public void updatePersistedData(Data data) throws DataRetrievalFailureException {
         String sql = "UPDATE data SET " +
                 "cfType = ?, " +
+                "community = ?, " +
                 "platform = ?, " +
                 "fileName = ?, " +
                 "headerLineNumbers = ?, " +
@@ -88,6 +89,7 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
         int rowsAffected  = getJdbcTemplate().update(sql, new Object[] {
                 // order matters here
                 data.getCfType(),
+                data.getCommunity(),
                 data.getPlatform(),
                 data.getFileName(),
                 data.getHeaderLineNumbers(),
@@ -110,8 +112,8 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
      * @throws DataRetrievalFailureException  If unable to delete persisted Data object.
      */
     @Override
-    public void deletePersistedData(int id) throws DataRetrievalFailureException {
-        String sql = "DELETE FROM data WHERE userId = ?";
+    public void deletePersistedData(String id) throws DataRetrievalFailureException {
+        String sql = "DELETE FROM data WHERE id = ?";
         int rowsAffected  = getJdbcTemplate().update(sql, id);
         if (rowsAffected <= 0) {
             String message = "Unable to delete Data object corresponding to id " + id;
@@ -136,11 +138,12 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
          */
         public Data mapRow(ResultSet rs, int rowNum) throws SQLException {
             Data data = new Data();
-            data.setId(rs.getInt("id"));
+            data.setId(rs.getString("id"));
             data.setCfType(rs.getString("cfType"));
+            data.setCommunity(rs.getString("community"));
             data.setPlatform(rs.getString("platform"));
             data.setFileName(rs.getString("fileName"));
-            data.setHeaderLineNumbers(rs.getInt("headerLineNumbers"));
+            data.setHeaderLineNumbers(rs.getString("headerLineNumbers"));
             data.setDelimiter(rs.getString("delimiter"));
             return data;
         }
