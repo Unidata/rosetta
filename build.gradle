@@ -62,8 +62,9 @@ dependencies {
     compile "org.slf4j:jcl-over-slf4j:1.7.25"
 
 
+    // JSON processing
     compile "com.fasterxml.jackson.core:jackson-databind:2.9.4"
-
+    compile "com.fasterxml.jackson.core:jackson-core:2.9.5";
 
 
 
