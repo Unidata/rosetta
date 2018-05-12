@@ -1,5 +1,8 @@
 package edu.ucar.unidata.rosetta.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.service.DataManager;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
@@ -7,11 +10,15 @@ import edu.ucar.unidata.rosetta.service.validators.CFTypeValidator;
 import edu.ucar.unidata.rosetta.service.validators.FileValidator;
 
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -32,6 +39,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.WebUtils;
 
 
 /**
@@ -66,8 +74,8 @@ public class TemplateController implements HandlerExceptionResolver {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        StringTrimmerEditor stringtrimmer = new StringTrimmerEditor(true);
-        binder.registerCustomEditor(String.class, stringtrimmer);
+        StringTrimmerEditor stringTrimmer = new StringTrimmerEditor(true);
+        binder.registerCustomEditor(String.class, stringTrimmer);
         binder.setValidator(cfTypeValidator);
     }
 
@@ -83,7 +91,20 @@ public class TemplateController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step1", method = RequestMethod.GET)
-    public ModelAndView specifyCFType(Model model) {
+    public ModelAndView specifyCFType(Model model, HttpServletRequest request) {
+
+        // Have we visited this page before during this session?
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+
+        // Create a new data form-backing object.
+        Data data;
+        if (rosettaCookie != null)
+            data = dataManager.lookupById(rosettaCookie.getValue());
+        else
+            data = new Data();
+
+        // Add data object to Model.
+        model.addAttribute("data", data);
         // Add current step to the Model (used by view to keep track of where we are in the wizard).
         model.addAttribute("currentStep", "1");
         // Add a list of all steps to the Model for rendering left nav menu.
@@ -93,8 +114,6 @@ public class TemplateController implements HandlerExceptionResolver {
         // Add platforms data to Model (for platform selection).
         model.addAttribute("platforms", resourceManager.loadResources().get("platforms"));
         // Add data object to Model.
-        model.addAttribute("data", new Data());
-
         return new ModelAndView("wizard");
     }
 
@@ -105,10 +124,17 @@ public class TemplateController implements HandlerExceptionResolver {
      * @param data      The form-backing object containing the CF type data.
      * @param result    The BindingResult for error handling.
      * @param model     The Model object to be populated by file upload data in the next step.
+     * @param request   HttpServletRequest needed to pass to the dataManager to get client IP.
+     * @param response  HttpServletResponse needed for setting cookie.
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/step1", method = RequestMethod.POST)
-    public ModelAndView specifyCFType(@Valid Data data, BindingResult result, Model model) {
+    public ModelAndView specifyCFType(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
+    //    public ModelAndView specifyCFType(@Valid Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
+        logger.info("HERE: ");
+        for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();)
+            logger.info(e.nextElement());
+
         if (result.hasErrors()) {   // validation errors
             logger.error("Validation errors detected in CF type form data.");
             model.addAttribute("error", result.getGlobalError().getDefaultMessage());
@@ -123,6 +149,9 @@ public class TemplateController implements HandlerExceptionResolver {
             model.addAttribute("platforms", resourceManager.loadResources().get("platforms"));
             return new ModelAndView("wizard");
         } else {
+            // Persist the data.
+            dataManager.persistData(data, request);
+            response.addCookie(new Cookie("rosetta", data.getId()));
             return new ModelAndView(new RedirectView("/step2", true));
         }
     }
@@ -903,9 +932,11 @@ public class TemplateController implements HandlerExceptionResolver {
                     + ((MaxUploadSizeExceededException) exception)
                     .getMaxUploadSize() + " byte.";
         } else {
+            StringWriter errors = new StringWriter();
+            exception.printStackTrace(new PrintWriter(errors));
             message = "An error has occurred: "
                     + exception.getClass().getName() + ":"
-                    + exception.getMessage();
+                    + errors;
         }
         // log it
         logger.error(message);
