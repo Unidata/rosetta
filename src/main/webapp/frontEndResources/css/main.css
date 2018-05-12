@@ -110,6 +110,15 @@ button,
     margin-left:0;
 }
 
+.disabled {
+    color:#CFCFCF;
+    background: #F8F8F8; /* Old browsers */
+    background: -moz-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #F8F8F8 -1%,#F9F9F9 0%,#F6F6F6 0%,#F6F6F6 0%,#F8F8F8 2%,#F8F8F8 4%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #F8F8F8 -1%,#F9F9F9 0%,#F6F6F6 0%,#F6F6F6 0%,#F8F8F8 2%,#F8F8F8 4%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F8F8F8', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+    border: 1px solid #F8F8F8;
+}
 
 /* commonly used class used to hide elements */
 .hideMe {
