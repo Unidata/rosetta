@@ -15,12 +15,16 @@ $(document).ready(function ($) {
         // make sure all other platform li are not highlighted (workaround for jQuery quirk).
         $(".platforms li").removeClass("ui-selected");
         // unselect any selected cfTypes in the dropdown menu.
-        $('#cfType select option:selected').prop('selected', false);
+        $("#cfType select option:selected").prop("selected", false);
 
         // check the selected radio button.
         $(selectedInput).prop("checked", true);
         // highlight the selected li
         $(selectedLi).addClass("ui-selected");
+        // remove disabled status for submit button
+        $("input[type=submit]").removeAttr("disabled");
+        // remove disabled class for submit button
+        $("input[type=submit]").removeClass("disabled");
     } );
 
     /**
@@ -32,6 +36,10 @@ $(document).ready(function ($) {
         $(".platforms li input").prop("checked", false);
         // make sure all other platform li are not highlighted (workaround for jQuery quirk).
         $(".platforms li").removeClass("ui-selected");
+        // remove disabled status for submit button
+        $("input[type=submit]").removeAttr("disabled");
+        // remove disabled class for submit button
+        $("input[type=submit]").removeClass("disabled");
     });
 
 
