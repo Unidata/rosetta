@@ -28,8 +28,3 @@ nav ul#steps li.current {
     background: #FFFFFF url('../img/current.png') 1px 8px no-repeat !important;
     font-weight: bold;
 }
-
-nav input.button {
-    float:right;
-    margin:0 10px;
-}
