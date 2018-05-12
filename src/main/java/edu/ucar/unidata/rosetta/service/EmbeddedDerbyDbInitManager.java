@@ -61,12 +61,13 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
             String createDataTable = "CREATE TABLE data " +
                     "(" +
-                    "id INTEGER primary key not null, " +
-                    "platform VARCHAR(100) not null, " +
-                    "cfType VARCHAR(100) not null, " +
-                    "fileName VARCHAR(100) not null, " +
-                    "headerLineNumbers INTEGER not null, " +
-                    "delimiter INTEGER not null" +
+                    "id VARCHAR(100) primary key not null, " +
+                    "platform VARCHAR(100), " +
+                    "community VARCHAR(100), " +
+                    "cfType VARCHAR(100), " +
+                    "fileName VARCHAR(100), " +
+                    "headerLineNumbers VARCHAR(100), " +
+                    "delimiter VARCHAR(10)" +
                     ")";
             createTable(createDataTable, props);
 
