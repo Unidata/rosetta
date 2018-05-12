@@ -5,7 +5,7 @@
 <!DOCTYPE HTML>
     <html>
         <head>
-            <title><spring:message code="global.title"/> ${baseUrl}</title>
+            <title><spring:message code="global.title"/></title>
             <script>
                 var baseUrl = '<c:out value="${baseUrl}" />';
             </script>
@@ -51,17 +51,6 @@
                                         </li>
                                     </c:forEach>
                                 </ul>
-
-                                <%-- Show the next button for all steps except the last. --%>
-                                <c:if test="${currentStep < fn:length(steps)}">
-                                    <input type="submit" name="step${currentStep}Next" value="Next" class="button"/>
-                                </c:if>
-
-                                <%-- Show the previous button for all steps except the first. --%>
-                                <c:if test="${currentStep > 1}">
-                                    <input type="submit" name="step${currentStep}Previous" value="Previous" class="button"/>
-                                </c:if>
-
                             </c:when>
                             <c:otherwise>
                                 <p class="error">Unable to load wizard navigation.</p>
