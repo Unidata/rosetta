@@ -21,9 +21,9 @@ $(document).ready(function ($) {
         $(selectedInput).prop("checked", true);
         // highlight the selected li
         $(selectedLi).addClass("ui-selected");
-        // remove disabled status for submit button
+        // remove disabled status for submit button.
         $("input[type=submit]").removeAttr("disabled");
-        // remove disabled class for submit button
+        // remove disabled class for submit button.
         $("input[type=submit]").removeClass("disabled");
     } );
 
@@ -36,9 +36,9 @@ $(document).ready(function ($) {
         $(".platforms li input").prop("checked", false);
         // make sure all other platform li are not highlighted (workaround for jQuery quirk).
         $(".platforms li").removeClass("ui-selected");
-        // remove disabled status for submit button
+        // remove disabled status for submit button.
         $("input[type=submit]").removeAttr("disabled");
-        // remove disabled class for submit button
+        // remove disabled class for submit button.
         $("input[type=submit]").removeClass("disabled");
     });
 
@@ -47,16 +47,49 @@ $(document).ready(function ($) {
      * fileType selection via dropdown menu.
      */
     $("select#fileType").change(function( event, ui ) {
-        // remove hideMe class for file upload section.
-        $("#upload").removeClass("hideMe");
-        if ($(this).find(":selected").text() === "Custom File Type") {
+        var fileType = $(this).find(":selected").text();
+        if (fileType == "--") {
+            if(!$("#upload").hasClass("hideMe") ) {
+                // add hideMe class for file upload section.
+                $("#upload").addClass("hideMe");
+            }
+        } else if (fileType === "Custom File Type") {
+            // remove hideMe class for file upload section.
+            $("#upload").removeClass("hideMe");
             // remove hideMe class for external positional file upload.
             $("#upload #custom").removeClass("hideMe");
         } else {
+            // remove hideMe class for file upload section.
+            $("#upload").removeClass("hideMe");
             // add hideMe class for external positional file upload.
             $("#upload #custom").addClass("hideMe");
         }
     });
+
+    /**
+     * STEP 2
+     * dataFile to upload selected.
+     */
+    $("input:file#dataFile").change(function (){
+        var file = $(this)[0].files[0];
+        var fileSize = file.size;
+        var fileName = file.name;
+        // remove disabled status for submit button.
+        $("input[type=submit]#next").removeAttr("disabled");
+        // remove disabled class for submit button.
+        $("input[type=submit]#next").removeClass("disabled");
+    });
+
+
+
+
+
+
+
+
+
+
+
 
     $('#dataFile').change(function(evt) {
         $('#uploadDataFile').removeClass('hideMe');

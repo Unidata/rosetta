@@ -71,20 +71,9 @@
     </div>
 
     <%-- Show the previous button. --%>
-    <c:if test="${currentStep > 1}">
-        <input type="submit" name="submit" value="Previous" class="button"/>
-    </c:if>
+    <input type="submit" name="submit" value="Previous" class="button"/>
+
 
     <%-- Show the next button. --%>
-    <input type="submit" name="submit" value="Next"
-            <c:if test="${empty data.platform && empty data.cfType }">
-                disabled
-            </c:if>
-           class="button
-            <c:if test="${empty data.platform && empty data.cfType }">
-                disabled
-            </c:if>
-        "/>
-
-
+    <input id="next" type="submit" name="submit" value="Next" disabled class="button disabled"/>
 </div>

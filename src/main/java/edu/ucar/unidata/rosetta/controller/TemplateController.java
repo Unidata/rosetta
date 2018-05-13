@@ -120,7 +120,8 @@ public class TemplateController implements HandlerExceptionResolver {
 
     /**
      * Accepts a POST request from step 1 of the wizard. Collects the CF type data entered by the user
-     * and validates it.  If it passes validation,
+     * and validates it.  If it passes validation, the data is written to the database and the user is
+     * redirected to step 2.  Otherwise, the user is taken pack to step 1 to correct the invalid data.
      *
      * @param data      The form-backing object containing the CF type data.
      * @param result    The BindingResult for error handling.
@@ -130,7 +131,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/step1", method = RequestMethod.POST)
-    public ModelAndView specifyCFType(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView processCFType(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
     //    public ModelAndView specifyCFType(@Valid Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
 
         if (result.hasErrors()) {   // validation errors
@@ -173,7 +174,7 @@ public class TemplateController implements HandlerExceptionResolver {
             data = dataManager.lookupById(rosettaCookie.getValue());
         else
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-            throw new IllegalStateException("No persisted data available for file upload step.  Check the cookie.");
+            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
         // Add data object to Model.
         model.addAttribute("data", data);
@@ -186,6 +187,40 @@ public class TemplateController implements HandlerExceptionResolver {
         // Add file type data to Model (for file type selection if cfType was directly specified).
         model.addAttribute("fileTypes", resourceManager.loadResources().get("fileTypes"));
         return new ModelAndView("wizard");
+    }
+
+    /**
+     * Accepts a POST request from step 2 of the wizard. Collects the CF type data entered by the user
+     * and validates it.  If it passes validation, the data is written to the database and the user is
+     * redirected to step 2.  Otherwise, the user is taken pack to step 1 to correct the invalid data.
+     *
+     * @param data      The form-backing object containing the CF type data.
+     * @param result    The BindingResult for error handling.
+     * @param model     The Model object to be populated by file upload data in the next step.
+     * @param request   HttpServletRequest needed to pass to the dataManager to get client IP.
+     * @param response  HttpServletResponse needed for setting cookie.
+     * @return          Redirect to next step.
+     */
+    @RequestMapping(value = "/step2", method = RequestMethod.POST)
+    public ModelAndView processFileUpload(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
+        //    public ModelAndView specify
+        if (result.hasErrors()) {   // validation errors
+            logger.error("Validation errors detected in file upload form data.");
+            model.addAttribute("error", result.getGlobalError().getDefaultMessage());
+            // Add current step to the Model (used by view to keep track of where we are in the wizard).
+            model.addAttribute("currentStep", "1");
+            // Add a list of all steps to the Model for rendering left nav menu.
+            model.addAttribute("steps", resourceManager.loadResources().get("steps"));
+            // Add domains data to Model (for platform display).
+            model.addAttribute("domains", resourceManager.loadResources().get("domains"));
+            // Add file type data to Model (for file type selection if cfType was directly specified).
+            model.addAttribute("fileTypes", resourceManager.loadResources().get("fileTypes"));
+            return new ModelAndView("wizard");
+        } else {
+            // Persist the data.
+            dataManager.persistData(data, request);
+            return new ModelAndView(new RedirectView("/step3", true));
+        }
     }
 
 
