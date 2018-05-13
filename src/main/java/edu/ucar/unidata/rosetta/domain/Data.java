@@ -13,13 +13,18 @@ public class Data {
     private String cfType;
     private String community;
     private String platform;
-    private CommonsMultipartFile file = null;
-    private String fileName;
+    private CommonsMultipartFile dataFile = null;
+    private String dataFileName;
+    private String dataFileType;
+    private CommonsMultipartFile positionalFile = null;
+    private String positionalFileName;
+    private CommonsMultipartFile templateFile = null;
+    private String templateFileName;
     private String headerLineNumbers;
     private String delimiter;
 
 
-    /*
+    /**
      * Returns the unique id associated with this object.
      *
      * @return  The unique id.
@@ -28,7 +33,7 @@ public class Data {
         return id;
     }
 
-    /*
+    /**
      * Sets the unique id associated with this object.
      *
      * @param id  The unique id.
@@ -37,7 +42,7 @@ public class Data {
         this.id = id;
     }
 
-    /*
+    /**
      * Returns the cfType.
      *
      * @return  The cfType.
@@ -46,7 +51,7 @@ public class Data {
         return cfType;
     }
 
-    /*
+    /**
      * Sets the cfType.
      *
      * @param cfType  The cfType.
@@ -63,7 +68,7 @@ public class Data {
         this.community = community;
     }
 
-    /*
+    /**
      * Returns the platform.
      *
      * @return  The platform.
@@ -72,7 +77,7 @@ public class Data {
         return platform;
     }
 
-    /*
+    /**
      * Sets the platform.
      *
      * @param platform  The platform.
@@ -81,32 +86,94 @@ public class Data {
         this.platform = platform;
     }
 
-    /*
-     * Returns the uploaded file in CommonsMultipartFile format.
+    /**
+     * Returns the uploaded data file in CommonsMultipartFile format.
      *
-     * @return  The CommonsMultipartFile file.
+     * @return  The CommonsMultipartFile data file.
      */
-    public CommonsMultipartFile getFile() {
-        return file;
+    public CommonsMultipartFile getDataFile() {
+        return dataFile;
     }
 
-    /*
-     * Sets the uploaded file as a CommonsMultipartFile file.
-     * The file is uploaded via an asynchronous AJAX call.
+    /**
+     * Sets the uploaded data file as a CommonsMultipartFile file.
      *
-     * @param file  The CommonsMultipartFile file.
+     * @param dataFile  The CommonsMultipartFile data file.
      */
-    public void setFile(CommonsMultipartFile file) {
-        setFileName(file.getOriginalFilename());
-        this.file = file;
+    public void setDataFile(CommonsMultipartFile dataFile) {
+        setDataFileName(dataFile.getOriginalFilename());
+        this.dataFile = dataFile;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getDataFileName() {
+        return dataFileName;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setDataFileName(String dataFileName) {
+        this.dataFileName = dataFileName;
+    }
+
+
+    public String getDataFileType() {
+        return dataFileType;
+    }
+
+    public void setDataFileType(String dataFileType) {
+        this.dataFileType = dataFileType;
+    }
+
+    /**
+     * Returns the uploaded positional file in CommonsMultipartFile format.
+     *
+     * @return  The CommonsMultipartFile positional file.
+     */
+    public CommonsMultipartFile getPositionalFile() {
+        return positionalFile;
+    }
+
+    /**
+     * Sets the uploaded positional file as a CommonsMultipartFile file.
+     *
+     * @param positionalFile  The CommonsMultipartFile positional file.
+     */
+    public void setPositionalFile(CommonsMultipartFile positionalFile) {
+        setPositionalFileName(positionalFile.getOriginalFilename());
+        this.positionalFile = positionalFile;
+    }
+
+    public String getPositionalFileName() {
+        return positionalFileName;
+    }
+
+    public void setPositionalFileName(String positionalFileName) {
+        this.positionalFileName = positionalFileName;
+    }
+
+    /**
+     * Returns the uploaded template file in CommonsMultipartFile format.
+     *
+     * @return  The CommonsMultipartFile template file.
+     */
+    public CommonsMultipartFile getTemplateFile() {
+        return templateFile;
+    }
+
+    /**
+     * Sets the uploaded tmeplate file as a CommonsMultipartFile file.
+     *
+     * @param templateFile  The CommonsMultipartFile template file.
+     */
+    public void setTemplateFile(CommonsMultipartFile templateFile) {
+        setTemplateFileName(templateFile.getOriginalFilename());
+        this.templateFile = templateFile;
+    }
+
+    public String getTemplateFileName() {
+        return templateFileName;
+    }
+
+    public void setTemplateFileName(String templateFileName) {
+        this.templateFileName = templateFileName;
     }
 
     public String getHeaderLineNumbers() {

@@ -65,7 +65,10 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     "platform VARCHAR(100), " +
                     "community VARCHAR(100), " +
                     "cfType VARCHAR(100), " +
-                    "fileName VARCHAR(100), " +
+                    "dataFileName VARCHAR(100), " +
+                    "dataFileType VARCHAR(100), " +
+                    "positionalFileName VARCHAR(100), " +
+                    "templateFileName VARCHAR(100), " +
                     "headerLineNumbers VARCHAR(100), " +
                     "delimiter VARCHAR(10)" +
                     ")";

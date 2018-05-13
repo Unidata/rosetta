@@ -82,7 +82,10 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 "cfType = ?, " +
                 "community = ?, " +
                 "platform = ?, " +
-                "fileName = ?, " +
+                "dataFileName = ?, " +
+                "dataFileType= ?, " +
+                "positionalFileName = ?, " +
+                "templateFileName = ?, " +
                 "headerLineNumbers = ?, " +
                 "delimiter = ? " +
                 "WHERE id = ?";
@@ -91,7 +94,10 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 data.getCfType(),
                 data.getCommunity(),
                 data.getPlatform(),
-                data.getFileName(),
+                data.getDataFileName(),
+                data.getDataFileType(),
+                data.getPositionalFileName(),
+                data.getTemplateFileName(),
                 data.getHeaderLineNumbers(),
                 data.getDelimiter(),
                 data.getId()
@@ -142,7 +148,10 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
             data.setCfType(rs.getString("cfType"));
             data.setCommunity(rs.getString("community"));
             data.setPlatform(rs.getString("platform"));
-            data.setFileName(rs.getString("fileName"));
+            data.setDataFileName(rs.getString("dataFileName"));
+            data.setDataFileType(rs.getString("dataFileType"));
+            data.setPositionalFileName(rs.getString("positionalFileName"));
+            data.setTemplateFileName(rs.getString("templateFileName"));
             data.setHeaderLineNumbers(rs.getString("headerLineNumbers"));
             data.setDelimiter(rs.getString("delimiter"));
             return data;
