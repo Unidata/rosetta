@@ -2,6 +2,8 @@ package edu.ucar.unidata.rosetta.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
 /**
  *
  */
@@ -11,6 +13,7 @@ public class Data {
     private String cfType;
     private String community;
     private String platform;
+    private CommonsMultipartFile file = null;
     private String fileName;
     private String headerLineNumbers;
     private String delimiter;
@@ -76,6 +79,26 @@ public class Data {
      */
     public void setPlatform(String platform) {
         this.platform = platform;
+    }
+
+    /*
+     * Returns the uploaded file in CommonsMultipartFile format.
+     *
+     * @return  The CommonsMultipartFile file.
+     */
+    public CommonsMultipartFile getFile() {
+        return file;
+    }
+
+    /*
+     * Sets the uploaded file as a CommonsMultipartFile file.
+     * The file is uploaded via an asynchronous AJAX call.
+     *
+     * @param file  The CommonsMultipartFile file.
+     */
+    public void setFile(CommonsMultipartFile file) {
+        setFileName(file.getOriginalFilename());
+        this.file = file;
     }
 
     public String getFileName() {

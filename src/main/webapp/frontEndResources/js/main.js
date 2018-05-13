@@ -42,8 +42,21 @@ $(document).ready(function ($) {
         $("input[type=submit]").removeClass("disabled");
     });
 
-
-
+    /**
+     * STEP 2
+     * fileType selection via dropdown menu.
+     */
+    $("select#fileType").change(function( event, ui ) {
+        // remove hideMe class for file upload section.
+        $("#upload").removeClass("hideMe");
+        if ($(this).find(":selected").text() === "Custom File Type") {
+            // remove hideMe class for external positional file upload.
+            $("#upload #custom").removeClass("hideMe");
+        } else {
+            // add hideMe class for external positional file upload.
+            $("#upload #custom").addClass("hideMe");
+        }
+    });
 
     $('#dataFile').change(function(evt) {
         $('#uploadDataFile').removeClass('hideMe');

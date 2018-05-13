@@ -96,9 +96,10 @@ public class TemplateController implements HandlerExceptionResolver {
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-        // Create a new data form-backing object.
+        // Create a Data form-backing object.
         Data data;
         if (rosettaCookie != null)
+            // User-provided cfType info already exists.  Populate Data object with info.
             data = dataManager.lookupById(rosettaCookie.getValue());
         else
             data = new Data();
@@ -131,14 +132,10 @@ public class TemplateController implements HandlerExceptionResolver {
     @RequestMapping(value = "/step1", method = RequestMethod.POST)
     public ModelAndView specifyCFType(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
     //    public ModelAndView specifyCFType(@Valid Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
-        logger.info("HERE: ");
-        for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();)
-            logger.info(e.nextElement());
 
         if (result.hasErrors()) {   // validation errors
             logger.error("Validation errors detected in CF type form data.");
             model.addAttribute("error", result.getGlobalError().getDefaultMessage());
-            //model.addAttribute("error", result.getGlobalError());
             // Add current step to the Model (used by view to keep track of where we are in the wizard).
             model.addAttribute("currentStep", "1");
             // Add a list of all steps to the Model for rendering left nav menu.
@@ -164,17 +161,86 @@ public class TemplateController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step2", method = RequestMethod.GET)
-    public ModelAndView fileUpload(Model model) {
+    public ModelAndView fileUpload(Model model, HttpServletRequest request) {
+
+        // Have we visited this page before during this session?
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+
+        // Create a Data form-backing object.
+        Data data;
+        if (rosettaCookie != null)
+            // User-provided cfType info already exists.  Populate Data object with info.
+            data = dataManager.lookupById(rosettaCookie.getValue());
+        else
+            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
+            throw new IllegalStateException("No persisted data available for file upload step.  Check the cookie.");
+
+        // Add data object to Model.
+        model.addAttribute("data", data);
         // Add current step to the Model.
         model.addAttribute("currentStep", "2");
         // Add a list of all steps to the Model for rendering left nav menu.
         model.addAttribute("steps", resourceManager.loadResources().get("steps"));
+        // Add domains data to Model (for file upload  display based on community type).
+        model.addAttribute("domains", resourceManager.loadResources().get("domains"));
+        // Add file type data to Model (for file type selection if cfType was directly specified).
+        model.addAttribute("fileTypes", resourceManager.loadResources().get("fileTypes"));
         return new ModelAndView("wizard");
     }
 
 
+    /**
+     * Accepts a POST request for an uploaded file, stores that file to disk
+     * and, returns the local (unique, alphanumeric) file name of the uploaded
+     * ASCII file.
+     *
+     * @param file    The UploadedFile form backing object containing the file.
+     * @param request The HttpServletRequest with which to glean the client IP address.
+     * @return A String of the local file name for the ASCII file (or null for an error).
+     */
+    /*
+    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    @ResponseBody
+    public String processUpload(Data data, HttpServletRequest request) {
+        // FileOutputStream outputStream = null;
+        String uniqueId = createUniqueId(request);
+        String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
+        try {
+            File localFileDir = new File(filePath);
+            if (!localFileDir.exists()) {
+                localFileDir.mkdirs();
+            }
+            File uploadedFile = new File(FilenameUtils.concat(filePath, file.getFileName()));
+            try (FileOutputStream outputStream = new FileOutputStream(uploadedFile)) {
+                outputStream.write(file.getFile().getFileItem().get());
+                outputStream.flush();
+                outputStream.close();
+            } catch (Exception exc) {
+                logger.error("error while saving uploaded file to disk.");
+                return null;
+            }
 
+            if ((file.getFileName().contains(".xls")) || (file.getFileName().contains(".xlsx"))) {
+                String xlsFilePath = FilenameUtils.concat(filePath, file.getFileName());
+                boolean conversionSuccessful = XlsToCsv.convert(xlsFilePath, null);
+                String csvFilePath = null;
+                if (conversionSuccessful) {
+                    if (xlsFilePath.contains(".xlsx")) {
+                        csvFilePath = xlsFilePath.replace(".xlsx", ".csv");
+                    } else if (xlsFilePath.contains(".xls")) {
+                        csvFilePath = xlsFilePath.replace(".xls", ".csv");
+                    }
+                }
+                file.setFileName(csvFilePath);
+            }
+        } catch (Exception e) {
+            logger.error("A file upload error has occurred: " + e.getMessage());
+            return null;
+        }
+        return uniqueId;
+    }
 
+*/
 
 
     /**
@@ -349,57 +415,7 @@ public class TemplateController implements HandlerExceptionResolver {
     }
     */
 
-    /**
-     * Accepts a POST request for an uploaded file, stores that file to disk
-     * and, returns the local (unique, alphanumeric) file name of the uploaded
-     * ASCII file.
-     *
-     * @param file    The UploadedFile form backing object containing the file.
-     * @param request The HttpServletRequest with which to glean the client IP address.
-     * @return A String of the local file name for the ASCII file (or null for an error).
-     */
-    /*
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    @ResponseBody
-    public String processUpload(UploadedFile file, HttpServletRequest request) {
-        // FileOutputStream outputStream = null;
-        String uniqueId = createUniqueId(request);
-        String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
-        try {
-            File localFileDir = new File(filePath);
-            if (!localFileDir.exists()) {
-                localFileDir.mkdirs();
-            }
-            File uploadedFile = new File(FilenameUtils.concat(filePath, file.getFileName()));
-            try (FileOutputStream outputStream = new FileOutputStream(uploadedFile)) {
-                outputStream.write(file.getFile().getFileItem().get());
-                outputStream.flush();
-                outputStream.close();
-            } catch (Exception exc) {
-                logger.error("error while saving uploaded file to disk.");
-                return null;
-            }
 
-            if ((file.getFileName().contains(".xls")) || (file.getFileName().contains(".xlsx"))) {
-                String xlsFilePath = FilenameUtils.concat(filePath, file.getFileName());
-                boolean conversionSuccessful = XlsToCsv.convert(xlsFilePath, null);
-                String csvFilePath = null;
-                if (conversionSuccessful) {
-                    if (xlsFilePath.contains(".xlsx")) {
-                        csvFilePath = xlsFilePath.replace(".xlsx", ".csv");
-                    } else if (xlsFilePath.contains(".xls")) {
-                        csvFilePath = xlsFilePath.replace(".xls", ".csv");
-                    }
-                }
-                file.setFileName(csvFilePath);
-            }
-        } catch (Exception e) {
-            logger.error("A file upload error has occurred: " + e.getMessage());
-            return null;
-        }
-        return uniqueId;
-    }
-    */
 
 
     /**
