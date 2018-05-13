@@ -40,4 +40,8 @@
         <fileName>steps.xml</fileName>
         <type>step</type>
     </resource>
+    <resource>
+        <fileName>fileTypes.xml</fileName>
+        <type>fileType</type>
+    </resource>
 </resources>
