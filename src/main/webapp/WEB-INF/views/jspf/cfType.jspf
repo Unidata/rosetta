@@ -1,5 +1,6 @@
 <p>To determine the most appropriate CF type, please select your community:</p>
 <c:choose>
+    <%-- Need the domains to load platforms by community. --%>
     <c:when test="${fn:length(domains) gt 0}">
         <script>
             $( function() {
