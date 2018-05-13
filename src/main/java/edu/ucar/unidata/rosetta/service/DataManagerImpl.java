@@ -3,9 +3,11 @@ package edu.ucar.unidata.rosetta.service;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.repository.DataDao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +18,9 @@ public class DataManagerImpl implements DataManager {
     protected static final Logger logger = Logger.getLogger(DataManagerImpl.class);
 
     private DataDao dataDao;
+
+    @Resource(name = "resourceManager")
+    private ResourceManager resourceManager;
 
     /**
      * Sets the data access object (DAO) which will acquire and persist the data passed to
@@ -46,6 +51,11 @@ public class DataManagerImpl implements DataManager {
     @Override
     public void persistData(Data data, HttpServletRequest request) {
         data.setId(createUniqueDataId(request)); // Create a unqiue ID for this object.
+        if (data.getPlatform() != null) {
+            String community = resourceManager.getCommunity(data.getPlatform());
+            logger.info(community);
+            data.setCommunity(community);
+        }
         dataDao.persistData(data);
     }
 
