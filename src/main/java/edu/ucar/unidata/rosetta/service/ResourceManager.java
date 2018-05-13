@@ -27,4 +27,6 @@ public interface ResourceManager {
      * @return A List of resource items, which are Maps containing the xml data.
      */
     public List<Map> fetchResources(File file, String type);
+
+    public String getCommunity(String platform);
 }

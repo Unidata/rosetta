@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -159,4 +160,27 @@ public class ResourceManagerImpl implements ResourceManager {
         }
         return resources;
     }
-  }
+
+    public String getCommunity(String platform) {
+        ArrayList<Object> domains = (ArrayList<Object>) loadResources().get("domains");
+        for (Object ob: domains) {
+            HashMap<String, Object> domain = (HashMap<String, Object>) ob;
+            if(domain.get("platform") instanceof ArrayList) {
+                ArrayList<String> platforms = (ArrayList<String>)domain.get("platform");
+                for(String p: platforms) {
+                    if(p.replaceAll(" ", "_").equals(platform)) {
+                        String community = (String)domain.get("name");
+                        return community.replaceAll(" ", "_");
+                    }
+                }
+            } else { // String
+                String p = (String) domain.get("platform");
+                if(p.replaceAll(" ", "_").equals(platform)) {
+                    String community = (String)domain.get("name");
+                    return community.replaceAll(" ", "_");
+                }
+            }
+        }
+        return null;
+    }
+}
