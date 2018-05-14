@@ -12,8 +12,8 @@
     </step>
     <step>
         <id>3</id>
-        <title>Specify Header Lines &amp; Delimiters</title>
-        <view>headerLinesAndDelimiters</view>
+        <title>Specify Custom File Type Attributes</title>
+        <view>customFileTypeAttributes</view>
     </step>
     <step>
         <id>4</id>

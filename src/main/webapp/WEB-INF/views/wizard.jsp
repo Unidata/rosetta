@@ -69,7 +69,7 @@
                                      <%@ include file="/WEB-INF/views/jspf/fileUpload.jspf" %>
                                  </c:when>
                                  <c:when test="${currentStepView eq 'headerLinesAndDelimiters'}">
-                                     <%@ include file="/WEB-INF/views/jspf/headerLinesAndDelimiters.jspf" %>
+                                     <%@ include file="/WEB-INF/views/jspf/customFileTypeAttributes.jspf" %>
                                  </c:when>
                                  <c:when test="${currentStepView eq 'variableMetadata'}">
                                      <%@ include file="/WEB-INF/views/jspf/variableMetadata.jspf" %>
