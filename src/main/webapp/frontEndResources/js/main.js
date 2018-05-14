@@ -46,7 +46,7 @@ $(document).ready(function ($) {
      * STEP 2
      * fileType selection via dropdown menu.
      */
-    $("select#fileType").change(function( event, ui ) {
+    $("select#dataFileType").change(function( event, ui ) {
         var fileType = $(this).find(":selected").text();
         if (fileType == "--") {
             if(!$("#upload").hasClass("hideMe") ) {

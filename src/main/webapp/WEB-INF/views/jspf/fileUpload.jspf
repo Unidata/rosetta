@@ -1,21 +1,30 @@
-
 <c:choose>
     <%-- Load file types by community. --%>
-    <c:when test="${not empty data.community}">
+    <c:when test="${not empty data.community || not empty data.cfType}">
         <c:choose>
-            <%-- Need the domains to load file type by community. --%>
-            <c:when test="${fn:length(domains) gt 0}">
+            <%-- Need the domains & fileTypes to load dataFileType options. --%>
+            <c:when test="${fn:length(domains) gt 0 && fn:length(fileTypes) gt 0}">
                 Select your data file type:
-                <select id="fileType">
+                <select id="dataFileType" name="dataFileType">
                     <option value="">--</option>
-                    <%-- Create file type selection options. --%>
-                    <c:forEach items="${domains}" var="domain">
-                        <c:if test="${data.community == fn:replace(domain.name, ' ', '_')}">
-                            <c:forEach items="${domain.fileType}" var="fileType">
-                                <option value="${fn:replace(fileType, ' ', '_')}">${fileType}</option>
+                    <c:choose>
+                        <%-- Create file type selection options from domains. --%>
+                        <c:when test="${not empty data.community}">
+                            <c:forEach items="${domains}" var="domain">
+                                <c:if test="${data.community == fn:replace(domain.name, ' ', '_')}">
+                                    <c:forEach items="${domain.fileType}" var="fileType">
+                                        <option value="${fn:replace(fileType, ' ', '_')}">${fileType}</option>
+                                    </c:forEach>
+                                </c:if>
                             </c:forEach>
-                        </c:if>
-                    </c:forEach>
+                        </c:when>
+                        <%-- Create file type selection options from fileTypes. --%>
+                        <c:otherwise>
+                            <c:forEach items="${fileTypes}" var="fileType">
+                                <option value="${fn:replace(fileType.name, ' ', '_')}">${fileType.name}</option>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
                 </select>
             </c:when>
             <c:otherwise>
@@ -24,22 +33,7 @@
         </c:choose>
     </c:when>
     <c:otherwise>
-        <c:choose>
-            <%-- Need the fileTypes to load file type when cfType has been specified. --%>
-            <c:when test="${fn:length(fileTypes) gt 0}">
-                Select your data file type:
-                <select id="fileType">
-                    <option value="">--</option>
-                    <c:forEach items="${fileTypes}" var="fileType">
-                        <%-- Create file type selection options. --%>
-                        <option value="${fn:replace(fileType.name, ' ', '_')}">${fileType.name}</option>
-                    </c:forEach>
-                </select>
-            </c:when>
-            <c:otherwise>
-                <p class="error">Unable to load file type information.  <spring:message code="fatal.error.message"/></p>
-            </c:otherwise>
-        </c:choose>
+        <p class="error">Unable to load file type information.  <spring:message code="fatal.error.message"/></p>
     </c:otherwise>
 </c:choose>
 
