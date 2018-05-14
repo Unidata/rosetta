@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.Date;
 import java.util.Random;
 
+import javax.activation.UnsupportedDataTypeException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,6 +31,8 @@ public class DataManagerImpl implements DataManager {
 
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
+    @Resource(name = "fileParserManager")
+    private FileParserManager fileParserManager;
 
     /**
      * Sets the data access object (DAO) for the Data object which will acquire and persist
@@ -97,28 +100,81 @@ public class DataManagerImpl implements DataManager {
         dataDao.deletePersistedData(id);
     }
 
+    /**
+     * Retrieves the name of the directory used for storing uploaded files.
+     *
+     * @return  The name of the directory used for storing uploaded files.
+     */
+    @Override
     public String getUploadDir() {
         return propertiesDao.lookupUploadDirectory();
     }
 
+    /**
+     * Converts .xls and .xlsx files to .csv files.
+     *
+     * @param id        The unique id associated with the file (a subdir in the uploads directory).
+     * @param fileName  The name of the .xls or .xlsx file to convert.
+     * @return          The name of the converted .csv file.
+     * @throws IOException  If unable to convert to .csv file.
+     */
+    @Override
+    public String convertToCSV(String id, String fileName) throws IOException {
+        logger.info(fileName);
+        if ((!fileName.contains(".xls")) || (!fileName.contains(".xlsx")))
+            throw new UnsupportedDataTypeException("Attempting to convert a non .xls type file to .csv format.");
 
+        String xlsFilePath = FilenameUtils.concat(FilenameUtils.concat(getUploadDir(), id), fileName);
+        // Change the file on disk.
+        boolean conversionSuccessful = XlsToCsv.convert(xlsFilePath, null);
+        String csvFileName = null;
+        if (conversionSuccessful) {
+            if (fileName.contains(".xlsx")) {
+                csvFileName = fileName.replace(".xlsx", ".csv");
+            } else if (fileName.contains(".xls")) {
+                csvFileName = fileName.replace(".xls", ".csv");
+            }
+        } else {
+            throw new IOException("Attempting to convert a non .xls type file to .csv format.");
+        }
+        return csvFileName;
+    }
 
+    /**
+     * Creates a subdirectory in the designated uploads directory using the (unique) id
+     * and writes the given file to the uploads subdirectory.
+     *
+     * @param id        The unique id associated with the file (a subdir in the uploads directory).
+     * @param fileName  The name of the file to save to disk.
+     * @param file      The CommonsMultipartFile to save to disk.
+     * @throws SecurityException  If unable to write file to disk because of a JVM security manager violation.
+     * @throws IOException  If unable to write file to disk.
+     */
+    @Override
     public void writeUploadedFileToDisk(String id, String fileName, CommonsMultipartFile file) throws SecurityException, IOException {
         String filePath = FilenameUtils.concat(getUploadDir(), id);
         File localFileDir = new File(filePath);
-
 
         if (!localFileDir.exists())
             if (!localFileDir.mkdirs())
                 throw new IOException("Unable to create " + id + " subdirectory in uploads directory.");
 
+
         logger.info("Writing uploaded file " + fileName + " to disk");
         File uploadedFile = new File(FilenameUtils.concat(filePath, fileName));
+
         FileOutputStream outputStream = new FileOutputStream(uploadedFile);
         outputStream.write(file.getFileItem().get());
         outputStream.flush();
         outputStream.close();
     }
+
+
+    public String parseDataFile(String id, String dataFileName) {
+        String filePath = FilenameUtils.concat( FilenameUtils.concat(getUploadDir(), id), dataFileName);
+        return fileParserManager.parseByLine(filePath);
+    }
+
 
     /**
      * Creates a unique id for the file name from the clients IP address and the date.

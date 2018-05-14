@@ -1,0 +1,81 @@
+<label for="headerLineGrid" class="error"></label>
+<label for="noHeaderLines" class="noHeaderLines">
+    <input type="checkbox" name="noHeaderLines" value="true" id="noHeaderLines"/>
+    No header lines available in this file
+</label>
+<div id="headerLineGrid" class="rosettaGrid"></div>
+
+<h4>Please specify delimiter(s) used.</h4>
+
+<label for="delimiter" class="error"></label>
+
+        <ul id="delimiterList">
+
+                <li>
+                    <label>
+                        <input type="checkbox" name="delimiter" id="delimiter"
+                               value="Tab"
+                               validate="required:true"/>
+                        Tab
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" name="delimiter" id="delimiter"
+                               value="Comma"
+                               validate="required:true"/>
+                        Comma
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" name="delimiter" id="delimiter"
+                               value="Whitespace"
+                               validate="required:true"/>
+                        Whitespace
+                    </label>
+                </li>
+          		<li>
+                    <label>
+                        <input type="checkbox" name="delimiter" id="delimiter"
+                               value="Colon"
+                               validate="required:true"/>
+                        Colon
+                    </label>
+                </li>
+               <li>
+                    <label>
+                        <input type="checkbox" name="delimiter" id="delimiter"
+                               value="Semicolon"
+                               validate="required:true"/>
+                        Semicolon
+                    </label>
+                </li>
+                          		<li>
+                    <label>
+                        <input type="checkbox" name="delimiter" id="delimiter"
+                               value="Single Quote"
+                               validate="required:true"/>
+                        Single Quote
+                    </label>
+                </li>
+                          		<li>
+                    <label>
+                        <input type="checkbox" name="delimiter" id="delimiter"
+                               value="Double Quote"
+                               validate="required:true"/>
+                        Double Quote
+                    </label>
+                </li>
+
+            <li>
+                <label>
+                    <input type="checkbox" name="delimiter" id="delimiter" value="Other"
+                           validate="required:true"/> Other
+                </label>
+                <label>
+                    <input type="text" id="otherDelimiter" name="otherDelimiter" size="1"
+                           maxlength="1" class="hideMe"/>
+                </label>
+            </li>
+        </ul>

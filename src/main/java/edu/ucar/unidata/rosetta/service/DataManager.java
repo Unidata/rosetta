@@ -2,8 +2,11 @@ package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
  * @author oxelson@ucar.edu
@@ -39,11 +42,35 @@ public interface DataManager {
      */
     public void deleteData(String id);
 
+    /**
+     * Retrieves the name of the directory used for storing uploaded files.
+     *
+     * @return  The name of the directory used for storing uploaded files.
+     */
     public String getUploadDir();
 
     /**
-     * write file to disk
+     * Converts .xls and .xlsx files to .csv files.
+     *
+     * @param id        The unique id associated with the file (a subdir in the uploads directory).
+     * @param fileName  The name of the .xls or .xlsx file to convert.
+     * @return          The name of the converted .csv file.
+     * @throws IOException  If unable to convert to .csv file.
      */
-    public void writeUploadedFileToDisk(String id, String fileName) throws IOException;
+    public String convertToCSV(String id, String fileName) throws IOException;
+
+    /**
+     * Creates a subdirectory in the designated uploads directory using the (unique) id
+     * and writes the given file to the uploads subdirectory.
+     *
+     * @param id        The unique id associated with the file (a subdir in the uploads directory).
+     * @param fileName  The name of the file to save to disk.
+     * @param file      The CommonsMultipartFile to save to disk.
+     * @throws SecurityException  If unable to write file to disk because of a JVM security manager violation.
+     * @throws IOException  If unable to write file to disk.
+     */
+    public void writeUploadedFileToDisk(String id, String fileName, CommonsMultipartFile file) throws SecurityException, IOException;
+
+    public String parseDataFile(String id, String dataFileName);
 
 }

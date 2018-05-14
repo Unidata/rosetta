@@ -1,8 +1,5 @@
 package edu.ucar.unidata.rosetta.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.service.DataManager;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
@@ -10,6 +7,7 @@ import edu.ucar.unidata.rosetta.service.validators.CFTypeValidator;
 import edu.ucar.unidata.rosetta.service.validators.FileValidator;
 
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Enumeration;
@@ -24,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -37,6 +36,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -62,9 +62,10 @@ public class TemplateController implements HandlerExceptionResolver {
     */
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
+
+
+
     /*
-    @Resource(name = "fileParserManager")
-    private FileParserManager fileParserManager;
     @Resource(name = "netcdfFileManager")
     private NetcdfFileManager netcdfFileManager;
 
@@ -80,15 +81,14 @@ public class TemplateController implements HandlerExceptionResolver {
         binder.setValidator(cfTypeValidator);
     }
 
-
     @Resource(name = "fileValidator")
     private FileValidator fileValidator;
 
 
     /**
-     * Accepts a GET request for access to step 1 of the wizard (shows a web form to collect CF type data).
+     * Accepts a GET request for access to step 1 of the wizard.
      *
-     * @param model  The Model object to be populated by CF type data.
+     * @param model  The Model object to be populated.
      * @param request   HttpServletRequest needed to get the cookie.
      * @return  View and the Model for the wizard to process.
      */
@@ -125,9 +125,9 @@ public class TemplateController implements HandlerExceptionResolver {
      * and validates it.  If it passes validation, the data is written to the database and the user is
      * redirected to step 2.  Otherwise, the user is taken pack to step 1 to correct the invalid data.
      *
-     * @param data      The form-backing object containing the CF type data.
+     * @param data      The form-backing object.
      * @param result    The BindingResult for error handling.
-     * @param model     The Model object to be populated by file upload data in the next step.
+     * @param model     The Model object to be populated.
      * @param request   HttpServletRequest needed to pass to the dataManager to get client IP.
      * @param response  HttpServletResponse needed for setting cookie.
      * @return          Redirect to next step.
@@ -159,7 +159,8 @@ public class TemplateController implements HandlerExceptionResolver {
     /**
      * Accepts a GET request for access to step 2 of the wizard.
      *
-     * @param model  The Model object to be populated by CF type data.
+     * @param model  The Model object to be populated.
+     * @param request   HttpServletRequest needed to get the cookie.
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step2", method = RequestMethod.GET)
@@ -171,7 +172,7 @@ public class TemplateController implements HandlerExceptionResolver {
         // Create a Data form-backing object.
         Data data;
         if (rosettaCookie != null)
-            // User-provided cfType info already exists.  Populate Data object with info.
+            // Populate Data object with info.
             data = dataManager.lookupById(rosettaCookie.getValue());
         else
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
@@ -190,6 +191,7 @@ public class TemplateController implements HandlerExceptionResolver {
         return new ModelAndView("wizard");
     }
 
+
     /**
      * Accepts a POST request from step 2 of the wizard. Collects the dataFileType and uploaded files
      * entered by the user and validates them.  If they passes validation, the files are written to the
@@ -198,14 +200,14 @@ public class TemplateController implements HandlerExceptionResolver {
      *
      * If the user clicked the previous button, they are redirected back to step 1.
      *
-     * @param data      The form-backing object containing the CF type data.
+     * @param data      The form-backing object.
      * @param result    The BindingResult for error handling.
      * @param model     The Model object to be populated by file upload data in the next step.
      * @param request   HttpServletRequest needed to get the cookie.
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/step2", method = RequestMethod.POST)
-    public ModelAndView processFileUpload(Data data, BindingResult result, Model model, HttpServletRequest request) {
+    public ModelAndView processFileUpload(Data data, BindingResult result, Model model, HttpServletRequest request) throws IOException {
 
         // Take user back to Step 1 (and don't save any data submitted in step 2).
         if (data.getSubmit().equals("Previous"))
@@ -239,18 +241,30 @@ public class TemplateController implements HandlerExceptionResolver {
 
             // Add the user-provided data from step 2 to the persistedData object.
             persistedData.setDataFileType(data.getDataFileType());
-            persistedData.setDataFileName(data.getDataFileName());
-            persistedData.setDataFile(data.getDataFile());
+            String dataFileName = data.getDataFileName();
 
+            // Write data file to disk.
+            dataManager.writeUploadedFileToDisk(persistedData.getId(), dataFileName, data.getDataFile());
+            if ((dataFileName.contains(".xls")) || (dataFileName.contains(".xlsx")))
+                dataFileName = dataManager.convertToCSV(persistedData.getId(), dataFileName);
+            persistedData.setDataFileName(dataFileName);
 
-
+            // Write positional file to disk if it exists.
             if (!data.getPositionalFileName().equals("")) {
-                persistedData.setPositionalFileName(data.getPositionalFileName());
+                String positionalFileName = data.getPositionalFileName();
+                if ((positionalFileName.contains(".xls")) || (positionalFileName.contains(".xlsx")))
+                    positionalFileName = dataManager.convertToCSV(persistedData.getId(), positionalFileName);
+                persistedData.setDataFileName(positionalFileName);
             }
 
+            // Write template file to disk if it exists.
             if (!data.getTemplateFileName().equals("")) {
-                persistedData.setTemplateFileName(data.getTemplateFileName());
+                String templateFileName = data.getTemplateFileName();
+                if ((templateFileName.contains(".xls")) || (templateFileName.contains(".xlsx")))
+                    templateFileName = dataManager.convertToCSV(persistedData.getId(), templateFileName);
+                persistedData.setDataFileName(templateFileName);
             }
+
             // Persist the new data.
             dataManager.updateData(persistedData);
             return new ModelAndView(new RedirectView("/step3", true));
@@ -259,124 +273,73 @@ public class TemplateController implements HandlerExceptionResolver {
 
 
     /**
-     * Accepts a POST request for an uploaded file, stores that file to disk
-     * and, returns the local (unique, alphanumeric) file name of the uploaded
-     * ASCII file.
+     * Accepts a GET request for access to step 3 of the wizard.
      *
-     * @param file    The UploadedFile form backing object containing the file.
-     * @param request The HttpServletRequest with which to glean the client IP address.
-     * @return A String of the local file name for the ASCII file (or null for an error).
+     * @param model  The Model object to be populated.
+     * @return  View and the Model for the wizard to process.
      */
-    /*
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    @ResponseBody
-    public String processUpload(Data data, HttpServletRequest request) {
-        // FileOutputStream outputStream = null;
-        String uniqueId = createUniqueId(request);
-        String filePath = FilenameUtils.concat(getUploadDir(), uniqueId);
-        try {
-            File localFileDir = new File(filePath);
-            if (!localFileDir.exists()) {
-                localFileDir.mkdirs();
-            }
-            File uploadedFile = new File(FilenameUtils.concat(filePath, file.getFileName()));
-            try (FileOutputStream outputStream = new FileOutputStream(uploadedFile)) {
-                outputStream.write(file.getFile().getFileItem().get());
-                outputStream.flush();
-                outputStream.close();
-            } catch (Exception exc) {
-                logger.error("error while saving uploaded file to disk.");
-                return null;
-            }
+    @RequestMapping(value = "/step3", method = RequestMethod.GET)
+    public ModelAndView specifyCustomFileTypeAttributes(Model model, HttpServletRequest request) {
 
-            if ((file.getFileName().contains(".xls")) || (file.getFileName().contains(".xlsx"))) {
-                String xlsFilePath = FilenameUtils.concat(filePath, file.getFileName());
-                boolean conversionSuccessful = XlsToCsv.convert(xlsFilePath, null);
-                String csvFilePath = null;
-                if (conversionSuccessful) {
-                    if (xlsFilePath.contains(".xlsx")) {
-                        csvFilePath = xlsFilePath.replace(".xlsx", ".csv");
-                    } else if (xlsFilePath.contains(".xls")) {
-                        csvFilePath = xlsFilePath.replace(".xls", ".csv");
-                    }
-                }
-                file.setFileName(csvFilePath);
-            }
-        } catch (Exception e) {
-            logger.error("A file upload error has occurred: " + e.getMessage());
-            return null;
+        // Have we visited this page before during this session?
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+
+        // Create a Data form-backing object.
+        Data data;
+        if (rosettaCookie != null)
+            // User-provided fileType info already exists.  Populate Data object with info.
+            data = dataManager.lookupById(rosettaCookie.getValue());
+        else
+            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
+            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        if (data.getDataFileType().equals("Custom_File_Type")) {
+            // Add data object to Model.
+            model.addAttribute("data", data);
+            // Add current step to the Model.
+            model.addAttribute("currentStep", "3");
+            // Add a list of all steps to the Model for rendering left nav menu.
+            model.addAttribute("steps", resourceManager.loadResources().get("steps"));
+            // Add domains data to Model (for file upload  display based on community type).
+            model.addAttribute("", dataManager.parseDataFile(data.getId(),data.getDataFileName()));
+            return new ModelAndView("wizard");
+        } else {
+            // Using a known data file type, so go directly to step 4.
+            return new ModelAndView(new RedirectView("/step4", true));
         }
-        return uniqueId;
     }
-
-*/
 
 
     /**
-     * Accepts a GET AJAX request for specific platform data corresponding to a community.
-     * Called during STEP 0 in the wizard.
+     * Accepts a GET request for access to step 3 of the wizard.
      *
-     * @param community  The community selected by the user.
-     * @param model  The Model object to be populated by platform data.
-     * @return  The platforms in JSON string format.
+     * @param model  The Model object to be populated.
+     * @return  View and the Model for the wizard to process.
      */
-    /*
-    @RequestMapping(value = "/getPlatforms/{community}", method = RequestMethod.GET)
-    @ResponseBody
-    public List getPlatforms(@PathVariable String community, Model model) {
-        // Get list of community resources.
-        List communities = (List) resourceManager.loadResources().get("communitys");
-        // Get list of platform resources.
-        List allPlatforms = (List) resourceManager.loadResources().get("platforms");
+    @RequestMapping(value = "/step4", method = RequestMethod.GET)
+    public ModelAndView specifyVariableMetadata(Model model, HttpServletRequest request) {
 
-        // Map to act as placeholder for data that will be returned to the client.
-        List<Map> matchingPlatforms = new ArrayList<Map>();
+        // Have we visited this page before during this session?
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
+        // Create a Data form-backing object.
+        Data data;
+        if (rosettaCookie != null)
+            // User-provided fileType info already exists.  Populate Data object with info.
+            data = dataManager.lookupById(rosettaCookie.getValue());
+        else
+            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
+            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
-        for (Object comm : communities) {
-
-            Map c = (Map)comm;
-            String communityName = (String) c.get("name");
-
-            if (community.equals(communityName.replaceAll("\\p{Z}", ""))) {
-
-                // The number of platforms a community has will determine the resulting type: 
-                if (String.class.isInstance(c.get("platform"))) {
-                    // If there is only one platform for the community, then it will be a String
-                    String platformName = (String) c.get("platform");
-
-                    for (Object plat : allPlatforms) {
-                        Map p = (Map)plat;
-                        String pName = (String) p.get("name");
-                        if (pName.equals(platformName)) {
-                            matchingPlatforms.add(p);
-                        }
-                            
-                    }
-                } else {
-                    // More than one platform will be a List.
-                    List platforms = (List) c.get("platform");
-
-                    for (Object platform : platforms) {
-                        String platformName = (String) platform;
-                        for (Object plat : allPlatforms) {
-                            Map p = (Map)plat;
-                            String pName = (String) p.get("name");
-                            if (pName.equals(platformName)) {
-                                matchingPlatforms.add(p);
-                            }
-                            
-                        }
-                    }
-                }
-            }
-        }
-        return matchingPlatforms;
+        // Add data object to Model.
+        model.addAttribute("data", data);
+        // Add current step to the Model.
+        model.addAttribute("currentStep", "4");
+        // Add a list of all steps to the Model for rendering left nav menu.
+        model.addAttribute("steps", resourceManager.loadResources().get("steps"));
+        // Add domains data to Model (for file upload  display based on community type).
+        return new ModelAndView("wizard");
     }
-
-
-*/
-
 
 
 
