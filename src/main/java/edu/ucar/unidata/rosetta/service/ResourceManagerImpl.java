@@ -32,6 +32,8 @@ import org.xml.sax.SAXException;
  * The Resources are XML containing data used both server-side and client-side
  * (in the later case, the server passes the resource properties to the view
  * via the model attribute).
+ *
+ * @author oxelson@ucar.edu
  */
 public class ResourceManagerImpl implements ResourceManager {
 

@@ -7,6 +7,8 @@ import org.springframework.validation.Validator;
 
 /**
  * Validates a Data object containing user input.
+ *
+ * @author oxelson@ucar.edu
  */
 @Component
 public class CFTypeValidator extends CommonValidator implements Validator {

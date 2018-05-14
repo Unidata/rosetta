@@ -19,6 +19,8 @@ import org.springframework.dao.NonTransientDataAccessResourceException;
 /**
  * An implementation of the DbInitManager that creates
  * the default embedded derby database for the rosetta application.
+ *
+ * @author oxelson@ucar.edu
  */
 public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
@@ -28,7 +30,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
     /**
      * Creates the embedded derby database for the rosetta.
      *
-     * @param props Properties used to create the database.
+     * @param props RosettaProperties used to create the database.
      * @throws NonTransientDataAccessResourceException  If unable to create or access the database.
      * @throws SQLException If an SQL exceptions occurs during database creation.
      */
@@ -98,7 +100,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
     /**
      * Shuts down the embedded derby database by de-registering the driver.
      *
-     * @param props Properties from application.properties that may be used for database shutdown.
+     * @param props RosettaProperties from application.properties that may be used for database shutdown.
      * @throws SQLException   If an SQL exceptions occurs during database shutdown.
      */
     public void shutdownDatabase(Properties props) throws SQLException {
@@ -131,7 +133,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
      * Creates a table in the derby database.
      *
      * @param statement The create SQL statement.
-     * @param props     Properties from which the database username and password are glean.
+     * @param props     RosettaProperties from which the database username and password are glean.
      * @throws NonTransientDataAccessResourceException  If unable to create instance of the database driver.
      * @throws SQLException If an SQL exceptions occurs during create table transaction.
      */
@@ -171,7 +173,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
     /**
      * Populates a table with data.
      *
-     * @param props Properties from which the database username and password are glean.
+     * @param props RosettaProperties from which the database username and password are glean.
      * @throws NonTransientDataAccessResourceException  If unable to create instance of the database driver.
      * @throws SQLException If an SQL exceptions occurs during insert transaction.
      */

@@ -12,6 +12,9 @@ import java.util.List;
 
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 
+/**
+ * @author oxelson@ucar.edu
+ */
 @Component
 public class FileValidator extends CommonValidator implements Validator {
     /*

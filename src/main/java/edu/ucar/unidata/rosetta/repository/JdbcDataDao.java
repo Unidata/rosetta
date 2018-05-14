@@ -15,6 +15,9 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
+/**
+ * @author oxelson@ucar.edu
+ */
 public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
 
 
@@ -39,7 +42,6 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
             throw new DataRetrievalFailureException(message);
         }
         return data.get(0);
-
     }
 
     /**
@@ -131,7 +133,7 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
     }
 
     /**
-     * DataMapper only used by JdbcDataDao.
+     * This DataMapper only used by JdbcDataDao.
      */
     private static class DataMapper implements RowMapper<Data> {
         /**

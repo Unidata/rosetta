@@ -21,6 +21,8 @@ import org.springframework.dao.NonTransientDataAccessResourceException;
  * Done at application initialization.
  * If first time application is run, it create the database and populates it with
  * the data loaded from the application.properties information.
+ *
+ * @author oxelson@ucar.edu
  */
 public class ApplicationInitialization implements ServletContextListener {
 

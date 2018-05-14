@@ -5,6 +5,8 @@ import org.springframework.validation.Errors;
 
 /**
  * Common validation methods all validators will use.
+ *
+ * @author oxelson@ucar.edu
  */
 public abstract class CommonValidator {
 

@@ -6,6 +6,8 @@ import java.util.Map;
 
 /**
  * Service for fetching rosetta resources from WEB_INF/classes/resources.
+ *
+ * @author oxelson@ucar.edu
  */
 public interface ResourceManager {
 
