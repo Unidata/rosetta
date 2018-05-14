@@ -3,7 +3,11 @@ package edu.ucar.unidata.rosetta.service;
 import edu.ucar.unidata.rosetta.domain.Data;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
+/**
+ * @author oxelson@ucar.edu
+ */
 public interface DataManager {
 
     /**
@@ -34,5 +38,12 @@ public interface DataManager {
      * @param id    The id of the Data object to delete.
      */
     public void deleteData(String id);
+
+    public String getUploadDir();
+
+    /**
+     * write file to disk
+     */
+    public void writeUploadedFileToDisk(String id, String fileName) throws IOException;
 
 }

@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * Accepts a GET request for access to step 1 of the wizard (shows a web form to collect CF type data).
      *
      * @param model  The Model object to be populated by CF type data.
+     * @param request   HttpServletRequest needed to get the cookie.
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step1", method = RequestMethod.GET)
@@ -132,7 +134,6 @@ public class TemplateController implements HandlerExceptionResolver {
      */
     @RequestMapping(value = "/step1", method = RequestMethod.POST)
     public ModelAndView processCFType(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
-    //    public ModelAndView specifyCFType(@Valid Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
 
         if (result.hasErrors()) {   // validation errors
             logger.error("Validation errors detected in CF type form data.");
@@ -190,20 +191,26 @@ public class TemplateController implements HandlerExceptionResolver {
     }
 
     /**
-     * Accepts a POST request from step 2 of the wizard. Collects the CF type data entered by the user
-     * and validates it.  If it passes validation, the data is written to the database and the user is
-     * redirected to step 2.  Otherwise, the user is taken pack to step 1 to correct the invalid data.
+     * Accepts a POST request from step 2 of the wizard. Collects the dataFileType and uploaded files
+     * entered by the user and validates them.  If they passes validation, the files are written to the
+     * file system, the dataFileType is written to the database and the user is redirected to step 3.
+     * Otherwise, the user is taken pack to step 2 to correct the invalid data.
+     *
+     * If the user clicked the previous button, they are redirected back to step 1.
      *
      * @param data      The form-backing object containing the CF type data.
      * @param result    The BindingResult for error handling.
      * @param model     The Model object to be populated by file upload data in the next step.
-     * @param request   HttpServletRequest needed to pass to the dataManager to get client IP.
-     * @param response  HttpServletResponse needed for setting cookie.
+     * @param request   HttpServletRequest needed to get the cookie.
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/step2", method = RequestMethod.POST)
-    public ModelAndView processFileUpload(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
-        //    public ModelAndView specify
+    public ModelAndView processFileUpload(Data data, BindingResult result, Model model, HttpServletRequest request) {
+
+        // Take user back to Step 1 (and don't save any data submitted in step 2).
+        if (data.getSubmit().equals("Previous"))
+            return new ModelAndView(new RedirectView("/step1", true));
+
         if (result.hasErrors()) {   // validation errors
             logger.error("Validation errors detected in file upload form data.");
             model.addAttribute("error", result.getGlobalError().getDefaultMessage());
@@ -216,9 +223,36 @@ public class TemplateController implements HandlerExceptionResolver {
             // Add file type data to Model (for file type selection if cfType was directly specified).
             model.addAttribute("fileTypes", resourceManager.loadResources().get("fileTypes"));
             return new ModelAndView("wizard");
+
         } else {
-            // Persist the data.
-            dataManager.persistData(data, request);
+
+            // Get the cookie.
+            Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+            // Create a Data form-backing object.
+            Data persistedData;
+            if (rosettaCookie != null)
+                // Data persisted in the database.
+                persistedData = dataManager.lookupById(rosettaCookie.getValue());
+            else
+                // Something has gone wrong.  We shouldn't be at this step without having persisted data.
+                throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+            // Add the user-provided data from step 2 to the persistedData object.
+            persistedData.setDataFileType(data.getDataFileType());
+            persistedData.setDataFileName(data.getDataFileName());
+            persistedData.setDataFile(data.getDataFile());
+
+
+
+            if (!data.getPositionalFileName().equals("")) {
+                persistedData.setPositionalFileName(data.getPositionalFileName());
+            }
+
+            if (!data.getTemplateFileName().equals("")) {
+                persistedData.setTemplateFileName(data.getTemplateFileName());
+            }
+            // Persist the new data.
+            dataManager.updateData(persistedData);
             return new ModelAndView(new RedirectView("/step3", true));
         }
     }

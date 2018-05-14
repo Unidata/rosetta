@@ -1,35 +1,54 @@
 package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.domain.Data;
+import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.repository.DataDao;
+import edu.ucar.unidata.rosetta.repository.PropertiesDao;
 
-import java.util.ArrayList;
+import java.io.*;
 import java.util.Date;
 import java.util.Random;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
+/**
+ * @author oxelson@ucar.edu
+ */
 public class DataManagerImpl implements DataManager {
 
     protected static final Logger logger = Logger.getLogger(DataManagerImpl.class);
 
     private DataDao dataDao;
+    private PropertiesDao propertiesDao;
 
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
 
     /**
-     * Sets the data access object (DAO) which will acquire and persist the data passed to
-     * it via the methods of this DataManager.
+     * Sets the data access object (DAO) for the Data object which will acquire and persist
+     * the data passed to it via the methods of this DataManager.
      *
-     * @param dataDao  The service mechanism data access object representing a Data object.
+     * @param dataDao  The service DAO representing a Data object.
      */
     public void setDataDao(DataDao dataDao) {
         this.dataDao = dataDao;
+    }
+
+    /**
+     * Sets the data access object (DAO) for the RosettaProperties object which will acquire
+     * and persist the data passed to it via the methods of this DataManager.
+     *
+     * @param propertiesDao  The service DAO representing a Data object.
+     */
+    public void setPropertiesDao(PropertiesDao propertiesDao) {
+        this.propertiesDao = propertiesDao;
     }
 
     /**
@@ -53,7 +72,6 @@ public class DataManagerImpl implements DataManager {
         data.setId(createUniqueDataId(request)); // Create a unqiue ID for this object.
         if (data.getPlatform() != null) {
             String community = resourceManager.getCommunity(data.getPlatform());
-            logger.info(community);
             data.setCommunity(community);
         }
         dataDao.persistData(data);
@@ -77,6 +95,29 @@ public class DataManagerImpl implements DataManager {
     @Override
     public void deleteData(String id) {
         dataDao.deletePersistedData(id);
+    }
+
+    public String getUploadDir() {
+        return propertiesDao.lookupUploadDirectory();
+    }
+
+
+
+    public void writeUploadedFileToDisk(String id, String fileName, CommonsMultipartFile file) throws SecurityException, IOException {
+        String filePath = FilenameUtils.concat(getUploadDir(), id);
+        File localFileDir = new File(filePath);
+
+
+        if (!localFileDir.exists())
+            if (!localFileDir.mkdirs())
+                throw new IOException("Unable to create " + id + " subdirectory in uploads directory.");
+
+        logger.info("Writing uploaded file " + fileName + " to disk");
+        File uploadedFile = new File(FilenameUtils.concat(filePath, fileName));
+        FileOutputStream outputStream = new FileOutputStream(uploadedFile);
+        outputStream.write(file.getFileItem().get());
+        outputStream.flush();
+        outputStream.close();
     }
 
     /**

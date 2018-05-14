@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
- *
+ * @author oxelson@ucar.edu
  */
 public class Data {
 
@@ -13,16 +13,16 @@ public class Data {
     private String cfType;
     private String community;
     private String platform;
+    private String dataFileType;
     private CommonsMultipartFile dataFile = null;
     private String dataFileName;
-    private String dataFileType;
     private CommonsMultipartFile positionalFile = null;
     private String positionalFileName;
     private CommonsMultipartFile templateFile = null;
     private String templateFileName;
     private String headerLineNumbers;
     private String delimiter;
-
+    private String submit;
 
     /**
      * Returns the unique id associated with this object.
@@ -86,6 +86,15 @@ public class Data {
         this.platform = platform;
     }
 
+    public String getDataFileType() {
+        return dataFileType;
+    }
+
+    public void setDataFileType(String dataFileType) {
+        this.dataFileType = dataFileType;
+    }
+
+
     /**
      * Returns the uploaded data file in CommonsMultipartFile format.
      *
@@ -113,14 +122,6 @@ public class Data {
         this.dataFileName = dataFileName;
     }
 
-
-    public String getDataFileType() {
-        return dataFileType;
-    }
-
-    public void setDataFileType(String dataFileType) {
-        this.dataFileType = dataFileType;
-    }
 
     /**
      * Returns the uploaded positional file in CommonsMultipartFile format.
@@ -190,6 +191,14 @@ public class Data {
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
+    }
+
+    public String getSubmit() {
+        return submit;
+    }
+
+    public void setSubmit(String submit) {
+        this.submit = submit;
     }
 
     @Override
