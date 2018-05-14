@@ -26,7 +26,7 @@
     <!-- Configures the @Controller programming model -->
     <mvc:annotation-driven/>
 
-    <!-- Properties injection -->
+    <!-- RosettaProperties injection -->
     <bean id="applicationProperties"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
@@ -86,9 +86,14 @@
     <!-- DAO injection -->
     <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl">
         <property name="dataDao" ref="dataDao"/>
+        <property name="propertiesDao" ref="propertiesDao"/>
     </bean>
 
     <bean id="dataDao" class="edu.ucar.unidata.rosetta.repository.JdbcDataDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="propertiesDao" class="edu.ucar.unidata.rosetta.repository.JdbcPropertiesDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
