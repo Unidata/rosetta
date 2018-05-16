@@ -1,3 +1,96 @@
+<script>
+    var grid;
+    
+    var fileData = JSON.parse(${parsedData});
+
+    var columns = [
+        {
+            id: "line_number",
+            name: "#",
+            field: "line_number",
+            width: 45,
+            cssClass: "lineNumber",
+            headerCssClass: "lineNumber",
+            resizable: false
+        }
+
+    ];
+
+    columns.push(
+        {
+            id: "line_data",
+            name: "Line Data",
+            field: "line_data",
+            width: 1000,
+            resizable: false
+        }
+    );
+
+
+    var options = {
+        editable: false,
+        enableAddRow: false,
+        enableColumnReorder: false,
+        forceFitColumns: true,
+    };
+
+        // Populate rows[] with the fileData and create the grid.
+    // Implement the SlickGrid checkboxSelector plugin. Bind 
+    // any events associated with the checkboxSelector plugin. 
+    $(function () {
+        // loop through the fileData and populate rows[]     
+        for (var i = 0; i < fileData.length; i++) {
+            if (fileData[i] != "") {
+                rows[i] = {
+                    line_number: i,
+                    line_data: fileData[i]
+                };
+            }
+        }
+
+        // initialize the checkboxSelector plugin and add to columns[]
+        var checkboxSelector = new Slick.CheckboxSelectColumn({
+            cssClass: "slick-cell-checkboxsel"
+        });
+        columns.unshift(checkboxSelector.getColumnDefinition());
+
+        // initialize the grid and set the selection model
+        grid = new Slick.Grid("#headerLineGrid", rows, columns, options);
+        var rowModel = new Slick.RowSelectionModel({selectActiveRow: false});
+        grid.setSelectionModel(rowModel);
+
+        // add the checkboxSelector to the grid
+        grid.registerPlugin(checkboxSelector);
+
+        // if user has landed on this step before and specified what is checked, add that to the
+        // grid
+        if (sessionStorage.headerLineNumbers) {
+            if (sessionStorage.headerLineNumbers == "none") { // user has specified that there are no header lines in the file
+                $("#step" + step + " #noHeaderLines").attr('checked', true);
+            } else {  // contains actual header line number data
+                var lines = sessionStorage.getItem("headerLineNumbers").split(/,/g);
+                grid.setSelectedRows(lines.sort(function (a, b) {
+                    return a - b
+                }));
+            }
+        }
+
+        // hide the checkbox in the grid column header on initial grid load (for aesthetics reasons)
+        $(".slick-column-name :checkbox").addClass("hideMe");
+
+        // bind header line selection events to the grid 
+        bindGridHeaderLineSelectionEvent(grid, step);
+
+        // Uncheck the 'no header lines available in this file' checkbox if it's been previously
+        // checked.
+        bindNoHeaderLinesAvailableSelectionEvent(grid, step);
+    });
+
+
+
+    
+</script>
+
 <label for="headerLineGrid" class="error"></label>
 <label for="noHeaderLines" class="noHeaderLines">
     <input type="checkbox" name="noHeaderLines" value="true" id="noHeaderLines"/>
