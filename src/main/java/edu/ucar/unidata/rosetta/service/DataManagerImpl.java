@@ -120,23 +120,19 @@ public class DataManagerImpl implements DataManager {
      */
     @Override
     public String convertToCSV(String id, String fileName) throws IOException {
-        logger.info(fileName);
-        if ((!fileName.contains(".xls")) || (!fileName.contains(".xlsx")))
+        String extension = FilenameUtils.getExtension(fileName);
+        if (!(extension.equals("xls") || extension.equals("xlsx")))
             throw new UnsupportedDataTypeException("Attempting to convert a non .xls type file to .csv format.");
 
         String xlsFilePath = FilenameUtils.concat(FilenameUtils.concat(getUploadDir(), id), fileName);
         // Change the file on disk.
         boolean conversionSuccessful = XlsToCsv.convert(xlsFilePath, null);
         String csvFileName = null;
-        if (conversionSuccessful) {
-            if (fileName.contains(".xlsx")) {
-                csvFileName = fileName.replace(".xlsx", ".csv");
-            } else if (fileName.contains(".xls")) {
-                csvFileName = fileName.replace(".xls", ".csv");
-            }
-        } else {
+        if (conversionSuccessful)
+            csvFileName = FilenameUtils.removeExtension(fileName) + ".csv";
+        else
             throw new IOException("Attempting to convert a non .xls type file to .csv format.");
-        }
+
         return csvFileName;
     }
 
