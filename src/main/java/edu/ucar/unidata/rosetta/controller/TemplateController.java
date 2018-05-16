@@ -93,7 +93,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step1", method = RequestMethod.GET)
-    public ModelAndView specifyCFType(Model model, HttpServletRequest request) {
+    public ModelAndView displayCFTypeSelectionForm(Model model, HttpServletRequest request) {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -164,7 +164,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step2", method = RequestMethod.GET)
-    public ModelAndView fileUpload(Model model, HttpServletRequest request) {
+    public ModelAndView displayFileUploadForm(Model model, HttpServletRequest request) {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -245,14 +245,16 @@ public class TemplateController implements HandlerExceptionResolver {
 
             // Write data file to disk.
             dataManager.writeUploadedFileToDisk(persistedData.getId(), dataFileName, data.getDataFile());
-            if ((dataFileName.contains(".xls")) || (dataFileName.contains(".xlsx")))
+            String dataFileNameExtension = FilenameUtils.getExtension(dataFileName);
+            if (dataFileNameExtension.equals("xls") || dataFileNameExtension.equals("xlsx"))
                 dataFileName = dataManager.convertToCSV(persistedData.getId(), dataFileName);
             persistedData.setDataFileName(dataFileName);
 
             // Write positional file to disk if it exists.
             if (!data.getPositionalFileName().equals("")) {
                 String positionalFileName = data.getPositionalFileName();
-                if ((positionalFileName.contains(".xls")) || (positionalFileName.contains(".xlsx")))
+                String positionalFileNameExtension = FilenameUtils.getExtension(positionalFileName);
+                if (positionalFileNameExtension.equals("xls") || positionalFileNameExtension.equals("xlsx"))
                     positionalFileName = dataManager.convertToCSV(persistedData.getId(), positionalFileName);
                 persistedData.setDataFileName(positionalFileName);
             }
@@ -260,7 +262,8 @@ public class TemplateController implements HandlerExceptionResolver {
             // Write template file to disk if it exists.
             if (!data.getTemplateFileName().equals("")) {
                 String templateFileName = data.getTemplateFileName();
-                if ((templateFileName.contains(".xls")) || (templateFileName.contains(".xlsx")))
+                String templateFileNameExtension = FilenameUtils.getExtension(templateFileName);
+                if (templateFileName.equals("xls") || templateFileNameExtension.equals("xlsx"))
                     templateFileName = dataManager.convertToCSV(persistedData.getId(), templateFileName);
                 persistedData.setDataFileName(templateFileName);
             }
@@ -279,7 +282,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step3", method = RequestMethod.GET)
-    public ModelAndView specifyCustomFileTypeAttributes(Model model, HttpServletRequest request) {
+    public ModelAndView displayCustomFileTypeAttributesForm(Model model, HttpServletRequest request) {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -301,7 +304,7 @@ public class TemplateController implements HandlerExceptionResolver {
             // Add a list of all steps to the Model for rendering left nav menu.
             model.addAttribute("steps", resourceManager.loadResources().get("steps"));
             // Add domains data to Model (for file upload  display based on community type).
-            model.addAttribute("", dataManager.parseDataFile(data.getId(),data.getDataFileName()));
+            model.addAttribute("parsedData", dataManager.parseDataFile(data.getId(),data.getDataFileName()));
             return new ModelAndView("wizard");
         } else {
             // Using a known data file type, so go directly to step 4.
@@ -317,7 +320,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step4", method = RequestMethod.GET)
-    public ModelAndView specifyVariableMetadata(Model model, HttpServletRequest request) {
+    public ModelAndView displayVariableMetadataForm(Model model, HttpServletRequest request) {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
