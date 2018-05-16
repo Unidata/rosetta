@@ -1,5 +1,9 @@
 package edu.ucar.unidata.rosetta.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -12,9 +16,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
-
  */
 public class JsonUtil {
+
+    /**
+     * Maps a Java Object to a JSON String.
+     *
+     * @param obj   The object to convert.
+     * @return      The Object as a JSOn string.
+     * @throws JsonProcessingException  If unable to map Object to JSOn string.
+     */
+    public static String mapObjectToJSON(Object obj) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(obj);
+    }
+
+
 
     private String name;
 
