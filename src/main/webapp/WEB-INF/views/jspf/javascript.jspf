@@ -6,18 +6,7 @@
 <script type="text/javascript" src="resources/js/plugins/jquery.metadata.js"></script>
 <script type="text/javascript" src="resources/js/plugins/jquery.validate.min.js"></script>
 
-<!-- Custom Utility -->
-<script type="text/javascript" src="resources/js/globalResources.js"></script>
-<script type="text/javascript" src="resources/js/sessionFunctions.js"></script>
-<script type="text/javascript" src="resources/js/validationFunctions.js"></script>
-<script type="text/javascript" src="resources/js/stepFunctions.js"></script>
-
-<!-- HTML5 AJAX File Uploader -->
-<script type="text/javascript" src="resources/js/uploader/uploader.js"></script>
-<script type="text/javascript" src="resources/js/uploader/custom.js"></script>
-
 <!-- SlickGrid -->
-
 <script type="text/javascript" src="resources/js/plugins/jquery.event.drag-2.3.0.js"></script>
 <script type="text/javascript" src="resources/js/plugins/jquery.jsonp.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/slick.cellrangedecorator.js"></script>
@@ -30,14 +19,8 @@
 <script type="text/javascript" src="resources/js/SlickGrid/slick.grid.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/slick.headerbuttons.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/slick.rowselectionmodel.js"></script>
-<script type="text/javascript" src="resources/js/SlickGrid/custom/drawGrid.js"></script>
-<script type="text/javascript" src="resources/js/SlickGrid/custom/headerLineSelection.js"></script>
-<script type="text/javascript" src="resources/js/SlickGrid/custom/delimiterSelection.js"></script>
-<script type="text/javascript" src="resources/js/SlickGrid/custom/variableSpecification.js"></script>
-
 
 <!-- custom -->
-<script type="text/javascript" src="resources/js/wizard.js"></script>
 <script type="text/javascript" src="resources/js/main.js"></script>
 
 
