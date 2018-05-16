@@ -40,6 +40,7 @@ import jxl.DateCell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -81,11 +82,7 @@ public class XlsToCsv {
 
             //File to store data in form of CSV
             if (csvFile == null) {
-                if (xlsFile.contains(".xlsx")) {
-                    csvFile = xlsFile.replace(".xls", ".csv");
-                } else {
-                    csvFile = xlsFile.replace(".xls", ".csv");
-                }
+                csvFile = FilenameUtils.removeExtension(xlsFile) + ".csv";
             }
 
             File f = new File(csvFile);
