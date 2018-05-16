@@ -71,6 +71,6 @@ public interface DataManager {
      */
     public void writeUploadedFileToDisk(String id, String fileName, CommonsMultipartFile file) throws SecurityException, IOException;
 
-    public String parseDataFile(String id, String dataFileName);
+    public String parseDataFileByLine(String id, String dataFileName) throws IOException;
 
 }

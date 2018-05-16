@@ -282,7 +282,7 @@ public class TemplateController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/step3", method = RequestMethod.GET)
-    public ModelAndView displayCustomFileTypeAttributesForm(Model model, HttpServletRequest request) {
+    public ModelAndView displayCustomFileTypeAttributesForm(Model model, HttpServletRequest request) throws IOException {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -304,7 +304,7 @@ public class TemplateController implements HandlerExceptionResolver {
             // Add a list of all steps to the Model for rendering left nav menu.
             model.addAttribute("steps", resourceManager.loadResources().get("steps"));
             // Add domains data to Model (for file upload  display based on community type).
-            model.addAttribute("parsedData", dataManager.parseDataFile(data.getId(),data.getDataFileName()));
+            model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
             return new ModelAndView("wizard");
         } else {
             // Using a known data file type, so go directly to step 4.

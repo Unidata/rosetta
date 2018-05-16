@@ -5,7 +5,9 @@ import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.repository.DataDao;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Random;
 
@@ -165,8 +167,15 @@ public class DataManagerImpl implements DataManager {
         outputStream.close();
     }
 
-
-    public String parseDataFile(String id, String dataFileName) {
+    /**
+     * Retrieves the data file from disk and parses it by line, converting it into a JSOn string.
+     *
+     * @param id  The unique id associated with the file (a subdir in the uploads directory).
+     * @param dataFileName  The file to parse.
+     * @return  A JSON String of the file data parsed by line.
+     * @throws IOException  For any file I/O or JSON conversions problems.
+     */
+    public String parseDataFileByLine(String id, String dataFileName) throws IOException {
         String filePath = FilenameUtils.concat( FilenameUtils.concat(getUploadDir(), id), dataFileName);
         return fileParserManager.parseByLine(filePath);
     }

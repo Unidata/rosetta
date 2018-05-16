@@ -1,6 +1,7 @@
 package edu.ucar.unidata.rosetta.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,15 +29,14 @@ public interface FileParserManager {
     public void setParsedFileData(List<List<String>> parsedFileData);
 
     /**
-     * A simple method that reads each line of a file, appends a new line character
-     * and appends to a StringBuffer, and returns the StringBuffer string value. This
-     * method is used to parse the file data when no header lines have been specified.
-     * TODO: refactor to return JSON
+     * A simple method that reads each line of a file, appends a new line
+     * character & adds to a List. The list is then turned into a JSON string.
      *
      * @param filePath The path to the file on disk.
-     * @return A String of the file data parsed by line.
+     * @return A JSON String of the file data parsed by line.
+     * @throws IOException For any file I/O or JSON conversions problems.
      */
-    public String parseByLine(String filePath);
+    public String parseByLine(String filePath) throws IOException;
 
     /**
      * This method reads each line of a file and if more than one delimiter has been
