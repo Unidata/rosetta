@@ -1,10 +1,11 @@
 package edu.ucar.unidata.rosetta.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
+ * An object to hold the data collected from the user in the Rosetta application.
+ *
  * @author oxelson@ucar.edu
  */
 public class Data {
@@ -22,6 +23,7 @@ public class Data {
     private String templateFileName;
     private String headerLineNumbers;
     private String delimiter;
+    private String otherDelimiter;
     private String submit;
 
     /**
@@ -60,10 +62,20 @@ public class Data {
         this.cfType = cfType;
     }
 
+    /**
+     * Returns the user's community.
+     *
+     * @return  The community.
+     */
     public String getCommunity() {
         return community;
     }
 
+    /**
+     * Sets the user's community.
+     *
+     * @param community The user's community.
+     */
     public void setCommunity(String community) {
         this.community = community;
     }
@@ -86,14 +98,23 @@ public class Data {
         this.platform = platform;
     }
 
+    /**
+     * Returns the data file type.
+     *
+     * @return  The data file type.
+     */
     public String getDataFileType() {
         return dataFileType;
     }
 
+    /**
+     * Sets the data file type.
+     *
+     * @param dataFileType  The data file type.
+     */
     public void setDataFileType(String dataFileType) {
         this.dataFileType = dataFileType;
     }
-
 
     /**
      * Returns the uploaded data file in CommonsMultipartFile format.
@@ -114,14 +135,23 @@ public class Data {
         this.dataFile = dataFile;
     }
 
+    /**
+     * Returns the name of the data file.
+     *
+     * @return  The name of the data file.
+     */
     public String getDataFileName() {
         return dataFileName;
     }
 
+    /**
+     * Sets the name of the data file.
+     *
+     * @param dataFileName  The name of the data file.
+     */
     public void setDataFileName(String dataFileName) {
         this.dataFileName = dataFileName;
     }
-
 
     /**
      * Returns the uploaded positional file in CommonsMultipartFile format.
@@ -142,10 +172,20 @@ public class Data {
         this.positionalFile = positionalFile;
     }
 
+    /**
+     * Returns the name of the positional file.
+     *
+     * @return  The name of the positional file.
+     */
     public String getPositionalFileName() {
         return positionalFileName;
     }
 
+    /**
+     * Sets the name of the positional file.
+     *
+     * @param positionalFileName The name of the positional file.
+     */
     public void setPositionalFileName(String positionalFileName) {
         this.positionalFileName = positionalFileName;
     }
@@ -160,7 +200,7 @@ public class Data {
     }
 
     /**
-     * Sets the uploaded tmeplate file as a CommonsMultipartFile file.
+     * Sets the uploaded template file as a CommonsMultipartFile file.
      *
      * @param templateFile  The CommonsMultipartFile template file.
      */
@@ -169,38 +209,83 @@ public class Data {
         this.templateFile = templateFile;
     }
 
+    /**
+     * Returns the name of the template file.
+     *
+     * @return  The name of the template file.
+     */
     public String getTemplateFileName() {
         return templateFileName;
     }
 
+    /**
+     * Sets the name of the template file.
+     *
+     * @param templateFileName The name of the template file.
+     */
     public void setTemplateFileName(String templateFileName) {
         this.templateFileName = templateFileName;
     }
 
+    /**
+     * Returns the header line numbers of the data file.
+     *
+     * @return  The header line numbers.
+     */
     public String getHeaderLineNumbers() {
         return headerLineNumbers;
     }
 
+    /**
+     *  * Sets the header line numbers of the data file.
+     *
+     * @param headerLineNumbers The header line numbers.
+     */
     public void setHeaderLineNumbers(String headerLineNumbers) {
         this.headerLineNumbers = headerLineNumbers;
     }
 
+    /**
+     * Returns the data file delimiter.
+     *
+     * @return  The delimiter.
+     */
     public String getDelimiter() {
         return delimiter;
     }
 
+    /**
+     * Sets the data file delimiter.
+     *
+     * @param delimiter The data file delimiter.
+     */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
 
+    /**
+     * Returns the submit type.
+     *
+     * @return  The submit type.
+     */
     public String getSubmit() {
         return submit;
     }
 
+    /**
+     * Sets the submit type.
+     *
+     * @param submit    The submit type.
+     */
     public void setSubmit(String submit) {
         this.submit = submit;
     }
 
+    /**
+     * String representation of this Data object.
+     *
+     * @return  The string representation.
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
