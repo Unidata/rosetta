@@ -81,10 +81,28 @@ $(document).ready(function ($) {
     });
 
 
-
-
-
-
+    /**
+     * STEP 3
+     * delimiter selected, so show next button.
+     */
+    $("input#delimiter").change(function (){
+        // selected.
+        if ($("input#delimiter").is(':checked')) {
+            // only show if there is header line data.
+            if ($("input#noHeaderLines").is(':checked') || $("input#headerLineNumbers").val()) {
+                // remove disabled status for submit button.
+                $("input[type=submit]#next").removeAttr("disabled");
+                // remove disabled class for submit button.
+                $("input[type=submit]#next").removeClass("disabled");
+            }
+        } else {
+            // delimiter unselected for some reason.
+            // add disabled status for submit button.
+            $("input[type=submit]#next").attr("disabled", true);
+            // add disabled class for submit button.
+            $("input[type=submit]#next").addClass("disabled");
+        }
+    });
 
 
       function quickSave() {

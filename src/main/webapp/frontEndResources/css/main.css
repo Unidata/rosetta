@@ -150,23 +150,7 @@ label.noHeaderLines {
     font-family: "Courier New", Courier, monospace;
 }
 
-/* The delimiter list needs this to have decimal separator selection placed properly */
-ul#delimiterList {
-    width: 100%;
-    list-style: none;
-    position: relative;
-    margin-bottom:20px;
-}
 
-ul#delimiterList li {
-    width: 15%;
-    display: inline;
-    margin: 0 15px 10px 0;
-    padding: 0;
-    float: left;
-    position: relative;
-    bottom: 0;
-}
 
 /* list of radio buttons  for template selection */
 ul.template {
@@ -221,11 +205,6 @@ ul li label img {
 }
 
 
-
-/* step 3: delimiter selection */
-#step3 ul li {
-    width: 20%;
-}
 
 /* step 4: variable dialog box */
 .ui-dialog #dialog {
@@ -484,3 +463,37 @@ ul li label img {
 #step2 #upload .files {
     margin:10px;
 }
+
+/**
+ * Step 3
+ */
+#step3 #delimiters {
+    display:block;
+    float:left;
+    width:100%;
+}
+
+/* The delimiter list needs this to have decimal separator selection placed properly */
+ul#delimiterList {
+    width: 100%;
+    list-style: none;
+    position: relative;
+    margin-bottom:10px;
+}
+
+ul#delimiterList li {
+    width: 20%;
+    display: inline;
+    margin: 0 15px 10px 0;
+    padding: 0;
+    float: left;
+    position: relative;
+    bottom: 0;
+}
+#step3 .buttonNav {
+    display:block;
+    float:left;
+    width:100%;
+}
+
+

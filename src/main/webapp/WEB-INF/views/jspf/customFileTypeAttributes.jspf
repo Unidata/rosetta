@@ -10,78 +10,88 @@
 <div id="headerLineGrid" class="rosettaGrid"></div>
 <input type="hidden" name="headerLineNumbers" value="" id="headerLineNumbers"/>
 
-<p>Please specify delimiter(s) used in this file:</p>
+<div id="delimiters" class="hideMe">
+    <p>Please specify delimiter(s) used in this file:</p>
+    <label for="delimiter" class="error"></label>
+    <ul id="delimiterList">
+        <li>
+            <label>
+                <input type="checkbox" name="delimiter" id="delimiter"
+                       value="Tab"
+                       validate="required:true"/>
+                Tab
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" name="delimiter" id="delimiter"
+                       value="Comma"
+                    validate="required:true"/>
+                Comma
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" name="delimiter" id="delimiter"
+                       value="Whitespace"
+                     validate="required:true"/>
+                Whitespace
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" name="delimiter" id="delimiter"
+                       value="Colon"
+                    validate="required:true"/>
+                Colon
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" name="delimiter" id="delimiter"
+                       value="Semicolon"
+                       validate="required:true"/>
+                Semicolon
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" name="delimiter" id="delimiter"
+                       value="Single Quote"
+                    validate="required:true"/>
+                Single Quote
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" name="delimiter" id="delimiter"
+                       value="Double Quote"
+                    validate="required:true"/>
+                Double Quote
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" name="delimiter" id="delimiter" value="Other"
+                       validate="required:true"/> Other
+            </label>
+            <label>
+                <input type="text" id="otherDelimiter" name="otherDelimiter" size="1"
+                     maxlength="10" class="hideMe"/>
+            </label>
+        </li>
+    </ul>
 
-<label for="delimiter" class="error"></label>
+    <div class="buttonNav">
+        <%-- Show the previous button. --%>
+        <input type="submit" name="submit" value="Previous" class="button"/>
+        <%-- Show the next button. --%>
+        <input id="next" type="submit" name="submit" value="Next" disabled class="button disabled"/>
+    </div>
 
-<ul id="delimiterList">
-    <li>
-        <label>
-            <input type="checkbox" name="delimiter" id="delimiter"
-                   value="Tab"
-                   validate="required:true"/>
-            Tab
-        </label>
-    </li>
-    <li>
-        <label>
-            <input type="checkbox" name="delimiter" id="delimiter"
-                   value="Comma"
-                   validate="required:true"/>
-            Comma
-        </label>
-    </li>
-    <li>
-        <label>
-            <input type="checkbox" name="delimiter" id="delimiter"
-                   value="Whitespace"
-                   validate="required:true"/>
-            Whitespace
-        </label>
-    </li>
-    <li>
-        <label>
-            <input type="checkbox" name="delimiter" id="delimiter"
-                   value="Colon"
-                   validate="required:true"/>
-            Colon
-        </label>
-    </li>
-    <li>
-        <label>
-            <input type="checkbox" name="delimiter" id="delimiter"
-                   value="Semicolon"
-                   validate="required:true"/>
-            Semicolon
-        </label>
-    </li>
-    <li>
-        <label>
-            <input type="checkbox" name="delimiter" id="delimiter"
-                   value="Single Quote"
-                   validate="required:true"/>
-            Single Quote
-        </label>
-    </li>
-    <li>
-        <label>
-            <input type="checkbox" name="delimiter" id="delimiter"
-                   value="Double Quote"
-                   validate="required:true"/>
-            Double Quote
-        </label>
-    </li>
-    <li>
-        <label>
-            <input type="checkbox" name="delimiter" id="delimiter" value="Other"
-                   validate="required:true"/> Other
-        </label>
-        <label>
-            <input type="text" id="otherDelimiter" name="otherDelimiter" size="1"
-                   maxlength="1" class="hideMe"/>
-        </label>
-    </li>
-</ul>
+</div>
+
+
 
 <script>
     var grid;
@@ -142,7 +152,7 @@
     grid.registerPlugin(checkboxSelector);
 
     // hide the checkbox in the grid column header on initial grid load (for aesthetics reasons)
-    (".slick-column-name :checkbox").addClass("hideMe");
+    $(".slick-column-name :checkbox").addClass("hideMe");
 
     // bind header line selection events to the grid
     bindGridHeaderLineSelectionEvent(grid, 3);
