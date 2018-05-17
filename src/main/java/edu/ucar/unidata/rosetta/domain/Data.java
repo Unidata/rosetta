@@ -22,6 +22,7 @@ public class Data {
     private CommonsMultipartFile templateFile = null;
     private String templateFileName;
     private String headerLineNumbers;
+    private boolean noHeaderLines;
     private String delimiter;
     private String otherDelimiter;
     private String submit;
@@ -243,6 +244,24 @@ public class Data {
      */
     public void setHeaderLineNumbers(String headerLineNumbers) {
         this.headerLineNumbers = headerLineNumbers;
+    }
+
+    /**
+     * Returns the no leader lines value.
+     *
+     * @return  The no header lines value.
+     */
+    public boolean getNoHeaderLines(){
+        return noHeaderLines;
+    }
+
+    /**
+     * Sets the no leader lines value.
+     *
+     * @param noHeaderLines The no header lines value.
+     */
+    public void setNoHeaderLines(boolean noHeaderLines) {
+        this.noHeaderLines = noHeaderLines;
     }
 
     /**

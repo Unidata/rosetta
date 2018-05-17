@@ -89,6 +89,7 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 "positionalFileName = ?, " +
                 "templateFileName = ?, " +
                 "headerLineNumbers = ?, " +
+                "noHeaderLines = ?, " +
                 "delimiter = ? " +
                 "WHERE id = ?";
         int rowsAffected  = getJdbcTemplate().update(sql, new Object[] {
@@ -101,6 +102,7 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 data.getPositionalFileName(),
                 data.getTemplateFileName(),
                 data.getHeaderLineNumbers(),
+                String.valueOf(data.getNoHeaderLines()),
                 data.getDelimiter(),
                 data.getId()
         });
@@ -155,6 +157,7 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
             data.setPositionalFileName(rs.getString("positionalFileName"));
             data.setTemplateFileName(rs.getString("templateFileName"));
             data.setHeaderLineNumbers(rs.getString("headerLineNumbers"));
+            data.setNoHeaderLines(Boolean.parseBoolean(rs.getString("noHeaderLines")));
             data.setDelimiter(rs.getString("delimiter"));
             return data;
         }
