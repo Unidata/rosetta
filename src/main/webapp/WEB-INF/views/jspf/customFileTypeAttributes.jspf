@@ -1,8 +1,90 @@
+
+<p>Because you specified your data file type as <i>custom</i>, we need the following information from you before can continue.</p>
+
+<p>Please tell us which lines in your dara file are header lines:</p>
+<label for="headerLineGrid" class="error"></label>
+<label for="noHeaderLines" class="noHeaderLines">
+    <input type="checkbox" name="noHeaderLines" value="true" id="noHeaderLines"/>
+    No header lines available in this file
+</label>
+<div id="headerLineGrid" class="rosettaGrid"></div>
+<input type="hidden" name="headerLineNumbers" value="" id="headerLineNumbers"/>
+
+<p>Please specify delimiter(s) used in this file:</p>
+
+<label for="delimiter" class="error"></label>
+
+<ul id="delimiterList">
+    <li>
+        <label>
+            <input type="checkbox" name="delimiter" id="delimiter"
+                   value="Tab"
+                   validate="required:true"/>
+            Tab
+        </label>
+    </li>
+    <li>
+        <label>
+            <input type="checkbox" name="delimiter" id="delimiter"
+                   value="Comma"
+                   validate="required:true"/>
+            Comma
+        </label>
+    </li>
+    <li>
+        <label>
+            <input type="checkbox" name="delimiter" id="delimiter"
+                   value="Whitespace"
+                   validate="required:true"/>
+            Whitespace
+        </label>
+    </li>
+    <li>
+        <label>
+            <input type="checkbox" name="delimiter" id="delimiter"
+                   value="Colon"
+                   validate="required:true"/>
+            Colon
+        </label>
+    </li>
+    <li>
+        <label>
+            <input type="checkbox" name="delimiter" id="delimiter"
+                   value="Semicolon"
+                   validate="required:true"/>
+            Semicolon
+        </label>
+    </li>
+    <li>
+        <label>
+            <input type="checkbox" name="delimiter" id="delimiter"
+                   value="Single Quote"
+                   validate="required:true"/>
+            Single Quote
+        </label>
+    </li>
+    <li>
+        <label>
+            <input type="checkbox" name="delimiter" id="delimiter"
+                   value="Double Quote"
+                   validate="required:true"/>
+            Double Quote
+        </label>
+    </li>
+    <li>
+        <label>
+            <input type="checkbox" name="delimiter" id="delimiter" value="Other"
+                   validate="required:true"/> Other
+        </label>
+        <label>
+            <input type="text" id="otherDelimiter" name="otherDelimiter" size="1"
+                   maxlength="1" class="hideMe"/>
+        </label>
+    </li>
+</ul>
+
 <script>
     var grid;
-    
-    var fileData = JSON.parse(${parsedData});
-
     var columns = [
         {
             id: "line_number",
@@ -13,9 +95,7 @@
             headerCssClass: "lineNumber",
             resizable: false
         }
-
     ];
-
     columns.push(
         {
             id: "line_data",
@@ -26,7 +106,7 @@
         }
     );
 
-
+    // SlickGrid options.
     var options = {
         editable: false,
         enableAddRow: false,
@@ -34,141 +114,40 @@
         forceFitColumns: true,
     };
 
-        // Populate rows[] with the fileData and create the grid.
+    // Populate rows[] with the fileData and create the grid.
     // Implement the SlickGrid checkboxSelector plugin. Bind 
     // any events associated with the checkboxSelector plugin. 
-    $(function () {
-        // loop through the fileData and populate rows[]     
-        for (var i = 0; i < fileData.length; i++) {
-            if (fileData[i] != "") {
-                rows[i] = {
-                    line_number: i,
-                    line_data: fileData[i]
-                };
-            }
+    var fileData = ${parsedData};
+    var rows = [fileData.length];
+    for (var i = 0; i < fileData.length; i++) {
+        if (fileData[i] != "") {
+            rows[i] = {
+                line_number: i,
+                line_data: fileData[i]
+            };
         }
-
-        // initialize the checkboxSelector plugin and add to columns[]
-        var checkboxSelector = new Slick.CheckboxSelectColumn({
-            cssClass: "slick-cell-checkboxsel"
-        });
-        columns.unshift(checkboxSelector.getColumnDefinition());
-
-        // initialize the grid and set the selection model
-        grid = new Slick.Grid("#headerLineGrid", rows, columns, options);
-        var rowModel = new Slick.RowSelectionModel({selectActiveRow: false});
-        grid.setSelectionModel(rowModel);
-
-        // add the checkboxSelector to the grid
-        grid.registerPlugin(checkboxSelector);
-
-        // if user has landed on this step before and specified what is checked, add that to the
-        // grid
-        if (sessionStorage.headerLineNumbers) {
-            if (sessionStorage.headerLineNumbers == "none") { // user has specified that there are no header lines in the file
-                $("#step" + step + " #noHeaderLines").attr('checked', true);
-            } else {  // contains actual header line number data
-                var lines = sessionStorage.getItem("headerLineNumbers").split(/,/g);
-                grid.setSelectedRows(lines.sort(function (a, b) {
-                    return a - b
-                }));
-            }
-        }
-
-        // hide the checkbox in the grid column header on initial grid load (for aesthetics reasons)
-        $(".slick-column-name :checkbox").addClass("hideMe");
-
-        // bind header line selection events to the grid 
-        bindGridHeaderLineSelectionEvent(grid, step);
-
-        // Uncheck the 'no header lines available in this file' checkbox if it's been previously
-        // checked.
-        bindNoHeaderLinesAvailableSelectionEvent(grid, step);
+    }
+    // initialize the checkboxSelector plugin and add to columns[]
+    var checkboxSelector = new Slick.CheckboxSelectColumn({
+        cssClass: "slick-cell-checkboxsel"
     });
+    columns.unshift(checkboxSelector.getColumnDefinition());
 
+    // initialize the grid and set the selection model
+    grid = new Slick.Grid("#headerLineGrid", rows, columns, options);
+    var rowModel = new Slick.RowSelectionModel({selectActiveRow: false});
+    grid.setSelectionModel(rowModel);
 
+    // add the checkboxSelector to the grid
+    grid.registerPlugin(checkboxSelector);
 
-    
+    // hide the checkbox in the grid column header on initial grid load (for aesthetics reasons)
+    (".slick-column-name :checkbox").addClass("hideMe");
+
+    // bind header line selection events to the grid
+    bindGridHeaderLineSelectionEvent(grid, 3);
+
+    // Uncheck the 'no header lines available in this file' checkbox if it's been previously checked.
+    bindNoHeaderLinesAvailableSelectionEvent(grid, 3);
+
 </script>
-
-<label for="headerLineGrid" class="error"></label>
-<label for="noHeaderLines" class="noHeaderLines">
-    <input type="checkbox" name="noHeaderLines" value="true" id="noHeaderLines"/>
-    No header lines available in this file
-</label>
-<div id="headerLineGrid" class="rosettaGrid"></div>
-
-<h4>Please specify delimiter(s) used.</h4>
-
-<label for="delimiter" class="error"></label>
-
-        <ul id="delimiterList">
-
-                <li>
-                    <label>
-                        <input type="checkbox" name="delimiter" id="delimiter"
-                               value="Tab"
-                               validate="required:true"/>
-                        Tab
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input type="checkbox" name="delimiter" id="delimiter"
-                               value="Comma"
-                               validate="required:true"/>
-                        Comma
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <input type="checkbox" name="delimiter" id="delimiter"
-                               value="Whitespace"
-                               validate="required:true"/>
-                        Whitespace
-                    </label>
-                </li>
-          		<li>
-                    <label>
-                        <input type="checkbox" name="delimiter" id="delimiter"
-                               value="Colon"
-                               validate="required:true"/>
-                        Colon
-                    </label>
-                </li>
-               <li>
-                    <label>
-                        <input type="checkbox" name="delimiter" id="delimiter"
-                               value="Semicolon"
-                               validate="required:true"/>
-                        Semicolon
-                    </label>
-                </li>
-                          		<li>
-                    <label>
-                        <input type="checkbox" name="delimiter" id="delimiter"
-                               value="Single Quote"
-                               validate="required:true"/>
-                        Single Quote
-                    </label>
-                </li>
-                          		<li>
-                    <label>
-                        <input type="checkbox" name="delimiter" id="delimiter"
-                               value="Double Quote"
-                               validate="required:true"/>
-                        Double Quote
-                    </label>
-                </li>
-
-            <li>
-                <label>
-                    <input type="checkbox" name="delimiter" id="delimiter" value="Other"
-                           validate="required:true"/> Other
-                </label>
-                <label>
-                    <input type="text" id="otherDelimiter" name="otherDelimiter" size="1"
-                           maxlength="1" class="hideMe"/>
-                </label>
-            </li>
-        </ul>
