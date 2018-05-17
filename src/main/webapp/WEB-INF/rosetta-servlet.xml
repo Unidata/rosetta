@@ -55,6 +55,18 @@
         <property name="maxUploadSize" value="${rosetta.maxUpload}"/>
     </bean>
 
+    <!-- Map exceptions to the proper views -->
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.springframework.dao.DataRetrievalFailureException">
+                    fatalError
+                </prop>
+            </props>
+        </property>
+        <property name="defaultErrorView" value="fatalError"/>
+    </bean>
+
     <!-- Message source resolver to use messages.properties file in the 'war/WEB-INF/classes' directory -->
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">
