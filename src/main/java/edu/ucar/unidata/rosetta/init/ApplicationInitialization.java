@@ -203,8 +203,4 @@ public class ApplicationInitialization implements ServletContextListener {
         }
         return props;
     }
-
-
-
-
 }
