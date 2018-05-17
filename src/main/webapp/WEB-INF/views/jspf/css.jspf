@@ -3,6 +3,7 @@
 <link type="text/css" rel="stylesheet" href="resources/css/jQuery/jquery-ui.theme.min.css"/>
 
 <!-- SlickGrid -->
+<link type="text/css" rel="stylesheet" href="resources/css/SlickGrid/custom.css"/>
 <link type="text/css" rel="stylesheet" href="resources/css/SlickGrid/slick.grid.css"/>
 <link type="text/css" rel="stylesheet" href="resources/css/SlickGrid/slick.headerbuttons.css"/>
 <link type="text/css" rel="stylesheet" href="resources/css/SlickGrid/slick-default-theme.css"/>
