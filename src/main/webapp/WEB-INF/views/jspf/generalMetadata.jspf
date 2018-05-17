@@ -53,3 +53,8 @@
         <!-- insert error handling -->
     </c:otherwise>
 </c:choose>
+
+<%-- Show the previous button. --%>
+<input type="submit" name="submit" value="Previous" class="button"/>
+<%-- Show the next button. --%>
+<input id="next" type="submit" name="submit" value="Next" disabled class="button disabled"/>
