@@ -48,7 +48,7 @@ public class AsciiFile {
 
     /**
      * Returns "other info" associated with this file. Allows for modifications and additions
-     * to the file object in the TemplateController.
+     * to the file object in the WizardController.
      *
      * @return The other info associated with the file.
      */
@@ -58,7 +58,7 @@ public class AsciiFile {
 
     /**
      * Sets "other info" associated with this file. Allows for modifications and additions
-     * to the file object in the TemplateController.
+     * to the file object in the WizardController.
      */
     public void setOtherInfo(HashMap<String,String> otherInfo) {
         this.otherInfo = otherInfo;
