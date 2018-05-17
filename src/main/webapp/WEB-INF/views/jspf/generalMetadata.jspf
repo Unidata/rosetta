@@ -1,3 +1,4 @@
+<h3>Specify General Information</h3>
 <c:choose>
     <c:when test="${fn:length(globalMetadataItems) gt 0}">
         <ul>

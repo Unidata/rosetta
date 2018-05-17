@@ -1,3 +1,5 @@
+<h3>Basic Information</h3>
+
 <p>To determine the most appropriate CF type, please select your community:</p>
 <c:choose>
     <%-- Need the domains to load platforms by community. --%>
@@ -5,19 +7,22 @@
         <script>
             $( function() {
                 var tabIndex = 0;
-                <%-- If platform or cfType selection exists, find the index number of the tab to activate it. --%>
-                <c:if test="${not empty data.cfType}">
-                    tabIndex = ${fn:length(domains)};
-                </c:if>
-                <%-- Start at index 1 as 0 is already declared. --%>
-                <c:forEach begin="1" end="${fn:length(domains) - 1 }" varStatus="loop">
-                    <c:forEach items="${domains[loop.index].platform}" var="p">
-                        <c:if test="${not empty data.platform && data.platform == fn:replace(p, ' ', '_')}">
-                            tabIndex = ${loop.index};
-                        </c:if>
-                    </c:forEach>
-                </c:forEach>
-
+                <c:choose>
+                    <%-- If platform or cfType selection exists, find the index number of the tab to activate it. --%>
+                    <c:when test="${not empty data.cfType}">
+                        tabIndex = ${fn:length(domains)};
+                    </c:when>
+                    <c:otherwise>
+                        <%-- Start at index 1 as 0 is already declared. --%>
+                        <c:forEach begin="1" end="${fn:length(domains) - 1 }" varStatus="loop">
+                            <c:forEach items="${domains[loop.index].platform}" var="p">
+                                <c:if test="${not empty data.platform && data.platform == fn:replace(p, ' ', '_')}">
+                                    tabIndex = ${loop.index};
+                                </c:if>
+                            </c:forEach>
+                        </c:forEach>
+                    </c:otherwise>
+                </c:choose>
                 $( "#tabs" ).tabs({active:tabIndex});
                 $( ".platforms" ).selectable();
             });
@@ -28,7 +33,7 @@
                     <%-- Create tabs --%>
                     <li><a href="#${fn:replace(domain.name, ' ', '_')}">${domain.name}</a></li>
                 </c:forEach>
-                <li class="cfType"><a href="#cfType"><small>advanced:</small> Input CF Type</a></li>
+                <li class="cfTypeSpecified"><a href="#cfTypeSpecified"><small>advanced:</small> Input CF Type</a></li>
             </ul>
             <c:forEach items="${domains}" var="domain">
                 <div id="${fn:replace(domain.name, ' ', '_')}">
@@ -65,7 +70,7 @@
 
                 </div> <!--/#${domain.name} -->
             </c:forEach>
-            <div id="cfType">
+            <div id="cfTypeSpecified">
                 <p>I know what I'm doing and I want to directly select a CF Type:</p>
                 <select name="cfType">
                     <option value="">Select a CF Type</option>

@@ -1,10 +1,11 @@
 $(document).ready(function ($) {
 
     /**
-     * STEP 1
+     * STEP 1: CF Type selection step
      * cfType selection via clicking on platform images, so show next button.
      */
     $(".platforms").on( "selectableselected", function( event, ui ) {
+        
         // get li corresponding to selected platform (for use below).
         var selectedLi = $(this).find(".ui-selected");
         // get the radio button corresponding to the selected platform.
@@ -15,7 +16,7 @@ $(document).ready(function ($) {
         // make sure all other platform li are not highlighted (workaround for jQuery quirk).
         $(".platforms li").removeClass("ui-selected");
         // unselect any selected cfTypes in the dropdown menu.
-        $("#cfType select option:selected").prop("selected", false);
+        $("#cfTypeSpecified select option:selected").prop("selected", false);
 
         // check the selected radio button.
         $(selectedInput).prop("checked", true);
@@ -28,7 +29,7 @@ $(document).ready(function ($) {
     } );
 
     /**
-     * STEP 1
+     * STEP 1: CF Type selection step
      * cfType selection via dropdown menu, so show next button.
      */
     $("#cfType select").change(function( event, ui ) {

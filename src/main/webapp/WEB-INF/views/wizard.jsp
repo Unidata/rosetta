@@ -27,54 +27,47 @@
             <c:choose>
                 <c:when test="${not empty currentStep}">
 
-                <form id="FORM" action="/rosetta/step${currentStep}" method="POST" enctype="multipart/form-data">
-
+                <form id="FORM" action="/rosetta/${currentStep}" method="POST" enctype="multipart/form-data">
                     <nav>
-                        <c:choose>
-                            <c:when test="${fn:length(steps) gt 0}">
-                                <ul id="steps">
-                                    <c:forEach items="${steps}" var="step">
-                                        <%-- Assign the variables associated with current step. --%>
-                                        <c:if test="${currentStep eq step.id}">
-                                            <c:set var="currentStepTitle" value="${step.title}" />
-                                            <c:set var="currentStepView" value="${step.view}" />
-                                        </c:if>
-
-
-                                        <%-- Create left nav step menu. --%>
-                                        <li id="step${step.id}"
-                                                <c:if test="${currentStep eq step.id}">
-                                                    class="current"
-                                                </c:if>
-                                        >
-                                            ${step.title}
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </c:when>
-                            <c:otherwise>
-                                <p class="error">Unable to load wizard navigation.</p>
-                            </c:otherwise>
-                        </c:choose>
+                        <ul id="steps">
+                            <li id="${currentStep}" <c:if test="${currentStep eq 'cfType'}">class="current"</c:if>>
+                                Basic Information
+                            </li>
+                            <li id="${currentStep}" <c:if test="${currentStep eq 'fileUpload'}">class="current"</c:if>>
+                                Upload Data File
+                            </li>
+                            <li id="${currentStep}" <c:if test="${currentStep eq 'customFileTypeAttributes'}">class="current"</c:if>>
+                                Specify Custom File Type Attributes
+                            </li>
+                            <li id="${currentStep}" <c:if test="${currentStep eq 'variableMetadata'}">class="current"</c:if>>
+                                Specify Variable Attributes
+                            </li>
+                            <li id="${currentStep}" <c:if test="${currentStep eq 'generalMetadata'}">class="current"</c:if>>
+                                Specify General Information
+                            </li>
+                            <li id="${currentStep}" <c:if test="${currentStep eq 'convertAndDownload'}">class="current"</c:if>>
+                                Download Converted File
+                            </li>
+                        </ul>
                     </nav>
 
                     <section>
-                         <div id="step${currentStep}">
-                            <h3>${currentStepTitle}</h3>
+                         <div id="${currentStep}">
+                            
                             <c:choose>
-                                 <c:when test="${currentStepView eq 'cfType'}">
+                                 <c:when test="${currentStep eq 'cfType'}">
                                      <%@ include file="/WEB-INF/views/jspf/cfType.jspf" %>
                                  </c:when>
-                                 <c:when test="${currentStepView eq 'fileUpload'}">
+                                 <c:when test="${currentStep eq 'fileUpload'}">
                                      <%@ include file="/WEB-INF/views/jspf/fileUpload.jspf" %>
                                  </c:when>
-                                 <c:when test="${currentStepView eq 'customFileTypeAttributes'}">
+                                 <c:when test="${currentStep eq 'customFileTypeAttributes'}">
                                      <%@ include file="/WEB-INF/views/jspf/customFileTypeAttributes.jspf" %>
                                  </c:when>
-                                 <c:when test="${currentStepView eq 'variableMetadata'}">
+                                 <c:when test="${currentStep eq 'variableMetadata'}">
                                      <%@ include file="/WEB-INF/views/jspf/variableMetadata.jspf" %>
                                  </c:when>
-                                 <c:when test="${currentStepView eq 'generalMetadata'}">
+                                 <c:when test="${currentStep eq 'generalMetadata'}">
                                      <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
                                  </c:when>
                                  <c:otherwise>

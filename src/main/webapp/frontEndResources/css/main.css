@@ -380,15 +380,15 @@ ul li label img {
 }
 
 /**
- * Step 1
+ * Cf Type Step of Wizard
  */
 
-#step1 {
+#cfType {
     width:100%;
 }
 
 /* tabs */
-#step1 ul {
+#cfType ul {
     width:100%;
     list-style: none;
     margin: 0 0 10px 0;
@@ -396,7 +396,7 @@ ul li label img {
     float: left;
 }
 
-#step1 ul li {
+#cfType ul li {
     display: inline;
     margin: 0 5px 0 0;
     padding: 0;
@@ -404,24 +404,24 @@ ul li label img {
     position: relative;
     bottom: 0;
 }
-#step1 ul li.cfType {
+#cfType ul li.cfTypeSpecified {
     margin: 0;
     float: right;
 }
 
-#step1 ul li.cfType small {
+#cfType ul li.cfTypeSpecified small {
     font-size:7pt;
 }
 
 
 
 /* platform display */
-#step1 ul.platforms {
+#cfType ul.platforms {
     margin: 0;
     padding: 0;
 }
 
-#step1 ul.platforms li {
+#cfType ul.platforms li {
     display: inline;
     margin: 0 10px 10px 0;
     padding: 0;
@@ -431,11 +431,11 @@ ul li label img {
     background:#FFFFFF;
 }
 
-#step1 ul.platforms li.ui-selected{
+#cfType ul.platforms li.ui-selected{
     background-color: #F39814;
 }
 
-#step1 ul.platforms li img {
+#cfType ul.platforms li img {
     width: 75px;
     height: 75px;
     margin: 0 0 10px 0px;
@@ -443,12 +443,12 @@ ul li label img {
     display: block;
 }
 
-#step1 ul.platforms li small {
+#cfType ul.platforms li small {
     display:block;
     margin: 0 0 5px 0;
 }
 
-#step1 ul.platforms li input {
+#cfType ul.platforms li input {
     display: none;
 }
 
