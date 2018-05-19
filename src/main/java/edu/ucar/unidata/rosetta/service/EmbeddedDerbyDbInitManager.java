@@ -46,7 +46,6 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
         // Create derby database file.
         File dbFile = new File(FilenameUtils.concat(rosettaHome, databaseName));
-
         Connection connection;
         if (!dbFile.exists()) {
             logger.info("Database does not exist yet.  Creating...");

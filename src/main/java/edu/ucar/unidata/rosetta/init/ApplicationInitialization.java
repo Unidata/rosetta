@@ -59,11 +59,16 @@ public class ApplicationInitialization implements ServletContextListener {
 
         // rosettaHome not specified in config file. Use default.
         String rosettaHome = props.getProperty("rosetta.home");
+
         if (rosettaHome != null) {
-            rosettaHome = rosettaHome.replaceAll("\\$\\{servletContainer.home}", servletContainerHome);
+            if (servletContainerHome != null) {
+                rosettaHome = rosettaHome.replaceAll("\\$\\{servletContainer.home}", servletContainerHome);
+            }
             props.setProperty("rosetta.home", rosettaHome);
         } else {
-            props.setProperty("rosetta.home", DEFAULT_ROSETTA_HOME);
+            // check for java property set at startup
+            rosettaHome = System.getProperty("rosetta.home", DEFAULT_ROSETTA_HOME);
+            props.setProperty("rosetta.home", rosettaHome);
         }
 
         File rosettaHomeLocation = new File(rosettaHome);
@@ -117,8 +122,11 @@ public class ApplicationInitialization implements ServletContextListener {
 
         // rosettaHome not specified in config file. Use default.
         String rosettaHome = props.getProperty("rosetta.home");
-        if (rosettaHome == null)
-            props.setProperty("rosetta.home", DEFAULT_ROSETTA_HOME);
+        if (rosettaHome == null) {
+            // check for java property set at startup
+            rosettaHome = System.getProperty("rosetta.home", DEFAULT_ROSETTA_HOME);
+            props.setProperty("rosetta.home", rosettaHome);
+        }
 
         try {
             EmbeddedDerbyDbInitManager dbInitManager = new EmbeddedDerbyDbInitManager();
@@ -189,7 +197,14 @@ public class ApplicationInitialization implements ServletContextListener {
         Properties props = new Properties();
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            File configFile = new File(classLoader.getResource(CONFIG_FILE).getFile());
+            String rosettaHome = System.getProperty("rosetta.home");
+            File configFile;
+            if (rosettaHome != null) {
+                configFile = new File(rosettaHome + '/' + CONFIG_FILE);
+            } else {
+                configFile = new File(classLoader.getResource(CONFIG_FILE).getFile());
+            }
+            System.out.println();
 
             logger.info("Reading " + configFile + " configuration file...");
             FileInputStream configFileIS = new FileInputStream(configFile);

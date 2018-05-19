@@ -181,12 +181,12 @@ task jekyllServe(type: JRubyExec, group: 'Jekyll', description: 'Serve your site
 
 gretty {
     servletContainer = 'tomcat8'
-
     httpPort = 8888
 
     contextPath = '/rosetta'
 
     jvmArgs = ["-Drosetta.content.root.path=$rootDir/src/test/rosetta_home",
+               "-Drosetta.home=$rootDir/src/test/rosetta_home",
                "-Dlog4j.configuration=$rootDir/src/main/webapp/WEB-INF/classes/log4j.xml"]
 
     integrationTestTask = 'test'
