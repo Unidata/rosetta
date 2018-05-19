@@ -1,0 +1,31 @@
+<label for="delimiter" class="error"></label>
+<c:choose>
+    <c:when test="${fn:length(delimiters) gt 0}">
+        <ul id="delimiterList">
+            <c:forEach items="${delimiters}" var="delimiter">
+                <li>
+                    <label>
+                        <input type="checkbox" name="delimiter" id="delimiter"
+                               value="<c:out value="${delimiter.name}" />"
+                               validate="required:true"/>
+                        <c:out value="${delimiter.name}"/>
+                    </label>
+                </li>
+            </c:forEach>
+            <li>
+                <label>
+                    <input type="checkbox" name="delimiter" id="delimiter" value="Other"
+                           validate="required:true"/> Other
+                </label>
+                <label>
+                    <input type="text" id="otherDelimiter" name="otherDelimiter" size="1"
+                           maxlength="1" class="hideMe"/>
+                </label>
+            </li>
+        </ul>
+    </c:when>
+    <c:otherwise>
+        <!-- insert error handling -->
+    </c:otherwise>
+</c:choose>
+<!-- <div id="delimiterGrid" class="rosettaGrid"></div> -->

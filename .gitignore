@@ -11,7 +11,7 @@ docs/dox
 target/
 
 # Ignore gradle stuff
-.gradle/*
+.gradle/
 build/
 
 #############
@@ -58,3 +58,4 @@ rosetta.tgz
 # Output Test Files #
 #####################
 src/test/resources/testData/esc/*.nc
+src/test/rosetta_home/*

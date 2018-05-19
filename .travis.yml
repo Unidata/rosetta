@@ -1,0 +1,28 @@
+language: java
+
+jdk:
+  - oraclejdk9
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
+  local_dir: build/_site/ 
+  on:
+    branch: master
+
+addons:
+  sonarqube:
+    organization: "unidata_org"
+    token:
+      secure: $SONAR_TOKEN # Set in travis-ci.org dashboard
+    github_token:
+          secure: $GITHUB_TOKEN # Set in travis-ci.org dashboard
+    branches:
+          - master
+
+script:
+  - ./gradlew clean test sonarqube jekyllBuild
+
+after_script:
+  - touch build/_site/.nojekyll
