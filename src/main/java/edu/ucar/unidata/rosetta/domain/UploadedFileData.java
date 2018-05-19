@@ -4,17 +4,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
- * A POJO to hold the data collected from the user in the Rosetta application
- * (acts as a form-backing-object).
+ * A POJO to hold the uploaded file-related data collected from the user in the
+ * corresponding step of the wizard (acts as a form-backing object in that step).
  *
  * @author oxelson@ucar.edu
  */
-public class Data {
+public class UploadedFileData {
 
     private String id;
-    private String cfType;
-    private String community;
-    private String platform;
     private String dataFileType;
     private CommonsMultipartFile dataFile = null;
     private String dataFileName;
@@ -22,10 +19,6 @@ public class Data {
     private String positionalFileName;
     private CommonsMultipartFile templateFile = null;
     private String templateFileName;
-    private String headerLineNumbers;
-    private boolean noHeaderLines;
-    private String delimiter;
-    private String otherDelimiter;
     private String submit;
 
     /**
@@ -44,60 +37,6 @@ public class Data {
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * Returns the cfType.
-     *
-     * @return  The cfType.
-     */
-    public String getCfType() {
-        return cfType;
-    }
-
-    /**
-     * Sets the cfType.
-     *
-     * @param cfType  The cfType.
-     */
-    public void setCfType(String cfType) {
-        this.cfType = cfType;
-    }
-
-    /**
-     * Returns the user's community.
-     *
-     * @return  The community.
-     */
-    public String getCommunity() {
-        return community;
-    }
-
-    /**
-     * Sets the user's community.
-     *
-     * @param community The user's community.
-     */
-    public void setCommunity(String community) {
-        this.community = community;
-    }
-
-    /**
-     * Returns the platform.
-     *
-     * @return  The platform.
-     */
-    public String getPlatform() {
-        return platform;
-    }
-
-    /**
-     * Sets the platform.
-     *
-     * @param platform  The platform.
-     */
-    public void setPlatform(String platform) {
-        this.platform = platform;
     }
 
     /**
@@ -227,78 +166,6 @@ public class Data {
      */
     public void setTemplateFileName(String templateFileName) {
         this.templateFileName = templateFileName;
-    }
-
-    /**
-     * Returns the header line numbers of the data file.
-     *
-     * @return  The header line numbers.
-     */
-    public String getHeaderLineNumbers() {
-        return headerLineNumbers;
-    }
-
-    /**
-     *  * Sets the header line numbers of the data file.
-     *
-     * @param headerLineNumbers The header line numbers.
-     */
-    public void setHeaderLineNumbers(String headerLineNumbers) {
-        this.headerLineNumbers = headerLineNumbers;
-    }
-
-    /**
-     * Returns the no leader lines value.
-     *
-     * @return  The no header lines value.
-     */
-    public boolean getNoHeaderLines(){
-        return noHeaderLines;
-    }
-
-    /**
-     * Sets the no leader lines value.
-     *
-     * @param noHeaderLines The no header lines value.
-     */
-    public void setNoHeaderLines(boolean noHeaderLines) {
-        this.noHeaderLines = noHeaderLines;
-    }
-
-    /**
-     * Returns the data file delimiter.
-     *
-     * @return  The delimiter.
-     */
-    public String getDelimiter() {
-        return delimiter;
-    }
-
-    /**
-     * Sets the data file delimiter.
-     *
-     * @param delimiter The data file delimiter.
-     */
-    public void setDelimiter(String delimiter) {
-        this.delimiter = delimiter;
-    }
-
-    /**
-     * Returns the other data file delimiter.
-     *
-     * @return  The other delimiter.
-     */
-    public String getOtherDelimiter() {
-        return otherDelimiter;
-    }
-
-    /**
-     * Sets the other data file delimiter.
-     *
-     * @param otherDelimiter The other delimiter.
-     */
-    public void setOtherDelimiter(String otherDelimiter) {
-        this.otherDelimiter = otherDelimiter;
     }
 
     /**

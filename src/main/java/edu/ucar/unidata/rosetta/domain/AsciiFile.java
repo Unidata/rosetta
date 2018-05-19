@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * asynchronous AJAX (POST) requests from the client-side. (AKA
  * SPRING Magic!)
  *
- * @see UploadedFile
+ * @see UploadedFileData
  */
 public class AsciiFile {
 

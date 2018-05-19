@@ -4,19 +4,18 @@
 <p>Please tell us which lines in your dara file are header lines:</p>
 <label for="headerLineGrid" class="error"></label>
 <label for="noHeaderLines" class="noHeaderLines">
-    <input type="checkbox" name="noHeaderLines" value="true" id="noHeaderLines"/>
+    <input type="checkbox" name="noHeaderLines" <c:if test="${data.noHeaderLines eq 'true'}">checked</c:if> value="${data.noHeaderLines}" id="noHeaderLines"/>
     No header lines available in this file
 </label>
 <div id="headerLineGrid" class="rosettaGrid"></div>
-<input type="hidden" name="headerLineNumbers" value="" id="headerLineNumbers"/>
-
-<div id="delimiters" class="hideMe">
+<input type="hidden" name="headerLineNumbers" value="${data.headerLineNumbers}" id="headerLineNumbers"/>
+<div id="delimiters" class="<c:if test="${empty data.delimiter}">hideMe</c:if>">
     <p>Please specify delimiter(s) used in this file:</p>
     <label for="delimiter" class="error"></label>
     <ul id="delimiterList">
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter"
+                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Tab'}">checked</c:if>
                        value="Tab"
                        validate="required:true"/>
                 Tab
@@ -24,7 +23,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter"
+                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Comma'}">checked</c:if>
                        value="Comma"
                     validate="required:true"/>
                 Comma
@@ -32,7 +31,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter"
+                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Whitespace'}">checked</c:if>
                        value="Whitespace"
                      validate="required:true"/>
                 Whitespace
@@ -40,7 +39,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter"
+                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Colon'}">checked</c:if>
                        value="Colon"
                     validate="required:true"/>
                 Colon
@@ -48,7 +47,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter"
+                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Semicolon'}">checked</c:if>
                        value="Semicolon"
                        validate="required:true"/>
                 Semicolon
@@ -56,7 +55,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter"
+                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Single Quote'}">checked</c:if>
                        value="Single Quote"
                     validate="required:true"/>
                 Single Quote
@@ -64,7 +63,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter"
+                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Double Quote'}">checked</c:if>
                        value="Double Quote"
                     validate="required:true"/>
                 Double Quote
@@ -72,12 +71,12 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter" value="Other"
+                <input type="checkbox" name="delimiter" id="delimiter" value="Other" <c:if test="${not empty data.delimiter && data.delimiter eq 'Other'}">checked</c:if>
                        validate="required:true"/> Other
             </label>
             <label>
-                <input type="text" id="otherDelimiter" name="otherDelimiter" size="1"
-                     maxlength="10" class="hideMe"/>
+                <input type="text" id="otherDelimiter" name="otherDelimiter" size="1" value="${data.otherDelimiter}"
+                     maxlength="10" class="<c:if test="${empty data.otherDelimiter}">hideMe</c:if>"/>
             </label>
         </li>
     </ul>
@@ -86,7 +85,7 @@
         <%-- Show the previous button. --%>
         <input type="submit" name="submit" value="Previous" class="button"/>
         <%-- Show the next button. --%>
-        <input id="next" type="submit" name="submit" value="Next" disabled class="button disabled"/>
+        <input type="submit" name="submit" id="Next" value="Next" disabled class="button disabled"/>
     </div>
 
 </div>
@@ -150,6 +149,14 @@
 
     // add the checkboxSelector to the grid
     grid.registerPlugin(checkboxSelector);
+
+    <%-- Populate the grid checkboxes if header lines are present. --%>
+    <c:if test="${not empty data.headerLineNumbers}"> 
+        var lines = '${data.headerLineNumbers}'.split(/,/g);
+        grid.setSelectedRows(lines.sort(function (a, b) {
+            return a - b
+        }));
+    </c:if>
 
     // hide the checkbox in the grid column header on initial grid load (for aesthetics reasons)
     $(".slick-column-name :checkbox").addClass("hideMe");

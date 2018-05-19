@@ -4,10 +4,14 @@ import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.repository.DataDao;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
+import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
 
+import java.beans.Statement;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Date;
 import java.util.Random;
 
@@ -113,6 +117,50 @@ public class DataManagerImpl implements DataManager {
     }
 
     /**
+     * Combines non-null user-provided entries with persisted entries in a single Data object.
+     * A new Data is created from the persisted data and is populated with the non-null values
+     * of the user-provided information using reflection.
+     *
+     * @param id    The id of the persisted data associated with the provided Data object.
+     * @param data  The Data object containing the user-provided data.
+     * @return  A data object that contains the new user-provided data and the persisted data.
+     * @throws RosettaDataException  If unable to populate the Data object by reflection.
+     */
+    public Data populateDataObjectWithInput(String id, Data data) throws RosettaDataException {
+        // Data persisted in the database.
+        Data persistedData = lookupById(id);
+
+        try {
+            for (Method method : data.getClass().getDeclaredMethods()) {
+                if (Modifier.isPublic(method.getModifiers())
+                        && method.getParameterTypes().length == 0
+                        && method.getReturnType() != void.class
+                        && (method.getName().startsWith("get"))
+                        ) {
+                    Object value = method.invoke(data);
+                    if (value != null) {
+                        if (value instanceof String) {
+                            if ("".equals((String) value)) {
+                                continue;
+                            } else {
+                                Statement statement = new Statement(persistedData, method.getName().replaceFirst("get", "set"), new Object[]{value});
+                                statement.execute();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch(Exception e) {
+            /*
+            NOTE: code in the try block actually throws a bunch of different exceptions, including
+            java.lang.Exception itself.  Hence, the use catch of the generic Exception class.
+             */
+            throw new RosettaDataException("Unable to populate data object by reflection: " + e);
+        }
+        return persistedData;
+    }
+
+    /**
      * Converts .xls and .xlsx files to .csv files.
      *
      * @param id        The unique id associated with the file (a subdir in the uploads directory).
@@ -168,7 +216,7 @@ public class DataManagerImpl implements DataManager {
     }
 
     /**
-     * Retrieves the data file from disk and parses it by line, converting it into a JSOn string.
+     * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
      *
      * @param id  The unique id associated with the file (a subdir in the uploads directory).
      * @param dataFileName  The file to parse.
@@ -179,7 +227,6 @@ public class DataManagerImpl implements DataManager {
         String filePath = FilenameUtils.concat( FilenameUtils.concat(getUploadDir(), id), dataFileName);
         return fileParserManager.parseByLine(filePath);
     }
-
 
     /**
      * Creates a unique id for the file name from the clients IP address and the date.

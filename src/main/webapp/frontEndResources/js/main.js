@@ -1,7 +1,7 @@
 $(document).ready(function ($) {
 
     /**
-     * STEP 1: CF Type selection step
+     * STEP 1: CF Type selection step.
      * cfType selection via clicking on platform images, so show next button.
      */
     $(".platforms").on( "selectableselected", function( event, ui ) {
@@ -29,7 +29,7 @@ $(document).ready(function ($) {
     } );
 
     /**
-     * STEP 1: CF Type selection step
+     * STEP 1: CF Type selection step.
      * cfType selection via dropdown menu, so show next button.
      */
     $("#cfType select").change(function( event, ui ) {
@@ -44,7 +44,7 @@ $(document).ready(function ($) {
     });
 
     /**
-     * STEP 2
+     * STEP 2: File upload step.
      * fileType selection via dropdown menu.
      */
     $("select#dataFileType").change(function( event, ui ) {
@@ -68,41 +68,24 @@ $(document).ready(function ($) {
     });
 
     /**
-     * STEP 2
+     * STEP 2: File upload step.
      * dataFile to upload selected, so show next button.
      */
     $("input:file#dataFile").change(function (){
-        var file = $(this)[0].files[0];
-        var fileSize = file.size;
-        var fileName = file.name;
         // remove disabled status for submit button.
-        $("input[type=submit]#next").removeAttr("disabled");
+        $("input[type=submit]#Next").removeAttr("disabled");
         // remove disabled class for submit button.
-        $("input[type=submit]#next").removeClass("disabled");
+        $("input[type=submit]#Next").removeClass("disabled");
     });
 
 
     /**
-     * STEP 3
+     * STEP 3: Custom file attribute step.
      * delimiter selected, so show next button.
+     * header line js handled in js/SlickGrid/custom/headerLineSelection.js
      */
     $("input#delimiter").change(function (){
-        // selected.
-        if ($("input#delimiter").is(':checked')) {
-            // only show if there is header line data.
-            if ($("input#noHeaderLines").is(':checked') || $("input#headerLineNumbers").val()) {
-                // remove disabled status for submit button.
-                $("input[type=submit]#next").removeAttr("disabled");
-                // remove disabled class for submit button.
-                $("input[type=submit]#next").removeClass("disabled");
-            }
-        } else {
-            // delimiter unselected for some reason.
-            // add disabled status for submit button.
-            $("input[type=submit]#next").attr("disabled", true);
-            // add disabled class for submit button.
-            $("input[type=submit]#next").addClass("disabled");
-        }
+        manageCustomFileButtonNav(); // This method lives in js/SlickGrid/custom/headerLineSelection.js
     });
 
 

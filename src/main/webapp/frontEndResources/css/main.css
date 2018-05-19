@@ -380,7 +380,7 @@ ul li label img {
 }
 
 /**
- * Cf Type Step of Wizard
+ * CF type step of wizard.
  */
 
 #cfType {
@@ -412,7 +412,6 @@ ul li label img {
 #cfType ul li.cfTypeSpecified small {
     font-size:7pt;
 }
-
 
 
 /* platform display */
@@ -453,21 +452,22 @@ ul li label img {
 }
 
 /**
- * Step 2
+ * File upload step of wizard.
  */
-#step2 #upload {
+#fileUpload #upload {
     margin:10px 0;
     padding:0;
 }
 
-#step2 #upload .files {
-    margin:10px;
+#fileUpload #upload .files {
+    margin:10px 10px 20px 10px;
 }
 
+
 /**
- * Step 3
+ * Custom file attributes step of wizard.
  */
-#step3 #delimiters {
+#customFileTypeAttributes #delimiters {
     display:block;
     float:left;
     width:100%;
@@ -490,7 +490,7 @@ ul#delimiterList li {
     position: relative;
     bottom: 0;
 }
-#step3 .buttonNav {
+#customFileTypeAttributes .buttonNav {
     display:block;
     float:left;
     width:100%;

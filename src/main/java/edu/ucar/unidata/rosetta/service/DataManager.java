@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
@@ -29,7 +30,7 @@ public interface DataManager {
     public void persistData(Data data, HttpServletRequest request);
 
     /**
-     * Updated the persisted information corresponding to the given data object.
+     * Updates the persisted information corresponding to the given data object.
      *
      * @param data  The data object to update.
      */
@@ -48,6 +49,18 @@ public interface DataManager {
      * @return  The name of the directory used for storing uploaded files.
      */
     public String getUploadDir();
+
+    /**
+     * Combines non-null user-provided entries with persisted entries in a single Data object.
+     * A new Data is created from the persisted data and is populated with the non-null values
+     * of the user-provided information using reflection.
+     *
+     * @param id    The id of the persisted data associated with the provided Data object.
+     * @param data  The Data object containing the user-provided data.
+     * @return  A data object that contains the new user-provided data and the persisted data.
+     * @throws RosettaDataException  If unable to populate the Data object by reflection.
+     */
+    public Data populateDataObjectWithInput(String id, Data data) throws RosettaDataException;
 
     /**
      * Converts .xls and .xlsx files to .csv files.
@@ -71,6 +84,14 @@ public interface DataManager {
      */
     public void writeUploadedFileToDisk(String id, String fileName, CommonsMultipartFile file) throws SecurityException, IOException;
 
+    /**
+     * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
+     *
+     * @param id  The unique id associated with the file (a subdir in the uploads directory).
+     * @param dataFileName  The file to parse.
+     * @return  A JSON String of the file data parsed by line.
+     * @throws IOException  For any file I/O or JSON conversions problems.
+     */
     public String parseDataFileByLine(String id, String dataFileName) throws IOException;
 
 }

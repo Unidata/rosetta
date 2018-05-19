@@ -19,7 +19,9 @@
 <script type="text/javascript" src="resources/js/SlickGrid/slick.grid.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/slick.headerbuttons.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/slick.rowselectionmodel.js"></script>
+<script type="text/javascript" src="resources/js/SlickGrid/custom/commonSlickGridEvents.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/custom/headerLineSelection.js"></script>
+<script type="text/javascript" src="resources/js/SlickGrid/custom/variableSpecification.js"></script>
 
 
 <!-- custom -->

@@ -8,3 +8,223 @@
 <input type="submit" name="submit" value="Previous" class="button"/>
 <%-- Show the next button. --%>
 <input id="next" type="submit" name="submit" value="Next" disabled class="button disabled"/>
+
+
+<script>
+    // load global resources used for this step
+    loadCFStandards();
+    loadUnitBuilderData();
+    loadCFStandardUnits();
+    loadMetadata();
+
+    var columns = [
+        {
+            id: "line_number",
+            name: "#",
+            field: "line_number",
+            width: 45,
+            cssClass: "lineNumber",
+            headerCssClass: "lineNumber",
+            resizable: false
+        }
+    ];
+    columns.push(
+        {
+            id: "line_data",
+            name: "Line Data",
+            field: "line_data",
+            width: 1000,
+            resizable: false
+        }
+    );
+
+    // The SlickGrid options for this particular grid.
+    var options = {
+        editable: false,
+        enableAddRow: false,
+        enableColumnReorder: false,
+        forceFitColumns: true,
+        enableCellNavigation: true
+    };
+
+
+    // A custom formatter (see slick.formatters.js) to format the lines for the header line toggle functionality
+    var LineNumberFormatter = function (row, cell, value, columnDef, dataContext) {
+        if (dataContext.parent != null) { // header row: a parent row is present
+            if (dataContext.id == dataContext.parent) { // header row that is the parent row
+                // return the appropriate item depending on the current state of the parent
+                // (expanded or collapsed)
+                if (dataContext._collapsed) {
+                    return " <span class='toggle expand'></span>" + value;
+                } else {
+                    return " <span class='toggle collapse'></span>" + value;
+                }
+            } else { // header row but not the parent row: do nothing
+                return value;
+            }
+        } else { // no "parent" assigned to the row (it's a data row)
+            return value;
+        }
+    };
+
+    // load global resources used for this step
+    loadCFStandards();
+    loadUnitBuilderData();
+    loadCFStandardUnits();
+    loadMetadata();
+
+    // Instead of using just rows[], we're using the dataView data model so we can use filtering
+    var dataView;
+
+    // assign the custom formatter
+    columns[0]["formatter"] = LineNumberFormatter;
+
+    // Populate rows[] (for the dataView) with the fileData and
+    // format accordingly if the line is a header line or a data
+    // line. If a data line, parse the data using the delimiter.
+    $(function () {
+        // get the header line numbers from the session so we can identify the line type in the
+        // fileData array and format accordingly
+        var headerLines = '${data.headerLineNumbers}'.split(/,/g);
+
+        // denote which is the first or "parent" header line that will be shown when the rest of
+        // the header lines are collapsed
+        var firstHeaderLine = headerLines[0];
+
+        // grab the "common" delimiter from the fileData
+        var delimiter = fileData.shift();
+        var colNumber;
+
+        // loop through the fileData line by line
+        for (var i = 0; i < fileData.length; i++) {
+            var parent = null;
+            if (fileData[i] != "") { // sanity check to make sure the line isn't blank
+
+                // an unglamerous way to keep track of where we are in the loop
+                if (i == 0) {
+                    bool = 1;
+                }
+
+                // create a placeholder object to hold the line data, starting with the line number
+                // data for the first column
+                var obj = {"line_number": i, "id": i};
+
+                // test the data against the headerLines array
+                if (jQuery.inArray(i.toString(), headerLines) < 0) { // it's not a header line
+
+                    // split the data line using the given delimiter
+                    if (delimiter != " ") {
+                        var dataItems = fileData[i].split(delimiter);
+                    } else {
+                        var dataItems = fileData[i].split(/\s+/);
+                        if (dataItems[0] == "") {
+                            dataItems.splice(0, 1);
+                        }
+                    }
+
+                    // find if this is the first iteration through the data lines in the loop and
+                    // finish creating the columns[]
+                    if (bool == 1) {
+                        colNumber = dataItems.length;
+                        // populate columns[]
+                        for (var x = 0; x < colNumber; x++) {
+                            // create placeholder column object
+                            var colObject = {
+                                id: x,
+                                name: "column " + x,
+                                field: x,
+                                width: 100,
+                                resizable: false,
+                                sortable: false
+                            };
+
+                            // check session to see if variable input has already been entered by
+                            // user
+                            colObject["header"] = { // "header" option is used with the HeaderButtons Plugin
+                                buttons: [
+                                    {
+                                        cssClass: "todo",
+                                        command: "setVariable",
+                                        tooltip: "data column " + x
+                                    }
+                                ]
+                            };
+
+                            columns.push(colObject);
+                        }
+                        bool = 0;
+                    }
+
+                    // add the parsed line data to our placeholder object
+                    for (var x = 0; x < dataItems.length; x++) {
+                        obj[x] = dataItems[x];
+                    }
+
+                } else { // it's a header line
+
+                    // add the un-parsed line data to our placeholder object
+                    //
+                    obj[0] = fileData[i];
+
+                    // the default view of the grid will have the header lines collapsed/hidden
+                    parent = firstHeaderLine;
+                    if (i == firstHeaderLine) {
+                        obj["_collapsed"] = true;
+                    }
+                }
+
+                // specify which row (first) is the parent header row (used for filtering)
+                obj["parent"] = parent;
+
+                // add the object to rows[]
+                rows[i] = obj;
+            }
+        }
+
+        // initialize the data model, set the data items, and apply the headerLineFilter
+        dataView = new Slick.Data.DataView({inlineFilters: true});
+        dataView.beginUpdate();
+        dataView.setItems(rows);
+        dataView.setFilter(headerLineFilter);
+        dataView.setFilterArgs(rows);
+        dataView.endUpdate();
+
+        // format the header line rows to set them apart from the data lines
+        dataView.getItemMetadata = function (i) {
+            if (i == firstHeaderLine) {
+                return {
+                    "cssClasses": "headerRow",
+                    "columns": {
+                        1: {
+                            "colspan": colNumber
+                        }
+                    }
+                };
+            }
+        };
+
+        // initialize the grid with the data model
+        grid = new Slick.Grid("#variableGrid", dataView, columns, options);
+
+        // bind header line toggle events to the grid
+        bindGridHeaderLineToggleEvent(grid, dataView, colNumber, headerLines, firstHeaderLine);
+
+        // bind generic scroll events to the grid
+        bindGridScrollEvent(colNumber, grid);
+
+        // load the HeaderButtons Plugin to custom buttons to column headers
+        var headerButtonsPlugin = new Slick.Plugins.HeaderButtons();
+
+        // bind HeaderButtons Plugin events
+        bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid, step);
+
+        // register the HeaderButtons Plugin with the grid
+        grid.registerPlugin(headerButtonsPlugin);
+
+        // have all the columns been handled?
+        testIfComplete(colNumber);
+
+    });
+
+
+</script>

@@ -40,15 +40,6 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
     loadCFStandardUnits();
     loadMetadata();
 
-    // The SlickGrid options for this particular grid.
-    var options = {
-        editable: false,
-        enableAddRow: false,
-        enableColumnReorder: false,
-        forceFitColumns: true,
-        enableCellNavigation: true
-    };
-
     // Instead of using just rows[], we're using the dataView data model so we can use filtering
     var dataView;
 
@@ -61,7 +52,7 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
     $(function () {
         // get the header line numbers from the session so we can identify the line type in the
         // fileData array and format accordingly
-        var headerLines = getFromSession("headerLineNumbers").split(/,/g);
+        var headerLines = '${data.headerLineNumbers}'.split(/,/g);
 
         // denote which is the first or "parent" header line that will be shown when the rest of
         // the header lines are collapsed
@@ -116,32 +107,6 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
 
                             // check session to see if variable input has already been entered by
                             // user
-                            var variableName = getFromSession("variableName" + x);
-                            if (variableName != null) { // data already in session
-                                // update the column name to be that of the assigned variable name
-                                colObject.name = variableName;
-                                if (testVariableCompleteness("variableName" + i, variableName)) {
-                                    colObject["header"] = { // "header" option is used with the HeaderButtons Plugin
-                                        buttons: [
-                                            {
-                                                cssClass: "done",
-                                                command: "setVariable",
-                                                tooltip: variableName
-                                            }
-                                        ]
-                                    }
-                                } else {
-                                    colObject["header"] = { // "header" option is used with the HeaderButtons Plugin
-                                        buttons: [
-                                            {
-                                                cssClass: "todo",
-                                                command: "setVariable",
-                                                tooltip: "data column " + x
-                                            }
-                                        ]
-                                    }
-                                }
-                            } else { // no data in session
                                 colObject["header"] = { // "header" option is used with the HeaderButtons Plugin
                                     buttons: [
                                         {
@@ -150,8 +115,8 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
                                             tooltip: "data column " + x
                                         }
                                     ]
-                                }
-                            }
+                                };
+
                             columns.push(colObject);
                         }
                         bool = 0;

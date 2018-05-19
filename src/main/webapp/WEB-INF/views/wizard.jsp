@@ -36,9 +36,11 @@
                             <li id="${currentStep}" <c:if test="${currentStep eq 'fileUpload'}">class="current"</c:if>>
                                 Upload Data File
                             </li>
-                            <li id="${currentStep}" <c:if test="${currentStep eq 'customFileTypeAttributes'}">class="current"</c:if>>
-                                Specify Custom File Type Attributes
-                            </li>
+                            <c:if test="${not empty data.dataFileType && data.dataFileType eq 'Custom_File_Type'}">
+                                <li id="${currentStep}" <c:if test="${currentStep eq 'customFileTypeAttributes'}">class="current"</c:if>>
+                                    Specify Custom File Type Attributes
+                                </li>
+                            </c:if>
                             <li id="${currentStep}" <c:if test="${currentStep eq 'variableMetadata'}">class="current"</c:if>>
                                 Specify Variable Attributes
                             </li>
