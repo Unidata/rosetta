@@ -1,6 +1,5 @@
 package edu.ucar.unidata.rosetta.init;
 
-import edu.ucar.unidata.rosetta.service.DbInitManager;
 import edu.ucar.unidata.rosetta.service.EmbeddedDerbyDbInitManager;
 
 import java.io.*;
@@ -8,7 +7,6 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 

@@ -26,8 +26,8 @@ version = '0.3-SNAPSHOT'
 
 description = """rosetta"""
 
-sourceCompatibility = 1.9
-targetCompatibility = 1.9
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 ext {
     springVersion = "4.3.13.RELEASE"
