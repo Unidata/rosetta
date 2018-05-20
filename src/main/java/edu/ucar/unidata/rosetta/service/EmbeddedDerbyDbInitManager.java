@@ -46,6 +46,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
         // Create derby database file.
         File dbFile = new File(FilenameUtils.concat(rosettaHome, databaseName));
+
         Connection connection;
         if (!dbFile.exists()) {
             logger.info("Database does not exist yet.  Creating...");
@@ -110,8 +111,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         // Get relevant properties.
         String rosettaHome = props.getProperty("rosetta.home");
         String databaseName = props.getProperty("jdbc.dbName");
-        String url = props.getProperty("jdbc.url").replaceAll("\\$\\{rosetta.home}", rosettaHome);
-        url = url.replaceAll("\\$\\{jdbc.dbName}", databaseName);
+        String url = props.getProperty("jdbc.url").replaceAll("\\$\\{rosetta.home\\}", rosettaHome);
+        url = url.replaceAll("\\$\\{jdbc\\.dbName}", databaseName);
         props.setProperty("jdbc.url", url);
 
         // Okay, we're done.  Shut down this particular connection to the database.
