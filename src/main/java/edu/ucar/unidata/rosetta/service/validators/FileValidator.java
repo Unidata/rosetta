@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.service;
+package edu.ucar.unidata.rosetta.service.validators;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -8,13 +8,15 @@ import org.springframework.validation.Validator;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 
-@Component
-public class FileValidator implements Validator {
+/**
+ * @author oxelson@ucar.edu
+ */
+@Component("fileValidator")
+public class FileValidator extends CommonValidator implements Validator {
     /*
         private String cfType = null;
         private String uniqueId = null;
@@ -27,8 +29,6 @@ public class FileValidator implements Validator {
         private HashMap<String, HashMap> variableMetadataMap = new HashMap<String, HashMap> ();
 
     */
-    private String[] NAUGHTY_STRINGS = {"<script>", "../", "javascript", "::", "&quot;", "fromcharCode", "%3", "$#", "alert(", ".js", ".source", "\\", "scriptlet", ".css", "binding:", ".htc", "vbscript", "mocha:", "livescript:", "base64", "\00", "xss:", "%77", "0x", "IS NULL;", "1;", "; --", "1=1"};
-    private String[] NAUGHTY_CHARS = {"<", ">", "`", "^", "|", "}", "{"};
 
 
     public boolean supports(Class clazz) {
@@ -45,46 +45,10 @@ public class FileValidator implements Validator {
 
     }
 
-
-    public void validateList(List<String> list, Errors errors) {
-        Iterator<String> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            String input = iterator.next();
+    private void validateList(List<String> list, Errors errors) {
+        for (String input : list) {
             validateInput(input, errors);
         }
-    }
-
-
-    public void validateInput(String input, Errors errors) {
-        String badChar = checkForNaughtyChars(input);
-        if (badChar != null) {
-            errors.reject("Bad value submitted: " + badChar);
-            return;
-        }
-        String badString = checkForNaughtyStrings(input);
-        if (badString != null) {
-            errors.reject("Bad value submitted: " + badString);
-            return;
-        }
-    }
-
-
-    public String checkForNaughtyStrings(String itemToCheck) {
-        for (String item : NAUGHTY_STRINGS) {
-            if (StringUtils.contains(StringUtils.lowerCase(itemToCheck), item)) {
-                return item;
-            }
-        }
-        return null;
-    }
-
-    public String checkForNaughtyChars(String itemToCheck) {
-        for (String item : NAUGHTY_CHARS) {
-            if (StringUtils.contains(itemToCheck, item)) {
-                return item;
-            }
-        }
-        return null;
     }
 
     /**
@@ -92,9 +56,8 @@ public class FileValidator implements Validator {
      * If the count per line is inconsistent, then there is an error.
      *
      * @param filePath The path to the file on disk.
-     * @thows RuntimeException if the delimiter count per line doesn't match.
      */
-    public void validateDelimiterCount(String filePath, Object obj, Errors errors) {
+    private void validateDelimiterCount(String filePath, Object obj, Errors errors) {
         AsciiFile file = (AsciiFile) obj;
         List<String> delimiterList = file.getDelimiterList();
         List<String> headerLineList = file.getHeaderLineList();
@@ -105,11 +68,9 @@ public class FileValidator implements Validator {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             while ((currentLine = reader.readLine()) != null) {
                 // If NOT a header line
-                if (!headerLineList.contains(new Integer(lineCount).toString())) {
+                if (!headerLineList.contains(String.valueOf(lineCount))) {
                     // Check to make sure the delimiter count per line is the same for each line.
-                    Iterator<String> delimiterIterator = delimiterList.iterator();
-                    while (delimiterIterator.hasNext()) {
-                        String delimiter = delimiterIterator.next();
+                    for (String delimiter : delimiterList) {
                         // Find out how many instances of the delimiter are in the line of data
                         int delimiterCount = StringUtils.countMatches(currentLine, delimiter);
                         // Assign FIRST delimiter count number to running total value and
@@ -119,13 +80,13 @@ public class FileValidator implements Validator {
                             dataLine = true;
                         } else {
                             if (delimiterRunningTotal != delimiterCount) {
-                                errors.reject("File line of data contains an irregular delimiter count at line number: " + new Integer(lineCount).toString() + " for delimiter: " + delimiter);
+                                errors.reject("File line of data contains an irregular delimiter count at line number: " + String.valueOf(lineCount) + " for delimiter: " + delimiter);
                             }
                         }
                     }
                 }
+                lineCount++;
             }
-            lineCount++;
         } catch (IOException e) {
             errors.reject(e.getMessage());
         }

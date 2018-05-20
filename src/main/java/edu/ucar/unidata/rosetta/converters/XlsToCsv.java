@@ -40,6 +40,7 @@ import jxl.DateCell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -62,7 +63,7 @@ public class XlsToCsv {
     /**
      * If a cell is empty, set the value in the CSV file to -999
      */
-    private static final String missingFillValue = "-999";
+    private static final String MISSING_FILL_VALUE = "-999";
 
     /**
      * _more_
@@ -81,22 +82,17 @@ public class XlsToCsv {
 
             //File to store data in form of CSV
             if (csvFile == null) {
-                if (xlsFile.contains(".xlsx")) {
-                    csvFile = xlsFile.replace(".xls", ".csv");
-                } else {
-                    csvFile = xlsFile.replace(".xls", ".csv");
-                }
+                csvFile = FilenameUtils.removeExtension(xlsFile) + ".csv";
             }
 
             File f = new File(csvFile);
-            // if file doesnt exists, then create it
+            // if file doesn't exists, then create it
             if (!f.exists()) {
                 f.createNewFile();
             }
             OutputStream os = new FileOutputStream(f);
             String encoding = "UTF8";
-            OutputStreamWriter osw = new OutputStreamWriter(os,
-                    encoding);
+            OutputStreamWriter osw = new OutputStreamWriter(os, encoding);
             BufferedWriter bw = new BufferedWriter(osw);
 
             // Gets the sheets from workbook
@@ -186,7 +182,7 @@ public class XlsToCsv {
 
     /**
      * Check the cell contents for a missing value. If cell is empty
-     * set the cell content value to missingFillValue.
+     * set the cell content value to MISSING_FILL_VALUE.
      *
      * @param contents the contents of a cell of the spreadsheet
      * @return contents with the missing value replaced
@@ -196,7 +192,7 @@ public class XlsToCsv {
             contents = contents.replace(",", "");
         }
         if (contents.equals("---")) {
-            contents = missingFillValue;
+            contents = MISSING_FILL_VALUE;
         }
         return contents;
     }

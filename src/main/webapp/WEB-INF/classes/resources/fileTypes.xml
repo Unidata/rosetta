@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<fileTypes>
+    <fileType>
+        <name>Custom File Type</name>
+    </fileType>
+    <fileType>
+        <name>EOL Composite Sounding File</name>
+    </fileType>
+    <fileType>
+        <name>GeoCSV</name>
+    </fileType>
+    <fileType>
+        <name>eTuff</name>
+    </fileType>
+</fileTypes>

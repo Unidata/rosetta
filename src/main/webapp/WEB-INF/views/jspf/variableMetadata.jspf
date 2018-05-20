@@ -1,0 +1,63 @@
+<h3>Specify Variable Attributes</h3>
+
+<label for="variableGrid" class="error"></label>
+<div id="variableGrid" class="rosettaGrid"></div>
+<div id="dialog"></div>
+<input type="hidden" name="variableMetadata" value="${data.variableMetadata}" id="variableMetadata"/>
+
+<%-- Show the previous button. --%>
+<input type="submit" name="submit" value="Previous" class="button"/>
+<%-- Show the next button. --%>
+<input id="Next" type="submit" name="submit" value="Next" disabled class="button disabled"/>
+
+
+<script>
+    var grid;
+    var columns = [
+        {
+            id: "line_number",
+            name: "#",
+            field: "line_number",
+            width: 45,
+            cssClass: "lineNumber",
+            headerCssClass: "lineNumber",
+            resizable: false
+        }
+    ];
+
+    // SlickGrid options.
+    var options = {
+        editable: false,
+        enableAddRow: false,
+        enableColumnReorder: false,
+        forceFitColumns: true,
+    };
+
+    var rows = [];
+
+    // A custom formatter (see slick.formatters.js) to format the lines for the header line toggle functionality
+    var LineNumberFormatter = function (row, cell, value, columnDef, dataContext) {
+        if (dataContext.parent != null) { // header row: a parent row is present
+            if (dataContext.id == dataContext.parent) { // header row that is the parent row
+                // return the appropriate item depending on the current state of the parent
+                // (expanded or collapsed)
+                if (dataContext._collapsed) {
+                    return " <span class='toggle expand'></span>" + value;
+                } else {
+                    return " <span class='toggle collapse'></span>" + value;
+                }
+            } else { // header row but not the parent row: do nothing
+                return value;
+            }
+        } else { // no "parent" assigned to the row (it's a data row)
+            return value;
+        }
+    };
+    // Parsed file data.
+    var fileData = ${parsedData};
+    var delimiter = '${delimiterSymbol}';
+    var headerLineNumbers = '${data.headerLineNumbers}';
+
+    gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter, headerLineNumbers);
+
+</script>

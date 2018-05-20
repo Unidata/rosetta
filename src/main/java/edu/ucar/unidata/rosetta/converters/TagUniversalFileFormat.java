@@ -326,7 +326,7 @@ public class TagUniversalFileFormat {
 
     private void printInventory() {
         log.debug("Inventory:");
-        List sortedKeys = new ArrayList(data.keySet());
+        List<String> sortedKeys = new ArrayList<String>(data.keySet());
         Collections.sort(sortedKeys);
 
         for (Object name : sortedKeys) {
@@ -399,9 +399,9 @@ public class TagUniversalFileFormat {
             theNewVar.addAttribute(new Attribute("units", timeUnit));
 
             // create variables:
-            List sortedKeys = new ArrayList(data.keySet());
+            List<String> sortedKeys = new ArrayList<String>(data.keySet());
             Collections.sort(sortedKeys);
-            List<String> trajVarNames = new ArrayList<>();
+            List<String> trajVarNames = new ArrayList<String>();
 
             for (Object name : sortedKeys) {
                 if (trajCoordVarNames.contains(name.toString())) {
@@ -567,9 +567,9 @@ public class TagUniversalFileFormat {
             theNewVar.addAttribute(new Attribute("units", "seconds"));
             theNewVar.addAttribute(new Attribute("description", "time since last latitude and longitude observation were obtained."));
             // create variables:
-            List sortedKeys = new ArrayList(data.keySet());
+            List<String> sortedKeys = new ArrayList<String>(data.keySet());
             Collections.sort(sortedKeys);
-            List<String> trajVarNames = new ArrayList<>();
+            List<String> trajVarNames = new ArrayList<String>();
 
             for (Object name : sortedKeys) {
                 if (trajCoordVarNames.contains(name.toString())) {
@@ -694,5 +694,4 @@ public class TagUniversalFileFormat {
         }
         return ncfile;
     }
-
 }

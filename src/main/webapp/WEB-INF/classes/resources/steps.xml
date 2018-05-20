@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<steps>
+    <step>
+        <id>1</id>
+        <title>Basic Information</title>
+        <view>cfType</view>
+    </step>
+    <step>
+        <id>2</id>
+        <title>Upload Data File</title>
+        <view>fileUpload</view>
+    </step>
+    <step>
+        <id>3</id>
+        <title>Specify Custom File Type Attributes</title>
+        <view>customFileTypeAttributes</view>
+    </step>
+    <step>
+        <id>4</id>
+        <title>Specify Variable Attributes</title>
+        <view>variableMetadata</view>
+    </step>
+    <step>
+        <id>5</id>
+        <title>Specify General Information</title>
+        <view>generalMetadata</view>
+    </step>
+    <step>
+        <id>6</id>
+        <title>Download Converted File</title>
+        <view>convertAndDownload</view>
+    </step>
+</steps>

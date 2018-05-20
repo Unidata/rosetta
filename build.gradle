@@ -26,8 +26,8 @@ version = '0.3-SNAPSHOT'
 
 description = """rosetta"""
 
-sourceCompatibility = 1.9
-targetCompatibility = 1.9
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 ext {
     springVersion = "4.3.13.RELEASE"
@@ -57,24 +57,26 @@ dependencies {
 
     // netCDF-Java/CDM deps
     compile "edu.ucar:netcdfAll:$cdmVersion"
-    //compile group: 'edu.ucar', name:'netcdfAll', version: '4.6.10'
+
     // others
-
-    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
-
+    compile "org.slf4j:slf4j-log4j12:1.7.25"
     compile "org.slf4j:slf4j-api:1.7.25"
-
     compile "org.slf4j:jcl-over-slf4j:1.7.25"
 
-    compile "commons-codec:commons-codec:1.11"
+    // JSON processing
+    compile "com.fasterxml.jackson.core:jackson-databind:2.9.4"
+    compile "com.fasterxml.jackson.core:jackson-core:2.9.5";
 
-    compile "org.apache.commons:commons-lang3:3.4"
+    // takes the place of javax.activation package
+    compile 'com.sun.activation:javax.activation:1.2.0'
 
     compile "commons-io:commons-io:2.6"
-
     compile "commons-fileupload:commons-fileupload:1.3.3"
-
+    compile "commons-codec:commons-codec:1.11"
+    compile "org.apache.commons:commons-lang3:3.4"
+    compile "commons-dbcp:commons-dbcp:1.4"
     compile "org.apache.httpcomponents:httpclient:4.3.6"
+    compile "org.apache.derby:derby:10.14.2.0"
 
     compile "jstl:jstl:1.2"
 
@@ -82,7 +84,11 @@ dependencies {
 
     compile "javax.servlet:javax.servlet-api:3.1.0"
 
-    compile 'javax.annotation:javax.annotation-api:1.3.1'
+    compile 'javax.annotation:javax.annotation-api:1.3.2'
+
+    // input validation
+    compile "org.hibernate:hibernate-validator:6.0.9.Final"
+    compile "javax.validation:validation-api:2.0.1.Final"
 
     compile "net.sourceforge.jexcelapi:jxl:2.6.12"
 
@@ -175,12 +181,12 @@ task jekyllServe(type: JRubyExec, group: 'Jekyll', description: 'Serve your site
 
 gretty {
     servletContainer = 'tomcat8'
-
     httpPort = 8888
 
     contextPath = '/rosetta'
 
     jvmArgs = ["-Drosetta.content.root.path=$rootDir/src/test/rosetta_home",
+               "-Drosetta.home=$rootDir/src/test/rosetta_home",
                "-Dlog4j.configuration=$rootDir/src/main/webapp/WEB-INF/classes/log4j.xml"]
 
     integrationTestTask = 'test'

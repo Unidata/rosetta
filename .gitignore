@@ -58,4 +58,6 @@ rosetta.tgz
 # Output Test Files #
 #####################
 src/test/resources/testData/esc/*.nc
-src/test/rosetta_home/*
+src/test/rosetta_home/downloads
+src/test/rosetta_home/uploads
+rosetaDb

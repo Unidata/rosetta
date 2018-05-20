@@ -32,4 +32,16 @@
         <fileName>publishers.xml</fileName>
         <type>publisher</type>
     </resource>
+    <resource>
+        <fileName>domains.xml</fileName>
+        <type>domain</type>
+    </resource>
+    <resource>
+        <fileName>steps.xml</fileName>
+        <type>step</type>
+    </resource>
+    <resource>
+        <fileName>fileTypes.xml</fileName>
+        <type>fileType</type>
+    </resource>
 </resources>

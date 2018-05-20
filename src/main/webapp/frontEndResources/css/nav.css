@@ -1,0 +1,30 @@
+/**
+ * navigation.css
+ * 
+ * Left Nav menu showing steps.
+ */
+
+nav {
+    float:left;
+    width:20%;
+    margin:0 10px 10px 0;
+    padding:0px;
+}
+
+nav ul#steps {
+    list-style:none;
+    overflow:hidden;
+    margin:0;
+    padding:0;
+}
+
+nav ul#steps li {
+    padding: 5px 0 5px 20px;
+    margin: 5px 0;
+    background: #FFFFFF url('../img/step.png') 1px 8px no-repeat !important;
+}
+
+nav ul#steps li.current {
+    background: #FFFFFF url('../img/current.png') 1px 8px no-repeat !important;
+    font-weight: bold;
+}

@@ -1,0 +1,170 @@
+<h3>Specify Custom File Type Attributes</h3>
+<p>Because you specified your data file type as <i>custom</i>, we need the following information from you before can continue.</p>
+
+<p>Please tell us which lines in your data file are header lines:</p>
+<label for="headerLineGrid" class="error"></label>
+<label for="noHeaderLines" class="noHeaderLines">
+    <input type="checkbox" name="noHeaderLines" <c:if test="${data.noHeaderLines eq 'true'}">checked</c:if> value="${data.noHeaderLines}" id="noHeaderLines"/>
+    No header lines available in this file
+</label>
+<div id="headerLineGrid" class="rosettaGrid"></div>
+<input type="hidden" name="headerLineNumbers" value="${data.headerLineNumbers}" id="headerLineNumbers"/>
+<div id="delimiters" class="<c:if test="${empty data.delimiter}">hideMe</c:if>">
+    <p>Please specify delimiter(s) used in this file:</p>
+    <label for="delimiter" class="error"></label>
+    <ul id="delimiterList">
+        <li>
+            <label>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Tab'}">checked</c:if>
+                       value="Tab"
+                       validate="required:true"/>
+                Tab
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Comma'}">checked</c:if>
+                       value="Comma"
+                    validate="required:true"/>
+                Comma
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Whitespace'}">checked</c:if>
+                       value="Whitespace"
+                     validate="required:true"/>
+                Whitespace
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Colon'}">checked</c:if>
+                       value="Colon"
+                    validate="required:true"/>
+                Colon
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Semicolon'}">checked</c:if>
+                       value="Semicolon"
+                       validate="required:true"/>
+                Semicolon
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Single Quote'}">checked</c:if>
+                       value="Single Quote"
+                    validate="required:true"/>
+                Single Quote
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Double Quote'}">checked</c:if>
+                       value="Double Quote"
+                    validate="required:true"/>
+                Double Quote
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="radio" name="delimiter" id="delimiter" value="Other" <c:if test="${not empty data.delimiter && data.delimiter eq 'Other'}">checked</c:if>
+                       validate="required:true"/> Other
+            </label>
+            <label>
+                <input type="text" id="otherDelimiter" name="otherDelimiter" size="1" value="${data.otherDelimiter}"
+                     maxlength="10" class="<c:if test="${empty data.otherDelimiter}">hideMe</c:if>"/>
+            </label>
+        </li>
+    </ul>
+
+    <div class="buttonNav">
+        <%-- Show the previous button. --%>
+        <input type="submit" name="submit" value="Previous" class="button"/>
+        <%-- Show the next button. --%>
+        <input type="submit" name="submit" id="Next" value="Next" disabled class="button disabled"/>
+    </div>
+
+</div>
+
+
+
+<script>
+    var grid;
+    var columns = [
+        {
+            id: "line_number",
+            name: "#",
+            field: "line_number",
+            width: 45,
+            cssClass: "lineNumber",
+            headerCssClass: "lineNumber",
+            resizable: false
+        }
+    ];
+    columns.push(
+        {
+            id: "line_data",
+            name: "Line Data",
+            field: "line_data",
+            width: 1000,
+            resizable: false
+        }
+    );
+
+    // SlickGrid options.
+    var options = {
+        editable: false,
+        enableAddRow: false,
+        enableColumnReorder: false,
+        forceFitColumns: true,
+    };
+
+    // Populate rows[] with the fileData and create the grid.
+    // Implement the SlickGrid checkboxSelector plugin. Bind 
+    // any events associated with the checkboxSelector plugin. 
+    var fileData = ${parsedData};
+    var rows = [fileData.length];
+    for (var i = 0; i < fileData.length; i++) {
+        if (fileData[i] != "") {
+            rows[i] = {
+                line_number: i,
+                line_data: fileData[i]
+            };
+        }
+    }
+    // initialize the checkboxSelector plugin and add to columns[]
+    var checkboxSelector = new Slick.CheckboxSelectColumn({
+        cssClass: "slick-cell-checkboxsel"
+    });
+    columns.unshift(checkboxSelector.getColumnDefinition());
+
+    // initialize the grid and set the selection model
+    grid = new Slick.Grid("#headerLineGrid", rows, columns, options);
+    var rowModel = new Slick.RowSelectionModel({selectActiveRow: false});
+    grid.setSelectionModel(rowModel);
+
+    // add the checkboxSelector to the grid
+    grid.registerPlugin(checkboxSelector);
+
+    <%-- Populate the grid checkboxes if header lines are present. --%>
+    <c:if test="${not empty data.headerLineNumbers}"> 
+        var lines = '${data.headerLineNumbers}'.split(/,/g);
+        grid.setSelectedRows(lines.sort(function (a, b) {
+            return a - b
+        }));
+    </c:if>
+
+    // hide the checkbox in the grid column header on initial grid load (for aesthetics reasons)
+    $(".slick-column-name :checkbox").addClass("hideMe");
+
+    // bind header line selection events to the grid
+    bindGridHeaderLineSelectionEvent(grid, 3);
+
+    // Uncheck the 'no header lines available in this file' checkbox if it's been previously checked.
+    bindNoHeaderLinesAvailableSelectionEvent(grid, 3);
+
+</script>

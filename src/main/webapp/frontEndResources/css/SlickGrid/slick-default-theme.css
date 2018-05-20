@@ -73,6 +73,20 @@ classes should alter those!
   background: white;
 }
 
+.slick-group-select-checkbox {
+  width: 13px;
+  height: 13px;
+  margin: 3px 10px 0 0;
+  display: inline-block;
+}
+.slick-group-select-checkbox.checked {
+  background: url(images/GrpCheckboxY.png) no-repeat center center;
+}
+
+.slick-group-select-checkbox.unchecked {
+  background: url(images/GrpCheckboxN.png) no-repeat center center;
+}
+
 .slick-cell.selected {
   background-color: beige;
 }
@@ -101,4 +115,18 @@ classes should alter those!
 
 .slick-cell.invalid {
   border-color: red;
+  -moz-animation-duration: 0.2s;
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-name: slickgrid-invalid-hilite;
+  -webkit-animation-name: slickgrid-invalid-hilite;  
+}
+
+@-moz-keyframes slickgrid-invalid-hilite {
+  from { box-shadow: 0 0 6px red; }
+  to { box-shadow: none; }
+}
+
+@-webkit-keyframes slickgrid-invalid-hilite {
+  from { box-shadow: 0 0 6px red; }
+  to { box-shadow: none; }
 }
