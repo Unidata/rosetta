@@ -1,5 +1,6 @@
 package edu.ucar.unidata.rosetta.init;
 
+import edu.ucar.unidata.rosetta.service.DbInitManager;
 import edu.ucar.unidata.rosetta.service.EmbeddedDerbyDbInitManager;
 
 import java.io.*;
@@ -7,6 +8,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -59,16 +61,11 @@ public class ApplicationInitialization implements ServletContextListener {
 
         // rosettaHome not specified in config file. Use default.
         String rosettaHome = props.getProperty("rosetta.home");
-
         if (rosettaHome != null) {
-            if (servletContainerHome != null) {
-                rosettaHome = rosettaHome.replaceAll("\\$\\{servletContainer.home}", servletContainerHome);
-            }
+            rosettaHome = rosettaHome.replaceAll("\\$\\{servletContainer.home}", servletContainerHome);
             props.setProperty("rosetta.home", rosettaHome);
         } else {
-            // check for java property set at startup
-            rosettaHome = System.getProperty("rosetta.home", DEFAULT_ROSETTA_HOME);
-            props.setProperty("rosetta.home", rosettaHome);
+            props.setProperty("rosetta.home", DEFAULT_ROSETTA_HOME);
         }
 
         File rosettaHomeLocation = new File(rosettaHome);
@@ -122,11 +119,8 @@ public class ApplicationInitialization implements ServletContextListener {
 
         // rosettaHome not specified in config file. Use default.
         String rosettaHome = props.getProperty("rosetta.home");
-        if (rosettaHome == null) {
-            // check for java property set at startup
-            rosettaHome = System.getProperty("rosetta.home", DEFAULT_ROSETTA_HOME);
-            props.setProperty("rosetta.home", rosettaHome);
-        }
+        if (rosettaHome == null)
+            props.setProperty("rosetta.home", DEFAULT_ROSETTA_HOME);
 
         try {
             EmbeddedDerbyDbInitManager dbInitManager = new EmbeddedDerbyDbInitManager();
@@ -197,14 +191,7 @@ public class ApplicationInitialization implements ServletContextListener {
         Properties props = new Properties();
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            String rosettaHome = System.getProperty("rosetta.home");
-            File configFile;
-            if (rosettaHome != null) {
-                configFile = new File(rosettaHome + '/' + CONFIG_FILE);
-            } else {
-                configFile = new File(classLoader.getResource(CONFIG_FILE).getFile());
-            }
-            System.out.println();
+            File configFile = new File(classLoader.getResource(CONFIG_FILE).getFile());
 
             logger.info("Reading " + configFile + " configuration file...");
             FileInputStream configFileIS = new FileInputStream(configFile);

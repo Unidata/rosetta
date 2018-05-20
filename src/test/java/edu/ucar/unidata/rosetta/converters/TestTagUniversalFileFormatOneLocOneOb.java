@@ -41,7 +41,6 @@ public class TestTagUniversalFileFormatOneLocOneOb {
     @BeforeClass
     public static void sanityCheckAndOutputRead() {
         TagUniversalFileFormat converter = new TagUniversalFileFormat();
-        converter.setMatchupOneLocOneOb(true);
         // check to make sure no global metadata has been set
         assertEquals(converter.getGlobalMetadata().size(), 0);
         converter.parse(etuffFile);
