@@ -29,7 +29,7 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
      * Looks up and retrieves a persisted Data object using the given id.
      *
      * @param id    The id of the Data object.
-     * @return      The Data object corresponding to the given id.
+     * @return  The Data object corresponding to the given id.
      * @throws DataRetrievalFailureException  If unable to lookup Data with the given id.
      */
     @Override
@@ -90,7 +90,9 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 "templateFileName = ?, " +
                 "headerLineNumbers = ?, " +
                 "noHeaderLines = ?, " +
-                "delimiter = ? " +
+                "delimiter = ?, " +
+                "otherDelimiter = ?, " +
+                "variableMetadata = ? " +
                 "WHERE id = ?";
         int rowsAffected  = getJdbcTemplate().update(sql, new Object[] {
                 // order matters here
@@ -104,6 +106,8 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 data.getHeaderLineNumbers(),
                 String.valueOf(data.getNoHeaderLines()),
                 data.getDelimiter(),
+                data.getOtherDelimiter(),
+                data.getVariableMetadata(),
                 data.getId()
         });
         if (rowsAffected  <= 0) {
@@ -159,6 +163,8 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
             data.setHeaderLineNumbers(rs.getString("headerLineNumbers"));
             data.setNoHeaderLines(Boolean.parseBoolean(rs.getString("noHeaderLines")));
             data.setDelimiter(rs.getString("delimiter"));
+            data.setOtherDelimiter(rs.getString("otherDelimiter"));
+            data.setVariableMetadata(rs.getString("variableMetadata"));
             return data;
         }
     }

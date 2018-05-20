@@ -11,12 +11,44 @@
  * @param value  The data to be stored in the session.
  */
 function addToSession(key, value) {
+    addToVariableString(key, value);
     if (typeof(Storage) !== "undefined") {
         sessionStorage.setItem(key, value);
     } else {
         // add some jQuery method here for non-HTML5
     }
 }
+
+function addToVariableString(key, value) {
+    var currentString = $("input#variableMetadata").val();
+    var newString = "";
+    // Is there anything stored yet?
+    if (!currentString) { // nothing stored
+        newString = key + "<>"  + value;
+    } else { // data is stored
+        // does the key already exist?
+        if (currentString.search(key) === -1) { // not found so add
+            newString = currentString + "<=>" + key + "<>"  + value;
+        } else { // found so replace
+            var keyValPairs = currentString.split("<=>");
+            for (i = 0; i < keyValPairs.length; i++) {
+                // matches
+                if (keyValPairs[i].search(key) !== -1) {
+                    newString += key + "<>"  + value;
+                } else {
+                    newString += keyValPairs[i];
+                }
+                // at the end
+                if (i !== (keyValPairs.length - 1)) {
+                    newString = newString + "<=>";
+                }
+            }
+        }
+    }
+    // update hidden form variable
+    $("input#variableMetadata").prop("value", newString);
+}
+
 
 /**
  * General function called to check if a key exists in the session.
@@ -29,6 +61,14 @@ function isInSession(key) {
     } else {
         // add some jQuery method here for non-HTML5
     }
+}
+
+function isInVariableString(key) {
+    var currentString = $("input#variableMetadata").val();
+    if (currentString.search(key) !== -1) // found
+        return true;
+    else  // not found
+        return false;
 }
 
 /**
@@ -44,6 +84,22 @@ function getFromSession(key) {
     }
 }
 
+function getFromVariableString(key) {
+    console.log("key: " + key);
+    var valueToReturn;
+    var currentString = $("input#variableMetadata").val();
+    var keyValPairs = currentString.split("<=>");
+    for (i = 0; i < keyValPairs.length; i++) {
+        // matches
+        if (keyValPairs[i].search(key) !== -1) {
+            var variablekeyValuePair = keyValPairs[i].split("<>");
+            valueToReturn = variablekeyValuePair[1];
+        } 
+    }
+    return valueToReturn;
+}
+
+
 /**
  * General function called to remove a key/value pair to the session.
  *
@@ -57,6 +113,25 @@ function removeFromSession(key) {
     }
 }
 
+function removeFromVariableString(key, value) {
+    var newString;
+    var currentString = $("input#variableMetadata").val();
+    var keyValPairs = currentString.split("<=>");
+    for (i = 0; i < keyValPairs.length; i++) {
+        // matches
+        if (keyValPairs[i].search(key) === -1) {
+            newString = newString + keyValPairs[i];
+            if (i !== (keyValPairs.length - 1)) {
+                newString = newString + "<=>";
+            }
+        } 
+    }
+    // update hidden form variable
+    $("input#variableMetadata").prop("value", newString);
+}
+
+
+
 /**
  * General function called to retrieve the size (number of items) in the session.
  */
@@ -66,6 +141,11 @@ function getSessionLength() {
     } else {
         // add some jQuery method here for non-HTML5
     }
+}
+
+function getVariableStringLength() {
+    var currentString = $("input#variableMetadata").val();
+    return (currentString.match(/<=>/g) || []).length;
 }
 
 /**
@@ -99,6 +179,23 @@ function removeAllButTheseFromSession(keep) {
     }
 }
 
+
+function removeAllButTheseFromVariableString(keep) {
+    var newString;
+    var currentString = $("input#variableMetadata").val();
+    var remove = [];
+    var keyValPairs = currentString.split("<=>");
+    for (i = 0; i < keyValPairs.length; i++) {
+        var variablekeyValuePair = keyValPairs[i].split("<>");
+        if ($.inArray(variablekeyValuePair[0], keep) < 0) {
+            remove.push(key);
+        }
+    }
+    for (var i = 0; i < remove.length; i++) {
+        removeFromVariableString(remove[i]);
+    }
+}
+
 /**
  * Looks to see if the user has already provided a value for something by checking the
  * session. This function is different than the getFromSession() function (above) in
@@ -112,7 +209,7 @@ function getItemEntered(sessionKey, dataSought) {
     var dataInSession = getFromSession(sessionKey);
     if (dataInSession) {
         var pairs = dataInSession.match(/(\\.|[^,])+/g);
-        for (var i = 0; i < pairs.length; i++) { 
+        for (var i = 0; i < pairs.length; i++) {
             var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
             if (keyValuePair[0] == dataSought && typeof keyValuePair[1] == "string") {
                 return unescapeCharacters(keyValuePair[1]);
@@ -121,21 +218,44 @@ function getItemEntered(sessionKey, dataSought) {
     }
     return null;
 }
+
+function getItemEnteredFromVariableString(key, sought) {
+    var data = getFromVariableString(key);
+    if (data) {
+        var pairs = data.match(/(\\.|[^,])+/g);
+        for (var i = 0; i < pairs.length; i++) {
+            var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
+            if (keyValuePair[0] == data && typeof keyValuePair[1] == "string") {
+                return unescapeCharacters(keyValuePair[1]);
+            }
+        }
+    }
+    return null;
+}
+
+
+
+
 function searchForValue(sessionKey, valueSought, exceptFrom) {
     var escapedValueSought = escapeCharacters(valueSought);
     var dataInSession = getFromSession(sessionKey);
     if (dataInSession) {
         var pairs = dataInSession.match(/(\\.|[^,])+/g);
-        for (var i = 0; i < pairs.length; i++) { 
+        for (var i = 0; i < pairs.length; i++) {
             var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
             if (keyValuePair[1] == escapedValueSought &&
-                    keyValuePair[0] != exceptFrom) {
+                keyValuePair[0] != exceptFrom) {
                 return keyValuePair[0];
             }
         }
     }
     return false;
 }
+
+
+
+
+
 
 function escapeCharacters(value){
     value = value.replace(/:/g,"\\:");
@@ -196,8 +316,53 @@ function buildStringForSession(sessionKey, key, value) {
     return sessionString;
 }
 
+
+function buildStringForVariableString(key, subKey, subValue) {
+    if (typeof subValue == "string"){
+        subValue = escapeCharacters(subValue);
+    }
+    var variableSubString = "";
+    var data = getFromVariableString(key);
+    var value = getItemEntered(key, subKey);
+    if (value != null) { // exists so we need to replace old subValue with the new
+        var pairs = data.match(/(\\.|[^,])+/g);
+        for (var i = 0; i < pairs.length; i++) {
+            var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
+            if (keyValuePair[0] == subKey) {
+                var appendString = createVariableStringAppendString(keyValuePair[0], subValue);
+                if (variableSubString == "") {
+                    variableSubString = appendString;
+                } else {
+                    variableSubString = variableSubString + "," + appendString;
+                }
+                continue;
+            } else {
+                var appendString = createVariableStringAppendString(keyValuePair[0], keyValuePair[1]);
+                if (variableSubString == "") {
+                    variableSubString = appendString;
+                } else {
+                    variableSubString = variableSubString + "," + appendString;
+                }
+            }
+        }
+    } else { // hasn't been added yet, so just concatenate the data
+        if (data == null) { // no metadata in session to start with: add the first entry
+            variableSubString = subKey + ":" + subValue;
+        } else { // concatenate the data to existing entries
+            variableSubString = data + "," + subKey + ":" + subValue;
+        }
+    }
+    return variableSubString;
+}
+
+
+
+
+
+
+
 /**
- * Utility function that just loops through an array of 
+ * Utility function that just loops through an array of
  * key/value pairs in the session and returns an array of the keys.
  *
  * @param sessionData  The array of key/value pairs in the session.
@@ -211,6 +376,21 @@ function getKeysFromSessionData(sessionData) {
     }
     return sessionKeys;
 }
+
+function getKeysFromVariableStringData(data) {
+    var keys = [];
+    // make sure chars are correct and no blank entries
+    for (var i = 0; i < data.length; i++) {
+        var keyValuePair = data[i].match(/(\\.|[^:])+/g);
+        keys.push(keyValuePair[0]);
+    }
+    return keys;
+}
+
+
+
+
+
 /**
  * Utility function that just loops through a string of concatenated
  * key/value pairs in the session and returns an array of the values.
@@ -257,6 +437,33 @@ function removeItemFromSessionString(sessionKey, itemToRemove) {
     }
 }
 
+function removeItemFromVariableString(key, itemToRemove) {
+    var variableSubString = "";
+    var data = getFromVariableString(key);
+    if (data != null) {
+        var pairs = data.match(/(\\.|[^,])+/g);
+        for (var i = 0; i < pairs.length; i++) {
+            var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
+            if (keyValuePair[0] != itemToRemove) {
+                var appendString = createVariableStringAppendString(keyValuePair[0], keyValuePair[1]);
+                if (variableSubString == "") {
+                    variableSubString = appendString;
+                } else {
+                    variableSubString = variableSubString + "," + appendString;
+                }
+            }
+            if (variableSubString != "") {
+                addToVariableString(key, variableSubString);
+            } else {
+                removeFromVariableString(key);
+            }
+        }
+    }
+}
+
+
+
+
 /**
  * Removes key/value pairs from A SINGLE ITEM stored in the session except for
  * whatever is defined in the keep array. E.g., Looks up the one item in the session
@@ -287,6 +494,26 @@ function removeAllButTheseFromSessionString(sessionKey, keep) {
     }
 }
 
+
+function removeAllButTheseFromVariableString(key, keep) {
+    var variableSubString = "";
+    var data = getFromVariableString(key);
+    var pairs = data.match(/(\\.|[^,])+/g);
+    for (var i = 0; i < pairs.length; i++) {
+        var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
+        if (keep.indexOf(keyValuePair[0]) >= 0) {
+            var appendString = createVariableStringAppendString(keyValuePair[0], keyValuePair[1]);
+            if (variableSubString == "") {
+                variableSubString = appendString;
+            } else {
+                variableSubString = variableSubString + "," + appendString;
+            }
+        }
+        addToVariableString(key, variableSubString);
+    }
+}
+
+
 /**
  * Returns the entered metadata values from the session except whatever is in the
  * exclusionList array. This function gets called during input validation.
@@ -311,6 +538,25 @@ function getAllButTheseFromSessionString(sessionKey, exclusionList) {
     return sessionString;
 }
 
+
+
+function getAllButTheseFromVariableString(key, exclusionList) {
+    var variableSubString = [];
+    var data = getFromVariableString(key);
+    var pairs = data.match(/(\\.|[^,])+/g);
+    for (var i = 0; i < pairs.length; i++) {
+        var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
+        if (exclusionList.indexOf(keyValuePair[0]) < 0) {
+            var value = "";
+            if (keyValuePair.length > 1) {
+                value = keyValuePair[1];
+            }
+            variableSubString.push(keyValuePair[0] + ":" + value);
+        }
+    }
+    return variableSubString;
+}
+
 /**
  * Utility function used by session-related functions when they are manipulating
  * the string of concatenated key/value pairs. In some instances (delimiters,
@@ -329,10 +575,21 @@ function createSessionAppendString(key, value) {
     return appendString;
 }
 
+
+function createVariableStringAppendString(key, value) {
+    var appendString = key + ":" + value;
+    if (value == undefined) {
+        appendString = key;
+    }
+    return appendString;
+}
+
+
 /**
  * Retrieves the session keys of only those variable containing metadata.
  * Note, those variables specified "Do Not Use" are ignored and not included.
  */
+ /*
 function getVariablesWithMetadata() {
     var sessionKeys = [];
     var sessionLength = getSessionLength();
@@ -346,7 +603,37 @@ function getVariablesWithMetadata() {
         }
     }
     return sessionKeys;
+}*/
+
+
+function getVariablesWithMetadata() {
+    var keys = [];
+    var currentString = $("input#variableMetadata").val();
+    var keyValPairs = currentString.split("<=>");
+    for (i = 0; i < keyValPairs.length; i++) {
+        var variablekeyValuePair = keyValPairs[i].split("<>");
+        if (variablekeyValuePair[0].match(/[variableName]{1}\d+/)) {
+            if (variablekeyValuePair[0].match(/Metadata/)) {
+                keys.push(variablekeyValuePair[0].replace("Metadata", ""));
+            }
+        }
+    }
+
+
+    for (var i = 0; i < length; i++) {
+        var key = getSessionKey(i);
+        var value = getFromSession(key);
+        if (key.match(/[variableName]{1}\d+/)) {
+            if (key.match(/Metadata/)) {
+                keys.push(key.replace("Metadata", ""));
+            }
+        }
+    }
+    return keys;
 }
+
+
+
 
 /**
  * This function retrieves all the session data and stashes it into an object.
@@ -374,3 +661,5 @@ function getAllDataInSession() {
     data["jsonStrSessionStorage"] = JSON.stringify(sessionStorage);
     return data;
 }
+
+

@@ -23,6 +23,7 @@ public class FileParserManagerImpl implements FileParserManager {
 
     protected static Logger logger = Logger.getLogger(FileParserManagerImpl.class);
 
+
     public List<List<String>> parsedFileData = new ArrayList<>();
     public List<String> header = new ArrayList<>();
 
@@ -46,6 +47,14 @@ public class FileParserManagerImpl implements FileParserManager {
         this.parsedFileData = parsedFileData;
     }
 
+    public List<String> getHeader() {
+        return header;
+    }
+
+    public void setHeader(List<String> header) {
+        this.header = header;
+    }
+
     /**
      * A simple method that reads each line of a file, appends a new line
      * character & adds to a List. The list is then turned into a JSON string.
@@ -56,26 +65,13 @@ public class FileParserManagerImpl implements FileParserManager {
      */
     public String parseByLine(String filePath) throws IOException {
         List<String> fileContents = new ArrayList<>();
-
-        FileReader fileReader = null;
-        BufferedReader bufferedReader = null;
-
-        try {
-            fileReader = new FileReader(new File(filePath));
-            bufferedReader = new BufferedReader(fileReader);
-
+        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             String currentLine;
             while ((currentLine = bufferedReader.readLine()) != null) {
                 if (StringUtils.isNotBlank(currentLine)) {
-                    fileContents.add(currentLine);
+                    fileContents.add(StringEscapeUtils.escapeHtml4(currentLine));
                 }
             }
-        } finally {
-            // Close the FileReader & BufferedReader.
-            assert fileReader != null;
-            fileReader.close();
-            assert bufferedReader != null;
-            bufferedReader.close();
         }
         return JsonUtil.mapObjectToJSON(fileContents);
     }
@@ -89,42 +85,29 @@ public class FileParserManagerImpl implements FileParserManager {
      * used to parse the file data when both the header lines and delimiter(s)
      * have been specified by the user. TODO: refactor to return JSON
      *
-     * @param filePath          The path to the file on disk.
-     * @param selectedDelimiter The delimiter selected to which any other delimiters will be
-     *                          normalized.
-     * @param delimiterList     The List<String> of delimiters specified by the user.
-     * @param headerLineList    The List<String> of header lines specified by the user.
+     * @param filePath   The path to the file on disk.
+     * @param delimiter  The used delimiter to parse the data.
+     * @param headerLineList  The List<String> of header lines specified by the user.
      * @return A String of the file data parsed by the delimiter(s).
      */
-    public String normalizeDelimiters(String filePath, String selectedDelimiter, List<String> delimiterList, List<String> headerLineList) {
-        List<List<String>> parsedData = new ArrayList<List<String>>();
+    /*
+    public String normalizeDelimiters(String filePath, String delimiter, List<String> headerLineList) throws IOException {
+        List<List<String>> parsedData = new ArrayList<>();
         List<String> headerData = new ArrayList<>();
         StringBuffer stringBuffer = new StringBuffer();
         int lineCount = 0;
-        String currentLine;
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String currentLine;
             while ((currentLine = reader.readLine()) != null) {
-
                 if (StringUtils.isNotBlank(currentLine)) {
-
                     // If a header line we don't have to deal with the delimiter
                     if (headerLineList.contains(String.valueOf(lineCount))) {
                         stringBuffer.append(currentLine + "\n");
                         headerData.add(currentLine);
                     } else {
-                        // Parse line data based on delimiter count
-                        if (delimiterList.size() != 1) { // more than one delimiter
-                            String[] delimiters = (String[]) delimiterList.toArray(new String[delimiterList.size()]);
-                            // "Normalize" delimiters for parsing purposes
-                            for (int i = 1; i < delimiters.length; i++) {
-                                // Change all delimiters the selected delimiter
-                                String updatedLineData = currentLine.replaceAll(StringEscapeUtils.escapeHtml4(delimiters[i]), StringEscapeUtils.escapeHtml4(selectedDelimiter));
-                                stringBuffer.append(updatedLineData + "\n");
-                                String[] lineComponents = updatedLineData.split(selectedDelimiter);
-                                List<String> list = new ArrayList<String>(Arrays.asList(lineComponents));
-                                parsedData.add(list);
-                            }
-                        } else if (selectedDelimiter == " ") {
+                        String symbol =  delimiterDao.lookupByName(delimiter).getSymbol();
+                        // Parse line data based on delimiter.
+                        if (delimiter.equals("Whitespace")) {
                             // This will use ANY white space, variable number spaces, tabs, etc. as
                             // the delimiter...not that the delimiter is " ", and is defined
                             // in the convertDelimiters of FileParserManagerimpl.java.
@@ -138,33 +121,20 @@ public class FileParserManagerImpl implements FileParserManager {
 
                         } else { // only one delimiter
                             stringBuffer.append(currentLine + "\n");
-                            String[] lineComponents = currentLine.split(selectedDelimiter);
-                            List<String> list = new ArrayList<String>(Arrays.asList(lineComponents));
+                            String[] lineComponents = currentLine.split(symbol);
+                            List<String> list = new ArrayList<>(Arrays.asList(lineComponents));
                             parsedData.add(list);
                         }
                     }
                     lineCount++;
-
                 }
-
             }
             setParsedFileData(parsedData);
             setHeader(headerData);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-            return null;
         }
         return stringBuffer.toString();
     }
-
-    public List<String> getHeader() {
-        return header;
-    }
-
-    public void setHeader(List<String> header) {
-        this.header = header;
-    }
-
+*/
     /**
      * A simple method that reads each line of a file, and looks for blank lines.
      * Blank line = empty, only whitespace, or null (as per StringUtils).

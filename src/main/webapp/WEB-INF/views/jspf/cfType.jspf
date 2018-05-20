@@ -54,7 +54,7 @@
                                             <input type="radio" name="platform" value="${fn:replace(platform.name, ' ', '_')}"
                                             <%-- Mark as selected if platform has already been chosen. --%>
                                             <c:if test="${not empty data.platform && data.platform == fn:replace(platform.name, ' ', '_')}">
-                                              selected
+                                              checked
                                             </c:if>
                                             />
                                         </li>

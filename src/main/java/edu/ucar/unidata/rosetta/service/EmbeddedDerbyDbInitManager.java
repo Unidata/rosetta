@@ -72,7 +72,9 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     "templateFileName VARCHAR(100), " +
                     "headerLineNumbers VARCHAR(100), " +
                     "noHeaderLines VARCHAR(10), " +
-                    "delimiter VARCHAR(50)" +
+                    "delimiter VARCHAR(50)," +
+                    "otherDelimiter VARCHAR(50)," +
+                    "variableMetadata VARCHAR(50)" +
                     ")";
             createTable(createDataTable, props);
 

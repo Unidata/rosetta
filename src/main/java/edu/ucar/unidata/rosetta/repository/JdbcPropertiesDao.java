@@ -26,8 +26,10 @@ public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
      * Looks up and retrieves the persisted uploads directory.
      *
      * @return The persisted uploads directory.
+     * @throws DataRetrievalFailureException  If unable to lookup uploads directory.
      */
-    public String lookupUploadDirectory() {
+    @Override
+    public String lookupUploadDirectory() throws DataRetrievalFailureException {
         String sql = "SELECT * FROM properties";
         List<RosettaProperties> properties = getJdbcTemplate().query(sql, new JdbcPropertiesDao.DataMapper());
         if (properties.isEmpty()) {
@@ -53,6 +55,7 @@ public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
          */
         public RosettaProperties mapRow(ResultSet rs, int rowNum) throws SQLException {
             RosettaProperties rosettaProperties = new RosettaProperties();
+            rosettaProperties.setId(rs.getInt("id"));
             rosettaProperties.setRosettaHome(rs.getString("rosettaHome"));
             rosettaProperties.setUploadDir(rs.getString("uploadDir"));
             rosettaProperties.setDownloadDir(rs.getString("downloadDir"));

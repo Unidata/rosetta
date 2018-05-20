@@ -1,7 +1,7 @@
 <h3>Specify Custom File Type Attributes</h3>
 <p>Because you specified your data file type as <i>custom</i>, we need the following information from you before can continue.</p>
 
-<p>Please tell us which lines in your dara file are header lines:</p>
+<p>Please tell us which lines in your data file are header lines:</p>
 <label for="headerLineGrid" class="error"></label>
 <label for="noHeaderLines" class="noHeaderLines">
     <input type="checkbox" name="noHeaderLines" <c:if test="${data.noHeaderLines eq 'true'}">checked</c:if> value="${data.noHeaderLines}" id="noHeaderLines"/>
@@ -15,7 +15,7 @@
     <ul id="delimiterList">
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Tab'}">checked</c:if>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Tab'}">checked</c:if>
                        value="Tab"
                        validate="required:true"/>
                 Tab
@@ -23,7 +23,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Comma'}">checked</c:if>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Comma'}">checked</c:if>
                        value="Comma"
                     validate="required:true"/>
                 Comma
@@ -31,7 +31,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Whitespace'}">checked</c:if>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Whitespace'}">checked</c:if>
                        value="Whitespace"
                      validate="required:true"/>
                 Whitespace
@@ -39,7 +39,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Colon'}">checked</c:if>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Colon'}">checked</c:if>
                        value="Colon"
                     validate="required:true"/>
                 Colon
@@ -47,7 +47,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Semicolon'}">checked</c:if>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Semicolon'}">checked</c:if>
                        value="Semicolon"
                        validate="required:true"/>
                 Semicolon
@@ -55,7 +55,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Single Quote'}">checked</c:if>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Single Quote'}">checked</c:if>
                        value="Single Quote"
                     validate="required:true"/>
                 Single Quote
@@ -63,7 +63,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Double Quote'}">checked</c:if>
+                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Double Quote'}">checked</c:if>
                        value="Double Quote"
                     validate="required:true"/>
                 Double Quote
@@ -71,7 +71,7 @@
         </li>
         <li>
             <label>
-                <input type="checkbox" name="delimiter" id="delimiter" value="Other" <c:if test="${not empty data.delimiter && data.delimiter eq 'Other'}">checked</c:if>
+                <input type="radio" name="delimiter" id="delimiter" value="Other" <c:if test="${not empty data.delimiter && data.delimiter eq 'Other'}">checked</c:if>
                        validate="required:true"/> Other
             </label>
             <label>

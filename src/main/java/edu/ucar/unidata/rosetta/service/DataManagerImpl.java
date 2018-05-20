@@ -12,7 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.activation.UnsupportedDataTypeException;
@@ -153,7 +156,8 @@ public class DataManagerImpl implements DataManager {
         } catch(Exception e) {
             /*
             NOTE: code in the try block actually throws a bunch of different exceptions, including
-            java.lang.Exception itself.  Hence, the use catch of the generic Exception class.
+            java.lang.Exception itself.  Hence, the use catch of the generic Exception class to
+            catch them all (otherwise I normally would not catch with just java.lang.Exception).
              */
             throw new RosettaDataException("Unable to populate data object by reflection: " + e);
         }
@@ -227,6 +231,20 @@ public class DataManagerImpl implements DataManager {
         String filePath = FilenameUtils.concat( FilenameUtils.concat(getUploadDir(), id), dataFileName);
         return fileParserManager.parseByLine(filePath);
     }
+
+    public String getDelimiterSymbol(String delimiter) {
+        Map<String, String> delimiters = new HashMap<>();
+        delimiters.put("Tab", "\t");
+        delimiters.put("Comma", ",");
+        delimiters.put("Whietspace", " ");
+        delimiters.put("Colon", ":");
+        delimiters.put("Semicolon", ";");
+        delimiters.put("Single Quote", "'");
+        delimiters.put("Double Quote", "\"");
+
+        return delimiters.get(delimiter);
+    }
+
 
     /**
      * Creates a unique id for the file name from the clients IP address and the date.

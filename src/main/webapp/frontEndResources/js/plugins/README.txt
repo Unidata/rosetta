@@ -7,8 +7,3 @@ needed by SlickGrid:
  jquery.event.drag.js
 
 
-needed by jWizard:
-
- jquery.validate.js
- jquery.metadata.js
- 

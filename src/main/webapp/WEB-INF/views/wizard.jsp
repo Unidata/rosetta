@@ -17,8 +17,6 @@
                 var platformMetadata = [];
                 var generalMetadata = [];
                 var publisherInfo = [];
-                $.metadata.setType("attr", "validate");
-                var maxUploadSize = 1243000;
             </script>
         </head>
         <body>

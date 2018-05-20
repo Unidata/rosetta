@@ -14,7 +14,7 @@
     border: 1px solid #CFCFCF;
     font-family: "Courier New", Courier, monospace;
     font-size: 9pt;
-    width:800px;
+    width:auto;
     height: 320px;
     margin: 0 20px 0 0;
 
@@ -75,6 +75,11 @@
     height: 20px;
     cursor: pointer;
     display: inline-block;
+}
+
+/* This needs to be thre for horizontal scrolling of the columns don't all fit in the view port.*/
+.slick-viewport {
+    overflow-x: auto !important;
 }
 
 /* column header button (HeaderButtonsPlugin) with empty with tick box */

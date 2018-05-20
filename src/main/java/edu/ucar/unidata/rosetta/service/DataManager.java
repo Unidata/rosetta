@@ -94,4 +94,5 @@ public interface DataManager {
      */
     public String parseDataFileByLine(String id, String dataFileName) throws IOException;
 
+    public String getDelimiterSymbol(String delimiter);
 }

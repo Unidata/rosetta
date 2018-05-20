@@ -124,14 +124,26 @@ public class WizardController implements HandlerExceptionResolver {
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/cfType", method = RequestMethod.POST)
-    public ModelAndView processCFType(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView processCFType(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) throws RosettaDataException {
 
         logger.info("submitted for cfType: " + data.toString());
-        // Persist the data.
-        dataManager.persistData(data, request);
-        response.addCookie(new Cookie("rosetta", data.getId()));
-        return new ModelAndView(new RedirectView("/fileUpload", true));
 
+        // Have we visited this page before during this session?
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+        if (rosettaCookie != null) { // We've been here before, combine new with previous persisted data.
+            // Combine user-provided data with persisted data.
+            Data persistedData = dataManager.populateDataObjectWithInput(rosettaCookie.getValue(), data);
+            logger.info("combined data: " + persistedData.toString());
+            // Persist the data!
+            dataManager.updateData(persistedData);
+        } else { // Haven't been before, so proceed with creation of entry in the db and cookie.
+            // Persist the data.
+            dataManager.persistData(data, request);
+            logger.info("newly persisted data: " + data.toString());
+            // First time posting to this page in this session.
+            response.addCookie(new Cookie("rosetta", data.getId()));
+        }
+        return new ModelAndView(new RedirectView("/fileUpload", true));
     }
 
 
@@ -268,9 +280,7 @@ public class WizardController implements HandlerExceptionResolver {
             model.addAttribute("data", data);
             // Add current step to the Model.
             model.addAttribute("currentStep", "customFileTypeAttributes");
-            // Add a list of all steps to the Model for rendering left nav menu.
-            model.addAttribute("steps", resourceManager.loadResources().get("steps"));
-            // Add domains data to Model (for file upload  display based on community type).
+            // Add parsed file data in JSON string format (to sho win the SlickGrid).
             model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
             return new ModelAndView("wizard");
         } else {
@@ -335,7 +345,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/variableMetadata", method = RequestMethod.GET)
-    public ModelAndView displayVariableMetadataForm(Model model, HttpServletRequest request) {
+    public ModelAndView displayVariableMetadataForm(Model model, HttpServletRequest request) throws IOException {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -355,9 +365,11 @@ public class WizardController implements HandlerExceptionResolver {
         model.addAttribute("data", data);
         // Add current step to the Model.
         model.addAttribute("currentStep", "variableMetadata");
-        // Add a list of all steps to the Model for rendering left nav menu.
-        model.addAttribute("steps", resourceManager.loadResources().get("steps"));
-        // Add domains data to Model (for file upload  display based on community type).
+        // Add parsed file data in JSON string format (to sho win the SlickGrid).
+        model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
+        // Add parsed file data in JSON string format (to sho win the SlickGrid).
+        logger.info(dataManager.getDelimiterSymbol(data.getDelimiter()));
+        model.addAttribute("delimiterSymbol", dataManager.getDelimiterSymbol(data.getDelimiter()));
         return new ModelAndView("wizard");
     }
 
