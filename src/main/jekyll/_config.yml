@@ -8,8 +8,6 @@ topnav_title: Rosetta Documentation
 site_title: Rosetta Documentation
 # this appears in the html browser tab for the site title (seen mostly by search engines, not users)
 
-site_topic: Rosetta
-
 company_name: Unidata
 # this appears in the footer
 

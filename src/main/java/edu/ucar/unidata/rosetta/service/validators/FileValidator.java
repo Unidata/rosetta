@@ -15,7 +15,7 @@ import edu.ucar.unidata.rosetta.domain.AsciiFile;
 /**
  * @author oxelson@ucar.edu
  */
-@Component("fileValidator")
+@Component
 public class FileValidator extends CommonValidator implements Validator {
     /*
         private String cfType = null;
