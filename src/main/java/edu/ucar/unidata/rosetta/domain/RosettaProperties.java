@@ -7,10 +7,19 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 public class RosettaProperties {
 
+    private int id;
     private String rosettaHome;
     private String uploadDir;
     private String downloadDir;
     private int maxUpload;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getRosettaHome() {
         return rosettaHome;

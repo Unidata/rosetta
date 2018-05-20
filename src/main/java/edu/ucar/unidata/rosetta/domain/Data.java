@@ -27,6 +27,7 @@ public class Data {
     private String delimiter;
     private String otherDelimiter;
     private String submit;
+    private String variableMetadata;
 
     /**
      * Returns the unique id associated with this object.
@@ -317,6 +318,24 @@ public class Data {
      */
     public void setSubmit(String submit) {
         this.submit = submit;
+    }
+
+    /**
+     * Returns the variable metadata.
+     *
+     * @return The variable metadata.
+     */
+    public String getVariableMetadata() {
+        return variableMetadata;
+    }
+
+    /**
+     * Sets the variable metadata.
+     *
+     * @param variableMetadata  The variable metadata.
+     */
+    public void setVariableMetadata(String variableMetadata) {
+        this.variableMetadata = variableMetadata;
     }
 
     /**
