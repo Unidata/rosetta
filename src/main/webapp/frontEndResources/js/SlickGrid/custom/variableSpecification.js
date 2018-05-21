@@ -113,16 +113,44 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
                                 sortable: false
                             };
 
-                            // here is where we will do our check to see if any data has been entered prior.
-                            colObject["header"] = { // "header" option is used with the HeaderButtons Plugin
-                                buttons: [
-                                    {
-                                        cssClass: "todo",
-                                        command: "setVariable",
-                                        tooltip: "data column " + x
+                            // check to see if variable input has already been entered by user.
+                            var variableName = getFromVariableString("variableName" + x);
+                            if (variableName != null) { // data exists
+                                // update the column name to be that of the assigned variable name
+                                colObject.name = variableName;
+                                if (testVariableCompleteness("variableName" + i, variableName)) {
+                                    colObject["header"] = { // "header" option is used with the HeaderButtons Plugin
+                                        buttons: [
+                                            {
+                                                cssClass: "done",
+                                                command: "setVariable",
+                                                tooltip: variableName
+                                            }
+                                        ]
                                     }
-                                ]
-                            };
+                                } else {
+                                    colObject["header"] = { // "header" option is used with the HeaderButtons Plugin
+                                        buttons: [
+                                            {
+                                                cssClass: "todo",
+                                                command: "setVariable",
+                                                tooltip: "data column " + x
+                                            }
+                                        ]
+                                    }
+                                }
+                            } else { // no data stored.
+                                // here is where we will do our check to see if any data has been entered prior.
+                                colObject["header"] = { // "header" option is used with the HeaderButtons Plugin
+                                    buttons: [
+                                        {
+                                            cssClass: "todo",
+                                            command: "setVariable",
+                                            tooltip: "data column " + x
+                                        }
+                                    ]
+                                };
+                            }
                             columns.push(colObject);
                         }
                         bool = 0;

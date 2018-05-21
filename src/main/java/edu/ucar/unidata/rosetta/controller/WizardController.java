@@ -2,6 +2,7 @@ package edu.ucar.unidata.rosetta.controller;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.service.DataManager;
+import edu.ucar.unidata.rosetta.service.MetadataManager;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.service.validators.CFTypeValidator;
@@ -53,6 +54,9 @@ public class WizardController implements HandlerExceptionResolver {
 
     @Resource(name = "dataManager")
     private DataManager dataManager;
+
+    @Resource(name = "metadataManager")
+    private MetadataManager metadataManager;
 
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
@@ -415,8 +419,14 @@ public class WizardController implements HandlerExceptionResolver {
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
         }
 
-        //TO DO: PARSE STANDARD DATA TYPE FILES (AND SUPPLEMENTAL FILES) AND SEND TO CLIENT BASED ON FILE TYPE
+        // Populate with any existing variable metadata.
+        data.setVariableMetadata(metadataManager.getMetadataStringForClient(data.getId(), "variable"));
 
+
+
+
+        //TO DO: PARSE STANDARD DATA TYPE FILES (AND SUPPLEMENTAL FILES) AND SEND TO CLIENT BASED ON FILE TYPE
+        //data.setVariableMetadata("variableName0<>year<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:dateOnly,dataType:Integer,long_name:ddd,units:fff,standard_name:aaa<=>variableName1<>foo<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:sss,missing_value:ddd,long_name:fff,units:ggg,valid_min:ggg<=>variableName2<>bar<=>variableName2Metadata<>_coordinateVariable:coordinate,dataType:Text,long_name:sss,units:ddd,standard_name:fff,time_leap_month:yes<=>variableName3<>Do Not Use<=>variableName4<>Do Not Use<=>variableName5<>Do Not Use<=>variableName6<>Do Not Use<=>variableName7<>Do Not Use<=>variableName8<>Do Not Use<=>variableName9<>Do Not Use");
         // Add data object to Model.
         model.addAttribute("data", data);
         // Add current step to the Model.
@@ -468,10 +478,10 @@ public class WizardController implements HandlerExceptionResolver {
                 return new ModelAndView(new RedirectView("/fileUpload", true));
 
         }
-        // Set the variable metadata.
-        persistedData.setVariableMetadata(data.getVariableMetadata());
-        // Persist the data!
-        dataManager.updateData(persistedData);
+
+        // Persist the variable metadata.
+        metadataManager.persistMetadata(metadataManager.parseVariableMetadata(data.getVariableMetadata(), persistedData.getId()));
+
         return new ModelAndView(new RedirectView("/generalMetadata", true));
     }
 
@@ -487,6 +497,7 @@ public class WizardController implements HandlerExceptionResolver {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+
         // Create a Data form-backing object.
         Data data;
         if (rosettaCookie != null) {
@@ -499,11 +510,12 @@ public class WizardController implements HandlerExceptionResolver {
         }
 
         if(data.getDataFileType().equals("eTuff")) {
-            // Add domains data to Model (for file upload  display based on community type).
-            //model.addAttribute("domains", resourceManager.loadResources().get("eTag_1.0_all_attributes"));
+            logger.info(resourceManager.loadResources().get("etagGlobalMetadataItems"));
+            // Add oiip metadata to Model.
+            model.addAttribute("generalMetadata", resourceManager.loadResources().get("etagGlobalMetadataItems"));
         } else {
-            logger.info(resourceManager.loadResources().get("globalMetadata"));
-            model.addAttribute("domains", resourceManager.loadResources().get("globalMetadata"));
+            // Add general global metadata to Model.
+            model.addAttribute("generalMetadata", resourceManager.loadResources().get("globalMetadataItems"));
         }
 
         // Add data object to Model.
@@ -550,8 +562,6 @@ public class WizardController implements HandlerExceptionResolver {
         // Persist the new data.
         // dataManager.updateData(data);
         return new ModelAndView(new RedirectView("/convertAndDownload", true));
-
-
     }
 
     /**
@@ -599,10 +609,7 @@ public class WizardController implements HandlerExceptionResolver {
     @RequestMapping(value = "/convertAndDownload", method = RequestMethod.POST)
     public ModelAndView processReturnToPriorPageRequest(Data data, Model model, HttpServletRequest request) {
         return new ModelAndView(new RedirectView("/variableMetadata", true));
-
-
     }
-
 
 
     /**

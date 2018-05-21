@@ -79,11 +79,12 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
             createTable(createDataTable, props);
 
 
-            String createVariableMetadataTable = "CREATE TABLE variableMetadata " +
+            String createVariableMetadataTable = "CREATE TABLE metadata " +
                     "(" +
-                    "id INTEGER primary key not null, " +
-                    "variableKey VARCHAR(255) not null, " +
-                    "variableValue VARCHAR(255)" +
+                    "id VARCHAR(100), " +
+                    "type VARCHAR(50), " +
+                    "metadataKey VARCHAR(255), " +
+                    "metadataValue VARCHAR(255)" +
                     ")";
             createTable(createVariableMetadataTable, props);
 

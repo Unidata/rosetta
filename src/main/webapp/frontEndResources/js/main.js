@@ -1,5 +1,13 @@
 $(document).ready(function ($) {
 
+    // automagically make any image alt a tooltip
+    $(document).tooltip({
+        items: "img[alt]",
+        content: function () {
+            return $(this).attr("alt");
+        }
+    });
+
     /**
      * STEP 1: CF Type selection step.
      * cfType selection via clicking on platform images, so show next button.
