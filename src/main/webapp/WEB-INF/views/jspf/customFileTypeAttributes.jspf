@@ -69,6 +69,7 @@
                 Double Quote
             </label>
         </li>
+        <!--
         <li>
             <label>
                 <input type="radio" name="delimiter" id="delimiter" value="Other" <c:if test="${not empty data.delimiter && data.delimiter eq 'Other'}">checked</c:if>
@@ -79,6 +80,7 @@
                      maxlength="10" class="<c:if test="${empty data.otherDelimiter}">hideMe</c:if>"/>
             </label>
         </li>
+        -->
     </ul>
 
     <div class="buttonNav">
