@@ -1,12 +1,13 @@
 package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.domain.Data;
+import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
@@ -49,6 +50,8 @@ public interface DataManager {
      * @return  The name of the directory used for storing uploaded files.
      */
     public String getUploadDir();
+
+    public Map<String,Object> parseVariableMetadata(String goryStringOfMetadata);
 
     /**
      * Combines non-null user-provided entries with persisted entries in a single Data object.

@@ -352,7 +352,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/customFileTypeAttributes", method = RequestMethod.POST)
-    public ModelAndView processCustomFileTypeAttributes(Data data, BindingResult result, Model model, HttpServletRequest request) throws RosettaDataException {
+    public ModelAndView processCustomFileTypeAttributes(Data data, BindingResult result, Model model, HttpServletRequest request) {
 
         logger.info("submitted for custom file type: " + data.toString());
 
@@ -442,7 +442,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/variableMetadata", method = RequestMethod.POST)
-    public ModelAndView processVariableMetadata(Data data, BindingResult result, Model model, HttpServletRequest request) throws RosettaDataException {
+    public ModelAndView processVariableMetadata(Data data, BindingResult result, Model model, HttpServletRequest request) {
 
         logger.info("submitted for variable metadata: " + data.toString());
 
@@ -498,11 +498,13 @@ public class WizardController implements HandlerExceptionResolver {
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
         }
 
-        if(data.getDataFileType().equals("eTuff"))
+        if(data.getDataFileType().equals("eTuff")) {
             // Add domains data to Model (for file upload  display based on community type).
-            model.addAttribute("domains", resourceManager.loadResources().get("eTag_1.0_all_attributes"));
-        else
+            //model.addAttribute("domains", resourceManager.loadResources().get("eTag_1.0_all_attributes"));
+        } else {
+            logger.info(resourceManager.loadResources().get("globalMetadata"));
             model.addAttribute("domains", resourceManager.loadResources().get("globalMetadata"));
+        }
 
         // Add data object to Model.
         model.addAttribute("data", data);

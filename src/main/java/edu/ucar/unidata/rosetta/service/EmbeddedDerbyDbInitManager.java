@@ -74,10 +74,18 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     "headerLineNumbers VARCHAR(100), " +
                     "noHeaderLines VARCHAR(10), " +
                     "delimiter VARCHAR(50)," +
-                    "otherDelimiter VARCHAR(50)," +
-                    "variableMetadata VARCHAR(255)" +
+                    "otherDelimiter VARCHAR(50)" +
                     ")";
             createTable(createDataTable, props);
+
+
+            String createVariableMetadataTable = "CREATE TABLE variableMetadata " +
+                    "(" +
+                    "id INTEGER primary key not null, " +
+                    "variableKey VARCHAR(255) not null, " +
+                    "variableValue VARCHAR(255)" +
+                    ")";
+            createTable(createVariableMetadataTable, props);
 
             // Populate properties table.
             populatePropertiesTable(props);

@@ -1,5 +1,6 @@
 package edu.ucar.unidata.rosetta.domain;
 
+import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -28,6 +29,7 @@ public class Data {
     private String otherDelimiter;
     private String submit;
     private String variableMetadata;
+    private Map<String,Object> parsedVariableMetadata;
 
     /**
      * Returns the unique id associated with this object.
@@ -336,6 +338,24 @@ public class Data {
      */
     public void setVariableMetadata(String variableMetadata) {
         this.variableMetadata = variableMetadata;
+    }
+
+    /**
+     * Returns the parsed variable metadata.
+     *
+     * @return The parsed variable metadata.
+     */
+    public Map<String,Object> getParsedVariableMetadata() {
+        return parsedVariableMetadata;
+    }
+
+    /**
+     * Sets the parsed variable metadata.
+     *
+     * @param parsedVariableMetadata  The parsed variable metadata.
+     */
+    public void setParsedVariableMetadata(Map<String,Object> parsedVariableMetadata) {
+        this.parsedVariableMetadata = parsedVariableMetadata;
     }
 
     /**
