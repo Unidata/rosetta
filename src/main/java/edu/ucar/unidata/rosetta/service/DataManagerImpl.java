@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringTokenizer;
 import org.apache.log4j.Logger;
 
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -81,7 +82,7 @@ public class DataManagerImpl implements DataManager {
      */
     @Override
     public void persistData(Data data, HttpServletRequest request) {
-        data.setId(createUniqueDataId(request)); // Create a unqiue ID for this object.
+        data.setId(createUniqueDataId(request)); // Create a unique ID for this object.
         if (data.getPlatform() != null) {
             String community = resourceManager.getCommunity(data.getPlatform());
             data.setCommunity(community);
@@ -119,8 +120,14 @@ public class DataManagerImpl implements DataManager {
         return propertiesDao.lookupUploadDirectory();
     }
 
-    public void parseVariableMetadata(String goryStringOfMetadata) {
+    public Map<String,Object> parseVariableMetadata(String goryStringOfMetadata) {
+        Map<String,Object> parsedVariableMetadata = new HashMap<>();
 
+        org.apache.commons.text.StringTokenizer tokenizer = new org.apache.commons.text.StringTokenizer​("foo");
+        while (tokenizer.hasMoreTokens()) {
+            System.out.println(tokenizer.nextToken());
+        }
+        return parsedVariableMetadata;
     }
 
     /**
@@ -148,7 +155,6 @@ public class DataManagerImpl implements DataManager {
                     if (value != null) {
                         if (value instanceof String) {
                             if ("".equals((String) value)) {
-                                continue;
                             } else {
                                 Statement statement = new Statement(persistedData, method.getName().replaceFirst("get", "set"), new Object[]{value});
                                 statement.execute();
@@ -241,7 +247,7 @@ public class DataManagerImpl implements DataManager {
         Map<String, String> delimiters = new HashMap<>();
         delimiters.put("Tab", "\t");
         delimiters.put("Comma", ",");
-        delimiters.put("Whietspace", " ");
+        delimiters.put("Whitespace", " ");
         delimiters.put("Colon", ":");
         delimiters.put("Semicolon", ";");
         delimiters.put("Single Quote", "'");
