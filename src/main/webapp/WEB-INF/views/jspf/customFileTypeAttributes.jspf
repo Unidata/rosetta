@@ -84,8 +84,17 @@
     <div class="buttonNav">
         <%-- Show the previous button. --%>
         <input type="submit" name="submit" value="Previous" class="button"/>
+
         <%-- Show the next button. --%>
-        <input type="submit" name="submit" id="Next" value="Next" disabled class="button disabled"/>
+        <input type="submit" name="submit" id="Next" value="Next"
+            <c:if test="${(empty data.delimiter || empty data.delimiter) && (empty data.delimiter || data.noHeaderLines eq 'false')}">
+                disabled
+            </c:if>
+            class="button
+            <c:if test="${(empty data.delimiter || empty data.delimiter) && (empty data.delimiter || data.noHeaderLines eq 'false')}">
+                disabled
+            </c:if>
+        "/>
     </div>
 
 </div>
