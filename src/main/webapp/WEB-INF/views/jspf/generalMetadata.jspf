@@ -1,61 +1,53 @@
 <h3>Specify General Information</h3>
+
+<script>
+    var required = [];
+</script>
+
+<p>Please provide the requested generalMetadata.</p>
+
 <c:choose>
-    <c:when test="${fn:length(globalMetadataItems) gt 0}">
+    <c:when test="${fn:length(generalMetadata) gt 0}">
         <ul>
-            <c:forEach items="${globalMetadataItems}" var="globalMetadataItem">
-                <script type="text/javascript">
-                    var obj = {};
-                    obj["tagName"] = "<c:out value="${globalMetadataItem.tagName}" />";
-                    obj["displayName"] = "<c:out value="${globalMetadataItem.displayName}" />";
-                    <c:choose>
-                    <c:when test="${globalMetadataItem.isRequired != null}">
-                    obj["isRequired"] = true;
-                    </c:when>
-                    <c:otherwise>
-                    obj["isRequired"] = false;
-                    </c:otherwise>
-                    </c:choose>
-                    <c:choose>
-                    <c:when test="${globalMetadataItem.units != null}">
-                    obj["units"] = true;
-                    </c:when>
-                    <c:otherwise>
-                    obj["units"] = false;
-                    </c:otherwise>
-                    </c:choose>
-                    generalMetadata.push(obj);
-                </script>
+            <c:forEach items="${generalMetadata}" var="generalMetadataItem">
                 <li>
                     <label>
-                        <c:choose>
-                            <c:when test="${globalMetadataItem.isRequired}">
-                                *
-                            </c:when>
-                        </c:choose>
-                        <c:out value="${globalMetadataItem.displayName}"/>
-                        <c:choose>
-                            <c:when test="${globalMetadataItem.description != null}">
-                                <img src="resources/img/help.png"
-                                     alt="<c:out value="${globalMetadataItem.description}" />"/>
-                            </c:when>
-                        </c:choose>
+                        <c:out value="${generalMetadataItem.displayName}"/>
+                            <c:if test="${generalMetadataItem.isRequired}">
+                               <small>(required)</small>
+                                <script>required.push('${generalMetadataItem.tagName}');</script>
+                            </c:if>
+                            <c:if test="${generalMetadataItem.description != null}">
+                                <img src="resources/img/help.png" alt="<c:out value="${generalMetadataItem.description}" />"/>
+                            </c:if>
                         <br/>
-                        <input type="text" name="<c:out value="${globalMetadataItem.tagName}" />"
-                               value=""/>
+                        <input type="text" name="<c:out value="${generalMetadataItem.tagName}" />" value=""/>
                     </label>
-                    <label for="<c:out value="${globalMetadataItem.tagName}" />"
-                           class="error"></label>
+                    <label for="<c:out value="${generalMetadataItem.tagName}" />" class="error"></label>
                 </li>
             </c:forEach>
             <div id="containerForCustomAttributes"/>
         </ul>
     </c:when>
     <c:otherwise>
-        <!-- insert error handling -->
+        <p class="error">Unable to general metadata information.  <spring:message code="fatal.error.message"/></p>
     </c:otherwise>
 </c:choose>
 
-<%-- Show the previous button. --%>
-<input type="submit" name="submit" value="Previous" class="button"/>
-<%-- Show the next button. --%>
-<input id="next" type="submit" name="submit" value="Next" disabled class="button disabled"/>
+<div class="buttonNav">
+    <%-- Show the previous button. --%>
+    <input type="submit" name="submit" value="Previous" class="button"/>
+    <%-- Show the next button. --%>
+    <input type="submit" name="submit" id="Next" value="Next"
+            <c:if test="${empty data.globalMetadata}">
+                disabled
+            </c:if>
+           class="button
+            <c:if test="${empty data.globalMetadata}">
+                disabled
+            </c:if>
+        "/>
+</div>
+
+
+

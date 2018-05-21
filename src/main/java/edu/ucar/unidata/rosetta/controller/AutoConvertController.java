@@ -117,7 +117,7 @@ public class AutoConvertController implements HandlerExceptionResolver {
         }
         ArrayList<String> inventory = new ArrayList<>();
         if (uploadedFile.getName().endsWith(".zip")) {
-            inventory = ZipFileUtil.unzipAndInventory(uploadedFile, toDirectory);
+           // inventory = ZipFileUtil.unzipAndInventory(uploadedFile, toDirectory);
         }
 
         // clean up inventory - some auto-generated OS files can really play havoc
@@ -170,7 +170,7 @@ public class AutoConvertController implements HandlerExceptionResolver {
         String zipFileName = FilenameUtils.concat(filePath, "converted_files.zip");
         File zipFile = new File(zipFileName);
         ZipFileUtil zippedConvertedFiles = new ZipFileUtil(zipFileName);
-        zippedConvertedFiles.addAllToZip("converted_files", convertedFiles);
+       // zippedConvertedFiles.addAllToZip("converted_files", convertedFiles);
 
         response.setContentType(APPLICATION_ZIP);
         response.setHeader("Content-Disposition", "inline; filename=" + zipFile.getName());

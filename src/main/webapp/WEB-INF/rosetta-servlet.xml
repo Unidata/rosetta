@@ -100,11 +100,19 @@
         <property name="propertiesDao" ref="propertiesDao"/>
     </bean>
 
+    <bean id="metadataManager" class="edu.ucar.unidata.rosetta.service.MetadataManagerImpl">
+        <property name="metadataDao" ref="metadataDao"/>
+    </bean>
+
     <bean id="dataDao" class="edu.ucar.unidata.rosetta.repository.JdbcDataDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
     <bean id="propertiesDao" class="edu.ucar.unidata.rosetta.repository.JdbcPropertiesDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="metadataDao" class="edu.ucar.unidata.rosetta.repository.JdbcMetadataDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 

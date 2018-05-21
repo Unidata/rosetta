@@ -51,20 +51,6 @@ public interface DataManager {
      */
     public String getUploadDir();
 
-    public Map<String,Object> parseVariableMetadata(String goryStringOfMetadata);
-
-    /**
-     * Combines non-null user-provided entries with persisted entries in a single Data object.
-     * A new Data is created from the persisted data and is populated with the non-null values
-     * of the user-provided information using reflection.
-     *
-     * @param id    The id of the persisted data associated with the provided Data object.
-     * @param data  The Data object containing the user-provided data.
-     * @return  A data object that contains the new user-provided data and the persisted data.
-     * @throws RosettaDataException  If unable to populate the Data object by reflection.
-     */
-    public Data populateDataObjectWithInput(String id, Data data) throws RosettaDataException;
-
     /**
      * Converts .xls and .xlsx files to .csv files.
      *
@@ -97,5 +83,11 @@ public interface DataManager {
      */
     public String parseDataFileByLine(String id, String dataFileName) throws IOException;
 
+    /**
+     * Returns the symbol corresponding to the given delimiter string.
+     *
+     * @param delimiter The delimiter string.
+     * @return  The symbol corresponding to the given string.
+     */
     public String getDelimiterSymbol(String delimiter);
 }

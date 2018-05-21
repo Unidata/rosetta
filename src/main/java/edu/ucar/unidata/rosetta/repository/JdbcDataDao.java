@@ -20,7 +20,6 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  */
 public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
 
-
     protected static Logger logger = Logger.getLogger(JdbcDataDao.class);
 
     private SimpleJdbcInsert insertActor;
@@ -91,8 +90,7 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 "headerLineNumbers = ?, " +
                 "noHeaderLines = ?, " +
                 "delimiter = ?, " +
-                "otherDelimiter = ?, " +
-                "variableMetadata = ? " +
+                "otherDelimiter = ? " +
                 "WHERE id = ?";
         int rowsAffected  = getJdbcTemplate().update(sql, new Object[] {
                 // order matters here
@@ -107,7 +105,6 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 String.valueOf(data.getNoHeaderLines()),
                 data.getDelimiter(),
                 data.getOtherDelimiter(),
-                data.getVariableMetadata(),
                 data.getId()
         });
         if (rowsAffected  <= 0) {
@@ -164,7 +161,6 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
             data.setNoHeaderLines(Boolean.parseBoolean(rs.getString("noHeaderLines")));
             data.setDelimiter(rs.getString("delimiter"));
             data.setOtherDelimiter(rs.getString("otherDelimiter"));
-            data.setVariableMetadata(rs.getString("variableMetadata"));
             return data;
         }
     }
