@@ -69,6 +69,30 @@ $(document).ready(function ($) {
 
     /**
      * STEP 2: File upload step.
+     * clear file upload selected.
+     */
+    $(".clearFileUpload").click(function (){
+        // order of element matter in this case.
+        $(this).addClass("hideMe");
+        $(this).prev("i").empty();
+        var file = $(this).next("input");
+        $(file).removeClass("hideMe");
+
+       $(file).next("input:hidden").prop("value", "");
+
+        if($(file).attr("id") === "dataFile") {
+            // remove disabled status for submit button.
+            $("input[type=submit]#Next").prop("disabled", "disabled");
+            // remove disabled class for submit button.
+            $("input[type=submit]#Next").addClass("disabled");
+        }
+
+
+    });
+
+
+    /**
+     * STEP 2: File upload step.
      * dataFile to upload selected, so show next button.
      */
     $("input:file#dataFile").change(function (){
@@ -77,7 +101,6 @@ $(document).ready(function ($) {
         // remove disabled class for submit button.
         $("input[type=submit]#Next").removeClass("disabled");
     });
-
 
     /**
      * STEP 3: Custom file attribute step.

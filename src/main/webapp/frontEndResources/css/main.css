@@ -110,6 +110,14 @@ button,
     margin-left:0;
 }
 
+button.clearFileUpload {
+    background:none;
+    padding:3px 5px !important;
+    margin-left:20px;
+    border-radius:0 !important;
+    font-size:8pt;
+}
+
 input[type="submit"] {
     margin: 1em 0 1em 10px;
 }

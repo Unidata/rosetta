@@ -1,5 +1,4 @@
 <h3>Upload Data File</h3>
-
 <c:choose>
     <%-- Load file types by community. --%>
     <c:when test="${not empty data.community || not empty data.cfType}">
@@ -28,7 +27,7 @@
                         <%-- Create file type selection options from fileTypes. --%>
                         <c:otherwise>
                             <c:forEach items="${fileTypes}" var="fileType">
-                                <option value="${fn:replace(fileType.name, ' ', '_')}
+                                <option value="${fn:replace(fileType.name, ' ', '_')}"
                                     <%-- Mark as selected if dataFileType has already been chosen. --%>
                                     <c:if test="${not empty data.dataFileType && data.dataFileType == fn:replace(fileType.name, ' ', '_')}">
                                           selected
@@ -56,7 +55,11 @@
         Data File (Required)
 
         <label for="dataFile" class="error"></label>
-        <input id="dataFile" name="dataFile" type="file" value=""/>
+        <c:if test="${not empty data.dataFileName}">
+            <i>${data.dataFileName}</i> <button type="button" id="clearDataFileUpload" class="clearFileUpload">Clear file upload</button>
+        </c:if>
+        <input id="dataFile" name="dataFile" type="file" class="<c:if test="${not empty data.dataFileName}">hideMe</c:if>" value=""/>
+        <input id="dataFileName" name="dataFileName" type="hidden" value="${data.dataFileName}"/>
         <div id="dataFileNotice"></div>
     </div>
 
@@ -64,7 +67,11 @@
         External Positional File (Optional)
 
         <label for="positionalFile" class="error"></label>
-        <input id="positionalFile" name="positionalFile" type="file" value=""/>
+        <c:if test="${not empty data.positionalFileName}">
+            <i>${data.positionalFileName}</i> <button type="button" id="clearPositionalFileUpload" class="clearFileUpload">Clear file upload</button>
+        </c:if>
+        <input id="positionalFile" name="positionalFile" type="file" class="<c:if test="${not empty data.positionalFileName}">hideMe</c:if>" value=""/>
+        <input id="positionalFileName" name="positionalFileName" type="hidden" value="${data.positionalFileName}"/>
         <div id="positionalFileNotice"></div>
     </div>
 
@@ -72,7 +79,11 @@
         Rosetta Template (Optional)
 
         <label for="templateFile" class="error"></label>
-        <input id="templateFile" name="templateFile" type="file" value=""/>
+        <c:if test="${not empty data.templateFileName}">
+            <i>${data.templateFileName}</i> <button type="button" id="clearTemplateFileUpload" class="clearFileUpload">Clear file upload</button>
+        </c:if>
+        <input id="templateFile" name="templateFile" type="file" class="<c:if test="${not empty data.templateFileName}">hideMe</c:if>" value=""/>
+        <input id="templateFileName" name="templateFileName" type="hidden" value="${data.templateFileName}"/>
         <div id="templateFileNotice"></div>
     </div>
 
