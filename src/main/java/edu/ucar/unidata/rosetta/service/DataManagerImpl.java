@@ -119,6 +119,10 @@ public class DataManagerImpl implements DataManager {
         return propertiesDao.lookupUploadDirectory();
     }
 
+    public void parseVariableMetadata(String goryStringOfMetadata) {
+
+    }
+
     /**
      * Combines non-null user-provided entries with persisted entries in a single Data object.
      * A new Data is created from the persisted data and is populated with the non-null values
@@ -202,6 +206,7 @@ public class DataManagerImpl implements DataManager {
      */
     @Override
     public void writeUploadedFileToDisk(String id, String fileName, CommonsMultipartFile file) throws SecurityException, IOException {
+
         String filePath = FilenameUtils.concat(getUploadDir(), id);
         File localFileDir = new File(filePath);
 
@@ -245,7 +250,6 @@ public class DataManagerImpl implements DataManager {
         return delimiters.get(delimiter);
     }
 
-
     /**
      * Creates a unique id for the file name from the clients IP address and the date.
      *
@@ -254,6 +258,7 @@ public class DataManagerImpl implements DataManager {
     */
     private String createUniqueDataId(HttpServletRequest request) {
         String id = String.valueOf(new Date().hashCode());
+        id = StringUtils.replaceChars(id, "-", "");
         String ipAddress = getIpAddress(request);
         if (ipAddress != null) {
             id = ipAddress + id;
