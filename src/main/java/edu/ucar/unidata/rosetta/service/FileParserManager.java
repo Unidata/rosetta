@@ -38,6 +38,11 @@ public interface FileParserManager {
      */
     public String parseByLine(String filePath) throws IOException;
 
+    public List<String>getHeaderLinesFromFile(String filePath, List<String> headerLineList) throws IOException;
+
+    public List<List<String>> parseByDelimiter(String filePath, List<String> headerLineList, String delimiter) throws IOException;
+
+
     //String normalizeDelimiters(String filePath, String delimiter, List<String> headerLineList) throws IOException;
 
     /**
