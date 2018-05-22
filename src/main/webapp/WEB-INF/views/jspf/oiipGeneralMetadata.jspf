@@ -613,6 +613,15 @@
     </li>
     <li>
         <label>
+            Method Landed
+            <img src="resources/img/help.png" alt="how was animal put aboard the vessel."/>
+            <br/>
+            <input type="text" name="method_landed" id="method_landed" value="${generalMetadata.method_landed}"/>
+        </label>
+        <label for="method_landed" class="error"></label>
+    </li>
+    <li>
+        <label>
             Set Float Capture
             <img src="resources/img/help.png" alt="If caught on longline, include set number and float number."/>
             <br/>

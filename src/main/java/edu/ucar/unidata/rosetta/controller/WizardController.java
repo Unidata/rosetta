@@ -2,13 +2,10 @@ package edu.ucar.unidata.rosetta.controller;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.domain.OIIPMetadata;
 import edu.ucar.unidata.rosetta.service.DataManager;
 import edu.ucar.unidata.rosetta.service.MetadataManager;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
-import edu.ucar.unidata.rosetta.service.validators.CFTypeValidator;
-import edu.ucar.unidata.rosetta.service.validators.FileValidator;
 
 
 import java.io.IOException;
@@ -28,12 +25,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -507,13 +501,45 @@ public class WizardController implements HandlerExceptionResolver {
 
         // Add data object to Model.
         model.addAttribute("data", data);
-        // The general metadata we colelct next depends on the platform entered.
-        if(data.getPlatform().equals("eTag"))
+
             // OIIP stuff.
-            model.addAttribute("generalMetadata", new OIIPMetadata());
-        else
-            // Everything else.
-            model.addAttribute("generalMetadata", new GeneralMetadata());
+            GeneralMetadata metadata = new GeneralMetadata();
+            metadata.setSpecies_capture("sddssa");
+            metadata.setSpeciesTSN_capture("sddssa");
+            metadata.setLength_type_capture("sddssa");
+            metadata.setLength_method_capture("sddssa");
+            metadata.setCondition_capture("sddssa");
+            metadata.setLength_recapture("sddssa");
+            metadata.setLength_unit_recapture("sddssa");
+            metadata.setLength_type_recapture("sddssa");
+            metadata.setLength_method_recapture("sddssa");
+            metadata.setAttachment_method("sddssa");
+            metadata.setLon_release("sddssa");
+            metadata.setLat_release("sddssa");
+            metadata.setPerson_tagger_capture("sddssa");
+            metadata.setDatetime_release("sddssa");
+            metadata.setDevice_type("sddssa");
+            metadata.setManufacturer("sddssa");
+            metadata.setModel("sddssa");
+            metadata.setSerial_number("sddssa");
+            metadata.setDevice_name("sddssa");
+            metadata.setPerson_owner("sddssa");
+            metadata.setOwner_contact("sddssa");
+            metadata.setFirmware("sddssa");
+            metadata.setEnd_details("sddssa");
+            metadata.setDatetime_end("sddssa");
+            metadata.setLon_end("sddssa");
+            metadata.setLat_end("sddssa");
+            metadata.setEnd_type("sddssa");
+            metadata.setProgramming_software("sddssa");
+            metadata.setProgramming_report("sddssa");
+            metadata.setFound_problem("sddssa");
+            metadata.setPerson_qc("sddssa");
+            metadata.setWaypoints_source("sddssa");
+
+            model.addAttribute("generalMetadata", metadata);
+
+
         // Add current step to the Model.
         model.addAttribute("currentStep", "generalMetadata");
         return new ModelAndView("wizard");
@@ -533,9 +559,9 @@ public class WizardController implements HandlerExceptionResolver {
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/generalMetadata", method = RequestMethod.POST)
-    public ModelAndView processGeneralMetadata(Data data, GeneralMetadata metadata, BindingResult result, Model model, HttpServletRequest request) {
+    public ModelAndView processGeneralMetadata(Data data, GeneralMetadata metadata, BindingResult result, Model model, HttpServletRequest request) throws RosettaDataException{
 
-        logger.info("submitted for general metadata: " + data.toString());
+        logger.info("submitted for general metadata: " + data.toString().toLowerCase() );
 
         // Get the cookie so we can get the persisted data.
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -560,9 +586,7 @@ public class WizardController implements HandlerExceptionResolver {
         }
 
         // Persist the global metadata.
-        metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(data.getVariableMetadata(), persistedData.getId()));
-
-        logger.info("persisted data: " + data.toString());
+        metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(metadata, persistedData.getId()));
 
         // Persist the new data.
         // dataManager.updateData(data);
@@ -614,7 +638,7 @@ public class WizardController implements HandlerExceptionResolver {
      */
     @RequestMapping(value = "/convertAndDownload", method = RequestMethod.POST)
     public ModelAndView processReturnToPriorPageRequest(Data data, Model model, HttpServletRequest request) {
-        return new ModelAndView(new RedirectView("/variableMetadata", true));
+        return new ModelAndView(new RedirectView("/generalMetadata", true));
     }
 
 
