@@ -76,6 +76,59 @@ public class FileParserManagerImpl implements FileParserManager {
         return JsonUtil.mapObjectToJSON(fileContents);
     }
 
+    public List<String> getHeaderLinesFromFile(String filePath, List<String> headerLineList) throws IOException {
+        List<String> headerData = new ArrayList<>();
+        int lineCount = 0;
+        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
+            String currentLine;
+            while ((currentLine = bufferedReader.readLine()) != null) {
+                if (StringUtils.isNotBlank(currentLine)) {
+                    // Get the header lines.
+                    if (headerLineList.contains(String.valueOf(lineCount))) {
+                        headerData.add(currentLine);
+                    }
+                }
+                lineCount++;
+            }
+        }
+        return headerData;
+    }
+
+
+    public List<List<String>> parseByDelimiter(String filePath, List<String> headerLineList, String delimiter) throws IOException {
+        List<List<String>> parsedData = new ArrayList<>();
+        int lineCount = 0;
+        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
+            String currentLine;
+            while ((currentLine = bufferedReader.readLine()) != null) {
+                if (StringUtils.isNotBlank(currentLine)) {
+                    // Ignore the header lines.
+                    if (!headerLineList.contains(String.valueOf(lineCount))) {
+                        // Parse line data based on delimiter.
+                        if (delimiter.equals(" ")) {
+                            // This will use ANY white space, variable number spaces, tabs, etc. as
+                            // the delimiter...not that the delimiter is " ", and is defined
+                            // in the convertDelimiters of FileParserManagerimpl.java.
+                            //
+                            // This special case also needs to be handled by variableSpecification.js
+                            // in the gridForVariableSpecification function.
+                            String[] tokens = StringUtil2.splitString(currentLine);
+                            List<String> valList = Arrays.asList(tokens);
+                            parsedData.add(valList);
+
+                        } else { // all other delimiters
+                            String[] lineComponents = currentLine.split(delimiter);
+                            List<String> list = new ArrayList<>(Arrays.asList(lineComponents));
+                            parsedData.add(list);
+                        }
+                    }
+                }
+                lineCount++;
+            }
+        }
+        return parsedData;
+    }
+
     /**
      * This method reads each line of a file and if more than one delimiter has
      * been specified by the user, it normalizes the delimiters in the line to
