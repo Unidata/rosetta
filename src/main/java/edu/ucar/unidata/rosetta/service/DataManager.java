@@ -97,4 +97,7 @@ public interface DataManager {
      * @return  The symbol corresponding to the given string.
      */
     public String getDelimiterSymbol(String delimiter);
+
+    public String getCFTypeFromPlatform(String platform);
+
 }
