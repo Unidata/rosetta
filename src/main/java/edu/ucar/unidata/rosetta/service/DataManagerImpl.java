@@ -4,17 +4,16 @@ import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.repository.DataDao;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
-import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
 
-import java.beans.Statement;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -214,6 +213,18 @@ public class DataManagerImpl implements DataManager {
         delimiters.put("Double Quote", "\"");
 
         return delimiters.get(delimiter);
+    }
+
+    public String getCFTypeFromPlatform(String platform) {
+        String cfType = null;
+        List<Map> platforms = (List<Map>) resourceManager.loadResources().get("platforms");
+        for(Map p : platforms) {
+            if(p.get("name").equals(platform)) {
+                cfType = (String) p.get("type");
+                break;
+            }
+        }
+        return cfType;
     }
 
     /**
