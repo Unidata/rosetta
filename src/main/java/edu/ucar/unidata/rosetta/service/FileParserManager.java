@@ -42,9 +42,6 @@ public interface FileParserManager {
 
     public List<List<String>> parseByDelimiter(String filePath, List<String> headerLineList, String delimiter) throws IOException;
 
-
-    //String normalizeDelimiters(String filePath, String delimiter, List<String> headerLineList) throws IOException;
-
     /**
      * A simple method that reads each line of a file, and looks for blank lines.
      * Blank line = empty, only whitespace, or null (as per StringUtils).
@@ -67,6 +64,7 @@ public interface FileParserManager {
      * @param header The header.
      */
     public void setHeader(List<String> header);
+
 }
 
 

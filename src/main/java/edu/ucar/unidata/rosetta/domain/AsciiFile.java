@@ -12,8 +12,6 @@ import java.util.regex.Pattern;
 
 /**
  * An arbitrary entity representing an ASCII file.
- *
- * @see UploadedFileData
  */
 public class AsciiFile {
 
@@ -33,11 +31,11 @@ public class AsciiFile {
     private String variableNames = null;
     private Map<String, String> variableNameMap = new HashMap<String, String>();
     private String variableMetadata = null;
-    private Map<String, Map<String,String>> variableMetadataMap;
+    private Map<String, Map<String, String>> variableMetadataMap;
     private String parseHeaderForMetadata = null;
     private List<String> parseHeaderForMetadataList = new ArrayList<String>();
     private String jsonStrSessionStorage = null;
-    private HashMap<String,String> otherInfo = new HashMap<String,String>();
+    private HashMap<String, String> otherInfo = new HashMap<String, String>();
 
 
     /**
@@ -46,7 +44,7 @@ public class AsciiFile {
      *
      * @return The other info associated with the file.
      */
-    public HashMap<String,String> getOtherInfo() {
+    public HashMap<String, String> getOtherInfo() {
         return otherInfo;
     }
 
@@ -54,7 +52,7 @@ public class AsciiFile {
      * Sets "other info" associated with this file. Allows for modifications and additions
      * to the file object in the WizardController.
      */
-    public void setOtherInfo(HashMap<String,String> otherInfo) {
+    public void setOtherInfo(HashMap<String, String> otherInfo) {
         this.otherInfo = otherInfo;
     }
 
@@ -234,6 +232,7 @@ public class AsciiFile {
         this.headerLineList = Arrays.asList(headerLineNumbers.split(","));
     }
 
+    /*
     public void setParseHeaderForMetadataList(String parseHeaderForMetadata){
         String[] headers = parseHeaderForMetadata.split(",");
         for (String s: headers){
@@ -242,10 +241,14 @@ public class AsciiFile {
                 parseHeaderForMetadataList.add(header[0]);
         }
     }
+    */
+    public void setParseHeaderForMetadataList(List<String> parseHeaderForMetadataList) {
+        this.parseHeaderForMetadataList = parseHeaderForMetadataList;
+    }
 
     public void setParseHeaderForMetadata(String parseHeaderForMetadata){
         this.parseHeaderForMetadata = parseHeaderForMetadata;
-        setParseHeaderForMetadataList(parseHeaderForMetadata);
+        //setParseHeaderForMetadataList(parseHeaderForMetadata);
     }
 
     public String getParseHeaderForMetadata(){
@@ -272,7 +275,7 @@ public class AsciiFile {
      */
     public void setPlatformMetadata(String platformMetadata) {
         this.platformMetadata = platformMetadata;
-        setPlatformMetadataMap();
+        //setPlatformMetadataMap();
     }
 
     /**
@@ -287,6 +290,7 @@ public class AsciiFile {
     /**
      * Creates a Map containing the platform metadata as specified by the user.
      */
+    /*
     public void setPlatformMetadataMap() {
         String regexComma = "(?<!\\\\)" + Pattern.quote(",");
         String regexColon = "(?<!\\\\)" + Pattern.quote(":");
@@ -297,6 +301,11 @@ public class AsciiFile {
             String[] items =  pairString.split(regexColon);
             this.platformMetadataMap.put(items[0], items[1].replaceAll("\\\\:", ":").replaceAll("\\\\,", ","));
         }
+    }
+    */
+
+    public void setPlatformMetadataMap(Map<String, String> platformMetadataMap) {
+        this.platformMetadataMap = platformMetadataMap;
     }
 
     /**

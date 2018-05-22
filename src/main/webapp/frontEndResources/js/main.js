@@ -162,6 +162,9 @@ $(document).ready(function ($) {
      * all required fields have data, so show next button.
      */
     $("input.required").change(function (){
+      console.log($(this));
+
+/*
         if($("input#species_capture").val() &&
            $("input#speciesTSN_capture").val() && 
            $("input#length_type_capture").val() && 
@@ -200,6 +203,46 @@ $(document).ready(function ($) {
             // remove disabled class for submit button.
             $("input[type=submit]#Next").removeClass("disabled");
         } 
+
+        */
+        // kludgy!
+        if($("input#species_capture").val()){
+        if($("input#speciesTSN_capture").val()){
+        if($("input#length_type_capture").val()){
+        if($("input#length_method_capture").val()){
+        if($("input#condition_capture").val()){
+        if($("input#length_recapture").val()){
+        if($("input#length_unit_recapture").val()){
+        if($("input#length_type_recapture").val()){
+        if($("input#length_method_recapture").val()){
+        if($("input#attachment_method").val()){
+        if($("input#lon_release").val()){
+        if($("input#lat_release").val()){
+        if($("input#person_tagger_capture").val()){
+        if($("input#datetime_release").val()){
+        if($("input#device_type").val()){
+        if($("input#manufacturer").val()){
+        if($("input#model").val()){
+        if($("input#serial_number").val()){
+        if($("input#device_name").val()){
+        if($("input#person_owner").val()){
+        if($("input#owner_contact").val()){
+        if($("input#firmware").val()){
+        if($("input#end_details").val()){
+        if($("input#datetime_end").val()){
+        if($("input#lon_end").val()){
+        if($("input#lat_end").val()){
+        if($("input#end_type").val()){
+        if($("input#programming_software").val()){
+        if($("input#programming_report").val()){
+        if($("input#found_problem").val()){
+        if($("input#person_qc").val()){
+        if($("input#waypoints_source").val()){
+            // remove disabled status for submit button.
+            $("input[type=submit]#Next").removeAttr("disabled");
+            // remove disabled class for submit button.
+            $("input[type=submit]#Next").removeClass("disabled");
+        }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 
     });
 

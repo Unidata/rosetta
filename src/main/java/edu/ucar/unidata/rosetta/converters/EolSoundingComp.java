@@ -40,6 +40,8 @@ import ucar.nc2.units.SimpleUnit;
  * http://data.eol.ucar.edu/datafile/nph-get/485.043/readme_PECAN_FP2_radiosonde.pdf
  *
  * (thanks to Scot Loehrer <loehrer@ucar.edu>)
+ *
+ * @author Sean Arms
  */
 
 public class EolSoundingComp {

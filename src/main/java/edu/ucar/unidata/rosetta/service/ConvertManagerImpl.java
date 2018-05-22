@@ -7,6 +7,7 @@ import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -47,10 +48,11 @@ public class ConvertManagerImpl implements ConvertManager {
                 // Get the header info.
                 List<String> header;
                 List<String> headerLineList;
-                if (!data.getNoHeaderLines())
+                if (!data.getNoHeaderLines() && data.getHeaderLineNumbers() != null)
                     headerLineList = Arrays.asList(data.getHeaderLineNumbers().split(","));
                 else
                     headerLineList = new ArrayList<>();
+
                 String filePath = FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName());
                 header = fileParserManager.getHeaderLinesFromFile(filePath, headerLineList);
 
@@ -66,11 +68,11 @@ public class ConvertManagerImpl implements ConvertManager {
                 asciiFile.setDelimiterList(data.getDelimiter());
                 asciiFile.setHeaderLineNumbers(data.getHeaderLineNumbers());
                 asciiFile.setHeaderLineList(data.getHeaderLineNumbers());
-                asciiFile.setPlatformMetadata(); // GET FROM POSITIONAL FILE
+                asciiFile.setPlatformMetadataMap(new HashMap<String, String>()); // LEAVING EMPTY
                 asciiFile.setGeneralMetadataMap(metadataManager.getGeneralMetadataMap(data.getId(), "general"));
                 asciiFile.setVariableNameMap(metadataManager.getVariableNameMap(data.getId(), "variable"));
                 asciiFile.setVariableMetadataMap(metadataManager.getVariableMetadataMap(data.getId(), "variable"));
-                asciiFile.setParseHeaderForMetadataList(); //NOT SURE WHAT THIS IS
+                asciiFile.setParseHeaderForMetadataList(new ArrayList<String>()); // LEAVING EMPTY
                 netcdfFile = potentialDsgWriter.createNetcdfFile(asciiFile, parseFileData, header, dataManager.getDownloadDir());
                 break;
             }
