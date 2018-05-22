@@ -28,6 +28,8 @@ public class Data {
     private String otherDelimiter;
     private String submit;
     private String variableMetadata;
+    private String netcdfFile;
+    private String template;
 
     /**
      * Returns the unique id associated with this object.
@@ -336,6 +338,22 @@ public class Data {
      */
     public void setVariableMetadata(String variableMetadata) {
         this.variableMetadata = variableMetadata;
+    }
+
+    public String getNetcdfFile() {
+        return netcdfFile;
+    }
+
+    public void setNetcdfFile(String netcdfFile) {
+        this.netcdfFile = netcdfFile;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
     }
 
     /**
