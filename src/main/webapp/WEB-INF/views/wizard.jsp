@@ -38,10 +38,10 @@
                                 <li id="${currentStep}" <c:if test="${currentStep eq 'customFileTypeAttributes'}">class="current"</c:if>>
                                     Specify Custom File Type Attributes
                                 </li>
+                                <li id="${currentStep}" <c:if test="${currentStep eq 'variableMetadata'}">class="current"</c:if>>
+                                    Specify Variable Attributes
+                                </li>
                             </c:if>
-                            <li id="${currentStep}" <c:if test="${currentStep eq 'variableMetadata'}">class="current"</c:if>>
-                                Specify Variable Attributes
-                            </li>
                             <li id="${currentStep}" <c:if test="${currentStep eq 'generalMetadata'}">class="current"</c:if>>
                                 Specify General Information
                             </li>
@@ -68,7 +68,14 @@
                                      <%@ include file="/WEB-INF/views/jspf/variableMetadata.jspf" %>
                                  </c:when>
                                  <c:when test="${currentStep eq 'generalMetadata'}">
-                                     <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
+                                     <c:choose>
+                                        <c:when test="${not empty data.platform && data.platform eq 'eTag'}">
+                                            <%@ include file="/WEB-INF/views/jspf/oiipGeneralMetadata.jspf" %>
+                                        </c:when>
+                                         <c:otherwise>
+                                             <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
+                                         </c:otherwise>
+                                     </c:choose>
                                  </c:when>
                                  <c:otherwise>
                                      <%@ include file="/WEB-INF/views/jspf/convertAndDownload.jspf" %>

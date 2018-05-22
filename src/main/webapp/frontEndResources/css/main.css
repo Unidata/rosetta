@@ -462,15 +462,30 @@ ul#delimiterList li {
 }
 
 /**
- * General metadat collection step of the wizard.
+ * General metadata collection step of the wizard.
  */
+
+#generalMetadata h5.toggle{
+    height: 25px !important;
+     margin:10px 0 0 0;
+    padding: 0 0 0 20px;
+    text-align: left;
+    font-size:10pt;
+    width:100%;
+    border-bottom: 1px solid #CFCFCF;
+}
 
 #generalMetadata ul {
     width: 100%;
     list-style: none;
     margin: 0 0 10px 0;
-    padding: 0;
+    padding: 10px;
     float: left;
+    background: #F8F8F8; /* Old browsers */
+    background: -moz-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #F8F8F8 -1%,#F9F9F9 0%,#F6F6F6 0%,#F6F6F6 0%,#F8F8F8 2%,#F8F8F8 4%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #F8F8F8 -1%,#F9F9F9 0%,#F6F6F6 0%,#F6F6F6 0%,#F8F8F8 2%,#F8F8F8 4%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F8F8F8', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
 }
 
 #generalMetadata ul li {
@@ -481,10 +496,6 @@ ul#delimiterList li {
     float: left;
     position: relative;
     bottom: 0;
-}
-
-#generalMetadata ul.oiipGlobalMetadata li {
-    width: 45%;
 }
 
 #generalMetadata ul li label {

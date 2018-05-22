@@ -1,0 +1,1357 @@
+<h3>Specify General Information</h3>
+
+
+<p>Please provide the requested metadata:</p>
+
+
+<h5 id="ancillary_positionsToggle" class="toggle expand">Ancillary Positions</h5>
+<ul class="hideMe" id="ancillary_positionsToggleSection">
+    <li>
+        <label>
+            Ancillary Position Source
+            <img src="resources/img/help.png" alt="List available source(s) for other known position(s)."/>
+            <br/>
+            <input type="text" name="ancillary_position_source" id="ancillary_position_source" value="${generalMetadata.ancillary_position_source}"/>
+        </label>
+        <label for="ancillary_position_source" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Ancillary Position Deviceid
+            <img src="resources/img/help.png" alt="List chronologically the devices collecting the ancillary position(s)."/>
+            <br/>
+            <input type="text" name="ancillary_position_deviceid" id="ancillary_position_deviceid" value="${generalMetadata.ancillary_position_deviceid}"/>
+        </label>
+        <label for="ancillary_position_deviceid" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Ancillary Position Datetime
+            <img src="resources/img/help.png" alt="List chronologically the datetime (yyyy-mm-dd hh:mm:ss) for ancillary position(s)."/>
+            <br/>
+            <input type="text" name="ancillary_position_datetime" id="ancillary_position_datetime" value="${generalMetadata.ancillary_position_datetime}"/>
+        </label>
+        <label for="ancillary_position_datetime" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Ancillary Position Lon
+            <img src="resources/img/help.png" alt="List chronologically the longitude for ancillary position(s)."/>
+            <br/>
+            <input type="text" name="ancillary_position_lon" id="ancillary_position_lon" value="${generalMetadata.ancillary_position_lon}"/>
+        </label>
+        <label for="ancillary_position_lon" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Ancillary Position Lat
+            <img src="resources/img/help.png" alt="List chronologically the latitude for ancillary position(s)."/>
+            <br/>
+            <input type="text" name="ancillary_position_lat" id="ancillary_position_lat" value="${generalMetadata.ancillary_position_lat}"/>
+        </label>
+        <label for="ancillary_position_lat" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Ancillary Position Quality
+            <img src="resources/img/help.png" alt="List chronologically the quality (location class/ accuracy/ range etc.) for ancillary position(s). Can be qualitative.."/>
+            <br/>
+            <input type="text" name="ancillary_position_quality" id="ancillary_position_quality" value="${generalMetadata.ancillary_position_quality}"/>
+        </label>
+        <label for="ancillary_position_quality" class="error"></label>
+    </li>
+</ul>
+
+<h5 id="animalToggle" class="toggle expand">Animal</h5>
+<ul class="hideMe" id="animalToggleSection">
+    <li>
+        <label>
+            Species Capture <small>(required)</small>
+            <img src="resources/img/help.png" alt="Common name(s) or FAO code for species name."/>
+            <br/>
+            <input class="required" type="text" name="species_capture" id="species_capture" value="${generalMetadata.species_capture}"/>
+        </label>
+        <label for="species_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Speciestsn Capture <small>(required)</small>
+            <img src="resources/img/help.png" alt="Taxononomic Serial Number (TSN) from ITIS (www.itis.gov)."/>
+            <br/>
+            <input class="required" type="text" name="speciesTSN_capture" id="speciesTSN_capture" value="${generalMetadata.speciesTSN_capture}"/>
+        </label>
+        <label for="speciesTSN_capture" class="error"></label>
+    </li>
+     <li>
+        <label>
+            Length Type Capture <small>(required)</small>
+            <img src="resources/img/help.png" alt="Type of length measurement."/>
+            <br/>
+            <input class="required" type="text" name="length_type_capture" id="length_type_capture" value="${generalMetadata.length_type_capture}"/>
+        </label>
+        <label for="length_type_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Length Method Capture <small>(required)</small>
+            <img src="resources/img/help.png" alt="Method used to obtain the measurement."/>
+            <br/>
+            <input type="text" name="length_method_capture" id="length_method_capture" value="${generalMetadata.length_method_capture}"/>
+        </label>
+        <label for="length_method_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Condition Capture <small>(required)</small>
+            <img src="resources/img/help.png" alt="Description of condition/ injury. Or specify scoring system and a score."/>
+            <br/>
+            <input class="required" type="text" name="condition_capture" id="condition_capture" value="${generalMetadata.condition_capture}"/>
+        </label>
+        <label for="condition_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Length Recapture <small>(required)</small>
+            <img src="resources/img/help.png" alt="Length of the animal."/>
+            <br/>
+            <input class="required" type="text" name="length_recapture" id="length_recapture" value="${generalMetadata.length_recapture}"/>
+        </label>
+        <label for="length_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Length Unit Recapture <small>(required)</small>
+            <img src="resources/img/help.png" alt="Unit of length measurement."/>
+            <br/>
+            <input class="required" type="text" name="length_unit_recapture" id="length_unit_recapture" value="${generalMetadata.length_unit_recapture}"/>
+        </label>
+        <label for="length_unit_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Length Type Recapture <small>(required)</small>
+            <img src="resources/img/help.png" alt="Type of length measurement."/>
+            <br/>
+            <input class="required" type="text" name="length_type_recapture" id="length_type_recapture" value="${generalMetadata.length_type_recapture}"/>
+        </label>
+        <label for="length_type_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Length Method Recapture <small>(required)</small>
+            <img src="resources/img/help.png" alt="Method used to obtain the measurement."/>
+            <br/>
+            <input class="required" type="text" name="length_method_recapture" id="length_method_recapture" value="${generalMetadata.length_method_recapture}"/>
+        </label>
+        <label for="length_method_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Lifestage Capture
+            <img src="resources/img/help.png" alt="Life stage of the animal."/>
+            <br/>
+            <input type="text" name="lifestage_capture" id="lifestage_capture" value="${generalMetadata.lifestage_capture}"/>
+        </label>
+        <label for="lifestage_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Sex
+            <img src="resources/img/help.png" alt="Sex of the animal."/>
+            <br/>
+            <input type="text" name="sex" id="sex" value="${generalMetadata.sex}"/>
+        </label>
+        <label for="sex" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Length Capture
+            <img src="resources/img/help.png" alt="Length of the animal."/>
+            <br/>
+            <input type="text" name="length_capture" id="length_capture" value="${generalMetadata.length_capture}"/>
+        </label>
+        <label for="length_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Length Unit Capture
+            <img src="resources/img/help.png" alt="Unit of length measurement."/>
+            <br/>
+            <input type="text" name="length_unit_capture" id="length_unit_capture" value="${generalMetadata.length_unit_capture}"/>
+        </label>
+        <label for="length_unit_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Weight Capture
+            <img src="resources/img/help.png" alt="Weight of the animal."/>
+            <br/>
+            <input type="text" name="weight_capture" id="weight_capture" value="${generalMetadata.weight_capture}"/>
+        </label>
+        <label for="weight_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Weight Unit Capture
+            <img src="resources/img/help.png" alt="Unit of weight measurement."/>
+            <br/>
+            <input type="text" name="weight_unit_capture" id="weight_unit_capture" value="${generalMetadata.weight_unit_capture}"/>
+        </label>
+        <label for="weight_unit_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Weight Type Capture
+            <img src="resources/img/help.png" alt="Type of weight measurement."/>
+            <br/>
+            <input type="text" name="weight_type_capture" id="weight_type_capture" value="${generalMetadata.weight_type_capture}"/>
+        </label>
+        <label for="weight_type_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Weight Method Capture
+            <img src="resources/img/help.png" alt="Method used to obtain the measurement."/>
+            <br/>
+            <input type="text" name="weight_method_capture" id="weight_method_capture" value="${generalMetadata.weight_method_capture}"/>
+        </label>
+        <label for="weight_method_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Hours Soaktime Capture
+            <img src="resources/img/help.png" alt="If caught on longline, specify soak time In hours."/>
+            <br/>
+            <input type="text" name="hours_soaktime_capture" id="hours_soaktime_capture" value="${generalMetadata.hours_soaktime_capture}"/>
+        </label>
+        <label for="hours_soaktime_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Minutes Fighttime Capture
+            <img src="resources/img/help.png" alt="If caught on rod and wheel or handline, specify fight time."/>
+            <br/>
+            <input type="text" name="minutes_fighttime_capture" id="minutes_fighttime_capture" value="${generalMetadata.minutes_fighttime_capture}"/>
+        </label>
+        <label for="minutes_fighttime_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Minutes Operation
+            <img src="resources/img/help.png" alt="Time used (minutes) in carrying out the attachment or surgical procedure.."/>
+            <br/>
+            <input type="text" name="minutes_operation" id="minutes_operation" value="${generalMetadata.minutes_operation}"/>
+        </label>
+        <label for="minutes_operation" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Minutes Revival
+            <img src="resources/img/help.png" alt="If the animal is revived, specify revival time in minutes."/>
+            <br/>
+            <input type="text" name="minutes_revival" id="minutes_revival" value="${generalMetadata.minutes_revival}"/>
+        </label>
+        <label for="minutes_revival" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Tag Placement
+            <img src="resources/img/help.png" alt="Description of where the tag was placed.."/>
+            <br/>
+            <input type="text" name="tag_placement" id="tag_placement" value="${generalMetadata.tag_placement}"/>
+        </label>
+        <label for="tag_placement" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Mount Numbolts
+            <img src="resources/img/help.png" alt="Number of bolts used for mounting."/>
+            <br/>
+            <input type="text" name="mount_numbolts" id="mount_numbolts" value="${generalMetadata.mount_numbolts}"/>
+        </label>
+        <label for="mount_numbolts" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Implant Numsuture
+            <img src="resources/img/help.png" alt="Number of suture used to close the wound."/>
+            <br/>
+            <input type="text" name="implant_numsuture" id="implant_numsuture" value="${generalMetadata.implant_numsuture}"/>
+        </label>
+        <label for="implant_numsuture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Tissue Sample Capture
+            <img src="resources/img/help.png" alt="List other sample types and sample IDs if collected."/>
+            <br/>
+            <input type="text" name="tissue_sample_capture" id="tissue_sample_capture" value="${generalMetadata.tissue_sample_capture}"/>
+        </label>
+        <label for="tissue_sample_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Fate Recapture
+            <img src="resources/img/help.png" alt="Fate of the animal upon recapture."/>
+            <br/>
+            <input type="text" name="fate_recapture" id="fate_recapture" value="${generalMetadata.fate_recapture}"/>
+        </label>
+        <label for="fate_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Lifestage Recapture
+            <img src="resources/img/help.png" alt="Life stage of the animal."/>
+            <br/>
+            <input type="text" name="lifestage_recapture" id="lifestage_recapture" value="${generalMetadata.lifestage_recapture}"/>
+        </label>
+        <label for="lifestage_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Weight Recapture
+            <img src="resources/img/help.png" alt="Weight of the animal."/>
+            <br/>
+            <input type="text" name="weight_recapture" id="weight_recapture" value="${generalMetadata.weight_recapture}"/>
+        </label>
+        <label for="weight_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Weight Unit Recapture
+            <img src="resources/img/help.png" alt="Unit of weight measurement."/>
+            <br/>
+            <input type="text" name="weight_unit_recapture" id="weight_unit_recapture" value="${generalMetadata.weight_unit_recapture}"/>
+        </label>
+        <label for="weight_unit_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Weight Type Recapture
+            <img src="resources/img/help.png" alt="Type of weight measurement."/>
+            <br/>
+            <input type="text" name="weight_type_recapture" id="weight_type_recapture" value="${generalMetadata.weight_type_recapture}"/>
+        </label>
+        <label for="weight_type_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Weight Method Recapture
+            <img src="resources/img/help.png" alt="Method used to obtain the measurement."/>
+            <br/>
+            <input type="text" name="weight_method_recapture" id="weight_method_recapture" value="${generalMetadata.weight_method_recapture}"/>
+        </label>
+        <label for="weight_method_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Condition Recapture
+            <img src="resources/img/help.png" alt="Description of condition/ injury. Or specify scoring system and a score.."/>
+            <br/>
+            <input type="text" name="condition_recapture" id="condition_recapture" value="${generalMetadata.condition_recapture}"/>
+        </label>
+        <label for="condition_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Hours Soaktime Recapture
+            <img src="resources/img/help.png" alt="If caught on longline, specify soak time In hours."/>
+            <br/>
+            <input type="text" name="hours_soaktime_recapture" id="hours_soaktime_recapture" value="${generalMetadata.hours_soaktime_recapture}"/>
+        </label>
+        <label for="hours_soaktime_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Minutes Fighttime Recapture
+            <img src="resources/img/help.png" alt="If caught on rod and wheel or handline, specify fight time."/>
+            <br/>
+            <input type="text" name="minutes_fighttime_recapture" id="minutes_fighttime_recapture" value="${generalMetadata.minutes_fighttime_recapture}"/>
+        </label>
+        <label for="minutes_fighttime_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Tissue Sample Recapture
+            <img src="resources/img/help.png" alt="List other sample types and sample IDs if collected."/>
+            <br/>
+            <input type="text" name="tissue_sample_recapture" id="tissue_sample_recapture" value="${generalMetadata.tissue_sample_recapture}"/>
+        </label>
+        <label for="tissue_sample_recapture" class="error"></label>
+    </li>
+</ul>
+
+<h5 id="attachmentToggle" class="toggle expand">Attachment</h5>
+<ul class="hideMe" id="attachmentToggleSection">
+    <li>
+        <label>
+            Attachment Method <small>(required)</small>
+            <img src="resources/img/help.png" alt="Method used to put the tag on/ in the animal."/>
+            <br/>
+            <input class="required" type="text" name="attachment_method" id="attachment_method" value="${generalMetadata.attachment_method}"/>
+        </label>
+        <label for="attachment_method" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Attachment Product
+            <img src="resources/img/help.png" alt="Brand name and/ product for attachment materials used."/>
+            <br/>
+            <input type="text" name="attachment_product" id="attachment_product" value="${generalMetadata.attachment_product}"/>
+        </label>
+        <label for="attachment_product" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Antifouling Product
+            <img src="resources/img/help.png" alt="Brand name and/ product of antifoluling paint or coating applied."/>
+            <br/>
+            <input type="text" name="antifouling_product" id="antifouling_product" value="${generalMetadata.antifouling_product}"/>
+        </label>
+        <label for="antifouling_product" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Antiseptic Product
+            <img src="resources/img/help.png" alt="Brand name and/ product of antiseptic or sterilizing agent used during the attachment."/>
+            <br/>
+            <input type="text" name="antiseptic_product" id="antiseptic_product" value="${generalMetadata.antiseptic_product}"/>
+        </label>
+        <label for="antiseptic_product" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Anesthesic Product
+            <img src="resources/img/help.png" alt="Brand name and/ product of anesthesia used during the attachment."/>
+            <br/>
+            <input type="text" name="anesthesic_product" id="anesthesic_product" value="${generalMetadata.anesthesic_product}"/>
+        </label>
+        <label for="anesthesic_product" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Anchor Type
+            <img src="resources/img/help.png" alt="Type of anchor."/>
+            <br/>
+            <input type="text" name="anchor_type" id="anchor_type" value="${generalMetadata.anchor_type}"/>
+        </label>
+        <label for="anchor_type" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Anchor Material
+            <img src="resources/img/help.png" alt="Material of anchor."/>
+            <br/>
+            <input type="text" name="anchor_material" id="anchor_material" value="${generalMetadata.anchor_material}"/>
+        </label>
+        <label for="anchor_material" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Anchor Dimensions Mm
+            <img src="resources/img/help.png" alt="Dimensions (millimeter) as length, width, thichkness or diameter.."/>
+            <br/>
+            <input type="text" name="anchor_dimensions_mm" id="anchor_dimensions_mm" value="${generalMetadata.anchor_dimensions_mm}"/>
+        </label>
+        <label for="anchor_dimensions_mm" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Anchor Depth Cm
+            <img src="resources/img/help.png" alt="How deep (centimeter) should the anchor be in the animal?."/>
+            <br/>
+            <input type="text" name="anchor_depth_cm" id="anchor_depth_cm" value="${generalMetadata.anchor_depth_cm}"/>
+        </label>
+        <label for="anchor_depth_cm" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Tether Material
+            <img src="resources/img/help.png" alt="Tether material for a towed tag."/>
+            <br/>
+            <input type="text" name="tether_material" id="tether_material" value="${generalMetadata.tether_material}"/>
+        </label>
+        <label for="tether_material" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Tether Assembly
+            <img src="resources/img/help.png" alt="Materials and methods in constructing a tether."/>
+            <br/>
+            <input type="text" name="tether_assembly" id="tether_assembly" value="${generalMetadata.tether_assembly}"/>
+        </label>
+        <label for="tether_assembly" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Tether Length Cm
+            <img src="resources/img/help.png" alt="End to end length (centimeter) of a tether."/>
+            <br/>
+            <input type="text" name="tether_length_cm" id="tether_length_cm" value="${generalMetadata.tether_length_cm}"/>
+        </label>
+        <label for="tether_length_cm" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Float Additional
+            <img src="resources/img/help.png" alt="Specify any additional floation used."/>
+            <br/>
+            <input type="text" name="float_additional" id="float_additional" value="${generalMetadata.float_additional}"/>
+        </label>
+        <label for="float_additional" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Mount Type <img src="resources/img/help.png" alt="Type of mount."/>
+            <br/>
+            <input type="text" name="mount_type" id="mount_type" value="${generalMetadata.mount_type}"/>
+        </label>
+        <label for="mount_type" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Release Method
+            <img src="resources/img/help.png" alt="Method to get a tag detached from the animal/ anchor."/>
+            <br/>
+            <input type="text" name="release_method" id="release_method" value="${generalMetadata.release_method}"/>
+        </label>
+        <label for="release_method" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Release Forced
+            <img src="resources/img/help.png" alt="If a mechanical release is engaged at depth (too avoid crushing the tag), specify the mechanism and depth at which the release is engaged."/>
+            <br/>
+            <input type="text" name="release_forced" id="release_forced" value="${generalMetadata.release_forced}"/>
+        </label>
+        <label for="release_forced" class="error"></label>
+    </li>
+</ul>
+
+<h5 id="deploymentToggle" class="toggle expand">Deployment</h5>
+<ul class="hideMe" id="deploymentToggleSection">
+    <li>
+        <label>
+            Lon Release <small>(required)</small>
+            <img src="resources/img/help.png" alt="Longitude (decimal degree) of deployment."/>
+            <br/>
+            <input class="required" type="text" name="lon_release" id="lon_release" value="${generalMetadata.lon_release}"/>
+        </label>
+        <label for="lon_release" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Lat Release <small>(required)</small>
+            <img src="resources/img/help.png" alt="Latitude (decimal degree) of deployment."/>
+            <br/>
+            <input class="required" type="text" name="lat_release" id="lat_release" value="${generalMetadata.lat_release}"/>
+        </label>
+        <label for="lat_release" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Person Tagger Capture <small>(required)</small>
+            <img src="resources/img/help.png" alt="Person responsible for tagging or surgery."/>
+            <br/>
+            <input class="required" type="text" name="person_tagger_capture" id="person_tagger_capture" value="${generalMetadata.person_tagger_capture}"/>
+        </label>
+        <label for="person_tagger_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Datetime Release <small>(required)</small>
+            <img src="resources/img/help.png" alt="Local date time (yyyy-mm-dd hh:mm:ss) of deployment."/>
+            <br/>
+            <input class="required" type="text" name="datetime_release" id="datetime_release" value="${generalMetadata.datetime_release}"/>
+        </label>
+        <label for="datetime_release" class="error"></label>
+    </li>
+    <li>
+        <label>
+            School Capture
+            <img src="resources/img/help.png" alt="Type of school in which the animal was caught."/>
+            <br/>
+            <input type="text" name="school_capture" id="school_capture" value="${generalMetadata.school_capture}"/>
+        </label>
+        <label for="school_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Vessel Capture
+            <img src="resources/img/help.png" alt="Name or standard identifer of vessel."/>
+            <br/>
+            <input type="text" name="vessel_capture" id="vessel_capture" value="${generalMetadata.vessel_capture}"/>
+        </label>
+        <label for="vessel_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Flag Capture
+            <img src="resources/img/help.png" alt="The vessel's country of registration."/>
+            <br/>
+            <input type="text" name="flag_capture" id="flag_capture" value="${generalMetadata.flag_capture}"/>
+        </label>
+        <label for="flag_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Cruise Capture
+            <img src="resources/img/help.png" alt="Name or standard identifer of cruise."/>
+            <br/>
+            <input type="text" name="cruise_capture" id="cruise_capture" value="${generalMetadata.cruise_capture}"/>
+        </label>
+        <label for="cruise_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Station Capture
+            <img src="resources/img/help.png" alt="Name or standard identifer of station."/>
+            <br/>
+            <input type="text" name="station_capture" id="station_capture" value="${generalMetadata.station_capture}"/>
+        </label>
+        <label for="station_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Set Float Capture
+            <img src="resources/img/help.png" alt="If caught on longline, include set number and float number."/>
+            <br/>
+            <input type="text" name="set_float_capture" id="set_float_capture" value="${generalMetadata.set_float_capture}"/>
+        </label>
+        <label for="set_float_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Depth M Capture
+            <img src="resources/img/help.png" alt="Depth (meters) at which the animal was caught."/>
+            <br/>
+            <input type="text" name="depth_m_capture" id="depth_m_capture" value="${generalMetadata.depth_m_capture}"/>
+        </label>
+        <label for="depth_m_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Hook Capture
+            <img src="resources/img/help.png" alt="Type of hook used."/>
+            <br/>
+            <input type="text" name="hook_capture" id="hook_capture" value="${generalMetadata.hook_capture}"/>
+        </label>
+        <label for="hook_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Baitlure Capture
+            <img src="resources/img/help.png" alt="Bait, chum, lure or decoy used."/>
+            <br/>
+            <input type="text" name="baitlure_capture" id="baitlure_capture" value="${generalMetadata.baitlure_capture}"/>
+        </label>
+        <label for="baitlure_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Temp Degc Capture
+            <img src="resources/img/help.png" alt="Air or sea surface temperature (Celcius) when the animal was caught."/>
+            <br/>
+            <input type="text" name="temp_degC_capture" id="temp_degC_capture" value="${generalMetadata.temp_degC_capture}"/>
+        </label>
+        <label for="temp_degC_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Wind Knots Capture
+            <img src="resources/img/help.png" alt="Wind speed (knots) when the animal was caught."/>
+            <br/>
+            <input type="text" name="wind_knots_capture" id="wind_knots_capture" value="${generalMetadata.wind_knots_capture}"/>
+        </label>
+        <label for="wind_knots_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Seastate Capture
+            <img src="resources/img/help.png" alt="World Meteorological Organization sea state code (0-9)."/>
+            <br/>
+            <input type="text" name="seastate_capture" id="seastate_capture" value="${generalMetadata.seastate_capture}"/>
+        </label>
+        <label for="seastate_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Person Angler Capture
+            <img src="resources/img/help.png" alt="Person responsible for angling."/>
+            <br/>
+            <input type="text" name="person_angler_capture" id="person_angler_capture" value="${generalMetadata.person_angler_capture}"/>
+        </label>
+        <label for="person_angler_capture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Othertags Capture
+            <img src="resources/img/help.png" alt="List tag IDs for conventional, acoustic, PIT, band or satellite tags for multi-tagged situation, photoID, photo/video footage file names."/>
+            <br/>
+            <input type="text" name="othertags_capture" id="othertags_capture" value="${generalMetadata.othertags_capture}"/>
+        </label>
+        <label for="othertags_capture" class="error"></label>
+    </li>
+</ul>
+
+
+<h5 id="deviceToggle" class="toggle expand">Device</h5>
+<ul class="hideMe" id="deviceToggleSection">
+    <li>
+        <label>
+            Device Type <small>(required)</small>
+            <img src="resources/img/help.png" alt="Type of device."/>
+            <br/>
+            <input class="required" type="text" name="device_type" id="device_type" value="${generalMetadata.device_type}"/>
+        </label>
+        <label for="device_type" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Manufacturer <small>(required)</small>
+            <img src="resources/img/help.png" alt="Name of manufacturer."/>
+            <br/>
+            <input class="required" type="text" name="manufacturer" id="manufacturer" value="${generalMetadata.manufacturer}"/>
+        </label>
+        <label for="manufacturer" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Model <small>(required)</small>
+            <img src="resources/img/help.png" alt="Model name."/>
+            <br/>
+            <input class="required" type="text" name="model" id="model" value="${generalMetadata.model}"/>
+        </label>
+        <label for="model" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Serial Number <small>(required)</small>
+            <img src="resources/img/help.png" alt="Serial number."/>
+            <br/>
+            <input class="required" type="text" name="serial_number" id="serial_number" value="${generalMetadata.serial_number}"/>
+        </label>
+        <label for="serial_number" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Device Name <small>(required)</small>
+            <img src="resources/img/help.png" alt="Append an identifer that is unique within your organization. This is essential if a device is recycled."/>
+            <br/>
+            <input class="required" type="text" name="device_name" id="device_name" value="${generalMetadata.device_name}"/>
+        </label>
+        <label for="device_name" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Person Owner <small>(required)</small>
+            <img src="resources/img/help.png" alt="Researcher/ organization owning the device."/>
+            <br/>
+            <input class="required" type="text" name="person_owner" id="person_owner" value="${generalMetadata.person_owner}"/>
+        </label>
+        <label for="person_owner" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Owner Contact <small>(required)</small>
+            <img src="resources/img/help.png" alt="Contact email/ telephone/ address."/>
+            <br/>
+            <input class="required" type="text" name="owner_contact" id="owner_contact" value="${generalMetadata.owner_contact}"/>
+        </label>
+        <label for="owner_contact" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Firmware <small>(required)</small>
+            <img src="resources/img/help.png" alt="Version number of the firmware used to build the device."/>
+            <br/>
+            <input class="required" type="text" name="firmware" id="firmware" value="${generalMetadata.firmware}"/>
+        </label>
+        <label for="firmware" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Project
+            <img src="resources/img/help.png" alt="Name or identifer for project/ grant number."/>
+            <br/>
+            <input type="text" name="project" id="project" value="${generalMetadata.project}"/>
+        </label>
+        <label for="project" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Specs
+            <img src="resources/img/help.png" alt="Specification document name/ URL/ file (e.g., in xml)."/>
+            <br/>
+            <input type="text" name="specs" id="specs" value="${generalMetadata.specs}"/>
+        </label>
+        <label for="specs" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Date Shipment
+            <img src="resources/img/help.png" alt="Date (yyyy-mm-dd) of receiving the device from manufacturer."/>
+            <br/>
+            <input type="text" name="date_shipment" id="date_shipment" value="${generalMetadata.date_shipment}"/>
+        </label>
+        <label for="date_shipment" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Ptt
+            <img src="resources/img/help.png" alt="Platform Transmitting Terminal (PTT) number for Argos transmission.."/>
+            <br/>
+            <input type="text" name="ptt" id="ptt" value="${generalMetadata.ptt}"/>
+        </label>
+        <label for="ptt" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Ptt Hex
+            <img src="resources/img/help.png" alt="PTT in hexadecimal."/>
+            <br/>
+            <input type="text" name="ptt_hex" id="ptt_hex" value="${generalMetadata.ptt_hex}"/>
+        </label>
+        <label for="ptt_hex" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Code Map
+            <img src="resources/img/help.png" alt="Placeholder for acoustic tags."/>
+            <br/>
+            <input type="text" name="code_map" id="code_map" value="${generalMetadata.code_map}"/>
+        </label>
+        <label for="code_map" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Ping Code
+            <img src="resources/img/help.png" alt="Placeholder for acoustic tags."/>
+            <br/>
+            <input type="text" name="ping_code" id="ping_code" value="${generalMetadata.ping_code}"/>
+        </label>
+        <label for="ping_code" class="error"></label>
+    </li>
+</ul>
+
+<h5 id="end_of_missionToggle" class="toggle expand">End of Mission</h5>
+<ul class="hideMe" id="end_of_missionToggleSection">
+    <li>
+        <label>
+            End Details <small>(required)</small>
+            <img src="resources/img/help.png" alt="TODO."/>
+            <br/>
+            <input class="required" type="text" name="end_details" id="end_details" value="${generalMetadata.end_details}"/>
+        </label>
+        <label for="end_details" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Datetime End <small>(required)</small>
+            <img src="resources/img/help.png" alt="End date time (yyyy-mm-dd hh:mm:ss) or date range (BETWEEN yyyy-mm-dd AND yyyy-mm-dd) if estimated/guessed."/>
+            <br/>
+            <input class="required" type="text" name="datetime_end" id="datetime_end" value="${generalMetadata.datetime_end}"/>
+        </label>
+        <label for="datetime_end" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Lon End <small>(required)</small>
+            <img src="resources/img/help.png" alt="End longitude."/>
+            <br/>
+            <input class="required" type="text" name="lon_end" id="lon_end" value="${generalMetadata.lon_end}"/>
+        </label>
+        <label for="lon_end" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Lat End <small>(required)</small>
+            <img src="resources/img/help.png" alt="End latitude."/>
+            <br/>
+            <input class="required" type="text" name="lat_end" id="lat_end" value="${generalMetadata.lat_end}"/>
+        </label>
+        <label for="lat_end" class="error"></label>
+    </li>
+    <li>
+        <label>
+            End Type <small>(required)</small>
+            <img src="resources/img/help.png" alt="Description of how the end point is derived for the device.."/>
+            <br/>
+            <input class="required" type="text" name="end_type" id="end_type" value="${generalMetadata.end_type}"/>
+        </label>
+        <label for="end_type" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Datetime Death
+            <img src="resources/img/help.png" alt="If mortality occurs before end datetime, specify date time (yyyy-mm-dd hh:mm:ss)."/>
+            <br/>
+            <input type="text" name="datetime_death" id="datetime_death" value="${generalMetadata.datetime_death}"/>
+        </label>
+        <label for="datetime_death" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Locationclass End
+            <img src="resources/img/help.png" alt="Argos location class for popup location or satellite transmission."/>
+            <br/>
+            <input type="text" name="locationclass_end" id="locationclass_end" value="${generalMetadata.locationclass_end}"/>
+        </label>
+        <label for="locationclass_end" class="error"></label>
+    </li>
+</ul>
+
+<h5 id="programmingToggle" class="toggle expand">Programming</h5>
+<ul class="hideMe" id="programmingToggleSection">
+    <li>
+        <label>
+            Programming Software <small>(required)</small>
+            <img src="resources/img/help.png" alt="Programming software with version number."/>
+            <br/>
+            <input class="required" type="text" name="programming_software" id="programming_software" value="${generalMetadata.programming_software}"/>
+        </label>
+        <label for="programming_software" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Programming Report <small>(required)</small>
+            <img src="resources/img/help.png" alt="File/ URL to a report listing the details of programming."/>
+            <br/>
+            <input class="required" type="text" name="programming_report" id="programming_report" value="${generalMetadata.programming_report}"/>
+        </label>
+        <label for="programming_report" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Date Programming
+            <img src="resources/img/help.png" alt="Date (yyyy-mm-dd) of programming."/>
+            <br/>
+            <input type="text" name="date_programming" id="date_programming" value="${generalMetadata.date_programming}"/>
+        </label>
+        <label for="date_programming" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Person Programmer
+            <img src="resources/img/help.png" alt="Person responsible for the programming."/>
+            <br/>
+            <input class="required" type="text" name="person_programmer" id="person_programmer" value="${generalMetadata.person_programmer}"/>
+        </label>
+        <label for="person_programmer" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Seconds Sampling
+            <img src="resources/img/help.png" alt="Sampling rate (seconds) for sensor sampling."/>
+            <br/>
+            <input type="text" name="seconds_sampling" id="seconds_sampling" value="${generalMetadata.seconds_sampling}"/>
+        </label>
+        <label for="seconds_sampling" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Seconds Sampling Highfreq
+            <img src="resources/img/help.png" alt="Sampling rate (seconds) for sensor sampling at a higher frequency."/>
+            <br/>
+            <input type="text" name="seconds_sampling_highfreq" id="seconds_sampling_highfreq" value="${generalMetadata.seconds_sampling_highfreq}"/>
+        </label>
+        <label for="seconds_sampling_highfreq" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Seconds Writingdata
+            <img src="resources/img/help.png" alt="Time interval in seconds when sampled data are written to onboard storage memory."/>
+            <br/>
+            <input type="text" name="seconds_writingdata" id="seconds_writingdata" value="${generalMetadata.seconds_writingdata}"/>
+        </label>
+        <label for="seconds_writingdata" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Minutes Summary
+            <img src="resources/img/help.png" alt="Interval in minutes during when data are summarized for that period."/>
+            <br/>
+            <input type="text" name="minutes_summary" id="minutes_summary" value="${generalMetadata.minutes_summary}"/>
+        </label>
+        <label for="minutes_summary" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Days Mission
+            <img src="resources/img/help.png" alt="Programmed mission length in days."/>
+            <br/>
+            <input type="text" name="days_mission" id="days_mission" value="${generalMetadata.days_mission}"/>
+        </label>
+        <label for="days_mission" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Days Constantdepth
+            <img src="resources/img/help.png" alt="Days at a constant depth before release is initiated."/>
+            <br/>
+            <input type="text" name="days_constantdepth" id="days_constantdepth" value="${generalMetadata.days_constantdepth}"/>
+        </label>
+        <label for="days_constantdepth" class="error"></label>
+    </li>
+</ul>
+
+<h5 id="qualityToggle" class="toggle expand">Quality</h5>
+<ul class="hideMe" id="qualityToggleSection">
+    <li>
+        <label>
+            Found Problem <small>(required)</small>
+            <img src="resources/img/help.png" alt="Is there any problem found in this dataset? One of 3 responses: yes, no, unexamined.."/>
+            <br/>
+            <input class="required" type="text" name="found_problem" id="found_problem" value="${generalMetadata.found_problem}"/>
+        </label>
+        <label for="found_problem" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Person Qc <small>(required)</small>
+            <img src="resources/img/help.png" alt="Person responsible for quality control."/>
+            <br/>
+            <input class="required" type="text" name="person_qc" id="person_qc" value="${generalMetadata.person_qc}"/>
+        </label>
+        <label for="person_qc" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Problem Affecteddates
+            <img src="resources/img/help.png" alt="Date range (BETWEEN yyyy-mm-dd AND yyyy-mm-dd) in which data quality is in doubt."/>
+            <br/>
+            <input type="text" name="problem_affecteddates" id="problem_affecteddates" value="${generalMetadata.problem_affecteddates}"/>
+        </label>
+        <label for="problem_affecteddates" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Problem Numof
+            <img src="resources/img/help.png" alt="Number of problems found."/>
+            <br/>
+            <input type="text" name="problem_numof" id="problem_numof" value="${generalMetadata.problem_numof}"/>
+        </label>
+        <label for="problem_numof" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Problem Summary
+            <img src="resources/img/help.png" alt="List short description(s) for the problem(s)."/>
+            <br/>
+            <input type="text" name="problem_summary" id="problem_summary" value="${generalMetadata.problem_summary}"/>
+        </label>
+        <label for="problem_summary" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Problem Details
+            <img src="resources/img/help.png" alt="Provide details for the problem(s)."/>
+            <br/>
+            <input type="text" name="problem_details" id="problem_details" value="${generalMetadata.problem_details}"/>
+        </label>
+        <label for="problem_details" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Calibration File
+            <img src="resources/img/help.png" alt="Files/ URLs used for calibration of sensors."/>
+            <br/>
+            <input type="text" name="calibration_file" id="calibration_file" value="${generalMetadata.calibration_file}"/>
+        </label>
+        <label for="calibration_file" class="error"></label>
+    </li>
+</ul>
+
+<h5 id="recoveryToggle" class="toggle expand">Recovery</h5>
+<ul class="hideMe" id="recoveryToggleSection">
+    <li>
+        <label>
+            Location Recapture
+            <img src="resources/img/help.png" alt="Name or standard identifer of location."/>
+            <br/>
+            <input type="text" name="location_recapture" id="location_recapture" value="${generalMetadata.location_recapture}"/>
+        </label>
+        <label for="location_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Method Recapture
+            <img src="resources/img/help.png" alt="Type of gear used to catch the animal."/>
+            <br/>
+            <input type="text" name="method_recapture" id="method_recapture" value="${generalMetadata.method_recapture}"/>
+        </label>
+        <label for="method_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            School Recapture
+            <img src="resources/img/help.png" alt="Type of school in which the animal was caught."/>
+            <br/>
+            <input type="text" name="school_recapture" id="school_recapture" value="${generalMetadata.school_recapture}"/>
+        </label>
+        <label for="school_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Vessel Recapture
+            <img src="resources/img/help.png" alt="Name or standard identifer of vessel."/>
+            <br/>
+            <input type="text" name="vessel_recapture" id="vessel_recapture" value="${generalMetadata.vessel_recapture}"/>
+        </label>
+        <label for="vessel_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Cruise Recapture
+            <img src="resources/img/help.png" alt="Name or standard identifer of cruise."/>
+            <br/>
+            <input type="text" name="cruise_recapture" id="cruise_recapture" value="${generalMetadata.cruise_recapture}"/>
+        </label>
+        <label for="cruise_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Station Recapture
+            <img src="resources/img/help.png" alt="Name or standard identifer of station."/>
+            <br/>
+            <input type="text" name="station_recapture" id="station_recapture" value="${generalMetadata.station_recapture}"/>
+        </label>
+        <label for="station_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Set Float Recapture
+            <img src="resources/img/help.png" alt="If caught on longline, include set number and float number."/>
+            <br/>
+            <input type="text" name="set_float_recapture" id="set_float_recapture" value="${generalMetadata.set_float_recapture}"/>
+        </label>
+        <label for="set_float_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Depth M Recapture
+            <img src="resources/img/help.png" alt="Depth (meters) at which the animal was caught."/>
+            <br/>
+            <input type="text" name="depth_m_recapture" id="depth_m_recapture" value="${generalMetadata.depth_m_recapture}"/>
+        </label>
+        <label for="depth_m_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Hook Recapture
+            <img src="resources/img/help.png" alt="Type of hook used."/>
+            <br/>
+            <input type="text" name="hook_recapture" id="hook_recapture" value="${generalMetadata.hook_recapture}"/>
+        </label>
+        <label for="hook_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Baitlure Recapture
+            <img src="resources/img/help.png" alt="Bait, chum, lure or decoy used."/>
+            <br/>
+            <input type="text" name="baitlure_recapture" id="baitlure_recapture" value="${generalMetadata.baitlure_recapture}"/>
+        </label>
+        <label for="baitlure_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Temp Degc Recapture
+            <img src="resources/img/help.png" alt="Air or sea surface temperature (Celcius) when the animal was caught."/>
+            <br/>
+            <input type="text" name="temp_degC_recapture" id="temp_degC_recapture" value="${generalMetadata.temp_degC_recapture}"/>
+        </label>
+        <label for="temp_degC_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Wind Knots Recapture
+            <img src="resources/img/help.png" alt="Wind speed (knots) when the animal was caught."/>
+            <br/>
+            <input type="text" name="wind_knots_recapture" id="wind_knots_recapture" value="${generalMetadata.wind_knots_recapture}"/>
+        </label>
+        <label for="wind_knots_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Seastate Recapture
+            <img src="resources/img/help.png" alt="World Meteorological Organization sea state code (0-9)."/>
+            <br/>
+            <input type="text" name="seastate_recapture" id="seastate_recapture" value="${generalMetadata.seastate_recapture}"/>
+        </label>
+        <label for="seastate_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Person Recapture
+            <img src="resources/img/help.png" alt="Person responsible for the recapture."/>
+            <br/>
+            <input type="text" name="person_recapture" id="person_recapture" value="${generalMetadata.person_recapture}"/>
+        </label>
+        <label for="person_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Person Tagger Recapture
+            <img src="resources/img/help.png" alt="Person responsible for tag-and-release."/>
+            <br/>
+            <input type="text" name="person_tagger_recapture" id="person_tagger_recapture" value="${generalMetadata.person_tagger_recapture}"/>
+        </label>
+        <label for="person_tagger_recapture" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Retagged Recapture
+            <img src="resources/img/help.png" alt="List tag IDs for conventional, acoustic, PIT, band or satellite tags for multi-tagged situation, photoID, photo/video footage file names."/>
+            <br/>
+            <input type="text" name="retagged_recapture" id="retagged_recapture" value="${generalMetadata.retagged_recapture}"/>
+        </label>
+        <label for="retagged_recapture" class="error"></label>
+    </li>
+</ul>
+
+
+<h5 id="waypointsToggle" class="toggle expand">Waypoints</h5>
+<ul class="hideMe" id="waypointsToggleSection">
+    <li>
+        <label>
+            Waypoints Source <small>(required)</small>
+            <img src="resources/img/help.png" alt="State the source for waypoints."/>
+            <br/>
+            <input class="required" type="text" name="waypoints_source" id="waypoints_source" value="${generalMetadata.waypoints_source}"/>
+        </label>
+        <label for="waypoints_source" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Waypoints Method
+            <img src="resources/img/help.png" alt="If waypoints_source' = 'modeled', specify the method used to estimate the positions. Include citation/ reference/ url if available."/>
+            <br/>
+            <input type="text" name="waypoints_method" id="waypoints_method" value="${generalMetadata.waypoints_method}"/>
+        </label>
+        <label for="waypoints_method" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Waypoints Software
+            <img src="resources/img/help.png" alt="Software packages used with version number."/>
+            <br/>
+            <input type="text" name="waypoints_software" id="waypoints_software" value="${generalMetadata.waypoints_software}"/>
+        </label>
+        <label for="waypoints_software" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Geolocation Parameters
+            <img src="resources/img/help.png" alt="List of Geocorrection Parameters and associated values implemented. Comma seperated list in format 'parameter1:value', 'parameter2:value',..."/>
+            <br/>
+            <input type="text" name="geolocation_parameters" id="geolocation_parameters" value="${generalMetadata.geolocation_parameters}"/>
+        </label>
+        <label for="geolocation_parameters" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Geolocation Output
+            <img src="resources/img/help.png" alt="URL/URI to any relevant geocorrection output file(s) produced."/>
+            <br/>
+            <input type="text" name="geolocation_output" id="geolocation_output" value="${generalMetadata.geolocation_output}"/>
+        </label>
+        <label for="geolocation_output" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Interpolation Method
+            <img src="resources/img/help.png" alt="None if no interpolation. Otherwise, specify method/ software used.."/>
+            <br/>
+            <input type="text" name="interpolation_method" id="interpolation_method" value="${generalMetadata.interpolation_method}"/>
+        </label>
+        <label for="interpolation_method" class="error"></label>
+    </li>
+    <li>
+        <label>
+            Interpolation Time
+            <img src="resources/img/help.png" alt="Specify the time interval for interpolation."/>
+            <br/>
+            <input type="text" name="interpolation_time" id="interpolation_time" value="${generalMetadata.interpolation_time}"/>
+        </label>
+        <label for="interpolation_time" class="error"></label>
+    </li>
+</ul>
+
+
+<div class="buttonNav">
+    <%-- Show the previous button. --%>
+    <input type="submit" name="submit" value="Previous" class="button"/>
+    <%-- Show the next button. --%>
+    <input type="submit" name="submit" id="Next" value="Next"
+            <c:if test="${empty generalMetadata.species_capture ||
+  empty generalMetadata.speciesTSN_capture ||
+  empty generalMetadata.length_type_capture ||
+  empty generalMetadata.length_method_capture ||
+  empty generalMetadata.condition_capture ||
+  empty generalMetadata.length_recapture ||
+  empty generalMetadata.length_unit_recapture ||
+  empty generalMetadata.length_type_recapture ||
+  empty generalMetadata.length_method_recapture ||
+  empty generalMetadata.attachment_method ||
+  empty generalMetadata.lon_release ||
+  empty generalMetadata.lat_release ||
+  empty generalMetadata.person_tagger_capture ||
+  empty generalMetadata.datetime_release ||
+  empty generalMetadata.device_type ||
+  empty generalMetadata.manufacturer ||
+  empty generalMetadata.model ||
+  empty generalMetadata.serial_number ||
+  empty generalMetadata.device_name ||
+  empty generalMetadata.person_owner ||
+  empty generalMetadata.owner_contact ||
+  empty generalMetadata.firmware ||
+  empty generalMetadata.end_details ||
+  empty generalMetadata.datetime_end ||
+  empty generalMetadata.lon_end ||
+  empty generalMetadata.lat_end ||
+  empty generalMetadata.end_type ||
+  empty generalMetadata.programming_software ||
+  empty generalMetadata.programming_report ||
+  empty generalMetadata.found_problem ||
+  empty generalMetadata.person_qc ||
+  empty generalMetadata.waypoints_source}}">
+                disabled
+            </c:if>
+           class="button
+            <c:if test="${empty generalMetadata.species_capture ||
+  empty generalMetadata.length_type_capture ||
+  empty generalMetadata.length_method_capture ||
+  empty generalMetadata.condition_capture ||
+  empty generalMetadata.length_recapture ||
+  empty generalMetadata.length_unit_recapture ||
+  empty generalMetadata.length_type_recapture ||
+  empty generalMetadata.length_method_recapture ||
+  empty generalMetadata.attachment_method ||
+  empty generalMetadata.lon_release ||
+  empty generalMetadata.lat_release ||
+  empty generalMetadata.person_tagger_capture ||
+  empty generalMetadata.datetime_release ||
+  empty generalMetadata.device_type ||
+  empty generalMetadata.manufacturer ||
+  empty generalMetadata.model ||
+  empty generalMetadata.serial_number ||
+  empty generalMetadata.device_name ||
+  empty generalMetadata.person_owner ||
+  empty generalMetadata.owner_contact ||
+  empty generalMetadata.firmware ||
+  empty generalMetadata.end_details ||
+  empty generalMetadata.datetime_end ||
+  empty generalMetadata.lon_end ||
+  empty generalMetadata.lat_end ||
+  empty generalMetadata.end_type ||
+  empty generalMetadata.programming_software ||
+  empty generalMetadata.programming_report ||
+  empty generalMetadata.found_problem ||
+  empty generalMetadata.person_qc ||
+  empty generalMetadata.waypoints_source}">
+                disabled
+            </c:if>
+        "/>
+</div>
+

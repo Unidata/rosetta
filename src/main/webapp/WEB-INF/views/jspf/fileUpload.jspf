@@ -52,7 +52,7 @@
     Upload your data file(s):
 
     <div class="files">
-        Data File (Required)
+        Data File <small>(Required)</small>
 
         <label for="dataFile" class="error"></label>
         <c:if test="${not empty data.dataFileName}">
@@ -64,7 +64,7 @@
     </div>
 
     <div id="custom" class="files <c:if test="${not empty data.dataFileType && data.dataFileType ne 'Custom_File_Type'}">hideMe</c:if>">
-        External Positional File (Optional)
+        External Positional File <small>(Optional)</small>
 
         <label for="positionalFile" class="error"></label>
         <c:if test="${not empty data.positionalFileName}">
@@ -76,7 +76,7 @@
     </div>
 
     <div class="files">
-        Rosetta Template (Optional)
+        Rosetta Template <small>(Optional)</small>
 
         <label for="templateFile" class="error"></label>
         <c:if test="${not empty data.templateFileName}">

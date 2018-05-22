@@ -1,5 +1,6 @@
 package edu.ucar.unidata.rosetta.service;
 
+import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
 import edu.ucar.unidata.rosetta.repository.MetadataDao;
 import org.apache.log4j.Logger;
@@ -166,4 +167,21 @@ public class MetadataManagerImpl implements MetadataManager {
             return null;
         }
     }
+
+    public List<Metadata> parseGeneralMetadata(GeneralMetadata metadata, String id) {
+        List<Metadata> parsedVariableMetadata = new ArrayList<>();
+
+        String[] keyValuePairs = goryStringOfMetadata.split("<=>");
+        for (String pair: keyValuePairs) {
+            String[] metadata = pair.split("<>");
+            Metadata m = new Metadata();
+            m.setId(id);
+            m.setType("variable");
+            m.setMetadataKey(metadata[0]);
+            m.setMetadataValue(metadata[1]);
+            parsedVariableMetadata.add(m);
+        }
+        return parsedVariableMetadata;
+    }
+
 }

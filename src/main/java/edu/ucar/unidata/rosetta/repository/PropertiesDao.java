@@ -10,4 +10,11 @@ public interface PropertiesDao {
      * @return The persisted uploads directory.
      */
     public String lookupUploadDirectory();
+
+    /**
+     * Looks up and retrieves the persisted downloads directory.
+     *
+     * @return The persisted downloads directory.
+     */
+    public String lookupDownloadDirectory();
 }

@@ -8,6 +8,7 @@ $(document).ready(function ($) {
         }
     });
 
+
     /**
      * STEP 1: CF Type selection step.
      * cfType selection via clicking on platform images, so show next button.
@@ -117,6 +118,89 @@ $(document).ready(function ($) {
      */
     $("input#delimiter").change(function (){
         manageCustomFileButtonNav(); // This method lives in js/SlickGrid/custom/headerLineSelection.js
+    });
+
+    /**
+     * STEP 5: OIIP general metadata.
+     * toggle metadata sections
+     */
+    $("h5.toggle").click(function (){
+        if ($(this).hasClass("expand")) {
+            $(this).removeClass("expand");
+            $(this).addClass("collapse");
+        } else {
+            $(this).removeClass("collapse");
+            $(this).addClass("expand");
+        }
+
+        var corresponding = $(this).attr("id") + "Section";
+        if ($("#"+ corresponding).hasClass("hideMe"))
+            $("#"+ corresponding).removeClass("hideMe");
+        else
+            $("#"+ corresponding).addClass("hideMe");
+    });
+
+
+    if(!$("input#species_capture").val() ||
+       !$("input#speciesTSN_capture").val() ||
+       !$("input#length_type_capture").val() || 
+       !$("input#length_method_capture").val() || 
+      !$("input#condition_capture").val() ||
+           !$("input#length_recapture").val() ||
+           !$("input#length_unit_recapture").val() ||
+           !$("input#length_type_recapture").val() ||
+           !$("input#length_method_recapture").val()
+    ) {
+
+
+          $("animalToggleSection").removeClass("hideMe");
+    }
+
+
+    /**
+     * STEP 5: OIIP general metadata.
+     * all required fields have data, so show next button.
+     */
+    $("input.required").change(function (){
+        if($("input#species_capture").val() &&
+           $("input#speciesTSN_capture").val() && 
+           $("input#length_type_capture").val() && 
+           $("input#length_method_capture").val() && 
+           $("input#condition_capture").val() &&
+           $("input#length_recapture").val() && 
+           $("input#length_unit_recapture").val() && 
+           $("input#length_type_recapture").val() && 
+           $("input#length_method_recapture").val() && 
+           $("input#attachment_method").val() && 
+           $("input#lon_release").val() && 
+           $("input#lat_release").val() && 
+           $("input#person_tagger_capture").val() && 
+           $("input#datetime_release").val() && 
+           $("input#device_type").val() && 
+           $("input#manufacturer").val() && 
+           $("input#model").val() && 
+           $("input#serial_number").val() && 
+           $("input#device_name").val() && 
+           $("input#person_owner").val() && 
+           $("input#owner_contact").val() && 
+           $("input#firmware").val() && 
+           $("input#end_details").val() && 
+           $("input#datetime_end").val() && 
+           $("input#lon_end").val() && 
+           $("input#lat_end").val() && 
+           $("input#end_type").val() && 
+           $("input#programming_software").val() && 
+           $("input#programming_report").val() && 
+           $("input#found_problem").val() && 
+           $("input#person_qc").val() && 
+           $("input#waypoints_source").val()
+        ) {
+            // remove disabled status for submit button.
+            $("input[type=submit]#Next").removeAttr("disabled");
+            // remove disabled class for submit button.
+            $("input[type=submit]#Next").removeClass("disabled");
+        } 
+
     });
 
 
