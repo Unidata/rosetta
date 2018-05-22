@@ -1,6 +1,8 @@
 package edu.ucar.unidata.rosetta.service;
 
+import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
+import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
 
 import java.util.List;
 
@@ -78,6 +80,16 @@ public interface MetadataManager {
      */
     public List<Metadata> parseVariableMetadata(String goryStringOfMetadata, String id);
 
+
+    /**
+     * Populates metadata objects from the user input provided and places the objects into a list.
+     *
+     * @param metadata  The metadata inputted by the user.
+     * @param id    The id of the Data object to which this metadata corresponds.
+     * @return  A list containing Metadata objects.
+     * @throws RosettaDataException  If unable to populate the metadata object by reflection.
+     */
+    public List<Metadata> parseGeneralMetadata(GeneralMetadata metadata, String id) throws RosettaDataException;
 
     /**
      * Creates a string version of metadata used by client side.

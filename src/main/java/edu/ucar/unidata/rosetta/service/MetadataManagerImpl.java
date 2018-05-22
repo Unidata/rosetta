@@ -3,8 +3,14 @@ package edu.ucar.unidata.rosetta.service;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
 import edu.ucar.unidata.rosetta.repository.MetadataDao;
+import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
+
+import java.beans.Statement;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,20 +174,56 @@ public class MetadataManagerImpl implements MetadataManager {
         }
     }
 
-    public List<Metadata> parseGeneralMetadata(GeneralMetadata metadata, String id) {
-        List<Metadata> parsedVariableMetadata = new ArrayList<>();
+    /**
+     * Populates metadata objects from the user input provided and places the objects into a list.
+     *
+     * @param metadata  The metadata inputted by the user.
+     * @param id    The id of the Data object to which this metadata corresponds.
+     * @return  A list containing Metadata objects.
+     * @throws RosettaDataException  If unable to populate the metadata object by reflection.
+     */
+    public List<Metadata> parseGeneralMetadata(GeneralMetadata metadata, String id) throws RosettaDataException {
+        List<Metadata> parsedGeneralMetadata = new ArrayList<>();
 
-        String[] keyValuePairs = goryStringOfMetadata.split("<=>");
-        for (String pair: keyValuePairs) {
-            String[] metadata = pair.split("<>");
-            Metadata m = new Metadata();
-            m.setId(id);
-            m.setType("variable");
-            m.setMetadataKey(metadata[0]);
-            m.setMetadataValue(metadata[1]);
-            parsedVariableMetadata.add(m);
+        try {
+            for (Method method : metadata.getClass().getDeclaredMethods()) {
+
+                if (Modifier.isPublic(method.getModifiers())
+                        && method.getParameterTypes().length == 0
+                        && method.getReturnType() != void.class
+                        && (method.getName().startsWith("get"))
+                        ) {
+
+                    Object value = method.invoke(metadata);
+
+                    if (value != null) {
+                        if (value instanceof String) {
+
+                            if (!"".equals((String) value)) {
+                                Metadata m = new Metadata();
+                                m.setId(id);
+                                m.setType("general");
+
+                                Statement keyStatement = new Statement(m, "setMetadataKey", new Object[]{method.getName().replaceFirst("get", "").toLowerCase()});
+                                keyStatement.execute();
+                                Statement valStatement = new Statement(m, "setMetadataValue", new Object[]{value});
+                                valStatement.execute();
+                                parsedGeneralMetadata.add(m);
+                            }
+                        }
+                    }
+                }
+
+            }
+        } catch(Exception e) {
+             /*
+             NOTE: code in the try block actually throws a bunch of different exceptions, including
+             java.lang.Exception itself.  Hence, the use catch of the generic Exception class to
+             catch them all (otherwise I normally would not catch with just java.lang.Exception).
+              */
+            throw new RosettaDataException("Unable to populate data object by reflection: " + e);
         }
-        return parsedVariableMetadata;
+        return parsedGeneralMetadata;
     }
 
 }
