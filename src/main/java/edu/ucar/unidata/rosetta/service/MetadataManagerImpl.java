@@ -1,5 +1,6 @@
 package edu.ucar.unidata.rosetta.service;
 
+import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
 import edu.ucar.unidata.rosetta.repository.MetadataDao;
@@ -212,7 +213,6 @@ public class MetadataManagerImpl implements MetadataManager {
                         }
                     }
                 }
-
             }
         } catch(Exception e) {
              /*
@@ -276,5 +276,42 @@ public class MetadataManagerImpl implements MetadataManager {
             variableMetadataMap.put(metadata.getMetadataKey().replace("Metadata", ""), metadataMapping);
         }
         return variableMetadataMap;
+    }
+
+
+
+    public GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType, GeneralMetadata metadata) throws RosettaDataException {
+        String metadataStr = "";
+
+        Map<String, String> globalMetadata = new HashMap<>();
+        // tag base archive flat file
+        if (fileType.equals("eTuff")) {
+            TagUniversalFileFormat tuffConverter = new TagUniversalFileFormat();
+            tuffConverter.parse(filePath);
+            globalMetadata = tuffConverter.getGlobalMetadata();
+        }
+
+        for (String key : globalMetadata.keySet()) {
+            try {
+                // Make setter method string.
+                String setMethod = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
+                for (Method method : metadata.getClass().getDeclaredMethods()) {
+                    if (method.getName().equals(setMethod)) {
+                        Statement statement = new Statement(metadata, setMethod, new Object[]{ globalMetadata.get(key).trim().replace("\"", "")});
+                        statement.execute();
+                    }
+                }
+            } catch(Exception e) {
+                /*
+                NOTE: code in the try block actually throws a bunch of different exceptions, including
+                java.lang.Exception itself.  Hence, the use catch of the generic Exception class to
+                catch them all (otherwise I normally would not catch with just java.lang.Exception).
+                */
+             throw new RosettaDataException("Unable to populate data object by reflection: " + e);
+            }
+        }
+        // need to return something like this:
+        // "title:title here,description:des here,institution:inst here,dataAuthor:data aut here,version:version here,dataSource:source here"
+        return metadata;
     }
 }

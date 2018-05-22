@@ -2,10 +2,7 @@ package edu.ucar.unidata.rosetta.controller;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.service.DataManager;
-import edu.ucar.unidata.rosetta.service.ConvertManager;
-import edu.ucar.unidata.rosetta.service.MetadataManager;
-import edu.ucar.unidata.rosetta.service.ResourceManager;
+import edu.ucar.unidata.rosetta.service.*;
 import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
 
 
@@ -405,7 +402,7 @@ public class WizardController implements HandlerExceptionResolver {
         //TO DO: PARSE STANDARD DATA TYPE FILES (AND SUPPLEMENTAL FILES) AND SEND TO CLIENT BASED ON FILE TYPE
         //data.setVariableMetadata("variableName0<>year<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:dateOnly,dataType:Integer,long_name:ddd,units:fff,standard_name:aaa<=>variableName1<>foo<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:sss,missing_value:ddd,long_name:fff,units:ggg,valid_min:ggg<=>variableName2<>bar<=>variableName2Metadata<>_coordinateVariable:coordinate,dataType:Text,long_name:sss,units:ddd,standard_name:fff,time_leap_month:yes<=>variableName3<>Do Not Use<=>variableName4<>Do Not Use<=>variableName5<>Do Not Use<=>variableName6<>Do Not Use<=>variableName7<>Do Not Use<=>variableName8<>Do Not Use<=>variableName9<>Do Not Use");
 
-        //data.setVariableMetadata("variableName0<>Timestamp<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:fullDateTime,dataType:Text,long_name:Full timestamp,units:yyyy-MM-ddThh\\:mm\\:ss.sTZD,units:yyyy-MM-ddThh\\:mm\\:ss.sTZDMM/dd/yyyy HH\\:mm\\:ss<=>variableName1<>dBar<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,dataType:Float,source:foo,missing_value:bar,long_name:baz,units:who knows<=>variableName2<>Light_at_depth<=>variableName2Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,source:light at depth,missing_value:foo,long_name:bar,units:baz<=>variableName3<>Internal Temp<=>variableName3Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:temp,missing_value:foo,long_name:bar,units:degree_Celsius,source:internal temp<=>variableName4<>External Temp<=>variableName4Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:temp,missing_value:foo,long_name:bar,units:degree_Celsius,source:internal temp,source:external temp");
+        data.setVariableMetadata("variableName0<>Timestamp<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:fullDateTime,dataType:Text,long_name:Full timestamp,units:yyyy-MM-ddThh\\:mm\\:ss.sTZD,units:yyyy-MM-ddThh\\:mm\\:ss.sTZDMM/dd/yyyy HH\\:mm\\:ss<=>variableName1<>dBar<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,dataType:Float,source:foo,missing_value:bar,long_name:baz,units:who knows<=>variableName2<>Light_at_depth<=>variableName2Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,source:light at depth,missing_value:foo,long_name:bar,units:baz<=>variableName3<>Internal Temp<=>variableName3Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:temp,missing_value:foo,long_name:bar,units:degree_Celsius,source:internal temp<=>variableName4<>External Temp<=>variableName4Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:temp,missing_value:foo,long_name:bar,units:degree_Celsius,source:internal temp,source:external temp");
         // Add data object to Model.
         model.addAttribute("data", data);
         // Add current step to the Model.
@@ -461,7 +458,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/generalMetadata", method = RequestMethod.GET)
-    public ModelAndView displayGeneralMetadataForm(Model model, HttpServletRequest request) {
+    public ModelAndView displayGeneralMetadataForm(Model model, HttpServletRequest request) throws RosettaDataException {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -479,8 +476,14 @@ public class WizardController implements HandlerExceptionResolver {
         model.addAttribute("data", data);
 
         GeneralMetadata metadata = new GeneralMetadata();
-/*
+
+        // If not a custom file type, get any included global metadata
+        if (!data.getDataFileType().equals("Custom_File_Type")) {
+            metadata = metadataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
+            logger.info(metadata.toString());
+        } else {
             // OIIP stuff.
+            /*
             metadata.setSpecies_capture("sddssa");
             metadata.setSpeciesTSN_capture("sddssa");
             metadata.setLength_type_capture("sddssa");
@@ -513,10 +516,10 @@ public class WizardController implements HandlerExceptionResolver {
             metadata.setFound_problem("sddssa");
             metadata.setPerson_qc("sddssa");
             metadata.setWaypoints_source("sddssa");
-*/
+            */
+        }
 
-            model.addAttribute("generalMetadata", metadata);
-
+        model.addAttribute("generalMetadata", metadata);
 
         // Add current step to the Model.
         model.addAttribute("currentStep", "generalMetadata");

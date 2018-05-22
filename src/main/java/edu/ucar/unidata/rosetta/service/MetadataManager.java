@@ -114,5 +114,6 @@ public interface MetadataManager {
     public Map<String, String> getGeneralMetadataMap(String id, String type);
     public Map<String, String> getVariableNameMap(String id, String type);
     public Map<String, Map<String,String>> getVariableMetadataMap(String id, String type);
+    public GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType, GeneralMetadata metadata) throws RosettaDataException;
 
 }
