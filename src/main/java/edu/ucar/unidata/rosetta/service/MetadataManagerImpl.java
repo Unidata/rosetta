@@ -12,8 +12,7 @@ import java.beans.Statement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MetadataManagerImpl implements MetadataManager {
 
@@ -226,4 +225,56 @@ public class MetadataManagerImpl implements MetadataManager {
         return parsedGeneralMetadata;
     }
 
+    // Hack to convert metadata to a format useful for AsciiFile for netcdf conversion.
+    public Map<String, String> getGeneralMetadataMap(String id, String type) {
+        List<Metadata> metadataList = lookupMetadata(id, type);
+        // Hack to convert metadata to a format useful for AsciiFile for netcdf conversion.
+        Map<String, String> generalMetadataMap = new HashMap<>();
+        for (Metadata metadata : metadataList) {
+            generalMetadataMap.put(metadata.getMetadataKey(), metadata.getMetadataValue());
+        }
+        return generalMetadataMap;
+    }
+
+    // Hack to convert metadata to a format useful for AsciiFile for netcdf conversion.
+    public Map<String, String> getVariableNameMap(String id, String type) {
+        List<Metadata> metadataList = lookupMetadata(id, type);
+        // Hack to convert metadata to a format useful for AsciiFile for netcdf conversion.
+        Map<String, String> variableNameMap = new HashMap<>();
+        for (Metadata metadata : metadataList) {
+            // Omit the 'do not use' entries.
+            if (!metadata.getMetadataValue().equals("Do Not Use")) {
+                // Omit the metadata entries and just grab the names
+                if (!metadata.getMetadataKey().matches("Metadata")) {
+                    variableNameMap.put(metadata.getMetadataKey(), metadata.getMetadataValue());
+                }
+            }
+        }
+        return variableNameMap;
+    }
+
+
+    // Hack to convert metadata to a format useful for AsciiFile for netcdf conversion.
+    public Map<String, Map<String,String>> getVariableMetadataMap(String id, String type) {
+        List<Metadata> metadataList = lookupMetadata(id, type);
+        // Hack to convert metadata to a format useful for AsciiFile for netcdf conversion.
+        Map<String, Map<String,String>> variableMetadataMap = new HashMap<>();
+        for (Metadata metadata : metadataList) {
+            logger.info(metadata.toString());
+            Map<String, String> metadataMapping = new HashMap<>();
+            logger.info(metadata.getMetadataValue());
+            // Omit the 'do not use' entries.
+            if (!metadata.getMetadataValue().equals("Do Not Use")) {
+                logger.info(metadata.getMetadataKey());
+                // Only look at the metadata entries
+                if (metadata.getMetadataKey().matches("Metadata")) {
+                    String[] metadataValues = metadata.getMetadataValue().split(":");
+                    logger.info(metadataValues[0] + " " + metadataValues[1]);
+                    metadataMapping.put(metadataValues[0], metadataValues[1]);
+                }
+            }
+            variableMetadataMap.put(metadata.getMetadataKey().replace("Metadata", ""), metadataMapping);
+        }
+        return variableMetadataMap;
+    }
 }
