@@ -5,6 +5,7 @@ import edu.ucar.unidata.rosetta.domain.Metadata;
 import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author oxelson@ucar.edu
@@ -108,4 +109,10 @@ public interface MetadataManager {
      * @return  The string version of the metadata used by client side.
      */
     public String getMetadataStringForClient(String id, String type);
+
+
+    public Map<String, String> getGeneralMetadataMap(String id, String type);
+    public Map<String, String> getVariableNameMap(String id, String type);
+    public Map<String, Map<String,String>> getVariableMetadataMap(String id, String type);
+
 }

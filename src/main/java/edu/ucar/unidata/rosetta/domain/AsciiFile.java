@@ -11,13 +11,7 @@ import java.util.regex.Pattern;
 
 
 /**
- * Object representing an AsciiFile.
- *
- * An arbitrary entity representing an ASCII file uploaded to the
- * local file system by a user. Various attributes of the AsciiFile
- * object are populated from the user input data collected via
- * asynchronous AJAX (POST) requests from the client-side. (AKA
- * SPRING Magic!)
+ * An arbitrary entity representing an ASCII file.
  *
  * @see UploadedFileData
  */
@@ -39,7 +33,7 @@ public class AsciiFile {
     private String variableNames = null;
     private Map<String, String> variableNameMap = new HashMap<String, String>();
     private String variableMetadata = null;
-    private HashMap<String, HashMap<String,String>> variableMetadataMap = new HashMap<String, HashMap<String,String>>();
+    private Map<String, Map<String,String>> variableMetadataMap;
     private String parseHeaderForMetadata = null;
     private List<String> parseHeaderForMetadataList = new ArrayList<String>();
     private String jsonStrSessionStorage = null;
@@ -321,7 +315,7 @@ public class AsciiFile {
      */
     public void setGeneralMetadata(String generalMetadata) {
         this.generalMetadata = generalMetadata;
-        setGeneralMetadataMap(generalMetadata);
+       // setGeneralMetadataMap(generalMetadata);
     }
 
     /**
@@ -333,11 +327,8 @@ public class AsciiFile {
         return generalMetadataMap;
     }
 
-    /**
-     * Creates a Map containing the general metadata as specified by the user.
-     *
-     * @param generalMetadata The String of general metadata.
-     */
+
+    /*
     public void setGeneralMetadataMap(String generalMetadata) {
         String regexComma = "(?<!\\\\)" + Pattern.quote(",");
         String regexColon = "(?<!\\\\)" + Pattern.quote(":");
@@ -348,6 +339,11 @@ public class AsciiFile {
             String[] items = pairString.split(regexColon);
             this.generalMetadataMap.put(items[0], items[1].replaceAll("\\\\:", ":").replaceAll("\\\\,", ","));
         }
+    }
+    */
+
+    public void setGeneralMetadataMap(Map<String, String> generalMetadataMap) {
+        this.generalMetadataMap = generalMetadataMap;
     }
 
     /**
@@ -366,7 +362,7 @@ public class AsciiFile {
      */
     public void setVariableNames(String variableNames) {
         this.variableNames = variableNames;
-        setVariableNameMap();
+        //setVariableNameMap();
     }
 
     /**
@@ -381,6 +377,7 @@ public class AsciiFile {
     /**
      * Creates a Map containing the variable units as specified by the user.
      */
+    /*
     public void setVariableNameMap() {
         List<String> pairs = Arrays.asList(variableNames.split(","));
         Iterator<String> pairsIterator = pairs.iterator();
@@ -389,6 +386,10 @@ public class AsciiFile {
             String[] items = pairString.split(":");
             this.variableNameMap.put(items[0], items[1]);
         }
+    }
+    */
+    public void setVariableNameMap(Map<String, String> variableNameMap) {
+        this.variableNameMap = variableNameMap;
     }
 
     /**
@@ -407,7 +408,7 @@ public class AsciiFile {
      */
     public void setVariableMetadata(String variableMetadata) {
         this.variableMetadata = variableMetadata;
-        setVariableMetadataMap();
+        //setVariableMetadataMap();
     }
 
     /**
@@ -415,13 +416,14 @@ public class AsciiFile {
      *
      * @return The variable metadata in a map.
      */
-    public HashMap<String, HashMap<String,String>> getVariableMetadataMap() {
+    public Map<String, Map<String,String>> getVariableMetadataMap() {
         return variableMetadataMap;
     }
 
     /**
      * Creates a Map containing the variable metadata as specified by the user.
      */
+    /*
     public void setVariableMetadataMap() {
         String regexComma = "(?<!\\\\)" + Pattern.quote(",");
         String regexColon = "(?<!\\\\)" + Pattern.quote(":");
@@ -445,6 +447,11 @@ public class AsciiFile {
             }
             this.variableMetadataMap.put(items[0], metadataMapping);
         }
+    }
+    */
+
+    public void setVariableMetadataMap(Map<String, Map<String,String>> variableMetadataMap) {
+        this.variableMetadataMap = variableMetadataMap;
     }
 
     /**

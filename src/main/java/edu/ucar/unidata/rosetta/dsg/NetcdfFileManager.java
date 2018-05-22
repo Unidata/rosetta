@@ -33,6 +33,7 @@ import ucar.nc2.Variable;
 
 /**
  * Handle writing out dsg netcdf file data.
+ * @author sarms@ucar.edu
  */
 public abstract class NetcdfFileManager {
 
@@ -41,7 +42,7 @@ public abstract class NetcdfFileManager {
     private String myCfRole;
     private String myDsgType;
 
-    private Map<String, HashMap<String,String>> variableMetadataMap;
+    private Map<String, Map<String,String>> variableMetadataMap;
     private Map<String, String> variableNameMap;
     private Map<String, String> platformMetadataMap;
     private Map<String, String> generalMetadataMap;
@@ -180,11 +181,11 @@ public abstract class NetcdfFileManager {
         this.coordVarList = coordVarList;
     }
 
-    public Map<String, HashMap<String,String>> getVariableMetadataMap() {
+    public Map<String, Map<String,String>> getVariableMetadataMap() {
         return variableMetadataMap;
     }
 
-    public void setVariableMetadataMap(HashMap<String, HashMap<String,String>> variableMetadataMap) {
+    public void setVariableMetadataMap(Map<String, Map<String,String>> variableMetadataMap) {
         this.variableMetadataMap = variableMetadataMap;
     }
 
@@ -312,7 +313,7 @@ public abstract class NetcdfFileManager {
         Set<String> variableNameKeys = getVariableNameMap().keySet();
         Iterator<String> variableNameKeysIterator = variableNameKeys.iterator();
         String key, value;
-        HashMap<String, String> variableMetadata = new HashMap<String,String>();
+        Map<String, String> variableMetadata = new HashMap<>();
         // check to see if user supplied a relTime (i.e. days since yyyy-mm-dd) If so,
         // then we do not need to construct a time variable. If not, then we need to create
         // a time dimension.
@@ -437,7 +438,7 @@ public abstract class NetcdfFileManager {
             varName = varName + "_" + newCount.toString();
         }
         allVarNames.add(varName);
-        HashMap variableMetadata = getVariableMetadataMap().get(sessionStorageKey + "Metadata");
+        Map variableMetadata = getVariableMetadataMap().get(sessionStorageKey + "Metadata");
         Object coordVarTypeOb = variableMetadata.get("_coordinateVariableType");
         String coordVarType = "";
         if (coordVarTypeOb != null) {
@@ -801,7 +802,7 @@ public abstract class NetcdfFileManager {
             if (success) {
                 return ncFilePath;
             } else {
-                logger.error("Error!  the netcdf file " + ncFilePath + "was not created.");
+                logger.error("Error! the netcdf file " + ncFilePath + "was not created.");
                 return null;
             }
 
