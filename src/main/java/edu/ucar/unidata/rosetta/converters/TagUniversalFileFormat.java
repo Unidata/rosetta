@@ -41,8 +41,6 @@ import ucar.nc2.time.CalendarDate;
  * Tag Base Archival Tags (flat file) following the OIIP Tag Universal File Format (TUFF)
  *
  * This class controls the conversion of Archival Tags as exported by TagBase.
- *
- * @author Sean Arms
  */
 
 public class TagUniversalFileFormat {
@@ -696,5 +694,4 @@ public class TagUniversalFileFormat {
         }
         return ncfile;
     }
-
 }
