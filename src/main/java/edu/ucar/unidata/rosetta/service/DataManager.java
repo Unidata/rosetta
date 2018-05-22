@@ -52,6 +52,13 @@ public interface DataManager {
     public String getUploadDir();
 
     /**
+     * Retrieves the name of the directory used for storing files for downloading.
+     *
+     * @return  The name of the directory used for storing files for downloading.
+     */
+    public String getDownloadDir();
+
+    /**
      * Converts .xls and .xlsx files to .csv files.
      *
      * @param id        The unique id associated with the file (a subdir in the uploads directory).

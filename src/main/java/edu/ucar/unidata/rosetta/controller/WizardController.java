@@ -1,6 +1,8 @@
 package edu.ucar.unidata.rosetta.controller;
 
 import edu.ucar.unidata.rosetta.domain.Data;
+import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
+import edu.ucar.unidata.rosetta.domain.OIIPMetadata;
 import edu.ucar.unidata.rosetta.service.DataManager;
 import edu.ucar.unidata.rosetta.service.MetadataManager;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
@@ -63,6 +65,7 @@ public class WizardController implements HandlerExceptionResolver {
 
 
     // Validators
+    /*
     @Autowired
     private CFTypeValidator cfTypeValidator;
 
@@ -75,7 +78,7 @@ public class WizardController implements HandlerExceptionResolver {
 
     @Resource(name = "fileValidator")
     private FileValidator fileValidator;
-
+    */
 
     /**
      * STEP 1: display CF type form.
@@ -290,13 +293,11 @@ public class WizardController implements HandlerExceptionResolver {
          add an extra step to collect data associated with that custom file type.
          */
         if(persistedData.getDataFileType().equals("Custom_File_Type")) {
-            logger.info("custom file type");
             // Custom file type selected; send user to view to collect data about the custom file type.
             return new ModelAndView(new RedirectView("/customFileTypeAttributes", true));
         } else {
-            logger.info("to var metadata");
-            // Known file type selected; send user to variable metadata step.
-            return new ModelAndView(new RedirectView("/variableMetadata", true));
+            // Known file type selected; send user to general metadata step.
+            return new ModelAndView(new RedirectView("/generalMetadata", true));
         }
     }
 
@@ -362,7 +363,7 @@ public class WizardController implements HandlerExceptionResolver {
 
         // Take user back to file upload step (and don't save any data to this step).
         if (data.getSubmit().equals("Previous"))
-            return new ModelAndView(new RedirectView("/convertAndDownload", true));
+            return new ModelAndView(new RedirectView("/fileUpload", true));
 
         // Get the cookie so we can get the persisted data.
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -427,6 +428,8 @@ public class WizardController implements HandlerExceptionResolver {
 
         //TO DO: PARSE STANDARD DATA TYPE FILES (AND SUPPLEMENTAL FILES) AND SEND TO CLIENT BASED ON FILE TYPE
         //data.setVariableMetadata("variableName0<>year<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:dateOnly,dataType:Integer,long_name:ddd,units:fff,standard_name:aaa<=>variableName1<>foo<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:sss,missing_value:ddd,long_name:fff,units:ggg,valid_min:ggg<=>variableName2<>bar<=>variableName2Metadata<>_coordinateVariable:coordinate,dataType:Text,long_name:sss,units:ddd,standard_name:fff,time_leap_month:yes<=>variableName3<>Do Not Use<=>variableName4<>Do Not Use<=>variableName5<>Do Not Use<=>variableName6<>Do Not Use<=>variableName7<>Do Not Use<=>variableName8<>Do Not Use<=>variableName9<>Do Not Use");
+
+        data.setVariableMetadata("variableName0<>Timestamp<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:fullDateTime,dataType:Text,long_name:Full timestamp,units:yyyy-MM-ddThh\\:mm\\:ss.sTZD,units:yyyy-MM-ddThh\\:mm\\:ss.sTZDMM/dd/yyyy HH\\:mm\\:ss<=>variableName1<>dBar<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,dataType:Float,source:foo,missing_value:bar,long_name:baz,units:who knows<=>variableName2<>Light_at_depth<=>variableName2Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,source:light at depth,missing_value:foo,long_name:bar,units:baz<=>variableName3<>Internal Temp<=>variableName3Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:temp,missing_value:foo,long_name:bar,units:degree_Celsius,source:internal temp<=>variableName4<>External Temp<=>variableName4Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:temp,missing_value:foo,long_name:bar,units:degree_Celsius,source:internal temp,source:external temp");
         // Add data object to Model.
         model.addAttribute("data", data);
         // Add current step to the Model.
@@ -456,6 +459,10 @@ public class WizardController implements HandlerExceptionResolver {
 
         logger.info("submitted for variable metadata: " + data.toString());
 
+        // Take user back to custom file attribute collection step (and don't save any data to this step).
+        if (data.getSubmit().equals("Previous"))
+            return new ModelAndView(new RedirectView("/customFileTypeAttributes", true));
+
         // Get the cookie so we can get the persisted data.
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
         Data persistedData;
@@ -466,17 +473,6 @@ public class WizardController implements HandlerExceptionResolver {
         } else {
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
-        }
-
-        // The previous step depends on what the user specified for the data file type.
-        if (data.getSubmit().equals("Previous")) {
-            if(persistedData.getDataFileType().equals("Custom_File_Type"))
-                // Take user back to custom file type attribute collection step (and don't save any data to this step).
-                return new ModelAndView(new RedirectView("/customFileTypeAttributes", true));
-            else
-                // Take user back to file upload step (and don't save any data to this step).
-                return new ModelAndView(new RedirectView("/fileUpload", true));
-
         }
 
         // Persist the variable metadata.
@@ -509,17 +505,15 @@ public class WizardController implements HandlerExceptionResolver {
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
         }
 
-        if(data.getDataFileType().equals("eTuff")) {
-            logger.info(resourceManager.loadResources().get("etagGlobalMetadataItems"));
-            // Add oiip metadata to Model.
-            model.addAttribute("generalMetadata", resourceManager.loadResources().get("etagGlobalMetadataItems"));
-        } else {
-            // Add general global metadata to Model.
-            model.addAttribute("generalMetadata", resourceManager.loadResources().get("globalMetadataItems"));
-        }
-
         // Add data object to Model.
         model.addAttribute("data", data);
+        // The general metadata we colelct next depends on the platform entered.
+        if(data.getPlatform().equals("eTag"))
+            // OIIP stuff.
+            model.addAttribute("generalMetadata", new OIIPMetadata());
+        else
+            // Everything else.
+            model.addAttribute("generalMetadata", new GeneralMetadata());
         // Add current step to the Model.
         model.addAttribute("currentStep", "generalMetadata");
         return new ModelAndView("wizard");
@@ -539,23 +533,34 @@ public class WizardController implements HandlerExceptionResolver {
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/generalMetadata", method = RequestMethod.POST)
-    public ModelAndView processGeneralMetadata(Data data, BindingResult result, Model model, HttpServletRequest request) {
+    public ModelAndView processGeneralMetadata(Data data, GeneralMetadata metadata, BindingResult result, Model model, HttpServletRequest request) {
 
         logger.info("submitted for general metadata: " + data.toString());
-
-        // Take user back to variable metadata collection step (and don't save any data to this step).
-        if (data.getSubmit().equals("Previous"))
-            return new ModelAndView(new RedirectView("/variableMetadata", true));
 
         // Get the cookie so we can get the persisted data.
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
         Data persistedData;
-        if (rosettaCookie != null)
-            // Data persisted in the database.
+        if (rosettaCookie != null) {
+            // Get the persisted data.
             persistedData = dataManager.lookupById(rosettaCookie.getValue());
-        else
+            logger.info("data pulled from db: " + persistedData.toString());
+        } else {
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+        }
+
+        // The previous step depends on what the user specified for the data file type.
+        if (data.getSubmit().equals("Previous")) {
+            if(persistedData.getDataFileType().equals("Custom_File_Type"))
+                // Take user back to variable metadata collection step (and don't save any data to this step).
+                return new ModelAndView(new RedirectView("/variableMetadata", true));
+            else
+                // Take user back to file upload step (and don't save any data to this step).
+                return new ModelAndView(new RedirectView("/fileUpload", true));
+        }
+
+        // Persist the global metadata.
+        metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(data.getVariableMetadata(), persistedData.getId()));
 
         logger.info("persisted data: " + data.toString());
 
@@ -577,6 +582,7 @@ public class WizardController implements HandlerExceptionResolver {
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
+        // DELETE COOKIE
         // Create a Data form-backing object.
         Data data;
         //if (rosettaCookie != null)

@@ -6,7 +6,6 @@
         <platform>Radiosonde</platform>
         <platform>Wind Profiler</platform>
         <platform>Aircraft</platform>
-        <platform>Glider</platform>
         <fileType>Custom File Type</fileType>
         <fileType>EOL Composite Sounding File</fileType>
         <fileType>GeoCSV</fileType>
@@ -16,6 +15,7 @@
         <platform>Moored Buoy</platform>
         <platform>CTD Sonde</platform>
         <fileType>Custom File Type</fileType>
+        <platform>Glider</platform>
     </domain>
     <domain>
         <name>Bio-Logging</name>

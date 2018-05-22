@@ -28,7 +28,6 @@ public class Data {
     private String otherDelimiter;
     private String submit;
     private String variableMetadata;
-    private String globalMetadata;
 
     /**
      * Returns the unique id associated with this object.
@@ -337,24 +336,6 @@ public class Data {
      */
     public void setVariableMetadata(String variableMetadata) {
         this.variableMetadata = variableMetadata;
-    }
-
-    /**
-     * Returns the global metadata.
-     *
-     * @return The global metadata.
-     */
-    public String getGlobalMetadata() {
-        return globalMetadata;
-    }
-
-    /**
-     * Sets the global metadata.
-     *
-     * @param globalMetadata  The variable metadata.
-     */
-    public void setGlobalMetadata(String globalMetadata) {
-        this.globalMetadata = globalMetadata;
     }
 
     /**

@@ -40,6 +40,22 @@ public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
         return properties.get(0).getUploadDir();
     }
 
+    /**
+     * Looks up and retrieves the persisted downloads directory.
+     *
+     * @return The persisted downloads directory.
+     */
+    public String lookupDownloadDirectory() {
+        String sql = "SELECT * FROM properties";
+        List<RosettaProperties> properties = getJdbcTemplate().query(sql, new JdbcPropertiesDao.DataMapper());
+        if (properties.isEmpty()) {
+            String message = "Unable to find persisted Rosetta properties";
+            logger.error(message);
+            throw new DataRetrievalFailureException(message);
+        }
+        return properties.get(0).getDownloadDir();
+    }
+
 
     /**
      * This DataMapper only used by JdbcPropertiesDao.
