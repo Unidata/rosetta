@@ -1,6 +1,9 @@
 <h3>Download Converted File</h3>
 
 <ul id="download">
+    <c:if test="${not empty data.netcdfFile}">
+        <a href="${data.netcdfFile}">Download converted file</a>
+    </c:if>
 </ul>
 
 
