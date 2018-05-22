@@ -144,7 +144,7 @@ public class ResourceManagerImpl implements ResourceManager {
                             // Add the newest value.
                             values.add(n.getTextContent());
 
-                            // Reassign to
+                            // Reassign
                             resource.put(n.getNodeName(), values);
                         } else {
                             // Add to map with node name as key and content as value.
