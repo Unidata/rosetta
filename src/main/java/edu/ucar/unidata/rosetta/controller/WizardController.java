@@ -483,6 +483,7 @@ public class WizardController implements HandlerExceptionResolver {
         if (!data.getDataFileType().equals("Custom_File_Type"))
             metadata = metadataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
 
+
         model.addAttribute("generalMetadata", metadata);
 
         // Add current step to the Model.
@@ -569,6 +570,9 @@ public class WizardController implements HandlerExceptionResolver {
             pathParts = data.getNetcdfFile().split(File.separator);
         }
         String netcdfFileName = pathParts[pathParts.length - 2] + File.separator + pathParts[pathParts.length -1];
+
+        data.setNetcdfFile(netcdfFileName);
+        dataManager.updateData(data);
 
         // Add data object to Model.
         model.addAttribute("data", data);
