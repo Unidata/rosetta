@@ -76,7 +76,7 @@ public class ConvertManagerImpl implements ConvertManager {
                     else
                         headerLineList = new ArrayList<>();
 
-                    header = fileParserManager.getHeaderLinesFromFile(ncFileToCreate, headerLineList);
+                    header = fileParserManager.getHeaderLinesFromFile(FilenameUtils.concat(filePathUploads, data.getDataFileName()), headerLineList);
 
                     // Get the parsed file data.
                     List<List<String>> parseFileData = fileParserManager.parseByDelimiter(FilenameUtils.concat(filePathUploads, data.getDataFileName()), headerLineList, dataManager.getDelimiterSymbol(data.getDelimiter()));
@@ -95,11 +95,7 @@ public class ConvertManagerImpl implements ConvertManager {
                     asciiFile.setVariableNameMap(metadataManager.getVariableNameMap(data.getId(), "variable"));
 
                     Map<String, Map<String,String>> foo = metadataManager.getVariableMetadataMap(data.getId(), "variable");
-                    if (foo != null)
-                        logger.info("not null " + foo.toString());
-                    else
-                        logger.info("null");
-                    asciiFile.setVariableMetadataMap(foo);
+                    asciiFile.setVariableMetadataMap(metadataManager.getVariableMetadataMap(data.getId(), "variable"));
                     asciiFile.setParseHeaderForMetadataList(new ArrayList<String>()); // LEAVING EMPTY
                     netcdfFile = potentialDsgWriter.createNetcdfFile(asciiFile, parseFileData, header, dataManager.getDownloadDir());
                     break;
