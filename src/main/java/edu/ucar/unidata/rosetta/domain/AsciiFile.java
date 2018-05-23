@@ -1,5 +1,8 @@
 package edu.ucar.unidata.rosetta.domain;
 
+
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,6 +17,8 @@ import java.util.regex.Pattern;
  * An arbitrary entity representing an ASCII file.
  */
 public class AsciiFile {
+
+    protected static final Logger logger = Logger.getLogger(AsciiFile.class);
 
     private String cfType = null;
     private String uniqueId = null;

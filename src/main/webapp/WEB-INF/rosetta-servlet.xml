@@ -14,8 +14,8 @@
 
     <!-- Static resources since we are handling all requests.
          These are front end resources (css, etc.) and xml files -->
-    <mvc:resources mapping="/resources/**" location="/frontEndResources/"/>
-    <mvc:resources mapping="/resources/**" location="/WEB-INF/classes/resources/"/>
+    <mvc:resources mapping="/resources/**" location="/frontEndResources/, /WEB-INF/classes/resources/"/>
+    <mvc:resources mapping="/download/**" location="file:/usr/local/tomcat/rosetta/downloads/"/>
 
     <!-- Activates various annotations to be detected in bean classes -->
     <context:annotation-config />

@@ -6,6 +6,8 @@ import edu.ucar.unidata.rosetta.service.*;
 import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
 
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -20,12 +22,16 @@ import javax.servlet.http.HttpServletResponse;
 
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -399,6 +405,8 @@ public class WizardController implements HandlerExceptionResolver {
         // Populate with any existing variable metadata.
         data.setVariableMetadata(metadataManager.getMetadataStringForClient(data.getId(), "variable"));
 
+       // data.setVariableMetadata("variableName0<>timestamp<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:fullDateTime,dataType:Text,long_name:aaa,units:aaa<=>variableName1<>foo<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:sss,missing_value:sss,long_name:sss,units:sss<=>variableName2<>bar<=>variableName2Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,source:sss,missing_value:sss,long_name:sss,units:sss<=>variableName3<>baz<=>variableName3Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:ddd,missing_value:ddd,long_name:ddd,units:dd<=>variableName4<>quo<=>variableName4Metadata<>_coordinateVariable:non-coordinate,dataType:Text,dataType:Float,source:sss,missing_value:sss,long_name:sss,units:sss");
+
         // Add data object to Model.
         model.addAttribute("data", data);
         // Add current step to the Model.
@@ -477,6 +485,42 @@ public class WizardController implements HandlerExceptionResolver {
         if (!data.getDataFileType().equals("Custom_File_Type"))
             metadata = metadataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
 
+/*
+        metadata.setSpecies_capture("sddssa");
+        metadata.setSpeciesTSN_capture("sddssa");
+        metadata.setLength_type_capture("sddssa");
+        metadata.setLength_method_capture("sddssa");
+        metadata.setCondition_capture("sddssa");
+        metadata.setLength_recapture("sddssa");
+        metadata.setLength_unit_recapture("sddssa");
+        metadata.setLength_type_recapture("sddssa");
+        metadata.setLength_method_recapture("sddssa");
+        metadata.setAttachment_method("sddssa");
+        metadata.setLon_release("sddssa");
+        metadata.setLat_release("sddssa");
+        metadata.setPerson_tagger_capture("sddssa");
+        metadata.setDatetime_release("sddssa");
+        metadata.setDevice_type("sddssa");
+        metadata.setManufacturer("sddssa");
+        metadata.setModel("sddssa");
+        metadata.setSerial_number("sddssa");
+        metadata.setDevice_name("sddssa");
+        metadata.setPerson_owner("sddssa");
+        metadata.setOwner_contact("sddssa");
+        metadata.setFirmware("sddssa");
+        metadata.setEnd_details("sddssa");
+        metadata.setDatetime_end("sddssa");
+        metadata.setLon_end("sddssa");
+        metadata.setLat_end("sddssa");
+        metadata.setEnd_type("sddssa");
+        metadata.setProgramming_software("sddssa");
+        metadata.setProgramming_report("sddssa");
+        metadata.setFound_problem("sddssa");
+        metadata.setPerson_qc("sddssa");
+        metadata.setWaypoints_source("sddssa");
+*/
+
+
         model.addAttribute("generalMetadata", metadata);
 
         // Add current step to the Model.
@@ -524,7 +568,7 @@ public class WizardController implements HandlerExceptionResolver {
         metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(metadata, persistedData.getId()));
 
         //Convert
-        String netcdfFile =  convertManager.convertToNetCDF(persistedData);
+        String netcdfFile = convertManager.convertToNetCDF(persistedData);
 
         // Update persisted data.
         persistedData.setNetcdfFile(netcdfFile);
@@ -556,10 +600,16 @@ public class WizardController implements HandlerExceptionResolver {
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
+        String[] pathParts = data.getNetcdfFile().split("/");
+        String netcdfFileName = pathParts[pathParts.length - 2] + "/" + pathParts[pathParts.length -1];
+        data.setNetcdfFile(netcdfFileName);
+        dataManager.updateData(data);
+
         // Add data object to Model.
         model.addAttribute("data", data);
         // Add current step to the Model.
-        model.addAttribute("currentStep", "convertAndDownload");
+        model.addAttribute("fileName", pathParts[pathParts.length -1]);
+        model.addAttribute("currentStep", "downloadAndConvert");
         return new ModelAndView("wizard");
     }
 
@@ -577,6 +627,51 @@ public class WizardController implements HandlerExceptionResolver {
     @RequestMapping(value = "/convertAndDownload", method = RequestMethod.POST)
     public ModelAndView processReturnToPriorPageRequest(Data data, Model model, HttpServletRequest request) {
         return new ModelAndView(new RedirectView("/generalMetadata", true));
+    }
+
+    /**
+     * Accepts a GET request to download a file from the download directory.
+     *
+     * @param uniqueID the sessions unique ID.
+     * @param fileName the name of the file the user wants to download from the download directory
+     * @return IOStream of the file requested.
+     */
+    @RequestMapping(value = "/fileDownload/{uniqueID}/{file:.*}", method = RequestMethod.GET)
+    public void fileDownload(@PathVariable(value = "uniqueID") String uniqueID,
+                             @PathVariable(value = "file") String fileName,
+                             HttpServletResponse response) {
+        String relFileLoc = uniqueID + File.separator + fileName;
+        String fullFilePath = FilenameUtils
+                .concat(dataManager.getDownloadDir(), relFileLoc);
+        File requestedFile = new File(fullFilePath);
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(requestedFile);
+            String ext = FilenameUtils.getExtension(fileName);
+            String contentType = "text/plain";
+            if (ext.equals("template")) {
+                contentType = "application/rosetta";
+            } else if (ext.equals("nc")) {
+                contentType = "application/x-netcdf";
+            } else if (ext.equals("zip")) {
+                contentType = "application/zip";
+            }
+            response.setHeader("Content-Type", contentType);
+            // copy it to response's OutputStream
+            IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        }
     }
 
 

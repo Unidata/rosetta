@@ -245,7 +245,7 @@ public class MetadataManagerImpl implements MetadataManager {
             // Omit the 'do not use' entries.
             if (!metadata.getMetadataValue().equals("Do Not Use")) {
                 // Omit the metadata entries and just grab the names
-                if (!metadata.getMetadataKey().matches("Metadata")) {
+                if (!metadata.getMetadataKey().contains("Metadata")) {
                     variableNameMap.put(metadata.getMetadataKey(), metadata.getMetadataValue());
                 }
             }
@@ -260,16 +260,12 @@ public class MetadataManagerImpl implements MetadataManager {
         // Hack to convert metadata to a format useful for AsciiFile for netcdf conversion.
         Map<String, Map<String,String>> variableMetadataMap = new HashMap<>();
         for (Metadata metadata : metadataList) {
-            logger.info(metadata.toString());
             Map<String, String> metadataMapping = new HashMap<>();
-            logger.info(metadata.getMetadataValue());
             // Omit the 'do not use' entries.
             if (!metadata.getMetadataValue().equals("Do Not Use")) {
-                logger.info(metadata.getMetadataKey());
                 // Only look at the metadata entries
-                if (metadata.getMetadataKey().matches("Metadata")) {
+                if (metadata.getMetadataKey().contains("Metadata")) {
                     String[] metadataValues = metadata.getMetadataValue().split(":");
-                    logger.info(metadataValues[0] + " " + metadataValues[1]);
                     metadataMapping.put(metadataValues[0], metadataValues[1]);
                 }
             }

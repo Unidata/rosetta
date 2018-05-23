@@ -40,8 +40,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         // Get relevant properties.
         String rosettaHome = props.getProperty("rosetta.home");
         String databaseName = props.getProperty("jdbc.dbName");
-        String url = props.getProperty("jdbc.url").replaceAll("\\$\\{rosetta.home}", rosettaHome);
-        url = url.replaceAll("\\$\\{jdbc.dbName}", databaseName);
+        String url = props.getProperty("jdbc.url").replaceAll("\\$\\{rosetta.home\\}", rosettaHome);
+        url = url.replaceAll("\\$\\{jdbc.dbName\\}", databaseName);
         props.setProperty("jdbc.url", url);
 
         // Create derby database file.
@@ -123,7 +123,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         String rosettaHome = props.getProperty("rosetta.home");
         String databaseName = props.getProperty("jdbc.dbName");
         String url = props.getProperty("jdbc.url").replaceAll("\\$\\{rosetta.home\\}", rosettaHome);
-        url = url.replaceAll("\\$\\{jdbc\\.dbName}", databaseName);
+        url = url.replaceAll("\\$\\{jdbc\\.dbName\\}", databaseName);
         props.setProperty("jdbc.url", url);
 
         // Okay, we're done.  Shut down this particular connection to the database.
