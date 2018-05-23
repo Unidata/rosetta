@@ -330,12 +330,9 @@ public abstract class NetcdfFileManager {
             key = variableNameKeysIterator.next();
             value = getVariableNameMap().get(key);
             if (!value.equals("Do Not Use")) {
-                variableMetadata = getVariableMetadataMap().get(key + "Metadata");
+                //variableMetadata = getVariableMetadataMap().get(key + "Metadata");
+                variableMetadata = getVariableMetadataMap().get(key);
                 boolean updatedMetadataMap = false;
-                if (variableMetadata != null)
-                    logger.info(variableMetadata);
-                else
-                    logger.info("is null");
                 // check if variable is a coordinate variable!
                 if (variableMetadata.containsKey("_coordinateVariable")) {
                     String coordVarType = variableMetadata.get("_coordinateVariableType");
@@ -444,7 +441,8 @@ public abstract class NetcdfFileManager {
             varName = varName + "_" + newCount.toString();
         }
         allVarNames.add(varName);
-        Map variableMetadata = getVariableMetadataMap().get(sessionStorageKey + "Metadata");
+        //Map variableMetadata = getVariableMetadataMap().get(sessionStorageKey + "Metadata");
+        Map variableMetadata = getVariableMetadataMap().get(sessionStorageKey);
         Object coordVarTypeOb = variableMetadata.get("_coordinateVariableType");
         String coordVarType = "";
         if (coordVarTypeOb != null) {
@@ -462,7 +460,6 @@ public abstract class NetcdfFileManager {
                 shape = coordVarType;
             }
         }
-
 
         String type = (String) variableMetadata.get("dataType");
         DataType ncType = null;

@@ -54,36 +54,36 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
             String createPropertiesTable = "CREATE TABLE properties " +
                     "(" +
                     "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
-                    "rosettaHome VARCHAR(100) not null, " +
-                    "uploadDir VARCHAR(100) not null, " +
-                    "downloadDir VARCHAR(100) not null, " +
+                    "rosettaHome VARCHAR(255) not null, " +
+                    "uploadDir VARCHAR(255) not null, " +
+                    "downloadDir VARCHAR(255) not null, " +
                     "maxUpload INTEGER not null" +
                     ")";
             createTable(createPropertiesTable, props);
 
             String createDataTable = "CREATE TABLE data " +
                     "(" +
-                    "id VARCHAR(100) primary key not null, " +
-                    "platform VARCHAR(100), " +
-                    "community VARCHAR(100), " +
-                    "cfType VARCHAR(100), " +
-                    "dataFileName VARCHAR(100), " +
-                    "dataFileType VARCHAR(100), " +
-                    "positionalFileName VARCHAR(100), " +
-                    "templateFileName VARCHAR(100), " +
-                    "headerLineNumbers VARCHAR(100), " +
+                    "id VARCHAR(255) primary key not null, " +
+                    "platform VARCHAR(255), " +
+                    "community VARCHAR(255), " +
+                    "cfType VARCHAR(255), " +
+                    "dataFileName VARCHAR(255), " +
+                    "dataFileType VARCHAR(255), " +
+                    "positionalFileName VARCHAR(255), " +
+                    "templateFileName VARCHAR(255), " +
+                    "headerLineNumbers VARCHAR(255), " +
                     "noHeaderLines VARCHAR(10), " +
                     "delimiter VARCHAR(50)," +
                     "otherDelimiter VARCHAR(50)," +
-                    "netcdfFile VARCHAR(100)," +
-                    "template VARCHAR(100)" +
+                    "netcdfFile VARCHAR(255)," +
+                    "template VARCHAR(255)" +
                     ")";
             createTable(createDataTable, props);
 
 
             String createVariableMetadataTable = "CREATE TABLE metadata " +
                     "(" +
-                    "id VARCHAR(100), " +
+                    "id VARCHAR(255), " +
                     "type VARCHAR(50), " +
                     "metadataKey VARCHAR(255), " +
                     "metadataValue VARCHAR(255)" +

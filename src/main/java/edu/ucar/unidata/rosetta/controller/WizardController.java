@@ -405,7 +405,7 @@ public class WizardController implements HandlerExceptionResolver {
         // Populate with any existing variable metadata.
         data.setVariableMetadata(metadataManager.getMetadataStringForClient(data.getId(), "variable"));
 
-       // data.setVariableMetadata("variableName0<>timestamp<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:fullDateTime,dataType:Text,long_name:aaa,units:aaa<=>variableName1<>foo<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:sss,missing_value:sss,long_name:sss,units:sss<=>variableName2<>bar<=>variableName2Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,source:sss,missing_value:sss,long_name:sss,units:sss<=>variableName3<>baz<=>variableName3Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:ddd,missing_value:ddd,long_name:ddd,units:dd<=>variableName4<>quo<=>variableName4Metadata<>_coordinateVariable:non-coordinate,dataType:Text,dataType:Float,source:sss,missing_value:sss,long_name:sss,units:sss");
+        data.setVariableMetadata("variableName0<>timestamp<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:fullDateTime,dataType:Text,long_name:aaa,units:aaa<=>variableName1<>foo<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:sss,missing_value:sss,long_name:sss,units:sss<=>variableName2<>bar<=>variableName2Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,source:sss,missing_value:sss,long_name:sss,units:sss<=>variableName3<>baz<=>variableName3Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:ddd,missing_value:ddd,long_name:ddd,units:dd<=>variableName4<>quo<=>variableName4Metadata<>_coordinateVariable:non-coordinate,dataType:Text,dataType:Float,source:sss,missing_value:sss,long_name:sss,units:sss");
 
         // Add data object to Model.
         model.addAttribute("data", data);
@@ -485,7 +485,7 @@ public class WizardController implements HandlerExceptionResolver {
         if (!data.getDataFileType().equals("Custom_File_Type"))
             metadata = metadataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
 
-/*
+
         metadata.setSpecies_capture("sddssa");
         metadata.setSpeciesTSN_capture("sddssa");
         metadata.setLength_type_capture("sddssa");
@@ -518,7 +518,7 @@ public class WizardController implements HandlerExceptionResolver {
         metadata.setFound_problem("sddssa");
         metadata.setPerson_qc("sddssa");
         metadata.setWaypoints_source("sddssa");
-*/
+
 
 
         model.addAttribute("generalMetadata", metadata);
@@ -600,10 +600,13 @@ public class WizardController implements HandlerExceptionResolver {
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
-        String[] pathParts = data.getNetcdfFile().split("/");
-        String netcdfFileName = pathParts[pathParts.length - 2] + "/" + pathParts[pathParts.length -1];
-        data.setNetcdfFile(netcdfFileName);
-        dataManager.updateData(data);
+        String[] pathParts;
+        if (File.separator.equals("\\" )) {
+            pathParts = data.getNetcdfFile().split("\\\\");
+        } else {
+            pathParts = data.getNetcdfFile().split(File.separator);
+        }
+        String netcdfFileName = pathParts[pathParts.length - 2] + File.separator + pathParts[pathParts.length -1];
 
         // Add data object to Model.
         model.addAttribute("data", data);
@@ -628,52 +631,6 @@ public class WizardController implements HandlerExceptionResolver {
     public ModelAndView processReturnToPriorPageRequest(Data data, Model model, HttpServletRequest request) {
         return new ModelAndView(new RedirectView("/generalMetadata", true));
     }
-
-    /**
-     * Accepts a GET request to download a file from the download directory.
-     *
-     * @param uniqueID the sessions unique ID.
-     * @param fileName the name of the file the user wants to download from the download directory
-     * @return IOStream of the file requested.
-     */
-    @RequestMapping(value = "/fileDownload/{uniqueID}/{file:.*}", method = RequestMethod.GET)
-    public void fileDownload(@PathVariable(value = "uniqueID") String uniqueID,
-                             @PathVariable(value = "file") String fileName,
-                             HttpServletResponse response) {
-        String relFileLoc = uniqueID + File.separator + fileName;
-        String fullFilePath = FilenameUtils
-                .concat(dataManager.getDownloadDir(), relFileLoc);
-        File requestedFile = new File(fullFilePath);
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(requestedFile);
-            String ext = FilenameUtils.getExtension(fileName);
-            String contentType = "text/plain";
-            if (ext.equals("template")) {
-                contentType = "application/rosetta";
-            } else if (ext.equals("nc")) {
-                contentType = "application/x-netcdf";
-            } else if (ext.equals("zip")) {
-                contentType = "application/zip";
-            }
-            response.setHeader("Content-Type", contentType);
-            // copy it to response's OutputStream
-            IOUtils.copy(inputStream, response.getOutputStream());
-            response.flushBuffer();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-            throw new RuntimeException(e.getMessage());
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                logger.error(e.getMessage());
-            }
-        }
-    }
-
 
     /**
      * This method gracefully handles any uncaught exception that are fatal in
