@@ -25,38 +25,6 @@ public class FileParserManagerImpl implements FileParserManager {
 
     protected static Logger logger = Logger.getLogger(FileParserManagerImpl.class);
 
-
-    public List<List<String>> parsedFileData = new ArrayList<>();
-    public List<String> header = new ArrayList<>();
-
-    /**
-     * Returns each line of the file data parsed by delimiter into a
-     * List<String> which is then stored into List<List<String>>.
-     *
-     * @return The parsed file data.
-     */
-    public List<List<String>> getParsedFileData() {
-        return parsedFileData;
-    }
-
-    /**
-     * Sets each line of the file data parsed by delimiter into a List<String>
-     * which is then stored into List<List<String>>.
-     *
-     * @param parsedFileData The parsed file data.
-     */
-    public void setParsedFileData(List<List<String>> parsedFileData) {
-        this.parsedFileData = parsedFileData;
-    }
-
-    public List<String> getHeader() {
-        return header;
-    }
-
-    public void setHeader(List<String> header) {
-        this.header = header;
-    }
-
     /**
      * A simple method that reads each line of a file, appends a new line
      * character & adds to a List. The list is then turned into a JSON string.

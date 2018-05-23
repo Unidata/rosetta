@@ -173,7 +173,6 @@ public class DataManagerImpl implements DataManager {
             if (!localFileDir.mkdirs())
                 throw new IOException("Unable to create " + id + " subdirectory in uploads directory.");
 
-
         logger.info("Writing uploaded file " + fileName + " to disk");
         File uploadedFile = new File(FilenameUtils.concat(filePath, fileName));
 

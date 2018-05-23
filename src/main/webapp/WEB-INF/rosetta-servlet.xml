@@ -93,7 +93,6 @@
     <bean id="convertManager" class="edu.ucar.unidata.rosetta.service.ConvertManagerImpl"/>
     <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.service.EmbeddedDerbyDbInitManager"/>
 
-
     <!-- DAO injection -->
     <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl">
         <property name="dataDao" ref="dataDao"/>
