@@ -405,8 +405,6 @@ public class WizardController implements HandlerExceptionResolver {
         // Populate with any existing variable metadata.
         data.setVariableMetadata(metadataManager.getMetadataStringForClient(data.getId(), "variable"));
 
-        data.setVariableMetadata("variableName0<>timestamp<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:fullDateTime,dataType:Text,long_name:aaa,units:aaa<=>variableName1<>foo<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:sss,missing_value:sss,long_name:sss,units:sss<=>variableName2<>bar<=>variableName2Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,source:sss,missing_value:sss,long_name:sss,units:sss<=>variableName3<>baz<=>variableName3Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:ddd,missing_value:ddd,long_name:ddd,units:dd<=>variableName4<>quo<=>variableName4Metadata<>_coordinateVariable:non-coordinate,dataType:Text,dataType:Float,source:sss,missing_value:sss,long_name:sss,units:sss");
-
         // Add data object to Model.
         model.addAttribute("data", data);
         // Add current step to the Model.
@@ -484,42 +482,6 @@ public class WizardController implements HandlerExceptionResolver {
         // If not a custom file type, ot probably already includes metadata, so get it.
         if (!data.getDataFileType().equals("Custom_File_Type"))
             metadata = metadataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
-
-
-        metadata.setSpecies_capture("sddssa");
-        metadata.setSpeciesTSN_capture("sddssa");
-        metadata.setLength_type_capture("sddssa");
-        metadata.setLength_method_capture("sddssa");
-        metadata.setCondition_capture("sddssa");
-        metadata.setLength_recapture("sddssa");
-        metadata.setLength_unit_recapture("sddssa");
-        metadata.setLength_type_recapture("sddssa");
-        metadata.setLength_method_recapture("sddssa");
-        metadata.setAttachment_method("sddssa");
-        metadata.setLon_release("sddssa");
-        metadata.setLat_release("sddssa");
-        metadata.setPerson_tagger_capture("sddssa");
-        metadata.setDatetime_release("sddssa");
-        metadata.setDevice_type("sddssa");
-        metadata.setManufacturer("sddssa");
-        metadata.setModel("sddssa");
-        metadata.setSerial_number("sddssa");
-        metadata.setDevice_name("sddssa");
-        metadata.setPerson_owner("sddssa");
-        metadata.setOwner_contact("sddssa");
-        metadata.setFirmware("sddssa");
-        metadata.setEnd_details("sddssa");
-        metadata.setDatetime_end("sddssa");
-        metadata.setLon_end("sddssa");
-        metadata.setLat_end("sddssa");
-        metadata.setEnd_type("sddssa");
-        metadata.setProgramming_software("sddssa");
-        metadata.setProgramming_report("sddssa");
-        metadata.setFound_problem("sddssa");
-        metadata.setPerson_qc("sddssa");
-        metadata.setWaypoints_source("sddssa");
-
-
 
         model.addAttribute("generalMetadata", metadata);
 

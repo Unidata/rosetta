@@ -265,9 +265,19 @@ public class MetadataManagerImpl implements MetadataManager {
             if (!metadata.getMetadataValue().equals("Do Not Use")) {
                 // Only look at the metadata entries
                 if (metadata.getMetadataKey().contains("Metadata")) {
-                    String[] metadataValues = metadata.getMetadataValue().split(":");
-                    metadataMapping.put(metadataValues[0], metadataValues[1]);
+                    String[] metadataValues = metadata.getMetadataValue().split(",");
+                    logger.info(Arrays.asList(metadataValues).toString());
+                    for(int i=0; i< metadataValues.length; i++) {
+                        String[] pairs = metadataValues[i].split(":");
+                        logger.info(Arrays.asList(pairs).toString());
+                        if (pairs.length == 1)
+                            metadataMapping.put(pairs[0], "");
+                        else
+                        metadataMapping.put(pairs[0], pairs[1]);
+                    }
                 }
+            } else {
+                logger.info("no using:" + metadata.getMetadataValue());
             }
             variableMetadataMap.put(metadata.getMetadataKey().replace("Metadata", ""), metadataMapping);
         }
