@@ -1,5 +1,6 @@
 package edu.ucar.unidata.rosetta.service;
 
+import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
@@ -14,6 +15,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+
+import ucar.ma2.InvalidRangeException;
 
 
 public class ConvertManagerImpl implements ConvertManager {
@@ -33,48 +36,62 @@ public class ConvertManagerImpl implements ConvertManager {
     private MetadataManager metadataManager;
 
 
-    public String convertToNetCDF(Data data) throws IOException, IllegalArgumentException {
+    public String convertToNetCDF(Data data) throws IOException, IllegalArgumentException, InvalidRangeException {
         String netcdfFile = null;
-        NetcdfFileManager dsgWriter;
-        for (NetcdfFileManager potentialDsgWriter : netcdfFileManager.asciiToDsg()) {
-            // Get the CF type.
-            String cfType = data.getCfType();
-            if (cfType == null || cfType.equals(""))
-                cfType = dataManager.getCFTypeFromPlatform(data.getPlatform());
 
-            // Does this DSG writer handle this particular CF type?
-            if (potentialDsgWriter.isMine(cfType)) {
+        // The data file type uploaded by the user decides how it is converted to netCDF.
+        if (!data.getDataFileType().equals("Custom_File_Type")) {
+            // Not a custom file type, so use one of Sean's converters.
 
-                // Get the header info.
-                List<String> header;
-                List<String> headerLineList;
-                if (!data.getNoHeaderLines() && data.getHeaderLineNumbers() != null)
-                    headerLineList = Arrays.asList(data.getHeaderLineNumbers().split(","));
-                else
-                    headerLineList = new ArrayList<>();
+            if (data.getDataFileType().equals("eTuff")) {
+                String ncFileToCreate = FilenameUtils.concat(FilenameUtils.concat(dataManager.getDownloadDir(), data.getId()),
+                        FilenameUtils.removeExtension(data.getDataFileName()) + ".nc");
+                TagUniversalFileFormat tagUniversalFileFormat = new TagUniversalFileFormat();
+                netcdfFile = tagUniversalFileFormat.convert(ncFileToCreate);
+            }
+        } else {
+            // Custom file type, so we need to convert it here.
+            NetcdfFileManager dsgWriter;
+            for (NetcdfFileManager potentialDsgWriter : netcdfFileManager.asciiToDsg()) {
+                // Get the CF type.
+                String cfType = data.getCfType();
+                if (cfType == null || cfType.equals(""))
+                    cfType = dataManager.getCFTypeFromPlatform(data.getPlatform());
 
-                String filePath = FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName());
-                header = fileParserManager.getHeaderLinesFromFile(filePath, headerLineList);
+                // Does this DSG writer handle this particular CF type?
+                if (potentialDsgWriter.isMine(cfType)) {
 
-                // Get the parsed file data.
-                List<List<String>> parseFileData = fileParserManager.parseByDelimiter(filePath, headerLineList, dataManager.getDelimiterSymbol(data.getDelimiter()));
+                    // Get the header info.
+                    List<String> header;
+                    List<String> headerLineList;
+                    if (!data.getNoHeaderLines() && data.getHeaderLineNumbers() != null)
+                        headerLineList = Arrays.asList(data.getHeaderLineNumbers().split(","));
+                    else
+                        headerLineList = new ArrayList<>();
 
-                // A hack to temporarily bridge the old rosetta code with the new. MUST REFACTOR!
-                AsciiFile asciiFile = new AsciiFile();
-                asciiFile.setCfType(cfType);
-                asciiFile.setUniqueId(data.getId());
-                asciiFile.setFileName(data.getDataFileName());
-                asciiFile.setDelimiters(data.getDelimiter());
-                asciiFile.setDelimiterList(data.getDelimiter());
-                asciiFile.setHeaderLineNumbers(data.getHeaderLineNumbers());
-                asciiFile.setHeaderLineList(data.getHeaderLineNumbers());
-                asciiFile.setPlatformMetadataMap(new HashMap<String, String>()); // LEAVING EMPTY
-                asciiFile.setGeneralMetadataMap(metadataManager.getGeneralMetadataMap(data.getId(), "general"));
-                asciiFile.setVariableNameMap(metadataManager.getVariableNameMap(data.getId(), "variable"));
-                asciiFile.setVariableMetadataMap(metadataManager.getVariableMetadataMap(data.getId(), "variable"));
-                asciiFile.setParseHeaderForMetadataList(new ArrayList<String>()); // LEAVING EMPTY
-                netcdfFile = potentialDsgWriter.createNetcdfFile(asciiFile, parseFileData, header, dataManager.getDownloadDir());
-                break;
+                    String filePath = FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName());
+                    header = fileParserManager.getHeaderLinesFromFile(filePath, headerLineList);
+
+                    // Get the parsed file data.
+                    List<List<String>> parseFileData = fileParserManager.parseByDelimiter(filePath, headerLineList, dataManager.getDelimiterSymbol(data.getDelimiter()));
+
+                    // A hack to temporarily bridge the old rosetta code with the new. MUST REFACTOR!
+                    AsciiFile asciiFile = new AsciiFile();
+                    asciiFile.setCfType(cfType);
+                    asciiFile.setUniqueId(data.getId());
+                    asciiFile.setFileName(data.getDataFileName());
+                    asciiFile.setDelimiters(data.getDelimiter());
+                    asciiFile.setDelimiterList(data.getDelimiter());
+                    asciiFile.setHeaderLineNumbers(data.getHeaderLineNumbers());
+                    asciiFile.setHeaderLineList(data.getHeaderLineNumbers());
+                    asciiFile.setPlatformMetadataMap(new HashMap<String, String>()); // LEAVING EMPTY
+                    asciiFile.setGeneralMetadataMap(metadataManager.getGeneralMetadataMap(data.getId(), "general"));
+                    asciiFile.setVariableNameMap(metadataManager.getVariableNameMap(data.getId(), "variable"));
+                    asciiFile.setVariableMetadataMap(metadataManager.getVariableMetadataMap(data.getId(), "variable"));
+                    asciiFile.setParseHeaderForMetadataList(new ArrayList<String>()); // LEAVING EMPTY
+                    netcdfFile = potentialDsgWriter.createNetcdfFile(asciiFile, parseFileData, header, dataManager.getDownloadDir());
+                    break;
+                }
             }
         }
         return netcdfFile;

@@ -34,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.WebUtils;
 
+import ucar.ma2.InvalidRangeException;
 
 /**
  * Main controller for Rosetta application.
@@ -398,11 +399,6 @@ public class WizardController implements HandlerExceptionResolver {
         // Populate with any existing variable metadata.
         data.setVariableMetadata(metadataManager.getMetadataStringForClient(data.getId(), "variable"));
 
-
-        //TO DO: PARSE STANDARD DATA TYPE FILES (AND SUPPLEMENTAL FILES) AND SEND TO CLIENT BASED ON FILE TYPE
-        //data.setVariableMetadata("variableName0<>year<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:dateOnly,dataType:Integer,long_name:ddd,units:fff,standard_name:aaa<=>variableName1<>foo<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:sss,missing_value:ddd,long_name:fff,units:ggg,valid_min:ggg<=>variableName2<>bar<=>variableName2Metadata<>_coordinateVariable:coordinate,dataType:Text,long_name:sss,units:ddd,standard_name:fff,time_leap_month:yes<=>variableName3<>Do Not Use<=>variableName4<>Do Not Use<=>variableName5<>Do Not Use<=>variableName6<>Do Not Use<=>variableName7<>Do Not Use<=>variableName8<>Do Not Use<=>variableName9<>Do Not Use");
-
-        data.setVariableMetadata("variableName0<>Timestamp<=>variableName0Metadata<>_coordinateVariable:coordinate,_coordinateVariableType:fullDateTime,dataType:Text,long_name:Full timestamp,units:yyyy-MM-ddThh\\:mm\\:ss.sTZD,units:yyyy-MM-ddThh\\:mm\\:ss.sTZDMM/dd/yyyy HH\\:mm\\:ss<=>variableName1<>dBar<=>variableName1Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,dataType:Float,source:foo,missing_value:bar,long_name:baz,units:who knows<=>variableName2<>Light_at_depth<=>variableName2Metadata<>_coordinateVariable:non-coordinate,dataType:Integer,source:light at depth,missing_value:foo,long_name:bar,units:baz<=>variableName3<>Internal Temp<=>variableName3Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:temp,missing_value:foo,long_name:bar,units:degree_Celsius,source:internal temp<=>variableName4<>External Temp<=>variableName4Metadata<>_coordinateVariable:non-coordinate,dataType:Float,source:temp,missing_value:foo,long_name:bar,units:degree_Celsius,source:internal temp,source:external temp");
         // Add data object to Model.
         model.addAttribute("data", data);
         // Add current step to the Model.
@@ -477,47 +473,9 @@ public class WizardController implements HandlerExceptionResolver {
 
         GeneralMetadata metadata = new GeneralMetadata();
 
-        // If not a custom file type, get any included global metadata
-        if (!data.getDataFileType().equals("Custom_File_Type")) {
+        // If not a custom file type, ot probably already includes metadata, so get it.
+        if (!data.getDataFileType().equals("Custom_File_Type"))
             metadata = metadataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
-            logger.info(metadata.toString());
-        } else {
-            // OIIP stuff.
-            /*
-            metadata.setSpecies_capture("sddssa");
-            metadata.setSpeciesTSN_capture("sddssa");
-            metadata.setLength_type_capture("sddssa");
-            metadata.setLength_method_capture("sddssa");
-            metadata.setCondition_capture("sddssa");
-            metadata.setLength_recapture("sddssa");
-            metadata.setLength_unit_recapture("sddssa");
-            metadata.setLength_type_recapture("sddssa");
-            metadata.setLength_method_recapture("sddssa");
-            metadata.setAttachment_method("sddssa");
-            metadata.setLon_release("sddssa");
-            metadata.setLat_release("sddssa");
-            metadata.setPerson_tagger_capture("sddssa");
-            metadata.setDatetime_release("sddssa");
-            metadata.setDevice_type("sddssa");
-            metadata.setManufacturer("sddssa");
-            metadata.setModel("sddssa");
-            metadata.setSerial_number("sddssa");
-            metadata.setDevice_name("sddssa");
-            metadata.setPerson_owner("sddssa");
-            metadata.setOwner_contact("sddssa");
-            metadata.setFirmware("sddssa");
-            metadata.setEnd_details("sddssa");
-            metadata.setDatetime_end("sddssa");
-            metadata.setLon_end("sddssa");
-            metadata.setLat_end("sddssa");
-            metadata.setEnd_type("sddssa");
-            metadata.setProgramming_software("sddssa");
-            metadata.setProgramming_report("sddssa");
-            metadata.setFound_problem("sddssa");
-            metadata.setPerson_qc("sddssa");
-            metadata.setWaypoints_source("sddssa");
-            */
-        }
 
         model.addAttribute("generalMetadata", metadata);
 
@@ -540,7 +498,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @return          Redirect to next step.
      */
     @RequestMapping(value = "/generalMetadata", method = RequestMethod.POST)
-    public ModelAndView processGeneralMetadata(Data data, GeneralMetadata metadata, BindingResult result, Model model, HttpServletRequest request) throws RosettaDataException, IOException {
+    public ModelAndView processGeneralMetadata(Data data, GeneralMetadata metadata, BindingResult result, Model model, HttpServletRequest request) throws RosettaDataException, IOException, InvalidRangeException {
 
         // Get the cookie so we can get the persisted data.
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -567,6 +525,7 @@ public class WizardController implements HandlerExceptionResolver {
 
         //Convert
         String netcdfFile =  convertManager.convertToNetCDF(persistedData);
+
         // Update persisted data.
         persistedData.setNetcdfFile(netcdfFile);
         dataManager.updateData(persistedData);
