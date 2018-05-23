@@ -93,8 +93,6 @@ public class ConvertManagerImpl implements ConvertManager {
                     asciiFile.setPlatformMetadataMap(new HashMap<String, String>()); // LEAVING EMPTY
                     asciiFile.setGeneralMetadataMap(metadataManager.getGeneralMetadataMap(data.getId(), "general"));
                     asciiFile.setVariableNameMap(metadataManager.getVariableNameMap(data.getId(), "variable"));
-
-                    Map<String, Map<String,String>> foo = metadataManager.getVariableMetadataMap(data.getId(), "variable");
                     asciiFile.setVariableMetadataMap(metadataManager.getVariableMetadataMap(data.getId(), "variable"));
                     asciiFile.setParseHeaderForMetadataList(new ArrayList<String>()); // LEAVING EMPTY
                     netcdfFile = potentialDsgWriter.createNetcdfFile(asciiFile, parseFileData, header, dataManager.getDownloadDir());

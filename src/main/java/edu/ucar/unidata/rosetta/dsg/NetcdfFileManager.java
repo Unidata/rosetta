@@ -461,6 +461,7 @@ public abstract class NetcdfFileManager {
             }
         }
 
+        Iterator it = variableMetadata.entrySet().iterator();
         String type = (String) variableMetadata.get("dataType");
         DataType ncType = null;
         if (type.equals("Text")) {
@@ -790,7 +791,7 @@ public abstract class NetcdfFileManager {
                 ncFileWriter = writePlatformInfo(ncFileWriter, file);
             }
 
-            ncFileWriter = writeRosettaInfo(ncFileWriter, file.getJsonStrSessionStorage());
+            //ncFileWriter = writeRosettaInfo(ncFileWriter, file.getJsonStrSessionStorage());
             // must write user data before any new dateTime variables!
             ncFileWriter = writeUserVarData(parseFileData, ncFileWriter, file.getDecimalSeparatorLocale());
             if (getDateTimeBluePrint() != null) {
