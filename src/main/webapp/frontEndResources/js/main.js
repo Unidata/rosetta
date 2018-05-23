@@ -140,22 +140,92 @@ $(document).ready(function ($) {
             $("#"+ corresponding).addClass("hideMe");
     });
 
-
-    if(!$("input#species_capture").val() ||
+    // If any of the required animal metadata is missing:
+    if(
+       !$("input#species_capture").val() ||
        !$("input#speciesTSN_capture").val() ||
        !$("input#length_type_capture").val() || 
        !$("input#length_method_capture").val() || 
-      !$("input#condition_capture").val() ||
-           !$("input#length_recapture").val() ||
-           !$("input#length_unit_recapture").val() ||
-           !$("input#length_type_recapture").val() ||
-           !$("input#length_method_recapture").val()
+       !$("input#condition_capture").val() ||
+       !$("input#length_recapture").val() ||
+       !$("input#length_unit_recapture").val() ||
+       !$("input#length_type_recapture").val() ||
+       !$("input#length_method_recapture").val()
     ) {
-
-
-          $("animalToggleSection").removeClass("hideMe");
+        $("#animalToggle").removeClass("expand");
+        $("#animalToggle").removeClass("collapse");
+        $("#animalToggleSection").removeClass("hideMe");
     }
 
+
+    // If any of the required attachement metadata is missing:
+    if(!$("input#attachment_method").val()) {
+        $("#attachmentToggle").removeClass("expand");
+        $("#attachmentToggle").removeClass("collapse");
+        $("#attachmentToggleSection").removeClass("hideMe");
+    }
+
+    // If any of the required deployment metadata is missing:
+    if(
+       !$("input#lon_release").val() ||
+       !$("input#lat_release").val() ||
+       !$("input#person_tagger_capture").val() ||
+       !$("input#datetime_release").val()
+    ) {
+        $("#deploymentToggle").removeClass("expand");
+        $("#deploymentToggle").removeClass("collapse");
+        $("#deploymentToggleSection").removeClass("hideMe");
+    }
+
+    // If any of the required device metadata is missing:
+    if(
+       !$("input#device_type").val() || 
+       !$("input#manufacturer").val() || 
+       !$("input#model").val() || 
+       !$("input#serial_number").val() || 
+       !$("input#device_name").val() || 
+       !$("input#person_owner").val() || 
+       !$("input#owner_contact").val() || 
+       !$("input#firmware").val() 
+    ) {
+        $("#deviceToggle").removeClass("expand");
+        $("#deviceToggle").removeClass("collapse");
+        $("#deviceToggleSection").removeClass("hideMe");
+    }
+
+    // If any of the required end of mission metadata is missing:
+    if(
+       !$("input#end_details").val() || 
+       !$("input#datetime_end").val() || 
+       !$("input#lon_end").val() || 
+       !$("input#lat_end").val() || 
+       !$("input#end_type").val()
+    ) {
+        $("#end_of_missionToggle").removeClass("expand");
+        $("#end_of_missionToggle").removeClass("collapse");
+        $("#end_of_missionToggleSection").removeClass("hideMe");
+    }
+
+    // If any of the required programming metadata is missing:
+    if(!$("input#programming_software").val() || !$("input#programming_report").val()) {
+        $("#programmingToggle").removeClass("expand");
+        $("#programmingToggle").removeClass("collapse");
+        $("#programmingToggleSection").removeClass("hideMe");
+    }
+
+    // If any of the required quality metadata is missing:
+    if(!$("input#found_problem").val() || !$("input#person_qc").val() ) {
+        $("#qualityToggle").removeClass("expand");
+        $("#qualityToggle").removeClass("collapse");
+        $("#qualityToggleSection").removeClass("hideMe");
+    }
+
+    // If any of the required waypoints metadata is missing:
+    if(!$("input#waypoints_source").val()) {
+        $("#waypointsToggle").removeClass("expand");
+        $("#waypointsToggle").removeClass("collapse");
+        $("#waypointsToggleSection").removeClass("hideMe");
+    }
 
     /**
      * STEP 5: OIIP general metadata.
