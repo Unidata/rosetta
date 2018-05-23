@@ -62,7 +62,7 @@ public class ApplicationInitialization implements ServletContextListener {
 
         if (rosettaHome != null) {
             if (servletContainerHome != null) {
-                rosettaHome = rosettaHome.replaceAll("\\$\\{servletContainer.home}", servletContainerHome);
+                rosettaHome = rosettaHome.replaceAll("\\$\\{servletContainer.home\\}", servletContainerHome);
             }
             props.setProperty("rosetta.home", rosettaHome);
         } else {

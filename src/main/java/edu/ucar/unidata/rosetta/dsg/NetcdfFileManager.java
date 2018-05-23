@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -330,6 +332,10 @@ public abstract class NetcdfFileManager {
             if (!value.equals("Do Not Use")) {
                 variableMetadata = getVariableMetadataMap().get(key + "Metadata");
                 boolean updatedMetadataMap = false;
+                if (variableMetadata != null)
+                    logger.info(variableMetadata);
+                else
+                    logger.info("is null");
                 // check if variable is a coordinate variable!
                 if (variableMetadata.containsKey("_coordinateVariable")) {
                     String coordVarType = variableMetadata.get("_coordinateVariableType");
@@ -807,13 +813,19 @@ public abstract class NetcdfFileManager {
             }
 
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            logger.error(errors);
+          //  e.printStackTrace();
             throw e;
         } catch (Exception e) {
             //TODO: Using this broad catch is not very good practice
-            e.printStackTrace();
-            logger.error(e.getMessage());
-            logger.error(e.getStackTrace());
+           // e.printStackTrace();
+           // logger.error(e.getMessage());
+           // logger.error(e.getStackTrace());
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            logger.error(errors);
             return null;
         }
     }
