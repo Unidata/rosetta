@@ -10,7 +10,6 @@ import java.util.List;
  */
 public interface MetadataDao {
 
-
     /**
      * Looks up and retrieves a list of persisted Metadata objects using the given id.
      *

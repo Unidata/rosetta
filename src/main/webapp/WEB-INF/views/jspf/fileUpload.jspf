@@ -12,7 +12,7 @@
                         <%-- Create file type selection options from domains. --%>
                         <c:when test="${not empty data.community}">
                             <c:forEach items="${domains}" var="domain">
-                                <c:if test="${data.community == fn:replace(domain.name, ' ', '_')}">
+                                <c:if test="${data.community == domain.name}">
                                     <c:forEach items="${domain.fileType}" var="fileType">
                                         <option value="${fn:replace(fileType, ' ', '_')}"
                                             <%-- Mark as selected if dataFileType has already been chosen. --%>

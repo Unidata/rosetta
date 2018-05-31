@@ -5,6 +5,8 @@ import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.dsg.NetcdfFileManager;
 
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -34,7 +36,7 @@ public class ConvertManagerImpl implements ConvertManager {
     private MetadataManager metadataManager;
 
 
-    public String convertToNetCDF(Data data) throws IOException, IllegalArgumentException, InvalidRangeException {
+    public String convertToNetCDF(Data data) throws IOException, IllegalArgumentException, InvalidRangeException, RosettaDataException {
         String netcdfFile = null;
 
         String filePathUploads = FilenameUtils.concat(dataManager.getUploadDir(), data.getId());

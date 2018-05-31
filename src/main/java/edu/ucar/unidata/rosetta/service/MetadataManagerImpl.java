@@ -4,7 +4,7 @@ import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
 import edu.ucar.unidata.rosetta.repository.MetadataDao;
-import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -266,18 +266,16 @@ public class MetadataManagerImpl implements MetadataManager {
                 // Only look at the metadata entries
                 if (metadata.getMetadataKey().contains("Metadata")) {
                     String[] metadataValues = metadata.getMetadataValue().split(",");
-                    logger.info(Arrays.asList(metadataValues).toString());
+
                     for(int i=0; i< metadataValues.length; i++) {
                         String[] pairs = metadataValues[i].split(":");
-                        logger.info(Arrays.asList(pairs).toString());
+
                         if (pairs.length == 1)
                             metadataMapping.put(pairs[0], "");
                         else
                         metadataMapping.put(pairs[0], pairs[1]);
                     }
                 }
-            } else {
-                logger.info("no using:" + metadata.getMetadataValue());
             }
             variableMetadataMap.put(metadata.getMetadataKey().replace("Metadata", ""), metadataMapping);
         }

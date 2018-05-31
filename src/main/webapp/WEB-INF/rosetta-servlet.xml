@@ -82,21 +82,23 @@
         <property name="suffix" value=".jsp"></property>
     </bean>
 
-    <!-- Declaration for Resource use -->
+    <!-- Declaration for resource use -->
     <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.FileParserManagerImpl"/>
-    <bean id="resourceManager" class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl"/>
     <bean id="cfTypeValidator" class="edu.ucar.unidata.rosetta.service.validators.CFTypeValidator"/>
     <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.validators.FileValidator"/>
     <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean"
           init-method="init"/>
     <bean id="netcdfFileManager" class="edu.ucar.unidata.rosetta.dsg.SingleStationTrajectory"/>
     <bean id="convertManager" class="edu.ucar.unidata.rosetta.service.ConvertManagerImpl"/>
-    <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.service.EmbeddedDerbyDbInitManager"/>
+    <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.service.resources.EmbeddedDerbyDbInitManager"/>
 
     <!-- DAO injection -->
     <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl">
         <property name="dataDao" ref="dataDao"/>
         <property name="propertiesDao" ref="propertiesDao"/>
+        <property name="communityDao" ref="communityDao"/>
+        <property name="platformDao" ref="platformDao"/>
+        <property name="fileTypeDao" ref="fileTypeDao"/>
     </bean>
 
     <bean id="metadataManager" class="edu.ucar.unidata.rosetta.service.MetadataManagerImpl">
@@ -114,6 +116,19 @@
     <bean id="metadataDao" class="edu.ucar.unidata.rosetta.repository.JdbcMetadataDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
+
+    <bean id="fileTypeDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcFileTypeDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="platformDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcPlatformDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="communityDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcCommunityDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
 
     <!-- Declare a datasource that has pooling capabilities-->
     <bean id="dbDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
