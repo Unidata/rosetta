@@ -4,4 +4,4 @@ This directory contains all the client-side scripts used by this web application
 add-on or custom functions/scripts associated with the 3rd-party packages are located in the 
 respective directories and denoted as custom.js or in a custom subdirectory.
 
-These scripts are loaded via jsp include from the WEB-INF/view/includes/javascript.jsp file.
+These scripts are loaded via jsp include from the WEB-INF/views/jspf/javascript.jspf file.
