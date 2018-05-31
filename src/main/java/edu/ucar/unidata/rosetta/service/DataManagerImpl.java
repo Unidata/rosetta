@@ -327,6 +327,129 @@ public class DataManagerImpl implements DataManager {
 
     }
 
+
+    /**
+     * Processes the data submitted by the user containing CF type information.
+     * If an ID already exists, the persisted data corresponding to that ID is
+     * collected and updated with the newly submitted data.  If no ID exists
+     * (is null), the data is persisted for the first time.
+     *
+     * @param id      The unique ID corresponding to already persisted data (may be null).
+     * @param data    The Data object submitted by the user containing the CF type information.
+     * @param request The HttpServletRequest used to get the IP address to make unique IDs for new data.
+     */
+    public void processCfType(String id, Data data, HttpServletRequest request) {
+
+        // If the id is present, then there is a cookie.  Combine new with previous persisted data.
+        if (id != null) {
+
+            // Get the persisted data corresponding to this ID.
+            Data persistedData = lookupById(id);
+
+            // Update platform value.
+            persistedData.setPlatform(data.getPlatform());
+
+            // Update community if needed.
+            if (data.getPlatform() != null)
+                persistedData.setCommunity(getCommunityFromPlatform(data.getPlatform()));
+
+            // Update CF type.
+            persistedData.setCfType(data.getCfType());
+
+            // Update persisted the data!
+            updateData(persistedData);
+
+        } else {
+            // No cookie, so persist new data.
+            // Persist the data.
+            persistData(data, request);
+        }
+    }
+
+    /**
+     * Processes the data submitted by the user containing uploaded file information.
+     * Writes the uploaded files to disk. Updates the persisted data corresponding
+     * to the provided unique ID with the uploaded file information.
+     *
+     * @param id    The unique ID corresponding to already persisted data.
+     * @param data  The Data object submitted by the user containing the uploaded file information.
+     * @return  The url redirect view used to send the user to the next step in the controller.
+     * @throws IOException  If unable to write file(s) to disk.
+     */
+    public String processFileUpload(String id, Data data) throws IOException {
+
+        String nextStep;
+
+        // Get the persisted data corresponding to this ID.
+        Data persistedData = lookupById(id);
+
+        // If a data file has been uploaded.
+        if (!data.getDataFile().isEmpty()) {
+            // Set the data file type.
+            persistedData.setDataFileType(data.getDataFileType());
+            // Write data file to disk.
+            String dataFileName = data.getDataFileName();
+            writeUploadedFileToDisk(persistedData.getId(), dataFileName, data.getDataFile());
+            // If the uploaded file was .xls or .xlsx, convert it to .csv
+            String dataFileNameExtension = FilenameUtils.getExtension(dataFileName);
+            if (dataFileNameExtension.equals("xls") || dataFileNameExtension.equals("xlsx"))
+                dataFileName = convertToCSV(persistedData.getId(), dataFileName);
+            // Set the data file name.
+            persistedData.setDataFileName(dataFileName);
+        } else {
+            persistedData.setDataFileType(data.getDataFileType());
+        }
+
+        // If a positional file has been uploaded.
+        if (!data.getPositionalFile().isEmpty()) {
+            String positionalFileName = data.getPositionalFileName();
+            // Write file to disk.
+            writeUploadedFileToDisk(persistedData.getId(), positionalFileName, data.getPositionalFile());
+            // If the uploaded file was .xls or .xlsx, convert it to .csv
+            String positionalFileNameExtension = FilenameUtils.getExtension(positionalFileName);
+            if (positionalFileNameExtension.equals("xls") || positionalFileNameExtension.equals("xlsx"))
+                positionalFileName = convertToCSV(persistedData.getId(), positionalFileName);
+            // Set the positional file name.
+            persistedData.setPositionalFileName(positionalFileName);
+        } else {
+            // no file and no file name, user is 'undoing' the upload.
+            if (data.getPositionalFileName().equals("")) {
+                persistedData.setPositionalFileName(null);
+            }
+        }
+
+        // If a template file has been uploaded.
+        if (!data.getTemplateFile().isEmpty()) {
+            String templateFileName = data.getTemplateFileName();
+            // Write file to disk.
+            writeUploadedFileToDisk(persistedData.getId(), templateFileName, data.getTemplateFile());
+            // If the uploaded file was .xls or .xlsx, convert it to .csv
+            String templateFileNameExtension = FilenameUtils.getExtension(templateFileName);
+            if (templateFileName.equals("xls") || templateFileNameExtension.equals("xlsx"))
+                templateFileName = convertToCSV(persistedData.getId(), templateFileName);
+            // Set the template file name.
+            persistedData.setTemplateFileName(templateFileName);
+        } else {
+            // no file and no file name, user is 'undoing' the upload.
+            if (data.getTemplateFileName().equals("")) {
+                persistedData.setTemplateFileName(null);
+            }
+        }
+        // Update persisted data!
+        updateData(persistedData);
+
+        // Depending on what the user entered for the data file, we may need to
+        // add an extra step to collect data associated with that custom file type.
+        if(persistedData.getDataFileType().equals("Custom_File_Type")) {
+            nextStep = "/customFileTypeAttributes";
+        } else {
+            nextStep ="/generalMetadata";
+        }
+        return nextStep;
+    }
+
+
+
     /**
      * Creates a unique id for the file name from the clients IP address and the date.
      *
