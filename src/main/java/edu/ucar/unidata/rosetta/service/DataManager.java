@@ -1,9 +1,13 @@
 package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.domain.Data;
-import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.domain.resources.Community;
+import edu.ucar.unidata.rosetta.domain.resources.FileType;
+import edu.ucar.unidata.rosetta.domain.resources.Platform;
+
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -99,5 +103,19 @@ public interface DataManager {
     public String getDelimiterSymbol(String delimiter);
 
     public String getCFTypeFromPlatform(String platform);
+
+    public String getCommunityFromPlatform(String platform);
+
+    public List<Platform> getPlatforms();
+
+    public List<Map<String, Object>> getPlatformsForView();
+
+    public List<Community> getCommunities();
+
+    public List<Map<String, Object>> getCommunitiesForView();
+
+    public List<FileType> getFileTypes();
+
+    public List<Map<String, Object>> getFileTypesForView();
 
 }

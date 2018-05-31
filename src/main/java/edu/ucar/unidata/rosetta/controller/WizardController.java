@@ -2,12 +2,10 @@ package edu.ucar.unidata.rosetta.controller;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.service.*;
-import edu.ucar.unidata.rosetta.service.exceptions.RosettaDataException;
-
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -22,16 +20,12 @@ import javax.servlet.http.HttpServletResponse;
 
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -62,10 +56,6 @@ public class WizardController implements HandlerExceptionResolver {
     @Resource(name = "metadataManager")
     private MetadataManager metadataManager;
 
-    @Resource(name = "resourceManager")
-    private ResourceManager resourceManager;
-
-
     // Validators
     /*
     @Autowired
@@ -91,7 +81,8 @@ public class WizardController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/cfType", method = RequestMethod.GET)
-    public ModelAndView displayCFTypeSelectionForm(Model model, HttpServletRequest request) {
+    public ModelAndView displayCFTypeSelectionForm(Model model, HttpServletRequest request){
+
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -107,10 +98,10 @@ public class WizardController implements HandlerExceptionResolver {
         model.addAttribute("data", data);
         // Add current step to the Model (used by view to keep track of where we are in the wizard).
         model.addAttribute("currentStep", "cfType");
-        // Add domains data to Model (for platform display).
-        model.addAttribute("domains", resourceManager.loadResources().get("domains"));
+        // Add communities data to Model (for platform display).
+        model.addAttribute("domains", dataManager.getCommunitiesForView());
         // Add platforms data to Model (for platform selection).
-        model.addAttribute("platforms", resourceManager.loadResources().get("platforms"));
+        model.addAttribute("platforms", dataManager.getPlatformsForView());
         // Add data object to Model.
         return new ModelAndView("wizard");
     }
@@ -139,8 +130,11 @@ public class WizardController implements HandlerExceptionResolver {
 
             // Update platform if needed.
             persistedData.setPlatform(data.getPlatform()); // If updating a previous value.
+
             // Update community if needed.
-            persistedData.setCommunity(resourceManager.getCommunity(data.getPlatform()));
+            if (data.getPlatform() != null)
+                persistedData.setCommunity(dataManager.getCommunityFromPlatform(data.getPlatform()));
+
             // Update CF type.
             persistedData.setCfType(data.getCfType());
             // Update persisted the data!
@@ -183,10 +177,10 @@ public class WizardController implements HandlerExceptionResolver {
         model.addAttribute("data", data);
         // Add current step to the Model.
         model.addAttribute("currentStep", "fileUpload");
-        // Add domains data to Model (for file upload  display based on community type).
-        model.addAttribute("domains", resourceManager.loadResources().get("domains"));
+        // Add community data to Model (for file upload display based on community type).
+        model.addAttribute("domains", dataManager.getCommunitiesForView());
         // Add file type data to Model (for file type selection if cfType was directly specified).
-        model.addAttribute("fileTypes", resourceManager.loadResources().get("fileTypes"));
+        model.addAttribute("fileTypes", dataManager.getFileTypesForView());
         return new ModelAndView("wizard");
     }
 

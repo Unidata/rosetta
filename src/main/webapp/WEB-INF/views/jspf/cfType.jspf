@@ -49,7 +49,7 @@
                                                 ui-selected
                                             </c:if>
                                             ">
-                                            <img src="${platform.img}" alt="${platform.name}" />
+                                            <img src="${platform.imgPath}" alt="${platform.name}" />
                                             <small>${platform.name}</small>
                                             <input type="radio" name="platform" value="${fn:replace(platform.name, ' ', '_')}"
                                             <%-- Mark as selected if platform has already been chosen. --%>
@@ -74,21 +74,21 @@
                 <p>I know what I'm doing and I want to directly select a CF Type:</p>
                 <select name="cfType">
                     <option value="">Select a CF Type</option>
-                        <%-- Populate the cfType field if the data exists & it matches point --%>
+                        <%-- ResourcePopulator the cfType field if the data exists & it matches point --%>
                     <option
                             <c:if test="${not empty data.cfType && data.cfType == 'point'}">
                                 selected
                             </c:if>
                             value="point">Point</option>
 
-                        <%-- Populate the cfType field if the data exists & it matches trajectory --%>
+                        <%-- ResourcePopulator the cfType field if the data exists & it matches trajectory --%>
                     <option
                             <c:if test="${not empty data.cfType && data.cfType == 'trajectory'}">
                                 selected
                             </c:if>
                             value="trajectory">Trajectory</option>
 
-                        <%-- Populate the cfType field if the data exists & it matches profile --%>
+                        <%-- ResourcePopulator the cfType field if the data exists & it matches profile --%>
                     <option
                             <c:if test="${not empty data.cfType && data.cfType == 'profile'}">
                                 selected
@@ -96,7 +96,7 @@
                             value="profile">Profile</option>
 
 
-                        <%-- Populate the cfType field if the data exists & it matches timerseries --%>
+                        <%-- ResourcePopulator the cfType field if the data exists & it matches timerseries --%>
                     <option
                             <c:if test="${not empty data.cfType && data.cfType == 'timeseries'}">
                                 selected

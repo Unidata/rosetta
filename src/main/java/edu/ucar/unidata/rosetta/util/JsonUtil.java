@@ -8,15 +8,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
-
 import org.apache.commons.io.FilenameUtils;
-
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
+ *
  */
 public class JsonUtil {
 
@@ -25,7 +24,7 @@ public class JsonUtil {
      *
      * @param obj   The object to convert.
      * @return      The Object as a JSOn string.
-     * @throws JsonProcessingException  If unable to map Object to JSOn string.
+     * @throws JsonProcessingException  If unable to map Object to JSON string.
      */
     public static String mapObjectToJSON(Object obj) throws JsonProcessingException {
 

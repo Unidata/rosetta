@@ -1,7 +1,8 @@
 package edu.ucar.unidata.rosetta.service;
 
-import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.converters.XlsToCsv;
+import edu.ucar.unidata.rosetta.domain.Data;
+import edu.ucar.unidata.rosetta.domain.resources.*;
 import edu.ucar.unidata.rosetta.repository.DataDao;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
 
@@ -11,16 +12,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import edu.ucar.unidata.rosetta.repository.resources.CommunityDao;
+import edu.ucar.unidata.rosetta.repository.resources.FileTypeDao;
+import edu.ucar.unidata.rosetta.repository.resources.PlatformDao;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -36,9 +36,10 @@ public class DataManagerImpl implements DataManager {
 
     private DataDao dataDao;
     private PropertiesDao propertiesDao;
+    private CommunityDao communityDao;
+    private PlatformDao platformDao;
+    private FileTypeDao fileTypeDao;
 
-    @Resource(name = "resourceManager")
-    private ResourceManager resourceManager;
     @Resource(name = "fileParserManager")
     private FileParserManager fileParserManager;
 
@@ -63,6 +64,36 @@ public class DataManagerImpl implements DataManager {
     }
 
     /**
+     * Sets the data access object (DAO) for the Community object which will acquire and persist
+     * the data passed to it via the methods of this DataManager.
+     *
+     * @param communityDao  The service DAO representing a Community object.
+     */
+    public void setCommunityDao(CommunityDao communityDao) {
+        this.communityDao = communityDao;
+    }
+
+    /**
+     * Sets the data access object (DAO) for the Platform object which will acquire and persist
+     * the data passed to it via the methods of this DataManager.
+     *
+     * @param platformDao  The service DAO representing a Platform object.
+     */
+    public void setPlatformDao(PlatformDao platformDao) {
+        this.platformDao = platformDao;
+    }
+
+    /**
+     * Sets the data access object (DAO) for the FileType object which will acquire and persist
+     * the data passed to it via the methods of this DataManager.
+     *
+     * @param fileTypeDao  The service DAO representing a FileType object.
+     */
+    public void setFileTypeDao(FileTypeDao fileTypeDao) {
+        this.fileTypeDao = fileTypeDao;
+    }
+
+    /**
      * Looks up and retrieves a Data object using the given id.
      *
      * @param id    The id of the Data object.
@@ -81,9 +112,11 @@ public class DataManagerImpl implements DataManager {
     @Override
     public void persistData(Data data, HttpServletRequest request) {
         data.setId(createUniqueDataId(request)); // Create a unique ID for this object.
+
+        // Get the community associated with the selected platform.
         if (data.getPlatform() != null) {
-            String community = resourceManager.getCommunity(data.getPlatform());
-            data.setCommunity(community);
+            Platform platform = platformDao.lookupPlatformByName(data.getPlatform().replaceAll("_", " "));
+            data.setCommunity(platform.getCommunity());
         }
         dataDao.persistData(data);
     }
@@ -214,16 +247,84 @@ public class DataManagerImpl implements DataManager {
         return delimiters.get(delimiter);
     }
 
+
     public String getCFTypeFromPlatform(String platform) {
-        String cfType = null;
-        List<Map> platforms = (List<Map>) resourceManager.loadResources().get("platforms");
-        for(Map p : platforms) {
-            if(p.get("name").equals(platform)) {
-                cfType = (String) p.get("type");
-                break;
-            }
+        Platform persistedPlatform = platformDao.lookupPlatformByName(platform);
+        return persistedPlatform.getCfType();
+    }
+
+    public String getCommunityFromPlatform(String platform) {
+        Platform persistedPlatform = platformDao.lookupPlatformByName(platform.replaceAll("_", " "));
+        return persistedPlatform.getCommunity();
+    }
+
+    public List<Platform> getPlatforms() {
+        return platformDao.getPlatforms();
+    }
+
+    public List<Map<String, Object>> getPlatformsForView() {
+
+        // Our return data structure.
+        List<Map<String, Object>> platformAttributes = new ArrayList<>();
+
+        for (Platform platform : getPlatforms()) {
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("name", platform.getName());
+            attributes.put("imgPath", platform.getImgPath());
+            attributes.put("cfType", platform.getCfType());
+
+            // Add Map to List.
+            platformAttributes.add(attributes);
         }
-        return cfType;
+        return platformAttributes;
+    }
+
+    public List<Community> getCommunities() {
+        return communityDao.getCommunities();
+    }
+
+    public List<Map<String, Object>> getCommunitiesForView() {
+        // Our return data structure.
+        List<Map<String, Object>> communityAttributes = new ArrayList<>();
+
+        // Get the needed data for each community object.
+        for (Community community : getCommunities()) {
+            Map<String, Object> attributes = new HashMap<>();
+            // Make a list of the platforms for each community.
+            List<String> platforms = new ArrayList<>();
+            for (Platform platform : getPlatforms()) {
+                if (community.getName().equals(platform.getCommunity())) {
+                    platforms.add(platform.getName());
+                }
+            }
+            // Add platforms list to Map.
+            attributes.put("platform", platforms);
+            // Add file types to Map.
+            attributes.put("fileType", community.getFileType());
+            attributes.put("name", community.getName());
+            // Add Map to List.
+            communityAttributes.add(attributes);
+        }
+       return communityAttributes;
+    }
+
+
+    public List<FileType> getFileTypes() {
+        return fileTypeDao.getFileTypes();
+    }
+
+    public List<Map<String, Object>> getFileTypesForView() {
+        // Our return data structure.
+        List<Map<String, Object>> fileTypeAttributes = new ArrayList<>();
+        for (FileType fileType : getFileTypes()) {
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("name", fileType.getName());
+
+            // Add Map to List.
+            fileTypeAttributes.add(attributes);
+        }
+        return fileTypeAttributes;
+
     }
 
     /**

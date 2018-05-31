@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<communities>
+    <community>
+        <name>Atmospheric Sciences</name>
+        <fileType>Custom File Type</fileType>
+        <fileType>EOL Composite Sounding File</fileType>
+        <fileType>GeoCSV</fileType>
+    </community>
+    <community>
+        <name>Physical Ocean Sciences</name>
+        <fileType>Custom File Type</fileType>
+    </community>
+    <community>
+        <name>Bio-Logging</name>
+        <fileType>Custom File Type</fileType>
+        <fileType>eTuff</fileType>
+    </community>
+</communities>
