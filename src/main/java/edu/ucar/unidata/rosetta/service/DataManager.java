@@ -118,4 +118,28 @@ public interface DataManager {
 
     public List<Map<String, Object>> getFileTypesForView();
 
+    /**
+     * Processes the data submitted by the user containing CF type information.
+     * If an ID already exists, the persisted data corresponding to that ID is
+     * collected and updated with the newly submitted data.  If no ID exists
+     * (is null), the data is persisted for the first time.
+     *
+     * @param id      The unique ID corresponding to already persisted data (may be null).
+     * @param data    The Data object submitted by the user containing the CF type information.
+     * @param request The HttpServletRequest used to get the IP address to make unique IDs for new data.
+     */
+    public void processCfType(String id, Data data, HttpServletRequest request);
+
+    /**
+     * Processes the data submitted by the user containing uploaded file information.
+     * Writes the uploaded files to disk. Updates the persisted data corresponding
+     * to the provided unique ID with the uploaded file information.
+     *
+     * @param id    The unique ID corresponding to already persisted data.
+     * @param data  The Data object submitted by the user containing the uploaded file information.
+     * @return  The url redirect view used to send the user to the next step in the controller.
+     * @throws IOException  If unable to write file(s) to disk.
+     */
+    public String processFileUpload(String id, Data data) throws IOException;
+
 }

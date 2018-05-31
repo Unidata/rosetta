@@ -124,25 +124,12 @@ public class WizardController implements HandlerExceptionResolver {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-        if (rosettaCookie != null) { // We've been here before, combine new with previous persisted data.
-            // Get the persisted data.
-            Data persistedData = dataManager.lookupById(rosettaCookie.getValue());
-
-            // Update platform if needed.
-            persistedData.setPlatform(data.getPlatform()); // If updating a previous value.
-
-            // Update community if needed.
-            if (data.getPlatform() != null)
-                persistedData.setCommunity(dataManager.getCommunityFromPlatform(data.getPlatform()));
-
-            // Update CF type.
-            persistedData.setCfType(data.getCfType());
-            // Update persisted the data!
-            dataManager.updateData(persistedData);
-
-        } else { // Haven't been before, so proceed with creation of entry in the db and cookie.
-            // Persist the data.
-            dataManager.persistData(data, request);
+        if (rosettaCookie != null) {
+            // We've been here before, combine new with previous persisted data.
+            dataManager.processCfType(rosettaCookie.getValue(), data, null);
+        } else {
+            // Haven't been before, so proceed with persist the data.
+            dataManager.processCfType(null, data, request);
             // First time posting to this page in this session.
             response.addCookie(new Cookie("rosetta", data.getId()));
         }
@@ -207,81 +194,15 @@ public class WizardController implements HandlerExceptionResolver {
 
         // Get the cookie so we can get the persisted data.
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-        Data persistedData;
-        if (rosettaCookie != null)
-            // Get the persisted data.
-            persistedData = dataManager.lookupById(rosettaCookie.getValue());
-        else
+        if (rosettaCookie == null)
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
+        // Persist the file upload data.
+        String nextStep = dataManager.processFileUpload(rosettaCookie.getValue(), data);
 
-        // If a data file has been uploaded.
-        if (!data.getDataFile().isEmpty()) {
-            // Set the data file type.
-            persistedData.setDataFileType(data.getDataFileType());
-            // Write data file to disk.
-            String dataFileName = data.getDataFileName();
-            dataManager.writeUploadedFileToDisk(persistedData.getId(), dataFileName, data.getDataFile());
-            // If the uploaded file was .xls or .xlsx, convert it to .csv
-            String dataFileNameExtension = FilenameUtils.getExtension(dataFileName);
-            if (dataFileNameExtension.equals("xls") || dataFileNameExtension.equals("xlsx"))
-                dataFileName = dataManager.convertToCSV(persistedData.getId(), dataFileName);
-            // Set the data file name.
-            persistedData.setDataFileName(dataFileName);
-        } else {
-            persistedData.setDataFileType(data.getDataFileType());
-        }
-
-        // If a positional file has been uploaded.
-        if (!data.getPositionalFile().isEmpty()) {
-            String positionalFileName = data.getPositionalFileName();
-            // Write file to disk.
-            dataManager.writeUploadedFileToDisk(persistedData.getId(), positionalFileName, data.getPositionalFile());
-            // If the uploaded file was .xls or .xlsx, convert it to .csv
-            String positionalFileNameExtension = FilenameUtils.getExtension(positionalFileName);
-            if (positionalFileNameExtension.equals("xls") || positionalFileNameExtension.equals("xlsx"))
-                positionalFileName = dataManager.convertToCSV(persistedData.getId(), positionalFileName);
-            // Set the positional file name.
-            persistedData.setPositionalFileName(positionalFileName);
-        } else {
-            // no file and no file name, user is 'undoing' the upload.
-            if (data.getPositionalFileName().equals("")) {
-                persistedData.setPositionalFileName(null);
-            }
-        }
-
-        // If a template file has been uploaded.
-        if (!data.getTemplateFile().isEmpty()) {
-            String templateFileName = data.getTemplateFileName();
-            // Write file to disk.
-            dataManager.writeUploadedFileToDisk(persistedData.getId(), templateFileName, data.getTemplateFile());
-            // If the uploaded file was .xls or .xlsx, convert it to .csv
-            String templateFileNameExtension = FilenameUtils.getExtension(templateFileName);
-            if (templateFileName.equals("xls") || templateFileNameExtension.equals("xlsx"))
-                templateFileName = dataManager.convertToCSV(persistedData.getId(), templateFileName);
-            // Set the template file name.
-            persistedData.setTemplateFileName(templateFileName);
-        } else {
-            // no file and no file name, user is 'undoing' the upload.
-            if (data.getTemplateFileName().equals("")) {
-                persistedData.setTemplateFileName(null);
-            }
-        }
-        // Persist the data!
-        dataManager.updateData(persistedData);
-
-        /*
-         Depending on what the user entered for the data file, we may need to
-         add an extra step to collect data associated with that custom file type.
-         */
-        if(persistedData.getDataFileType().equals("Custom_File_Type")) {
-            // Custom file type selected; send user to view to collect data about the custom file type.
-            return new ModelAndView(new RedirectView("/customFileTypeAttributes", true));
-        } else {
-            // Known file type selected; send user to general metadata step.
-            return new ModelAndView(new RedirectView("/generalMetadata", true));
-        }
+        // Send user to the next view.  (See dataManager.processFileUpload).
+        return new ModelAndView(new RedirectView(nextStep, true));
     }
 
 
