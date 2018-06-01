@@ -83,7 +83,7 @@
     </bean>
 
     <!-- Declaration for resource use -->
-    <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.FileParserManagerImpl"/>
+    <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.FileManagerImpl"/>
     <bean id="cfTypeValidator" class="edu.ucar.unidata.rosetta.service.validators.CFTypeValidator"/>
     <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.validators.FileValidator"/>
     <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean"
