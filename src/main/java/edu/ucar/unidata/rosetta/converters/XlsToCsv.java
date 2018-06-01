@@ -1,38 +1,10 @@
-/*
- * Copyright 1998-2013 University Corporation for Atmospheric Research/Unidata
- *
- * Portions of this software were developed by the Unidata Program at the
- * University Corporation for Atmospheric Research.
- *
- * Access and use of this software shall impose the following obligations
- * and understandings on the user. The user is granted the right, without
- * any fee or cost, to use, copy, modify, alter, enhance and distribute
- * this software, and any derivative works thereof, and its supporting
- * documentation for any purpose whatsoever, provided that this entire
- * notice appears in all copies of the software, derivative works and
- * supporting documentation.  Further, UCAR requests that the user credit
- * UCAR/Unidata in any publications that result from the use of this
- * software or in any product that includes this software. The names UCAR
- * and/or Unidata, however, may not be used in any advertising or publicity
- * to endorse or promote any products or commercial entity unless specific
- * written permission is obtained from UCAR/Unidata. The user also
- * understands that UCAR/Unidata is not obligated to provide the user with
- * any support, consulting, training or assistance of any kind with regard
- * to the use, operation and performance of this software nor to provide
- * the user with any updates, revisions, new versions or "bug fixes."
- *
- * THIS SOFTWARE IS PROVIDED BY UCAR/UNIDATA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL UCAR/UNIDATA BE LIABLE FOR ANY SPECIAL,
- * INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
- * FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
- * NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
- * WITH THE ACCESS, USE OR PERFORMANCE OF THIS SOFTWARE.
- */
-
 package edu.ucar.unidata.rosetta.converters;
 
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+
+import java.io.*;
+import java.util.Date;
+import java.util.Locale;
 
 import jxl.Cell;
 import jxl.CellType;
@@ -40,40 +12,40 @@ import jxl.DateCell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
-import org.apache.commons.io.FilenameUtils;
+import jxl.read.biff.BiffException;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.Locale;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 
 
 /**
- * Convert xls, xlsx files to a csv file
+ * Convert xls, xlsx files to  Comma Separated Value (CSV) format.
  *
- * @author Sean Arms
+ * @author sarms@ucar.edu (original author)
+ * @author oxelson@ucar.edu (modified)
  */
 public class XlsToCsv {
 
-    /**
-     * If a cell is empty, set the value in the CSV file to -999
-     */
+    private final static Logger logger = Logger.getLogger(XlsToCsv.class);
+
+
+    // If a cell is empty, set the value in the CSV file to -999
     private static final String MISSING_FILL_VALUE = "-999";
 
     /**
-     * _more_
+     * Converts the provided xls/xlsx file to Comma Separated Value (CSV) format.
      *
      * @param xlsFile Path to xls/xlsx file
      * @param csvFile Path where csv file should be created. If null, csv file will
      *                be created in the same location as @param xlsFile
+     * @return  True if file conversion was successful; otherwise false.
+     * @throws RosettaDataException If unable to convert xls/xlsx file to csv.
      */
-    public static boolean convert(String xlsFile, String csvFile) {
-        boolean successful = false;
+    public static boolean convert(String xlsFile, String csvFile) throws RosettaDataException {
+
+        boolean successful;
+        BufferedWriter bw = null;
+
         try {
             //Excel document to be imported
             WorkbookSettings ws = new WorkbookSettings();
@@ -86,14 +58,15 @@ public class XlsToCsv {
             }
 
             File f = new File(csvFile);
-            // if file doesn't exists, then create it
-            if (!f.exists()) {
-                f.createNewFile();
-            }
+            // If file doesn't exists, then create it.
+            if (!f.exists())
+                if(!f.createNewFile())
+                    return false; // Unable to create file.
+
             OutputStream os = new FileOutputStream(f);
             String encoding = "UTF8";
             OutputStreamWriter osw = new OutputStreamWriter(os, encoding);
-            BufferedWriter bw = new BufferedWriter(osw);
+            bw = new BufferedWriter(osw);
 
             // Gets the sheets from workbook
             for (int sheet = 0; sheet < w.getNumberOfSheets(); sheet++) {
@@ -102,7 +75,7 @@ public class XlsToCsv {
                 //bw.write(s.getName());
                 //bw.newLine();
 
-                Cell[] row = null;
+                Cell[] row;
 
                 // Gets the cells from sheet
                 String contents;
@@ -142,17 +115,24 @@ public class XlsToCsv {
                     }
                 }
             }
-            bw.flush();
-            bw.close();
             successful = true;
-        } catch (UnsupportedEncodingException e) {
-            System.err.println(e.toString());
-        } catch (IOException e) {
-            System.err.println(e.toString());
-        } catch (Exception e) {
-            System.err.println(e.toString());
-        }
+        } catch (IOException | BiffException e ) {
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            logger.error(errors);
+            throw new RosettaDataException("Unable to convert file to CSV format: " + errors);
+        } finally {
+            try {
+                assert bw != null;
+                bw.flush();
+                bw.close();
 
+            } catch (IOException e) {
+                StringWriter errors = new StringWriter();
+                e.printStackTrace(new PrintWriter(errors));
+                logger.error(errors);
+            }
+        }
         return successful;
     }
 
@@ -161,10 +141,10 @@ public class XlsToCsv {
      * then convert the value to seconds since 1970-01-01.
      *
      * @param row Cell object representing a row
-     * @return String reprensetation of value contained within the row
+     * @return String representation of value contained within the row
      */
     private static String getCellContents(Cell row) {
-        String contents = "";
+        String contents;
 
         if (row.getType() == CellType.DATE) {
             DateCell dc = (DateCell) row;
