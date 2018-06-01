@@ -24,17 +24,7 @@ import ucar.ma2.InvalidRangeException;
  */
 public interface DataManager {
 
-    /**
-     * Converts .xls and .xlsx files to .csv files.
-     *
-     * @param id        The unique id associated with the file (a subdir in the uploads directory).
-     * @param fileName  The name of the .xls or .xlsx file to convert.
-     * @return          The name of the converted .csv file.
-     * @throws IOException  If unable to convert to .csv file.
-     */
-    public String convertToCSV(String id, String fileName) throws IOException;
-
-    /**
+       /**
      * Deletes the persisted data object information.
      *
      * @param id    The id of the Data object to delete.
@@ -200,8 +190,9 @@ public interface DataManager {
      * @param id    The unique ID corresponding to already persisted data.
      * @param data  The Data object submitted by the user containing the uploaded file information.
      * @throws IOException  If unable to write file(s) to disk.
+     * @throws RosettaDataException If a file conversion exception occurred.
      */
-    public void processFileUpload(String id, Data data) throws IOException;
+    public void processFileUpload(String id, Data data) throws IOException, RosettaDataException;
 
     /**
      * Processes the data submitted by the user containing general metadata information.  Since this
@@ -248,16 +239,4 @@ public interface DataManager {
      * @param data  The data object to update.
      */
     public void updatePersistedData(Data data);
-
-    /**
-     * Creates a subdirectory in the designated uploads directory using the (unique) id
-     * and writes the given file to the uploads subdirectory.
-     *
-     * @param id        The unique id associated with the file (a subdir in the uploads directory).
-     * @param fileName  The name of the file to save to disk.
-     * @param file      The CommonsMultipartFile to save to disk.
-     * @throws SecurityException  If unable to write file to disk because of a JVM security manager violation.
-     * @throws IOException  If unable to write file to disk.
-     */
-    public void writeUploadedFileToDisk(String id, String fileName, CommonsMultipartFile file) throws SecurityException, IOException;
 }
