@@ -2,7 +2,7 @@ package edu.ucar.unidata.rosetta.config;
 
 import edu.ucar.unidata.rosetta.service.ConvertManager;
 import edu.ucar.unidata.rosetta.service.DataManager;
-import edu.ucar.unidata.rosetta.service.FileParserManager;
+import edu.ucar.unidata.rosetta.service.FileManager;
 import edu.ucar.unidata.rosetta.service.MetadataManager;
 import edu.ucar.unidata.rosetta.service.resources.ResourceManager;
 import org.mockito.Mockito;
@@ -26,8 +26,8 @@ public class TestContext {
     }
 
     @Bean
-    public FileParserManager fileParserManager() {
-        return Mockito.mock(FileParserManager.class);
+    public FileManager fileParserManager() {
+        return Mockito.mock(FileManager.class);
     }
 
     @Bean
