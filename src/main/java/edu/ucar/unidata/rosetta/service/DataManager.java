@@ -1,6 +1,7 @@
 package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.domain.Data;
+import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.resources.Community;
 import edu.ucar.unidata.rosetta.domain.resources.FileType;
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
@@ -12,7 +13,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import ucar.ma2.InvalidRangeException;
 
 /**
  * @author oxelson@ucar.edu
@@ -130,6 +133,15 @@ public interface DataManager {
      */
     public void processCfType(String id, Data data, HttpServletRequest request);
 
+
+    /**
+     * Processes the data submitted by the user containing custom data file information.
+     *
+     * @param id    The unique ID corresponding to already persisted data.
+     * @param data  The Data object submitted by the user containing the custom data file information.
+     */
+    public void processCustomFileTypeAttributes(String id, Data data);
+
     /**
      * Processes the data submitted by the user containing uploaded file information.
      * Writes the uploaded files to disk. Updates the persisted data corresponding
@@ -137,9 +149,48 @@ public interface DataManager {
      *
      * @param id    The unique ID corresponding to already persisted data.
      * @param data  The Data object submitted by the user containing the uploaded file information.
-     * @return  The url redirect view used to send the user to the next step in the controller.
      * @throws IOException  If unable to write file(s) to disk.
      */
-    public String processFileUpload(String id, Data data) throws IOException;
+    public void processFileUpload(String id, Data data) throws IOException;
+
+    /**
+     * Processes the data submitted by the user containing general metadata information.  Since this
+     * is the final step of collecting data in the wizard, the uploaded data file is converted to
+     * netCDF format in preparation for user download.
+     *
+     * @param id    The unique ID corresponding to already persisted data.
+     * @param metadata  The Metadata object submitted by the user containing the general metadata information.
+     * @throws InvalidRangeException // If encounters an invalid range while converting file to netCDF.
+     * @throws IOException  // If unable to convert file to netCDF format.
+     * @throws RosettaDataException  If unable to populate the metadata object.
+     */
+    public void processGeneralMetadata(String id, GeneralMetadata metadata) throws InvalidRangeException, IOException, RosettaDataException;
+
+    /**
+     * Determines the next step in the wizard based the user specified data file type.
+     * This method is called when there is a divergence of possible routes through the wizard.
+     *
+     * @param id  The unique ID corresponding to already persisted data.
+     * @return  The next step to redirect the user to in the wizard.
+     */
+    public String processNextStep(String id);
+
+    /**
+     * Determines the previous step in the wizard based the user specified data file type.
+     * This method is called when there is a divergence of possible routes through the wizard.
+     *
+     * @param id  The unique ID corresponding to already persisted data.
+     * @return  The previous step to redirect the user to in the wizard.
+     */
+    public String processPreviousStep(String id);
+
+    /**
+     * Processes the data submitted by the user containing variable metadata information.
+     *
+     * @param id    The unique ID corresponding to already persisted data.
+     * @param data  The Data object submitted by the user containing variable metadata information.
+     */
+    public void processVariableMetadata(String id, Data data);
+
 
 }

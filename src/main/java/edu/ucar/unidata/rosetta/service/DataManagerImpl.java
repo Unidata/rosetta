@@ -2,9 +2,14 @@ package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.converters.XlsToCsv;
 import edu.ucar.unidata.rosetta.domain.Data;
+import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.resources.*;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.repository.DataDao;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
+import edu.ucar.unidata.rosetta.repository.resources.CommunityDao;
+import edu.ucar.unidata.rosetta.repository.resources.FileTypeDao;
+import edu.ucar.unidata.rosetta.repository.resources.PlatformDao;
 
 
 import java.io.File;
@@ -18,14 +23,13 @@ import javax.activation.UnsupportedDataTypeException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import edu.ucar.unidata.rosetta.repository.resources.CommunityDao;
-import edu.ucar.unidata.rosetta.repository.resources.FileTypeDao;
-import edu.ucar.unidata.rosetta.repository.resources.PlatformDao;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import ucar.ma2.InvalidRangeException;
 
 /**
  * @author oxelson@ucar.edu
@@ -40,8 +44,15 @@ public class DataManagerImpl implements DataManager {
     private PlatformDao platformDao;
     private FileTypeDao fileTypeDao;
 
+    // The other managers we make use of in this file.
+    @Resource(name = "convertManager")
+    private ConvertManager convertManager;
+
     @Resource(name = "fileParserManager")
     private FileParserManager fileParserManager;
+
+    @Resource(name = "metadataManager")
+    private MetadataManager metadataManager;
 
     /**
      * Sets the data access object (DAO) for the Data object which will acquire and persist
@@ -356,14 +367,42 @@ public class DataManagerImpl implements DataManager {
             // Update CF type.
             persistedData.setCfType(data.getCfType());
 
-            // Update persisted the data!
+            // Update persisted the data.
             updateData(persistedData);
 
         } else {
             // No cookie, so persist new data.
-            // Persist the data.
             persistData(data, request);
         }
+    }
+
+    /**
+     * Processes the data submitted by the user containing custom data file information.
+     *
+     * @param id    The unique ID corresponding to already persisted data.
+     * @param data  The Data object submitted by the user containing the custom data file information.
+     */
+    public void processCustomFileTypeAttributes(String id, Data data) {
+
+        // Get the persisted data.
+        Data persistedData = lookupById(id);
+
+        // Handle boolean values of the Data object for header lines.
+        if (data.getNoHeaderLines()) {
+            // set no header lines.
+            persistedData.setNoHeaderLines(true);
+            // Remove any previously persisted headerlines.
+            persistedData.setHeaderLineNumbers(null);
+        } else {
+            // Set header lines.
+            persistedData.setNoHeaderLines(false);
+            persistedData.setHeaderLineNumbers(data.getHeaderLineNumbers());
+        }
+        // Set delimiter.
+        persistedData.setDelimiter(data.getDelimiter());
+
+        // Update persisted data.
+        updateData(persistedData);
     }
 
     /**
@@ -373,12 +412,9 @@ public class DataManagerImpl implements DataManager {
      *
      * @param id    The unique ID corresponding to already persisted data.
      * @param data  The Data object submitted by the user containing the uploaded file information.
-     * @return  The url redirect view used to send the user to the next step in the controller.
      * @throws IOException  If unable to write file(s) to disk.
      */
-    public String processFileUpload(String id, Data data) throws IOException {
-
-        String nextStep;
+    public void processFileUpload(String id, Data data) throws IOException {
 
         // Get the persisted data corresponding to this ID.
         Data persistedData = lookupById(id);
@@ -431,23 +467,109 @@ public class DataManagerImpl implements DataManager {
             persistedData.setTemplateFileName(templateFileName);
         } else {
             // no file and no file name, user is 'undoing' the upload.
-            if (data.getTemplateFileName().equals("")) {
+            if (data.getTemplateFileName().equals(""))
                 persistedData.setTemplateFileName(null);
-            }
-        }
-        // Update persisted data!
-        updateData(persistedData);
 
-        // Depending on what the user entered for the data file, we may need to
-        // add an extra step to collect data associated with that custom file type.
-        if(persistedData.getDataFileType().equals("Custom_File_Type")) {
-            nextStep = "/customFileTypeAttributes";
-        } else {
-            nextStep ="/generalMetadata";
         }
+        // Update persisted data.
+        updateData(persistedData);
+    }
+
+    /**
+     * Processes the data submitted by the user containing general metadata information.  Since this
+     * is the final step of collecting data in the wizard, the uploaded data file is converted to
+     * netCDF format in preparation for user download.
+     *
+     * @param id    The unique ID corresponding to already persisted data.
+     * @param metadata  The Metadata object submitted by the user containing the general metadata information.
+     * @throws InvalidRangeException // If encounters an invalid range while converting file to netCDF.
+     * @throws IOException  // If unable to convert file to netCDF format.
+     * @throws RosettaDataException  If unable to populate the metadata object.
+     */
+    public void processGeneralMetadata(String id, GeneralMetadata metadata) throws InvalidRangeException, IOException, RosettaDataException {
+
+        // The placeholder for what we are going to return.
+        String previousStep;
+
+        // Get the persisted data.
+        Data persistedData = lookupById(id);
+
+        // Persist the global metadata.
+        metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(metadata, id));
+
+        // Convert the file to netCDF so we may persist its name.
+        String netcdfFile = convertManager.convertToNetCDF(persistedData);
+
+        // Persists the netCDF file information (name).
+        persistedData.setNetcdfFile(netcdfFile);
+
+        // Update persisted data.
+        updateData(persistedData);
+    }
+
+    /**
+     * Determines the next step in the wizard based the user specified data file type.
+     * This method is called when there is a divergence of possible routes through the wizard.
+     *
+     * @param id  The unique ID corresponding to already persisted data.
+     * @return  The next step to redirect the user to in the wizard.
+     */
+    public String processNextStep(String id) {
+
+        // The placeholder for what we are going to return.
+        String nextStep;
+
+        // Get the persisted data.
+        Data persistedData = lookupById(id);
+
+        // The next step depends on what the user specified for the data file type.
+        if(persistedData.getDataFileType().equals("Custom_File_Type"))
+            nextStep = "/customFileTypeAttributes";
+        else
+            nextStep ="/generalMetadata";
+
         return nextStep;
     }
 
+    /**
+     * Determines the previous step in the wizard based the user specified data file type.
+     * This method is called when there is a divergence of possible routes through the wizard.
+     *
+     * @param id  The unique ID corresponding to already persisted data.
+     * @return  The previous step to redirect the user to in the wizard.
+     */
+    public String processPreviousStep(String id) {
+
+        // The placeholder for what we are going to return.
+        String previousStep;
+
+        // Get the persisted data.
+        Data persistedData = lookupById(id);
+
+        // The previous step (if the user chooses to go there) depends on what the user specified for the data file type.
+        if(persistedData.getDataFileType().equals("Custom_File_Type"))
+            previousStep = "/variableMetadata";
+        else
+            previousStep = "/fileUpload";
+
+        return previousStep;
+    }
+
+    /**
+     * Processes the data submitted by the user containing variable metadata information.
+     *
+     * @param id    The unique ID corresponding to already persisted data.
+     * @param data  The Data object submitted by the user containing variable metadata information.
+     */
+    public void processVariableMetadata(String id, Data data) {
+
+        // Get the persisted data.
+        Data persistedData = lookupById(id);
+
+        // Persist the variable metadata.
+        metadataManager.persistMetadata(metadataManager.parseVariableMetadata(data.getVariableMetadata(), id));
+
+    }
 
 
     /**
