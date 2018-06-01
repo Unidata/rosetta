@@ -14,6 +14,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -35,6 +36,7 @@ public class TestTagUniversalFileFormatBatchProcess {
     String postUrl = "http://localhost:8888/rosetta/batchProcess";
 
     @Test
+    @Ignore
     public void testBatchProcessEtuff() {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
 

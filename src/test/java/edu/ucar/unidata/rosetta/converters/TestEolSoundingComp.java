@@ -5,6 +5,7 @@
 package edu.ucar.unidata.rosetta.converters;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -23,6 +24,7 @@ public class TestEolSoundingComp {
     private EolSoundingComp escConvertor = new EolSoundingComp();
 
     @Test
+    @Ignore
     public void sanityCheck() {
         String escFile = String.join(File.separator, escFileTld, "ELLIS_20150610_reduced.cls");
         assertFalse(escConvertor.convert(escFile).isEmpty());
