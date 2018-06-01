@@ -55,6 +55,9 @@ dependencies {
     compile "org.springframework.security:spring-security-config:$springSecurityVersion"
     compile "org.springframework.security:spring-security-taglibs:$springSecurityVersion"
 
+    // Spring Test
+    testCompile "org.springframework:spring-test:$springVersion"
+
     // netCDF-Java/CDM deps
     compile "edu.ucar:netcdfAll:$cdmVersion"
 
@@ -99,7 +102,12 @@ dependencies {
 
     compile "org.codehaus.jackson:jackson-mapper-asl:1.5.3"
 
-    testCompile "junit:junit:4.11"
+    // Testing
+    testCompile "org.hamcrest:hamcrest-library:1.3"
+    testCompile "org.hamcrest:hamcrest-core:1.3"
+    testCompile "junit:junit:4.12"
+    testCompile "org.mockito:mockito-all:1.10.19"
+    testCompile "org.mockito:mockito-core:2.18.3"
 
 
     jrubyExec 'rubygems:jekyll:3.4.0'
