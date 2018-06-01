@@ -18,52 +18,11 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import ucar.ma2.InvalidRangeException;
 
 /**
+ * Service for handling collected data information.
+ *
  * @author oxelson@ucar.edu
  */
 public interface DataManager {
-
-    /**
-     * Looks up and retrieves a Data object using the given id.
-     *
-     * @param id    The id of the Data object.
-     * @return      The Data object corresponding to the given id.
-     */
-    public Data lookupById(String id);
-
-    /**
-     * Persists the information in the given data object.
-     *
-     * @param data  The Data object to persist.
-     */
-    public void persistData(Data data, HttpServletRequest request);
-
-    /**
-     * Updates the persisted information corresponding to the given data object.
-     *
-     * @param data  The data object to update.
-     */
-    public void updateData(Data data);
-
-    /**
-     * Deletes the persisted data object information.
-     *
-     * @param id    The id of the Data object to delete.
-     */
-    public void deleteData(String id);
-
-    /**
-     * Retrieves the name of the directory used for storing uploaded files.
-     *
-     * @return  The name of the directory used for storing uploaded files.
-     */
-    public String getUploadDir();
-
-    /**
-     * Retrieves the name of the directory used for storing files for downloading.
-     *
-     * @return  The name of the directory used for storing files for downloading.
-     */
-    public String getDownloadDir();
 
     /**
      * Converts .xls and .xlsx files to .csv files.
@@ -76,16 +35,125 @@ public interface DataManager {
     public String convertToCSV(String id, String fileName) throws IOException;
 
     /**
-     * Creates a subdirectory in the designated uploads directory using the (unique) id
-     * and writes the given file to the uploads subdirectory.
+     * Deletes the persisted data object information.
      *
-     * @param id        The unique id associated with the file (a subdir in the uploads directory).
-     * @param fileName  The name of the file to save to disk.
-     * @param file      The CommonsMultipartFile to save to disk.
-     * @throws SecurityException  If unable to write file to disk because of a JVM security manager violation.
-     * @throws IOException  If unable to write file to disk.
+     * @param id    The id of the Data object to delete.
      */
-    public void writeUploadedFileToDisk(String id, String fileName, CommonsMultipartFile file) throws SecurityException, IOException;
+    public void deletePersistedData(String id);
+
+    /**
+     * Retrieves the CF Types associated with the given platform.
+     *
+     * @param platform  The platform.
+     * @return  The CF Types associated with the given platform.
+     */
+    public String getCFTypeFromPlatform(String platform);
+
+    /**
+     * Retrieves a list of all the persisted communities.
+     *
+     * @return  A list of Community objects.
+     */
+    public List<Community> getCommunities();
+
+    /**
+     * Reformats community information for use by the view.
+     * TODO: Refactor view to use raw Community objects.
+     *
+     * @return  The community information as a List<Map<String, Object>>.
+     */
+    public List<Map<String, Object>> getCommunitiesForView();
+
+    /**
+     * Retrieves the community associated with the given platform.
+     *
+     * @param platform  The platform.
+     * @return  The community associated with the given platform.
+     */
+    public String getCommunityFromPlatform(String platform);
+
+    /**
+     * Returns the symbol corresponding to the given delimiter string.
+     *
+     * @param delimiter The delimiter string.
+     * @return  The symbol corresponding to the given string.
+     */
+    public String getDelimiterSymbol(String delimiter);
+
+    /**
+     * Retrieves the name of the directory used for storing files for downloading.
+     *
+     * @return  The name of the directory used for storing files for downloading.
+     */
+    public String getDownloadDir();
+
+    /**
+     * Retrieves a list of all the persisted FileType objects.
+     *
+     * @return  A list of FileType objects.
+     */
+    public List<FileType> getFileTypes();
+
+    /**
+     * Reformats file type information for use by the view.
+     * TODO: Refactor view to use raw FileType objects.
+     *
+     * @return  The file type information as a List<Map<String, Object>>.
+     */
+    public List<Map<String, Object>> getFileTypesForView();
+
+    /**
+     * Pulls the general metadata from a data known file and populates the provided
+     * GeneralMetadata object. If the data file type is a custom file (not a known type)
+     * then an empty, non-populated GeneralMetadata object is returned.
+     *
+     * @param filePath  The path to the data file which may contain the metadata we need.
+     * @param fileType  The data file type.
+     * @param metadata  The GeneralMetadata object to populate.
+     * @return  The GeneralMetadata object to populated with the general metadata.
+     * @throws RosettaDataException If unable to populate the GeneralMetadata object.
+     */
+    public GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType, GeneralMetadata metadata) throws RosettaDataException;
+
+    /**
+     * Retrieves the persisted metadata associated with the given id & type.
+     * Creates and returns string version of the metadata used by client side.
+     *
+     * @param id    The id of the metadata.
+     * @param type  The metadata type.
+     * @return  The string version of the metadata used by client side.
+     */
+    public String getMetadataStringForClient(String id, String type);
+
+    /**
+     * Retrieves a list of all the persisted Platform objects.
+     *
+     * @return  A list of Platform objects.
+     */
+    public List<Platform> getPlatforms();
+
+    /**
+     * Reformats platform information for use by the view.
+     * TODO: Refactor view to use raw Platform objects.
+     *
+     * @return  The platform information as a List<Map<String, Object>>.
+     */
+    public List<Map<String, Object>> getPlatformsForView();
+
+    /**
+     * Retrieves the name of the directory used for storing uploaded files.
+     *
+     * @return  The name of the directory used for storing uploaded files.
+     */
+    public String getUploadDir();
+
+    /**
+     * Looks up and retrieves a Data object using the given id.
+     *
+     * @param id    The id of the Data object.
+     * @return      The Data object corresponding to the given id.
+     */
+    public Data lookupPersistedDataById(String id);
 
     /**
      * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
@@ -98,30 +166,11 @@ public interface DataManager {
     public String parseDataFileByLine(String id, String dataFileName) throws IOException;
 
     /**
-     * Returns the symbol corresponding to the given delimiter string.
+     * Persists the information in the given data object.
      *
-     * @param delimiter The delimiter string.
-     * @return  The symbol corresponding to the given string.
+     * @param data  The Data object to persist.
      */
-    public String getDelimiterSymbol(String delimiter);
-
-    public String getCFTypeFromPlatform(String platform);
-
-    public String getCommunityFromPlatform(String platform);
-
-    public List<Platform> getPlatforms();
-
-    public List<Map<String, Object>> getPlatformsForView();
-
-    public List<Community> getCommunities();
-
-    public List<Map<String, Object>> getCommunitiesForView();
-
-    public List<FileType> getFileTypes();
-
-    public List<Map<String, Object>> getFileTypesForView();
-
-    public GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType, GeneralMetadata metadata) throws RosettaDataException;
+    public void persistData(Data data, HttpServletRequest request);
 
     /**
      * Processes the data submitted by the user containing CF type information.
@@ -134,7 +183,6 @@ public interface DataManager {
      * @param request The HttpServletRequest used to get the IP address to make unique IDs for new data.
      */
     public void processCfType(String id, Data data, HttpServletRequest request);
-
 
     /**
      * Processes the data submitted by the user containing custom data file information.
@@ -194,5 +242,22 @@ public interface DataManager {
      */
     public void processVariableMetadata(String id, Data data);
 
+    /**
+     * Updates the persisted information corresponding to the given data object.
+     *
+     * @param data  The data object to update.
+     */
+    public void updatePersistedData(Data data);
 
+    /**
+     * Creates a subdirectory in the designated uploads directory using the (unique) id
+     * and writes the given file to the uploads subdirectory.
+     *
+     * @param id        The unique id associated with the file (a subdir in the uploads directory).
+     * @param fileName  The name of the file to save to disk.
+     * @param file      The CommonsMultipartFile to save to disk.
+     * @throws SecurityException  If unable to write file to disk because of a JVM security manager violation.
+     * @throws IOException  If unable to write file to disk.
+     */
+    public void writeUploadedFileToDisk(String id, String fileName, CommonsMultipartFile file) throws SecurityException, IOException;
 }

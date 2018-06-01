@@ -3,13 +3,11 @@ package edu.ucar.unidata.rosetta.service;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
 import edu.ucar.unidata.rosetta.repository.MetadataDao;
-import edu.ucar.unidata.rosetta.service.MetadataManagerImpl;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataRetrievalFailureException;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,10 +43,10 @@ public class MetadataManagerTest {
         metadata2.setMetadataValue("degrees F");
         generalMetadata = new GeneralMetadata();
 
-        when(metadataManager.lookupMetadata("000000345HDV4")).thenReturn(Arrays.asList(metadata1, metadata2));
-        when(metadataManager.lookupMetadata("000000345HDV4", "general")).thenReturn(Arrays.asList(metadata1));
-        doThrow(new DataRetrievalFailureException("Unable to delete metadata entries corresponding to id " + metadata1.getId())).when(metadataManager).deleteMetadata(metadata1.getId());
-        doThrow(new DataRetrievalFailureException("Unable to delete metadata entries corresponding to id " + metadata1.getId() + " and type " + metadata1.getType())).when(metadataManager).deleteMetadata(metadata1.getId(), metadata1.getType());
+        when(metadataManager.lookupPersistedMetadata("000000345HDV4")).thenReturn(Arrays.asList(metadata1, metadata2));
+        when(metadataManager.lookupPersistedMetadata("000000345HDV4", "general")).thenReturn(Arrays.asList(metadata1));
+        doThrow(new DataRetrievalFailureException("Unable to delete metadata entries corresponding to id " + metadata1.getId())).when(metadataManager).deletePersistedMetadata(metadata1.getId());
+        doThrow(new DataRetrievalFailureException("Unable to delete metadata entries corresponding to id " + metadata1.getId() + " and type " + metadata1.getType())).when(metadataManager).deletePersistedMetadata(metadata1.getId(), metadata1.getType());
         when(metadataManager.parseVariableMetadata("variableName0<>year", "000000345HDV4")).thenReturn(Arrays.asList(metadata1, metadata2));
         when(metadataManager.getStringFromParsedVariableMetadata(Arrays.asList(metadata1, metadata2))).thenReturn("variableName0<>year");
         when(metadataManager.getMetadataStringForClient("000000345HDV4", "general")).thenReturn("variableName0<>year");
@@ -65,7 +63,7 @@ public class MetadataManagerTest {
 
     @Test
     public void lookupMetadataByIdTest() throws Exception {
-        List<Metadata> persistedMetadata = metadataManager.lookupMetadata("000000345HDV4");
+        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4");
         assertTrue(persistedMetadata.size() == 2);
         for (Metadata metadata : persistedMetadata) {
             assertEquals(metadata.getMetadataKey(), "temp");
@@ -74,7 +72,7 @@ public class MetadataManagerTest {
 
     @Test
     public void lookupMetadataByIdAndTypeTest() throws Exception {
-        List<Metadata> persistedMetadata = metadataManager.lookupMetadata("000000345HDV4", "general");
+        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4", "general");
         assertTrue(persistedMetadata.size() == 1);
         Metadata metadata = persistedMetadata.get(0);
         assertEquals(metadata.getMetadataValue(), "degrees C");
@@ -83,7 +81,7 @@ public class MetadataManagerTest {
     @Test
     public void persistMetadataObjectListTest() throws Exception {
         metadataManager.persistMetadata(Arrays.asList(metadata1, metadata2));
-        List<Metadata> persistedMetadata = metadataManager.lookupMetadata("000000345HDV4");
+        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4");
         assertTrue(persistedMetadata.size() == 2);
         for (Metadata metadata : persistedMetadata) {
             assertEquals(metadata.getMetadataKey(), "temp");
@@ -93,7 +91,7 @@ public class MetadataManagerTest {
     @Test
     public void persistMetadataObjectTest() throws Exception {
         metadataManager.persistMetadata(metadata1);
-        List<Metadata> persistedMetadata = metadataManager.lookupMetadata("000000345HDV4", "general");
+        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4", "general");
         Metadata metadata = persistedMetadata.get(0);
         assertEquals(metadata.getMetadataValue(), "degrees C");
     }
@@ -102,8 +100,8 @@ public class MetadataManagerTest {
     public void updateMetadataObjectListTest() throws Exception {
         metadata1.setMetadataKey("internal_temperature"); // Update
         metadata2.setMetadataKey("external_temperature"); // Update
-        metadataManager.updateMetadata(Arrays.asList(metadata1, metadata2));
-        List<Metadata> persistedMetadata = metadataManager.lookupMetadata("000000345HDV4");
+        metadataManager.updatePersistedMetadata(Arrays.asList(metadata1, metadata2));
+        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4");
         // They should not be equal.
         assertTrue(!persistedMetadata.get(0).getMetadataKey().equals(persistedMetadata.get(1).getMetadataKey()));
     }
@@ -111,21 +109,21 @@ public class MetadataManagerTest {
     @Test
     public void updateMetadataObjectTest() throws Exception {
         metadata1.setMetadataValue("degrees F"); // Update
-        metadataManager.updateMetadata(metadata1);
-        List<Metadata> persistedMetadata = metadataManager.lookupMetadata("000000345HDV4", "general");
+        metadataManager.updatePersistedMetadata(metadata1);
+        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4", "general");
         assertEquals(persistedMetadata.get(0).getMetadataValue(), "degrees F");
     }
 
     @Test(expected = DataRetrievalFailureException.class)
     public void deleteMetadataByIdTest() throws Exception {
-        metadataManager.deleteMetadata("000000345HDV4");
-        metadataManager.lookupMetadata("000000345HDV4");
+        metadataManager.deletePersistedMetadata("000000345HDV4");
+        metadataManager.lookupPersistedMetadata("000000345HDV4");
     }
 
     @Test(expected = DataRetrievalFailureException.class)
     public void deleteMetadataByIdAndTypeTest() throws Exception {
-        metadataManager.deleteMetadata("000000345HDV4", "general");
-        metadataManager.lookupMetadata("000000345HDV4");
+        metadataManager.deletePersistedMetadata("000000345HDV4", "general");
+        metadataManager.lookupPersistedMetadata("000000345HDV4");
     }
 
     @Test
