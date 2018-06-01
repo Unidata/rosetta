@@ -65,7 +65,6 @@ public class WizardController implements HandlerExceptionResolver {
     */
 
     /**
-     * STEP 1: display CF type form.
      * Accepts a GET request for access to CF type selection step of the wizard.
      *
      * @param model  The Model object to be populated.
@@ -99,37 +98,67 @@ public class WizardController implements HandlerExceptionResolver {
     }
 
     /**
-     * STEP 1: process CF type form data.
-     * Accepts a POST request from CF type selection step of the wizard. Processes the
-     * submitted data and persists it to the database.  Redirects user to next step or
-     * previous step depending on submitted form button (Next or Previous).
+     * Accepts a GET request for access to convert and download step of the wizard.
      *
-     * @param data      The form-backing object.
-     * @param result    The BindingResult for error handling.
-     * @param model     The Model object to be populated.
-     * @param request   HttpServletRequest needed to pass to the dataManager to get client IP.
-     * @param response  HttpServletResponse needed for setting cookie.
-     * @return          Redirect to next step.
+     * @param model  The Model object to be populated.
+     * @return  View and the Model for the wizard to process.
      */
-    @RequestMapping(value = "/cfType", method = RequestMethod.POST)
-    public ModelAndView processCFType(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/convertAndDownload", method = RequestMethod.GET)
+    public ModelAndView displayConvertedFileDownloadPage(Model model, HttpServletRequest request) {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-        if (rosettaCookie != null) {
-            // We've been here before, combine new with previous persisted data.
-            dataManager.processCfType(rosettaCookie.getValue(), data, null);
-        } else {
-            // Haven't been before, so proceed with persist the data.
-            dataManager.processCfType(null, data, request);
-            // First time posting to this page in this session.
-            response.addCookie(new Cookie("rosetta", data.getId()));
-        }
-        return new ModelAndView(new RedirectView("/fileUpload", true));
+
+        if (rosettaCookie == null)
+            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
+            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        // Create a Data form-backing object.
+        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
+
+        // Add data object to Model.
+        model.addAttribute("data", data);
+
+        // Add current step to the Model.
+        model.addAttribute("currentStep", "convertAndDownload");
+
+        // The currentStep variable will determine which jsp frag to load in the wizard.
+        return new ModelAndView("wizard");
     }
 
     /**
-     * STEP 2: display file upload form.
+     * Accepts a GET request for access to custom file type attribute collection step of the wizard.
+     *
+     * @param model  The Model object to be populated.
+     * @return  View and the Model for the wizard to process.
+     */
+    @RequestMapping(value = "/customFileTypeAttributes", method = RequestMethod.GET)
+    public ModelAndView displayCustomFileTypeAttributesForm(Model model, HttpServletRequest request) throws IOException {
+
+        // Have we visited this page before during this session?
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+
+        if (rosettaCookie == null)
+            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
+            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        // Create a Data form-backing object.
+        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
+
+
+        // Add data object to Model.
+        model.addAttribute("data", data);
+        // Add current step to the Model.
+        model.addAttribute("currentStep", "customFileTypeAttributes");
+        // Add parsed file data in JSON string format (to sho win the SlickGrid).
+        model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
+
+        // The currentStep variable will determine which jsp frag to load in the wizard.
+        return new ModelAndView("wizard");
+
+    }
+
+    /**
      * Accepts a GET request for access to file upload step of the wizard.
      *
      * @param model  The Model object to be populated.
@@ -163,180 +192,6 @@ public class WizardController implements HandlerExceptionResolver {
     }
 
     /**
-     * STEP 2: process file upload form data.
-     * Accepts a POST request from file upload step of the wizard. Processes the
-     * submitted data and persists it to the database.  Redirects user to next step
-     * or previous step depending on submitted form button (Next or Previous).
-     *
-     * @param data      The form-backing object.
-     * @param result    The BindingResult for error handling.
-     * @param model     The Model object to be populated by file upload data in the next step.
-     * @param request   HttpServletRequest needed to get the cookie.
-     * @return          Redirect to next step.
-     */
-    @RequestMapping(value = "/fileUpload", method = RequestMethod.POST)
-    public ModelAndView processFileUpload(Data data, BindingResult result, Model model, HttpServletRequest request) throws IOException, RosettaDataException{
-
-        // Take user back to the CF type selection step (and don't save any data to this step).
-        if (data.getSubmit().equals("Previous"))
-            return new ModelAndView(new RedirectView("/cfType", true));
-
-        // Get the cookie so we can get the persisted data.
-        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-        if (rosettaCookie == null)
-            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
-
-        // Persist the file upload data.
-        dataManager.processFileUpload(rosettaCookie.getValue(), data);
-
-        // Depending on what the user entered for the data file, we may need to
-        // add an extra step to collect data associated with that custom file type.
-        String nextStep = dataManager.processNextStep(rosettaCookie.getValue());
-
-        // Send user to the next view.  (See dataManager.processFileUpload).
-        return new ModelAndView(new RedirectView(nextStep, true));
-    }
-
-    /**
-     * STEP 3: display custom file attribute form.
-     * Accepts a GET request for access to custom file type attribute collection step of the wizard.
-     *
-     * @param model  The Model object to be populated.
-     * @return  View and the Model for the wizard to process.
-     */
-    @RequestMapping(value = "/customFileTypeAttributes", method = RequestMethod.GET)
-    public ModelAndView displayCustomFileTypeAttributesForm(Model model, HttpServletRequest request) throws IOException {
-
-        // Have we visited this page before during this session?
-        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-
-        if (rosettaCookie == null)
-            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
-
-        // Create a Data form-backing object.
-        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
-
-
-        // Add data object to Model.
-        model.addAttribute("data", data);
-        // Add current step to the Model.
-        model.addAttribute("currentStep", "customFileTypeAttributes");
-        // Add parsed file data in JSON string format (to sho win the SlickGrid).
-        model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
-
-        // The currentStep variable will determine which jsp frag to load in the wizard.
-        return new ModelAndView("wizard");
-
-    }
-
-    /**
-     * STEP 3: process custom file attribute form data.
-     * Accepts a POST request from custom file type attribute collection step of the wizard.
-     * Processes the submitted data and persists it to the database.  Redirects user to next
-     * step or previous step depending on submitted form button (Next or Previous).
-     *
-     * STEP 3 is only accessed/processed when the user uploads a 'custom' data file type (specified
-     * during prior step).  Otherwise, if they upload a known data type, they are taken directly to
-     * STEP 4.
-     *
-     * @param data      The form-backing object.
-     * @param result    The BindingResult for error handling.
-     * @param model     The Model object to be populated by file upload data in the next step.
-     * @param request   HttpServletRequest needed to get the cookie.
-     * @return          Redirect to next step.
-     */
-    @RequestMapping(value = "/customFileTypeAttributes", method = RequestMethod.POST)
-    public ModelAndView processCustomFileTypeAttributes(Data data, BindingResult result, Model model, HttpServletRequest request) {
-
-        // Take user back to file upload step (and don't save any data to this step).
-        if (data.getSubmit().equals("Previous"))
-            return new ModelAndView(new RedirectView("/fileUpload", true));
-
-        // Get the cookie so we can get the persisted data.
-        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-        if (rosettaCookie == null)
-            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
-
-        // Persist the custom data file information.
-        dataManager.processCustomFileTypeAttributes(rosettaCookie.getValue(), data);
-
-        // Send user to next step to collect variable metadata.
-        return new ModelAndView(new RedirectView("/variableMetadata", true));
-    }
-
-    /**
-     * STEP 4: display form.
-     * Accepts a GET request for access to variable metadata collection step of the wizard.
-     *
-     * @param model  The Model object to be populated.
-     * @return  View and the Model for the wizard to process.
-     */
-    @RequestMapping(value = "/variableMetadata", method = RequestMethod.GET)
-    public ModelAndView displayVariableMetadataForm(Model model, HttpServletRequest request) throws IOException {
-
-        // Have we visited this page before during this session?
-        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-
-        if (rosettaCookie == null)
-            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
-
-        // Create a Data form-backing object.
-        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
-
-        // Populate with any existing variable metadata.
-        data.setVariableMetadata(dataManager.getMetadataStringForClient(data.getId(), "variable"));
-
-        // Add data object to Model.
-        model.addAttribute("data", data);
-        // Add current step to the Model.
-        model.addAttribute("currentStep", "variableMetadata");
-        // Add parsed file data in JSON string format (to show in the SlickGrid).
-        model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
-        // Add delimiter to do additional client-side parsing for SlickGrid.
-        model.addAttribute("delimiterSymbol", dataManager.getDelimiterSymbol(data.getDelimiter()));
-
-        // The currentStep variable will determine which jsp frag to load in the wizard.
-        return new ModelAndView("wizard");
-    }
-
-    /**
-     * STEP 4: process form data.
-     * Accepts a POST request from variable metadata collection step of the wizard. Processes
-     * the submitted data and persists it to the database.  Redirects user to next step or
-     * previous step depending on submitted form button (Next or Previous).
-     *
-     * @param data      The form-backing object.
-     * @param result    The BindingResult for error handling.
-     * @param model     The Model object to be populated by file upload data in the next step.
-     * @param request   HttpServletRequest needed to get the cookie.
-     * @return          Redirect to next step.
-     */
-    @RequestMapping(value = "/variableMetadata", method = RequestMethod.POST)
-    public ModelAndView processVariableMetadata(Data data, BindingResult result, Model model, HttpServletRequest request) {
-
-        // Take user back to custom file attribute collection step (and don't save any data to this step).
-        if (data.getSubmit().equals("Previous"))
-            return new ModelAndView(new RedirectView("/customFileTypeAttributes", true));
-
-        // Get the cookie so we can get the persisted data.
-        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-        if (rosettaCookie == null)
-            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
-
-        // Persist the variable metadata information.
-        dataManager.processVariableMetadata(rosettaCookie.getValue(), data);
-
-        // Send user to next step to collect general metadata.
-        return new ModelAndView(new RedirectView("/generalMetadata", true));
-    }
-
-    /**
-     * STEP 5: display form.
      * Accepts a GET request for access to general metadata collection step of the wizard.
      *
      * @param model  The Model object to be populated.
@@ -372,9 +227,156 @@ public class WizardController implements HandlerExceptionResolver {
         return new ModelAndView("wizard");
     }
 
+    /**
+     * Accepts a GET request for access to variable metadata collection step of the wizard.
+     *
+     * @param model  The Model object to be populated.
+     * @return  View and the Model for the wizard to process.
+     */
+    @RequestMapping(value = "/variableMetadata", method = RequestMethod.GET)
+    public ModelAndView displayVariableMetadataForm(Model model, HttpServletRequest request) throws IOException {
+
+        // Have we visited this page before during this session?
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+
+        if (rosettaCookie == null)
+            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
+            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        // Create a Data form-backing object.
+        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
+
+        // Populate with any existing variable metadata.
+        data.setVariableMetadata(dataManager.getMetadataStringForClient(data.getId(), "variable"));
+
+        // Add data object to Model.
+        model.addAttribute("data", data);
+        // Add current step to the Model.
+        model.addAttribute("currentStep", "variableMetadata");
+        // Add parsed file data in JSON string format (to show in the SlickGrid).
+        model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
+        // Add delimiter to do additional client-side parsing for SlickGrid.
+        model.addAttribute("delimiterSymbol", dataManager.getDelimiterSymbol(data.getDelimiter()));
+
+        // The currentStep variable will determine which jsp frag to load in the wizard.
+        return new ModelAndView("wizard");
+    }
 
     /**
-     * STEP 5: process form data
+     * Accepts a POST request from CF type selection step of the wizard. Processes the
+     * submitted data and persists it to the database.  Redirects user to next step or
+     * previous step depending on submitted form button (Next or Previous).
+     *
+     * @param data      The form-backing object.
+     * @param result    The BindingResult for error handling.
+     * @param model     The Model object to be populated.
+     * @param request   HttpServletRequest needed to pass to the dataManager to get client IP.
+     * @param response  HttpServletResponse needed for setting cookie.
+     * @return          Redirect to next step.
+     */
+    @RequestMapping(value = "/cfType", method = RequestMethod.POST)
+    public ModelAndView processCFType(Data data, BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
+
+        // Have we visited this page before during this session?
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+        if (rosettaCookie != null) {
+            // We've been here before, combine new with previous persisted data.
+            dataManager.processCfType(rosettaCookie.getValue(), data, null);
+        } else {
+            // Haven't been before, so proceed with persist the data.
+            dataManager.processCfType(null, data, request);
+            // First time posting to this page in this session.
+            response.addCookie(new Cookie("rosetta", data.getId()));
+        }
+        return new ModelAndView(new RedirectView("/fileUpload", true));
+    }
+
+    /**
+     * Accepts a POST request from convert and download step of the wizard. The only purpose of
+     * this method is to capture if the user clicked the previous button, in which case they
+     * are redirected back to general metadata collection step.
+     *
+     * @param data      The form-backing object.
+     * @param model     The Model object to be populated by file upload data in the next step.
+     * @param request   HttpServletRequest needed to get the cookie.
+     * @return          Redirect to next step.
+     */
+    @RequestMapping(value = "/convertAndDownload", method = RequestMethod.POST)
+    public ModelAndView processConvertAndDownload(Data data, Model model, HttpServletRequest request) {
+        return new ModelAndView(new RedirectView("/generalMetadata", true));
+    }
+
+    /**
+     * Accepts a POST request from custom file type attribute collection step of the wizard.
+     * Processes the submitted data and persists it to the database.  Redirects user to next
+     * step or previous step depending on submitted form button (Next or Previous).
+     *
+     * STEP 3 is only accessed/processed when the user uploads a 'custom' data file type (specified
+     * during prior step).  Otherwise, if they upload a known data type, they are taken directly to
+     * STEP 4.
+     *
+     * @param data      The form-backing object.
+     * @param result    The BindingResult for error handling.
+     * @param model     The Model object to be populated by file upload data in the next step.
+     * @param request   HttpServletRequest needed to get the cookie.
+     * @return          Redirect to next step.
+     */
+    @RequestMapping(value = "/customFileTypeAttributes", method = RequestMethod.POST)
+    public ModelAndView processCustomFileTypeAttributes(Data data, BindingResult result, Model model, HttpServletRequest request) {
+
+        // Take user back to file upload step (and don't save any data to this step).
+        if (data.getSubmit().equals("Previous"))
+            return new ModelAndView(new RedirectView("/fileUpload", true));
+
+        // Get the cookie so we can get the persisted data.
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+        if (rosettaCookie == null)
+            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
+            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        // Persist the custom data file information.
+        dataManager.processCustomFileTypeAttributes(rosettaCookie.getValue(), data);
+
+        // Send user to next step to collect variable metadata.
+        return new ModelAndView(new RedirectView("/variableMetadata", true));
+    }
+
+    /**
+     * Accepts a POST request from file upload step of the wizard. Processes the
+     * submitted data and persists it to the database.  Redirects user to next step
+     * or previous step depending on submitted form button (Next or Previous).
+     *
+     * @param data      The form-backing object.
+     * @param result    The BindingResult for error handling.
+     * @param model     The Model object to be populated by file upload data in the next step.
+     * @param request   HttpServletRequest needed to get the cookie.
+     * @return          Redirect to next step.
+     */
+    @RequestMapping(value = "/fileUpload", method = RequestMethod.POST)
+    public ModelAndView processFileUpload(Data data, BindingResult result, Model model, HttpServletRequest request) throws IOException, RosettaDataException{
+
+        // Take user back to the CF type selection step (and don't save any data to this step).
+        if (data.getSubmit().equals("Previous"))
+            return new ModelAndView(new RedirectView("/cfType", true));
+
+        // Get the cookie so we can get the persisted data.
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+        if (rosettaCookie == null)
+            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
+            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        // Persist the file upload data.
+        dataManager.processFileUpload(rosettaCookie.getValue(), data);
+
+        // Depending on what the user entered for the data file, we may need to
+        // add an extra step to collect data associated with that custom file type.
+        String nextStep = dataManager.processNextStep(rosettaCookie.getValue());
+
+        // Send user to the next view.  (See dataManager.processFileUpload).
+        return new ModelAndView(new RedirectView(nextStep, true));
+    }
+
+    /**
      * Accepts a POST request from general metadata collection step of the wizard. Processes
      * the submitted data and persists it to the database.  Redirects user to next step or
      * previous step depending on submitted form button (Next or Previous).
@@ -409,48 +411,33 @@ public class WizardController implements HandlerExceptionResolver {
     }
 
     /**
-     * STEP 6: display form.
-     * Accepts a GET request for access to convert and download step of the wizard.
-     *
-     * @param model  The Model object to be populated.
-     * @return  View and the Model for the wizard to process.
-     */
-    @RequestMapping(value = "/convertAndDownload", method = RequestMethod.GET)
-    public ModelAndView displayConvertedFileDownloadPage(Model model, HttpServletRequest request) {
-
-        // Have we visited this page before during this session?
-        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-
-        if (rosettaCookie == null)
-            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
-
-        // Create a Data form-backing object.
-        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
-
-        // Add data object to Model.
-        model.addAttribute("data", data);
-
-        // Add current step to the Model.
-        model.addAttribute("currentStep", "convertAndDownload");
-
-        // The currentStep variable will determine which jsp frag to load in the wizard.
-        return new ModelAndView("wizard");
-    }
-
-    /**
-     * STEP 6: process form data.
-     * Accepts a POST request from convert and download step of the wizard. The only purpose of
-     * this method is to capture if the user clicked the previous button, in which case they
-     * are redirected back to general metadata collection step.
+     * Accepts a POST request from variable metadata collection step of the wizard. Processes
+     * the submitted data and persists it to the database.  Redirects user to next step or
+     * previous step depending on submitted form button (Next or Previous).
      *
      * @param data      The form-backing object.
+     * @param result    The BindingResult for error handling.
      * @param model     The Model object to be populated by file upload data in the next step.
      * @param request   HttpServletRequest needed to get the cookie.
      * @return          Redirect to next step.
      */
-    @RequestMapping(value = "/convertAndDownload", method = RequestMethod.POST)
-    public ModelAndView processReturnToPriorPageRequest(Data data, Model model, HttpServletRequest request) {
+    @RequestMapping(value = "/variableMetadata", method = RequestMethod.POST)
+    public ModelAndView processVariableMetadata(Data data, BindingResult result, Model model, HttpServletRequest request) {
+
+        // Take user back to custom file attribute collection step (and don't save any data to this step).
+        if (data.getSubmit().equals("Previous"))
+            return new ModelAndView(new RedirectView("/customFileTypeAttributes", true));
+
+        // Get the cookie so we can get the persisted data.
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+        if (rosettaCookie == null)
+            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
+            throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        // Persist the variable metadata information.
+        dataManager.processVariableMetadata(rosettaCookie.getValue(), data);
+
+        // Send user to next step to collect general metadata.
         return new ModelAndView(new RedirectView("/generalMetadata", true));
     }
 

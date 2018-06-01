@@ -49,15 +49,6 @@ public class WizardControllerTest {
     @Autowired
     private WebApplicationContext context;
 
-    @Before
-    public void setUp() throws Exception {
-        reset(dataManagerMock);
-
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .build();
-    }
-
     @Test
     public void displayCFTypeSelectionFormTest() throws Exception {
 
@@ -70,27 +61,8 @@ public class WizardControllerTest {
     }
 
     @Test
-    public void processCFTypeTest() throws Exception {
-        mockMvc.perform(post("/cfType"))
-                  .andExpect(status().is3xxRedirection())
-                  .andExpect(redirectedUrl("/fileUpload"));
-        //.andDo(print());
-    }
-
-    @Test
-    public void displayFileUploadFormTest() throws Exception {
-        mockMvc.perform(get("/fileUpload")
-                .cookie(new Cookie("rosetta", "123456"))
-        )
-                .andExpect(model().attribute("currentStep", equalTo("fileUpload")))
-                .andExpect(view().name("wizard"))
-                .andExpect(forwardedUrl("/WEB-INF/views/wizard.jsp"));
-        //.andDo(print());
-    }
-
-    @Test
-    public void displayFileUploadFormNoCookieTest() throws Exception {
-        mockMvc.perform(get("/fileUpload"))
+    public void displayConvertedFileDownloadPageNoCookieTest() throws Exception {
+        mockMvc.perform(get("/convertAndDownload"))
                 .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("error"))
@@ -98,60 +70,24 @@ public class WizardControllerTest {
         //.andDo(print());
     }
 
-
     @Test
-    public void processFileUploadSubmitPreviousTest() throws Exception {
+    public void displayConvertedFileDownloadPageTest() throws Exception {
 
-        mockMvc.perform(post("/fileUpload")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("submit", "Previous")
-                    .cookie(new Cookie("rosetta", "123456"))
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/cfType"));
+        when(dataManagerMock.lookupPersistedDataById("123456")).thenReturn(mock(Data.class));
+
+        mockMvc.perform(get("/convertAndDownload")
+                .cookie(new Cookie("rosetta", "123456"))
+        )
+                .andExpect(model().attribute("currentStep", equalTo("downloadAndConvert")))
+                .andExpect(view().name("wizard"))
+                .andExpect(forwardedUrl("/WEB-INF/views/wizard.jsp"));
         //.andDo(print());
     }
 
-
     @Test
-    public void processFileUploadSubmitNextCustomDataFileTypeTest() throws Exception {
+    public void displayCustomFileTypeAttributesFormNoCookieTest() throws Exception {
 
-        when(dataManagerMock.processNextStep("123456")).thenReturn("/customFileTypeAttributes");
-
-        mockMvc.perform(post("/fileUpload")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "Next")
-                .cookie(new Cookie("rosetta", "123456"))
-        )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/customFileTypeAttributes"));
-               // .andDo(print());
-
-    }
-
-    @Test
-    public void processFileUploadSubmitNextKnownDataFileTypeTest() throws Exception {
-
-        when(dataManagerMock.processNextStep("123456")).thenReturn("/generalMetadata");
-
-        mockMvc.perform(post("/fileUpload")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "Next")
-                .cookie(new Cookie("rosetta", "123456"))
-        )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/generalMetadata"));
-               // .andDo(print());
-
-    }
-
-    @Test
-    public void processFileUploadNoCookieTest() throws Exception {
-
-        mockMvc.perform(post("/fileUpload")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "Next")
-        )
+        mockMvc.perform(get("/customFileTypeAttributes"))
                 .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("error"))
@@ -173,11 +109,9 @@ public class WizardControllerTest {
         //.andDo(print());
     }
 
-
     @Test
-    public void displayCustomFileTypeAttributesFormNoCookieTest() throws Exception {
-
-        mockMvc.perform(get("/customFileTypeAttributes"))
+    public void displayFileUploadFormNoCookieTest() throws Exception {
+        mockMvc.perform(get("/fileUpload"))
                 .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("error"))
@@ -185,109 +119,22 @@ public class WizardControllerTest {
         //.andDo(print());
     }
 
-
     @Test
-    public void processCustomFileTypeAttributesSubmitPreviousTest() throws Exception {
-
-        mockMvc.perform(post("/customFileTypeAttributes")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "Previous")
-        )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/fileUpload"));
-        //.andDo(print());
-
-    }
-
-    @Test
-    public void processCustomFileTypeAttributesSubmitNextTest() throws Exception {
-
-        mockMvc.perform(post("/customFileTypeAttributes")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "Next")
+    public void displayFileUploadFormTest() throws Exception {
+        mockMvc.perform(get("/fileUpload")
                 .cookie(new Cookie("rosetta", "123456"))
         )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/variableMetadata"));
-        //.andDo(print());
-    }
-
-    @Test
-    public void processCustomFileTypeAttributesNoCookieTest() throws Exception {
-
-        mockMvc.perform(post("/customFileTypeAttributes")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "next")
-        )
-                .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
-                .andExpect(status().isOk())
-                .andExpect(view().name("error"))
-                .andExpect(forwardedUrl("/WEB-INF/views/error.jsp"));
-        //.andDo(print());
-    }
-
-
-    @Test
-    public void displayVariableMetadataFormTest() throws Exception {
-
-        when(dataManagerMock.lookupPersistedDataById("123456")).thenReturn(mock(Data.class));
-
-        mockMvc.perform(get("/variableMetadata")
-                .cookie(new Cookie("rosetta", "123456"))
-        )
-                .andExpect(model().attribute("currentStep", equalTo("variableMetadata")))
+                .andExpect(model().attribute("currentStep", equalTo("fileUpload")))
                 .andExpect(view().name("wizard"))
                 .andExpect(forwardedUrl("/WEB-INF/views/wizard.jsp"));
         //.andDo(print());
-
     }
 
     @Test
-    public void displayVariableMetadataFormNoCookieTest() throws Exception {
+    public void displayGeneralMetadataFormNoCookieTest() throws Exception {
 
-        mockMvc.perform(get("/variableMetadata"))
-                .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
+        mockMvc.perform(get("/generalMetadata"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("error"))
-                .andExpect(forwardedUrl("/WEB-INF/views/error.jsp"));
-        //.andDo(print());
-    }
-
-
-    @Test
-    public void processVariableMetadataSubmitPreviousTest() throws Exception {
-
-        mockMvc.perform(post("/variableMetadata")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "Previous")
-        )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/customFileTypeAttributes"));
-        //.andDo(print());
-
-    }
-
-    @Test
-    public void processVariableMetadataSubmitNextTest() throws Exception {
-
-        // user clicks previous
-        mockMvc.perform(post("/variableMetadata")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "Next")
-                .cookie(new Cookie("rosetta", "123456"))
-        )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/generalMetadata"));
-        //.andDo(print());
-    }
-
-    @Test
-    public void processVariableMetadataNoCookieTest() throws Exception {
-
-        mockMvc.perform(post("/variableMetadata")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "next")
-        )
                 .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("error"))
@@ -313,14 +160,177 @@ public class WizardControllerTest {
     }
 
     @Test
-    public void displayGeneralMetadataFormNoCookieTest() throws Exception {
-        
-        mockMvc.perform(get("/generalMetadata"))
-                .andExpect(status().isOk())
+    public void displayVariableMetadataFormNoCookieTest() throws Exception {
+
+        mockMvc.perform(get("/variableMetadata"))
                 .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("error"))
                 .andExpect(forwardedUrl("/WEB-INF/views/error.jsp"));
+        //.andDo(print());
+    }
+
+    @Test
+    public void displayVariableMetadataFormTest() throws Exception {
+
+        when(dataManagerMock.lookupPersistedDataById("123456")).thenReturn(mock(Data.class));
+
+        mockMvc.perform(get("/variableMetadata")
+                .cookie(new Cookie("rosetta", "123456"))
+        )
+                .andExpect(model().attribute("currentStep", equalTo("variableMetadata")))
+                .andExpect(view().name("wizard"))
+                .andExpect(forwardedUrl("/WEB-INF/views/wizard.jsp"));
+        //.andDo(print());
+
+    }
+
+    @Test
+    public void processCFTypeTest() throws Exception {
+        mockMvc.perform(post("/cfType"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/fileUpload"));
+        //.andDo(print());
+    }
+
+    @Test
+    public void processConvertedFileDownloadPageTest() throws Exception {
+
+        // user clicks previous
+        mockMvc.perform(post("/convertAndDownload")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "Previous")
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/generalMetadata"));
+        //.andDo(print());
+
+    }
+
+    @Test
+    public void processCustomFileTypeAttributesNoCookieTest() throws Exception {
+
+        mockMvc.perform(post("/customFileTypeAttributes")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "next")
+        )
+                .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
+                .andExpect(forwardedUrl("/WEB-INF/views/error.jsp"));
+        //.andDo(print());
+    }
+
+    @Test
+    public void processCustomFileTypeAttributesSubmitNextTest() throws Exception {
+
+        mockMvc.perform(post("/customFileTypeAttributes")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "Next")
+                .cookie(new Cookie("rosetta", "123456"))
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/variableMetadata"));
+        //.andDo(print());
+    }
+
+    @Test
+    public void processCustomFileTypeAttributesSubmitPreviousTest() throws Exception {
+
+        mockMvc.perform(post("/customFileTypeAttributes")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "Previous")
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/fileUpload"));
+        //.andDo(print());
+
+    }
+
+    @Test
+    public void processFileUploadNoCookieTest() throws Exception {
+
+        mockMvc.perform(post("/fileUpload")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "Next")
+        )
+                .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
+                .andExpect(forwardedUrl("/WEB-INF/views/error.jsp"));
+        //.andDo(print());
+    }
+
+    @Test
+    public void processFileUploadSubmitNextCustomDataFileTypeTest() throws Exception {
+
+        when(dataManagerMock.processNextStep("123456")).thenReturn("/customFileTypeAttributes");
+
+        mockMvc.perform(post("/fileUpload")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "Next")
+                .cookie(new Cookie("rosetta", "123456"))
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/customFileTypeAttributes"));
+        // .andDo(print());
+
+    }
+
+    @Test
+    public void processFileUploadSubmitNextKnownDataFileTypeTest() throws Exception {
+
+        when(dataManagerMock.processNextStep("123456")).thenReturn("/generalMetadata");
+
+        mockMvc.perform(post("/fileUpload")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "Next")
+                .cookie(new Cookie("rosetta", "123456"))
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/generalMetadata"));
+        // .andDo(print());
+
+    }
+
+    @Test
+    public void processFileUploadSubmitPreviousTest() throws Exception {
+
+        mockMvc.perform(post("/fileUpload")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "Previous")
+                .cookie(new Cookie("rosetta", "123456"))
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/cfType"));
+        //.andDo(print());
+    }
+
+    @Test
+    public void processGeneralMetadataNoCookieTest() throws Exception {
+
+        // user clicks next
+        mockMvc.perform(post("/generalMetadata")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "next")
+        )
+                .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
+                .andExpect(forwardedUrl("/WEB-INF/views/error.jsp"));
+        //.andDo(print());
+    }
+
+    @Test
+    public void processGeneralMetadataSubmitNextTest() throws Exception {
+
+        mockMvc.perform(post("/generalMetadata")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "next")
+                .cookie(new Cookie("rosetta", "123456"))
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/convertAndDownload"));
         //.andDo(print());
     }
 
@@ -355,23 +365,9 @@ public class WizardControllerTest {
     }
 
     @Test
-    public void processGeneralMetadataSubmitNextTest() throws Exception {
+    public void processVariableMetadataNoCookieTest() throws Exception {
 
-        mockMvc.perform(post("/generalMetadata")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "next")
-                .cookie(new Cookie("rosetta", "123456"))
-        )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/convertAndDownload"));
-        //.andDo(print());
-    }
-
-    @Test
-    public void processGeneralMetadataNoCookieTest() throws Exception {
-
-        // user clicks next
-        mockMvc.perform(post("/generalMetadata")
+        mockMvc.perform(post("/variableMetadata")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("submit", "next")
         )
@@ -382,44 +378,39 @@ public class WizardControllerTest {
         //.andDo(print());
     }
 
-
     @Test
-    public void displayConvertedFileDownloadPageTest() throws Exception {
-
-        when(dataManagerMock.lookupPersistedDataById("123456")).thenReturn(mock(Data.class));
-
-        mockMvc.perform(get("/convertAndDownload")
-                .cookie(new Cookie("rosetta", "123456"))
-        )
-                .andExpect(model().attribute("currentStep", equalTo("downloadAndConvert")))
-                .andExpect(view().name("wizard"))
-                .andExpect(forwardedUrl("/WEB-INF/views/wizard.jsp"));
-        //.andDo(print());
-
-    }
-
-    @Test
-    public void displayConvertedFileDownloadPageNoCookieTest() throws Exception {
-        mockMvc.perform(get("/convertAndDownload"))
-                .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
-                .andExpect(status().isOk())
-                .andExpect(view().name("error"))
-                .andExpect(forwardedUrl("/WEB-INF/views/error.jsp"));
-        //.andDo(print());
-    }
-
-    @Test
-    public void processConvertedFileDownloadPageTest() throws Exception {
+    public void processVariableMetadataSubmitNextTest() throws Exception {
 
         // user clicks previous
-        mockMvc.perform(post("/convertAndDownload")
+        mockMvc.perform(post("/variableMetadata")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("submit", "Previous")
+                .param("submit", "Next")
+                .cookie(new Cookie("rosetta", "123456"))
         )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/generalMetadata"));
         //.andDo(print());
+    }
+
+    @Test
+    public void processVariableMetadataSubmitPreviousTest() throws Exception {
+
+        mockMvc.perform(post("/variableMetadata")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("submit", "Previous")
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/customFileTypeAttributes"));
+        //.andDo(print());
 
     }
 
+    @Before
+    public void setUp() throws Exception {
+        reset(dataManagerMock);
+
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .build();
+    }
 }
