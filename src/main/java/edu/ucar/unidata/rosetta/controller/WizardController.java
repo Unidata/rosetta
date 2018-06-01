@@ -5,7 +5,6 @@ import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.service.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -49,9 +48,6 @@ public class WizardController implements HandlerExceptionResolver {
     @Resource(name = "dataManager")
     private DataManager dataManager;
 
-    @Resource(name = "metadataManager")
-    private MetadataManager metadataManager;
-
     // Validators
     /*
     @Autowired
@@ -85,7 +81,7 @@ public class WizardController implements HandlerExceptionResolver {
         Data data;
         if (rosettaCookie != null)
             // User-provided cfType info already exists.  Populate Data object with info.
-            data = dataManager.lookupById(rosettaCookie.getValue());
+            data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
         else
             data = new Data();
 
@@ -132,7 +128,6 @@ public class WizardController implements HandlerExceptionResolver {
         return new ModelAndView(new RedirectView("/fileUpload", true));
     }
 
-
     /**
      * STEP 2: display file upload form.
      * Accepts a GET request for access to file upload step of the wizard.
@@ -152,7 +147,7 @@ public class WizardController implements HandlerExceptionResolver {
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
         // Create a Data form-backing object.
-        Data data = dataManager.lookupById(rosettaCookie.getValue());
+        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
 
         // Add data object to Model.
         model.addAttribute("data", data);
@@ -166,7 +161,6 @@ public class WizardController implements HandlerExceptionResolver {
         // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
     }
-
 
     /**
      * STEP 2: process file upload form data.
@@ -204,7 +198,6 @@ public class WizardController implements HandlerExceptionResolver {
         return new ModelAndView(new RedirectView(nextStep, true));
     }
 
-
     /**
      * STEP 3: display custom file attribute form.
      * Accepts a GET request for access to custom file type attribute collection step of the wizard.
@@ -223,7 +216,7 @@ public class WizardController implements HandlerExceptionResolver {
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
         // Create a Data form-backing object.
-        Data data = dataManager.lookupById(rosettaCookie.getValue());
+        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
 
 
         // Add data object to Model.
@@ -292,10 +285,10 @@ public class WizardController implements HandlerExceptionResolver {
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
         // Create a Data form-backing object.
-        Data data = dataManager.lookupById(rosettaCookie.getValue());
+        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
 
         // Populate with any existing variable metadata.
-        data.setVariableMetadata(metadataManager.getMetadataStringForClient(data.getId(), "variable"));
+        data.setVariableMetadata(dataManager.getMetadataStringForClient(data.getId(), "variable"));
 
         // Add data object to Model.
         model.addAttribute("data", data);
@@ -309,7 +302,6 @@ public class WizardController implements HandlerExceptionResolver {
         // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
     }
-
 
     /**
      * STEP 4: process form data.
@@ -361,7 +353,7 @@ public class WizardController implements HandlerExceptionResolver {
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
         // Create a Data form-backing object.
-        Data data = dataManager.lookupById(rosettaCookie.getValue());
+        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
 
         // Add data object to Model.
         model.addAttribute("data", data);
@@ -369,7 +361,7 @@ public class WizardController implements HandlerExceptionResolver {
         GeneralMetadata metadata = new GeneralMetadata();
 
         // Mine the data file for any included metadata.
-        metadata = metadataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
+        metadata = dataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
 
         model.addAttribute("generalMetadata", metadata);
 
@@ -434,18 +426,17 @@ public class WizardController implements HandlerExceptionResolver {
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
         // Create a Data form-backing object.
-        Data data = dataManager.lookupById(rosettaCookie.getValue());
+        Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
 
         // Add data object to Model.
         model.addAttribute("data", data);
 
         // Add current step to the Model.
-        model.addAttribute("currentStep", "downloadAndConvert");
+        model.addAttribute("currentStep", "convertAndDownload");
 
         // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
     }
-
 
     /**
      * STEP 6: process form data.
