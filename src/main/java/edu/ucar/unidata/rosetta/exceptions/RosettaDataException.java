@@ -5,7 +5,7 @@ package edu.ucar.unidata.rosetta.exceptions;
  *
  * @author oxelson@ucar.edu
  */
-public class RosettaDataException extends Exception{
+public class RosettaDataException extends Exception {
 
     public RosettaDataException() {}
 
