@@ -49,37 +49,10 @@ public class DataManagerImpl implements DataManager {
     private ConvertManager convertManager;
 
     @Resource(name = "fileParserManager")
-    private FileParserManager fileParserManager;
+    private FileManager fileManager;
 
     @Resource(name = "metadataManager")
     private MetadataManager metadataManager;
-
-
-    /**
-     * Converts .xls and .xlsx files to .csv files.
-     *
-     * @param id        The unique id associated with the file (a subdir in the uploads directory).
-     * @param fileName  The name of the .xls or .xlsx file to convert.
-     * @return          The name of the converted .csv file.
-     * @throws IOException  If unable to convert to .csv file.
-     */
-    @Override
-    public String convertToCSV(String id, String fileName) throws IOException {
-        String extension = FilenameUtils.getExtension(fileName);
-        if (!(extension.equals("xls") || extension.equals("xlsx")))
-            throw new UnsupportedDataTypeException("Attempting to convert a non .xls type file to .csv format.");
-
-        String xlsFilePath = FilenameUtils.concat(FilenameUtils.concat(getUploadDir(), id), fileName);
-        // Change the file on disk.
-        boolean conversionSuccessful = XlsToCsv.convert(xlsFilePath, null);
-        String csvFileName = null;
-        if (conversionSuccessful)
-            csvFileName = FilenameUtils.removeExtension(fileName) + ".csv";
-        else
-            throw new IOException("Attempting to convert a non .xls type file to .csv format.");
-
-        return csvFileName;
-    }
 
     /**
      * Creates a unique id for the file name from the clients IP address and the date.
@@ -358,7 +331,7 @@ public class DataManagerImpl implements DataManager {
     @Override
     public String parseDataFileByLine(String id, String dataFileName) throws IOException {
         String filePath = FilenameUtils.concat( FilenameUtils.concat(getUploadDir(), id), dataFileName);
-        return fileParserManager.parseByLine(filePath);
+        return fileManager.parseByLine(filePath);
     }
 
     /**
@@ -454,9 +427,10 @@ public class DataManagerImpl implements DataManager {
      * @param id    The unique ID corresponding to already persisted data.
      * @param data  The Data object submitted by the user containing the uploaded file information.
      * @throws IOException  If unable to write file(s) to disk.
+     * @throws RosettaDataException If a file conversion exception occurred.
      */
     @Override
-    public void processFileUpload(String id, Data data) throws IOException {
+    public void processFileUpload(String id, Data data) throws IOException, RosettaDataException {
 
         // Get the persisted data corresponding to this ID.
         Data persistedData = lookupPersistedDataById(id);
@@ -465,13 +439,11 @@ public class DataManagerImpl implements DataManager {
         if (!data.getDataFile().isEmpty()) {
             // Set the data file type.
             persistedData.setDataFileType(data.getDataFileType());
-            // Write data file to disk.
+
             String dataFileName = data.getDataFileName();
-            writeUploadedFileToDisk(persistedData.getId(), dataFileName, data.getDataFile());
-            // If the uploaded file was .xls or .xlsx, convert it to .csv
-            String dataFileNameExtension = FilenameUtils.getExtension(dataFileName);
-            if (dataFileNameExtension.equals("xls") || dataFileNameExtension.equals("xlsx"))
-                dataFileName = convertToCSV(persistedData.getId(), dataFileName);
+            // Write data file to disk.
+            dataFileName = fileManager.writeUploadedFileToDisk(getUploadDir(), persistedData.getId(), dataFileName, data.getDataFile());
+
             // Set the data file name.
             persistedData.setDataFileName(dataFileName);
         } else {
@@ -482,11 +454,7 @@ public class DataManagerImpl implements DataManager {
         if (!data.getPositionalFile().isEmpty()) {
             String positionalFileName = data.getPositionalFileName();
             // Write file to disk.
-            writeUploadedFileToDisk(persistedData.getId(), positionalFileName, data.getPositionalFile());
-            // If the uploaded file was .xls or .xlsx, convert it to .csv
-            String positionalFileNameExtension = FilenameUtils.getExtension(positionalFileName);
-            if (positionalFileNameExtension.equals("xls") || positionalFileNameExtension.equals("xlsx"))
-                positionalFileName = convertToCSV(persistedData.getId(), positionalFileName);
+            positionalFileName = fileManager.writeUploadedFileToDisk(getUploadDir(), persistedData.getId(), positionalFileName, data.getPositionalFile());
             // Set the positional file name.
             persistedData.setPositionalFileName(positionalFileName);
         } else {
@@ -500,11 +468,7 @@ public class DataManagerImpl implements DataManager {
         if (!data.getTemplateFile().isEmpty()) {
             String templateFileName = data.getTemplateFileName();
             // Write file to disk.
-            writeUploadedFileToDisk(persistedData.getId(), templateFileName, data.getTemplateFile());
-            // If the uploaded file was .xls or .xlsx, convert it to .csv
-            String templateFileNameExtension = FilenameUtils.getExtension(templateFileName);
-            if (templateFileName.equals("xls") || templateFileNameExtension.equals("xlsx"))
-                templateFileName = convertToCSV(persistedData.getId(), templateFileName);
+            templateFileName = fileManager.writeUploadedFileToDisk(getUploadDir(), persistedData.getId(), templateFileName, data.getTemplateFile());
             // Set the template file name.
             persistedData.setTemplateFileName(templateFileName);
         } else {
@@ -664,34 +628,5 @@ public class DataManagerImpl implements DataManager {
     @Override
     public void updatePersistedData(Data data) {
         dataDao.updatePersistedData(data);
-    }
-
-    /**
-     * Creates a subdirectory in the designated uploads directory using the (unique) id
-     * and writes the given file to the uploads subdirectory.
-     *
-     * @param id        The unique id associated with the file (a subdir in the uploads directory).
-     * @param fileName  The name of the file to save to disk.
-     * @param file      The CommonsMultipartFile to save to disk.
-     * @throws SecurityException  If unable to write file to disk because of a JVM security manager violation.
-     * @throws IOException  If unable to write file to disk.
-     */
-    @Override
-    public void writeUploadedFileToDisk(String id, String fileName, CommonsMultipartFile file) throws SecurityException, IOException {
-
-        String filePath = FilenameUtils.concat(getUploadDir(), id);
-        File localFileDir = new File(filePath);
-
-        if (!localFileDir.exists())
-            if (!localFileDir.mkdirs())
-                throw new IOException("Unable to create " + id + " subdirectory in uploads directory.");
-
-        logger.info("Writing uploaded file " + fileName + " to disk");
-        File uploadedFile = new File(FilenameUtils.concat(filePath, fileName));
-
-        FileOutputStream outputStream = new FileOutputStream(uploadedFile);
-        outputStream.write(file.getFileItem().get());
-        outputStream.flush();
-        outputStream.close();
     }
 }
