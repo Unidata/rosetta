@@ -48,7 +48,7 @@ public class MetadataManagerImpl implements MetadataManager {
 
     /**
      * Converts metadata to a format useful for AsciiFile (custom file type) for netCDF conversion.
-     * TODO: refactor to do remove need for AsciiFile.
+     * TODO: refactor to remove need for AsciiFile.
      *
      * @param id    The unique ID corresponding to the metadata to find.
      * @param type  The type of metadata (general or variable).
