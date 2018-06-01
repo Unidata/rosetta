@@ -37,7 +37,6 @@ public class ConvertManagerImpl implements ConvertManager {
 
 
     public String convertToNetCDF(Data data) throws IOException, IllegalArgumentException, InvalidRangeException, RosettaDataException {
-        String netcdfFile = null;
 
         String filePathUploads = FilenameUtils.concat(dataManager.getUploadDir(), data.getId());
         String filePathDownloads = FilenameUtils.concat(dataManager.getDownloadDir(), data.getId());
@@ -46,7 +45,6 @@ public class ConvertManagerImpl implements ConvertManager {
         if (!localFileDir.exists())
             if (!localFileDir.mkdirs())
                 throw new IOException("Unable to create " + data.getId() + " subdirectory in downloads directory.");
-
         String netcdfFileName = FilenameUtils.removeExtension(data.getDataFileName()) + ".nc";
         String ncFileToCreate = FilenameUtils.concat(filePathDownloads, netcdfFileName);
 
@@ -56,7 +54,7 @@ public class ConvertManagerImpl implements ConvertManager {
 
                 TagUniversalFileFormat tagUniversalFileFormat = new TagUniversalFileFormat();
                 tagUniversalFileFormat.parse(FilenameUtils.concat(filePathUploads, data.getDataFileName()));
-                netcdfFile = tagUniversalFileFormat.convert(ncFileToCreate);
+                String netcdfFile = tagUniversalFileFormat.convert(ncFileToCreate);
 
         } else {
             // Custom file type, so we need to convert it here.
@@ -97,11 +95,11 @@ public class ConvertManagerImpl implements ConvertManager {
                     asciiFile.setVariableNameMap(metadataManager.getVariableNameMap(data.getId(), "variable"));
                     asciiFile.setVariableMetadataMap(metadataManager.getVariableMetadataMap(data.getId(), "variable"));
                     asciiFile.setParseHeaderForMetadataList(new ArrayList<String>()); // LEAVING EMPTY
-                    netcdfFile = potentialDsgWriter.createNetcdfFile(asciiFile, parseFileData, header, dataManager.getDownloadDir());
+                    String netcdfFile = potentialDsgWriter.createNetcdfFile(asciiFile, parseFileData, header, dataManager.getDownloadDir());
                     break;
                 }
             }
         }
-        return netcdfFile;
+        return netcdfFileName;
     }
 }

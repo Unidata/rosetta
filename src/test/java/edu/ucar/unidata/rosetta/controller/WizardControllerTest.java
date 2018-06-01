@@ -124,8 +124,8 @@ public class WizardControllerTest {
                 .cookie(new Cookie("rosetta", "123456"))
         )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/customFileTypeAttributes"))
-                .andDo(print());
+                .andExpect(redirectedUrl("/customFileTypeAttributes"));
+               // .andDo(print());
 
     }
 

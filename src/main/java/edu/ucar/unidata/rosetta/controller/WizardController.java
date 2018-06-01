@@ -97,7 +97,8 @@ public class WizardController implements HandlerExceptionResolver {
         model.addAttribute("domains", dataManager.getCommunitiesForView());
         // Add platforms data to Model (for platform selection).
         model.addAttribute("platforms", dataManager.getPlatformsForView());
-        // Add data object to Model.
+
+        // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
     }
 
@@ -146,14 +147,12 @@ public class WizardController implements HandlerExceptionResolver {
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-        // Create a Data form-backing object.
-        Data data;
-        if (rosettaCookie != null)
-            // Populate Data object with info.
-            data = dataManager.lookupById(rosettaCookie.getValue());
-        else
+        if (rosettaCookie == null)
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        // Create a Data form-backing object.
+        Data data = dataManager.lookupById(rosettaCookie.getValue());
 
         // Add data object to Model.
         model.addAttribute("data", data);
@@ -163,6 +162,8 @@ public class WizardController implements HandlerExceptionResolver {
         model.addAttribute("domains", dataManager.getCommunitiesForView());
         // Add file type data to Model (for file type selection if cfType was directly specified).
         model.addAttribute("fileTypes", dataManager.getFileTypesForView());
+
+        // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
     }
 
@@ -217,14 +218,12 @@ public class WizardController implements HandlerExceptionResolver {
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-        // Create a Data form-backing object.
-        Data data;
-        if (rosettaCookie != null)
-            // Populate Data object with info.
-            data = dataManager.lookupById(rosettaCookie.getValue());
-        else
+        if (rosettaCookie == null)
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        // Create a Data form-backing object.
+        Data data = dataManager.lookupById(rosettaCookie.getValue());
 
 
         // Add data object to Model.
@@ -233,6 +232,8 @@ public class WizardController implements HandlerExceptionResolver {
         model.addAttribute("currentStep", "customFileTypeAttributes");
         // Add parsed file data in JSON string format (to sho win the SlickGrid).
         model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
+
+        // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
 
     }
@@ -286,14 +287,12 @@ public class WizardController implements HandlerExceptionResolver {
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-        // Create a Data form-backing object.
-        Data data;
-        if (rosettaCookie != null)
-            // Populate Data object with info.
-            data = dataManager.lookupById(rosettaCookie.getValue());
-        else
+        if (rosettaCookie == null)
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        // Create a Data form-backing object.
+        Data data = dataManager.lookupById(rosettaCookie.getValue());
 
         // Populate with any existing variable metadata.
         data.setVariableMetadata(metadataManager.getMetadataStringForClient(data.getId(), "variable"));
@@ -306,6 +305,8 @@ public class WizardController implements HandlerExceptionResolver {
         model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
         // Add delimiter to do additional client-side parsing for SlickGrid.
         model.addAttribute("delimiterSymbol", dataManager.getDelimiterSymbol(data.getDelimiter()));
+
+        // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
     }
 
@@ -355,21 +356,19 @@ public class WizardController implements HandlerExceptionResolver {
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-        // Create a Data form-backing object.
-        Data data;
-        if (rosettaCookie != null)
-            // Populate Data object with info.
-            data = dataManager.lookupById(rosettaCookie.getValue());
-        else
+        if (rosettaCookie == null)
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
+
+        // Create a Data form-backing object.
+        Data data = dataManager.lookupById(rosettaCookie.getValue());
 
         // Add data object to Model.
         model.addAttribute("data", data);
 
         GeneralMetadata metadata = new GeneralMetadata();
 
-        // If not a custom file type, it probably already includes metadata, so get it.
+        // Mine the data file for any included metadata.
         metadata = metadataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
 
         model.addAttribute("generalMetadata", metadata);
@@ -377,6 +376,7 @@ public class WizardController implements HandlerExceptionResolver {
         // Add current step to the Model.
         model.addAttribute("currentStep", "generalMetadata");
 
+        // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
     }
 
@@ -429,31 +429,20 @@ public class WizardController implements HandlerExceptionResolver {
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-        // Create a Data form-backing object.
-        Data data;
-        if (rosettaCookie != null)
-            // Populate Data object with info.
-            data = dataManager.lookupById(rosettaCookie.getValue());
-        else
+        if (rosettaCookie == null)
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
-        String[] pathParts;
-        if (File.separator.equals("\\" )) {
-            pathParts = data.getNetcdfFile().split("\\\\");
-        } else {
-            pathParts = data.getNetcdfFile().split(File.separator);
-        }
-        String netcdfFileName = pathParts[pathParts.length - 2] + File.separator + pathParts[pathParts.length -1];
-
-        data.setNetcdfFile(netcdfFileName);
-        dataManager.updateData(data);
+        // Create a Data form-backing object.
+        Data data = dataManager.lookupById(rosettaCookie.getValue());
 
         // Add data object to Model.
         model.addAttribute("data", data);
+
         // Add current step to the Model.
-        model.addAttribute("fileName", pathParts[pathParts.length -1]);
         model.addAttribute("currentStep", "downloadAndConvert");
+
+        // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
     }
 

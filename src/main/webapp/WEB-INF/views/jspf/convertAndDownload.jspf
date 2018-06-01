@@ -2,7 +2,7 @@
 
 <ul id="download">
     <c:if test="${not empty data.netcdfFile}">
-        NetCDF File: <a href="${baseUrl}/download/${data.netcdfFile}">${fileName}</a>
+        NetCDF File: <a href="${baseUrl}/download/${data.id}/${data.netcdfFile}">${data.netcdfFile}</a>
     </c:if>
 </ul>
 
