@@ -36,8 +36,8 @@ public class DataManagerTest {
         data.setSubmit("Next");
 
         // The behavior we want to see.
-        when(dataManager.lookupById("000000345HDV4")).thenReturn(data);
-        doThrow(new DataRetrievalFailureException("Unable to find persisted Data object corresponding to id " + data.getId())).when(dataManager).deleteData(data.getId());
+        when(dataManager.lookupPersistedDataById("000000345HDV4")).thenReturn(data);
+        doThrow(new DataRetrievalFailureException("Unable to find persisted Data object corresponding to id " + data.getId())).when(dataManager).deletePersistedData(data.getId());
         when(dataManager.getUploadDir()).thenReturn("/dev/null");
         when(dataManager.getDownloadDir()).thenReturn("/tmp");
         when(dataManager.convertToCSV("000000345HDV4", "test.xls")).thenReturn("true");
@@ -56,29 +56,29 @@ public class DataManagerTest {
 
     @Test
     public void lookupByIdTest() throws Exception {
-        Data persistedData = dataManager.lookupById("000000345HDV4");
+        Data persistedData = dataManager.lookupPersistedDataById("000000345HDV4");
         assertEquals(persistedData.getCfType(), "trajectory");
     }
 
     @Test
     public void persistDataTest() throws Exception {
         dataManager.persistData(data, request);
-        Data persistedData = dataManager.lookupById("000000345HDV4");
+        Data persistedData = dataManager.lookupPersistedDataById("000000345HDV4");
         assertEquals(persistedData.getCfType(), "trajectory");
     }
 
     @Test
     public void updateDataTest() throws Exception {
         data.setCfType("profile"); // Update data cfType.
-        dataManager.updateData(data);
-        Data persistedData = dataManager.lookupById("000000345HDV4");
+        dataManager.updatePersistedData(data);
+        Data persistedData = dataManager.lookupPersistedDataById("000000345HDV4");
         assertEquals(persistedData.getCfType(), "profile");
     }
 
     @Test(expected = DataRetrievalFailureException.class)
     public void deleteDataTest() throws Exception {
-        dataManager.deleteData("000000345HDV4");
-        dataManager.lookupById("000000345HDV4");
+        dataManager.deletePersistedData("000000345HDV4");
+        dataManager.lookupPersistedDataById("000000345HDV4");
     }
 
     @Test
