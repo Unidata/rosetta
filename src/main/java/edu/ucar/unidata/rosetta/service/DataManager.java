@@ -121,6 +121,8 @@ public interface DataManager {
 
     public List<Map<String, Object>> getFileTypesForView();
 
+    public GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType, GeneralMetadata metadata) throws RosettaDataException;
+
     /**
      * Processes the data submitted by the user containing CF type information.
      * If an ID already exists, the persisted data corresponding to that ID is
