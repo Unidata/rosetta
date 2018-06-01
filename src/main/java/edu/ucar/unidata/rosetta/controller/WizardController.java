@@ -18,7 +18,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
@@ -79,7 +78,6 @@ public class WizardController implements HandlerExceptionResolver {
      */
     @RequestMapping(value = "/cfType", method = RequestMethod.GET)
     public ModelAndView displayCFTypeSelectionForm(Model model, HttpServletRequest request){
-
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -228,19 +226,15 @@ public class WizardController implements HandlerExceptionResolver {
             // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException("No persisted data available for file upload step.  Check the database & the cookie.");
 
-        // If the custom data file was specified by the user, we need to add an additional step in the wizard.
-        if (data.getDataFileType().equals("Custom_File_Type")) {
-            // Add data object to Model.
-            model.addAttribute("data", data);
-            // Add current step to the Model.
-            model.addAttribute("currentStep", "customFileTypeAttributes");
-            // Add parsed file data in JSON string format (to sho win the SlickGrid).
-            model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
-            return new ModelAndView("wizard");
-        } else {
-            // Using a known data file type, so go directly to variable metadata collection step.
-            return new ModelAndView(new RedirectView("/variableMetadata", true));
-        }
+
+        // Add data object to Model.
+        model.addAttribute("data", data);
+        // Add current step to the Model.
+        model.addAttribute("currentStep", "customFileTypeAttributes");
+        // Add parsed file data in JSON string format (to sho win the SlickGrid).
+        model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
+        return new ModelAndView("wizard");
+
     }
 
     /**
@@ -375,14 +369,14 @@ public class WizardController implements HandlerExceptionResolver {
 
         GeneralMetadata metadata = new GeneralMetadata();
 
-        // If not a custom file type, ot probably already includes metadata, so get it.
-        if (!data.getDataFileType().equals("Custom_File_Type"))
-            metadata = metadataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
+        // If not a custom file type, it probably already includes metadata, so get it.
+        metadata = metadataManager.getMetadataFromKnownFile(FilenameUtils.concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()), data.getDataFileName()), data.getDataFileType(), metadata);
 
         model.addAttribute("generalMetadata", metadata);
 
         // Add current step to the Model.
         model.addAttribute("currentStep", "generalMetadata");
+
         return new ModelAndView("wizard");
     }
 

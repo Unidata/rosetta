@@ -338,6 +338,10 @@ public class DataManagerImpl implements DataManager {
 
     }
 
+    public GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType, GeneralMetadata metadata) throws RosettaDataException {
+        return metadataManager.getMetadataFromKnownFile(filePath, fileType, metadata);
+    }
+
 
     /**
      * Processes the data submitted by the user containing CF type information.
