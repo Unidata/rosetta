@@ -30,7 +30,7 @@ public class ConvertManagerImpl implements ConvertManager {
     private DataManager dataManager;
 
     @Resource(name = "fileParserManager")
-    private FileParserManager fileParserManager;
+    private FileManager fileManager;
 
     @Resource(name = "metadataManager")
     private MetadataManager metadataManager;
@@ -76,10 +76,10 @@ public class ConvertManagerImpl implements ConvertManager {
                     else
                         headerLineList = new ArrayList<>();
 
-                    header = fileParserManager.getHeaderLinesFromFile(FilenameUtils.concat(filePathUploads, data.getDataFileName()), headerLineList);
+                    header = fileManager.getHeaderLinesFromFile(FilenameUtils.concat(filePathUploads, data.getDataFileName()), headerLineList);
 
                     // Get the parsed file data.
-                    List<List<String>> parseFileData = fileParserManager.parseByDelimiter(FilenameUtils.concat(filePathUploads, data.getDataFileName()), headerLineList, dataManager.getDelimiterSymbol(data.getDelimiter()));
+                    List<List<String>> parseFileData = fileManager.parseByDelimiter(FilenameUtils.concat(filePathUploads, data.getDataFileName()), headerLineList, dataManager.getDelimiterSymbol(data.getDelimiter()));
 
                     // A hack to temporarily bridge the old rosetta code with the new. MUST REFACTOR!
                     AsciiFile asciiFile = new AsciiFile();
