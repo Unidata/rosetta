@@ -162,7 +162,7 @@ public class WizardControllerTest {
     @Test
     public void displayCustomFileTypeAttributesFormTest() throws Exception {
 
-        when(dataManagerMock.lookupById("123456")).thenReturn(mock(Data.class));
+        when(dataManagerMock.lookupPersistedDataById("123456")).thenReturn(mock(Data.class));
 
         mockMvc.perform(get("/customFileTypeAttributes")
                 .cookie(new Cookie("rosetta", "123456"))
@@ -230,7 +230,7 @@ public class WizardControllerTest {
     @Test
     public void displayVariableMetadataFormTest() throws Exception {
 
-        when(dataManagerMock.lookupById("123456")).thenReturn(mock(Data.class));
+        when(dataManagerMock.lookupPersistedDataById("123456")).thenReturn(mock(Data.class));
 
         mockMvc.perform(get("/variableMetadata")
                 .cookie(new Cookie("rosetta", "123456"))
@@ -298,7 +298,7 @@ public class WizardControllerTest {
     @Test
     public void displayGeneralMetadataFormTest() throws Exception {
 
-        when(dataManagerMock.lookupById("123456")).thenReturn(mock(Data.class));
+        when(dataManagerMock.lookupPersistedDataById("123456")).thenReturn(mock(Data.class));
         when(dataManagerMock.getUploadDir()).thenReturn("/dev/null");
         when(dataManagerMock.getMetadataFromKnownFile("/dev/null", "eTuff", mock(GeneralMetadata.class))).thenReturn(mock(GeneralMetadata.class));
 
@@ -385,20 +385,8 @@ public class WizardControllerTest {
 
     @Test
     public void displayConvertedFileDownloadPageTest() throws Exception {
-        mockMvc.perform(get("/convertAndDownload"))
-                .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
-                .andExpect(status().isOk())
-                .andExpect(view().name("error"))
-                .andExpect(forwardedUrl("/WEB-INF/views/error.jsp"));
-        //.andDo(print());
-    }
 
-    @Test
-    public void displayConvertedFileDownloadPageNoCookieTest() throws Exception {
-/*
-        when(dataManagerMock.lookupById("123456")).thenReturn(mock(Data.class));
-        when(dataManagerMock.getUploadDir()).thenReturn("/dev/null");
-        when(dataManagerMock.getMetadataFromKnownFile("/dev/null", "eTuff", mock(GeneralMetadata.class))).thenReturn(mock(GeneralMetadata.class));
+        when(dataManagerMock.lookupPersistedDataById("123456")).thenReturn(mock(Data.class));
 
         mockMvc.perform(get("/convertAndDownload")
                 .cookie(new Cookie("rosetta", "123456"))
@@ -407,9 +395,18 @@ public class WizardControllerTest {
                 .andExpect(view().name("wizard"))
                 .andExpect(forwardedUrl("/WEB-INF/views/wizard.jsp"));
         //.andDo(print());
-        */
+
     }
 
+    @Test
+    public void displayConvertedFileDownloadPageNoCookieTest() throws Exception {
+        mockMvc.perform(get("/convertAndDownload"))
+                .andExpect(model().attribute("exception", org.hamcrest.Matchers.isA(IllegalStateException.class)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
+                .andExpect(forwardedUrl("/WEB-INF/views/error.jsp"));
+        //.andDo(print());
+    }
 
     @Test
     public void processConvertedFileDownloadPageTest() throws Exception {
