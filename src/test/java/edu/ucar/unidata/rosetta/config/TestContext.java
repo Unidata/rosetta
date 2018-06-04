@@ -1,6 +1,5 @@
 package edu.ucar.unidata.rosetta.config;
 
-import edu.ucar.unidata.rosetta.service.ConvertManager;
 import edu.ucar.unidata.rosetta.service.DataManager;
 import edu.ucar.unidata.rosetta.service.FileManager;
 import edu.ucar.unidata.rosetta.service.MetadataManager;
@@ -10,15 +9,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Mock object dependancies used for controller tests (found via component scan in applicationContext-test.xml)
+ * Mock object dependencies used for controller tests (found via component scan in applicationContext-test.xml)
  */
 @Configuration
 public class TestContext {
-
-    @Bean
-    public ConvertManager convertManager() {
-        return Mockito.mock(ConvertManager.class);
-    }
 
     @Bean
     public DataManager dataManager() {
