@@ -9,7 +9,7 @@
                 Title <small>(required)</small>
                 <img src="resources/img/help.png" alt="The title of this data set."/>
                 <br/>
-                <input type="text" name="title" id="title" value="${generalMetadata.title}"/>
+                <input class="required" type="text" name="title" id="title" value="${generalMetadata.title}"/>
             </label>
             <label for="title" class="error"></label>
         </li>
@@ -19,7 +19,7 @@
                 Description <small>(required)</small>
                 <img src="resources/img/help.png" alt="General description of this dataset."/>
                 <br/>
-                <input type="text" name="description" id="description" value="${generalMetadata.description}"/>
+                <input class="required" type="text" name="description" id="description" value="${generalMetadata.description}"/>
             </label>
             <label for="description" class="error"></label>
         </li>
@@ -29,7 +29,7 @@
                 Institution <small>(required)</small>
                 <img src="resources/img/help.png" alt="TThe name of the institution or organization providing the dataset."/>
                 <br/>
-                <input type="text" name="institution" id="institution" value="${generalMetadata.institution}"/>
+                <input class="required" type="text" name="institution" id="institution" value="${generalMetadata.institution}"/>
             </label>
             <label for="institution" class="error"></label>
         </li>
@@ -59,7 +59,7 @@
                 Data Source
                 <img src="resources/img/help.png" alt="The data logger/instrumentation make and model."/>
                 <br/>
-                <input type="text" name="dataSource" id="dataSource" value="${generalMetadata.dataSources}"/>
+                <input type="text" name="dataSource" id="dataSource" value="${generalMetadata.dataSource}"/>
             </label>
             <label for="dataSource" class="error"></label>
         </li>
