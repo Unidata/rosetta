@@ -17,17 +17,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 public interface FileManager {
 
     /**
-     * Converts .xls and .xlsx files to .csv files.
-     *
-     * @param uploadDirPath The path to the uploads directory.
-     * @param id        The unique id associated with the file (a subdir in the uploads directory).
-     * @param fileName  The name of the .xls or .xlsx file to convert.
-     * @return  The name of the converted .csv file.
-     * @throws RosettaFileException If unable to convert xls/xlsx file to csv.
-     */
-    public String convertToCSV(String uploadDirPath, String id, String fileName) throws RosettaFileException;
-
-    /**
      * Creates a subdirectory in the Rosetta download directory with the name of the provided
      * unique ID, into which converted data files and Rosetta templates will be stashed and
      * made available for download by the user.

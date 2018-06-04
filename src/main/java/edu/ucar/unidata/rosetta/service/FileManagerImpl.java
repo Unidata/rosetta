@@ -3,8 +3,7 @@ package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-import edu.ucar.unidata.rosetta.util.XlsToCsvUtil;
-import edu.ucar.unidata.rosetta.util.JsonUtil;
+import edu.ucar.unidata.rosetta.util.*;
 
 import java.io.*;
 import java.io.IOException;
@@ -39,8 +38,8 @@ public class FileManagerImpl implements FileManager {
      * @return  The name of the converted .csv file.
      * @throws RosettaFileException If unable to convert xls/xlsx file to csv.
      */
-    @Override
-    public String convertToCSV(String uploadDirPath, String id, String fileName) throws RosettaFileException {
+    private String convertToCSV(String uploadDirPath, String id, String fileName) throws RosettaFileException {
+        // This check of file extension may seem superfluous, but we don't want to continue it it's not an xls* file.
         String extension = FilenameUtils.getExtension(fileName);
         if (!(extension.equals("xls") || extension.equals("xlsx")))
             throw new RosettaFileException("Attempting to convert a non .xls type file to .csv format.");
@@ -278,11 +277,23 @@ public class FileManagerImpl implements FileManager {
             throw new RosettaFileException("Unable write uploaded file to disk: " + e);
         }
 
-        // If the uploaded file was .xls or .xlsx, convert it to .csv
+        // May need to process the uploaded file depending on its type (.zip, excel file, etc.).
         String dataFileNameExtension = FilenameUtils.getExtension(fileName);
+
+        // Is it a Zip file?
+        if (dataFileNameExtension.equals("zip")) {
+            List<String> inventory = unZip(uploadDirPath, id, fileName);
+        }
+
+        // If the uploaded file was .xls or .xlsx, convert it to .csv
         if (dataFileNameExtension.equals("xls") || dataFileNameExtension.equals("xlsx"))
             fileName = convertToCSV(uploadDirPath, id, fileName);
 
         return fileName;
+    }
+
+    private List<String> unZip(String uploadDirPath, String id, String fileName) {
+        return ZipFileUtil.unzipAndInventory(fileName, FilenameUtils.concat(uploadDirPath, id));
+
     }
 }
