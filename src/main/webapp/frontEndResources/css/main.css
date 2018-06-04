@@ -31,7 +31,7 @@ h4 {
 a[href$='.nc'] {
     padding-left: 18px;
     line-height: 18px;
-    background: transparent url('../img/logo/netcdf.png') center left no-repeat;
+    background: transparent url('../img/icon/netcdf.png') center left no-repeat;
 }
 
 a[href$='.template'] {
