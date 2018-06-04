@@ -36,12 +36,14 @@ public class FileValidator extends CommonValidator implements Validator {
     }
 
     public void validate(Object obj, Errors errors) {
+        /*
         AsciiFile file = (AsciiFile) obj;
         validateInput(file.getCfType(), errors);
         validateInput(file.getUniqueId(), errors);
         validateInput(file.getFileName(), errors);
         validateList(file.getDelimiterList(), errors);
         validateList(file.getHeaderLineList(), errors);
+        */
 
     }
 
@@ -58,6 +60,7 @@ public class FileValidator extends CommonValidator implements Validator {
      * @param filePath The path to the file on disk.
      */
     private void validateDelimiterCount(String filePath, Object obj, Errors errors) {
+        /*
         AsciiFile file = (AsciiFile) obj;
         List<String> delimiterList = file.getDelimiterList();
         List<String> headerLineList = file.getHeaderLineList();
@@ -90,6 +93,7 @@ public class FileValidator extends CommonValidator implements Validator {
         } catch (IOException e) {
             errors.reject(e.getMessage());
         }
+        */
     }
 
 

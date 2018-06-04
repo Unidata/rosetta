@@ -1,15 +1,9 @@
 package edu.ucar.unidata.rosetta.util;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -20,10 +14,15 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
-Utility class for zip file manipulation
+ * Utility class for zip file manipulation.
+ *
+ * @author sarms@ucar.edu
+ * @author oxelson@ucar.edu
  */
 
 public class ZipFileUtil {
+
+    private static final Logger logger = Logger.getLogger(ZipFileUtil.class);
 
     private String name;
 
@@ -84,6 +83,7 @@ public class ZipFileUtil {
         }
     }
 
+
     public String readFileFromZip(String fileName) {
         String data = "";
         String line;
@@ -104,46 +104,62 @@ public class ZipFileUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return data;
-
     }
 
-    public static ArrayList<String> unzipAndInventory(File inputZipFile, File uncompressed_dir) {
-        // http://www.avajava.com/tutorials/lessons/how-do-i-unzip-the-contents-of-a-zip-file.html
-        // No need to reinvent the wheel. However, there isn't any license on this, or any way
-        // to really give attribution here.
+    /**
+     *
+     * Original code taken from http://www.avajava.com/tutorials/lessons/how-do-i-unzip-the-contents-of-a-zip-file.html
+     *
+     * @param zipFileName
+     * @param uncompressed_dir
+     * @return
+     */
+    public static List<String> unzipAndInventory(String zipFileName, String uncompressed_dir) {
+
+        String zipFilePath = FilenameUtils.concat(uncompressed_dir, zipFileName);
+
+        logger.info("uncomepressed dir: "  + uncompressed_dir);
         String template = "";
-        ArrayList<String> inventory = new ArrayList<>();
+        List<String> inventory = new ArrayList<>();
         try {
-            ZipFile zipFile = new ZipFile(inputZipFile);
-            Enumeration<?> enu = zipFile.entries();
-            while (enu.hasMoreElements()) {
-                ZipEntry zipEntry = (ZipEntry) enu.nextElement();
+            ZipFile zipFile = new ZipFile(new File(zipFilePath));
+            logger.info("Files in " + zipFile.getName() + ":");
+            Enumeration<?> e = zipFile.entries();
+            while (e.hasMoreElements()) {
+                ZipEntry zipEntry = (ZipEntry) e.nextElement();
 
                 String name = zipEntry.getName();
+                logger.info(" " + name);
 
-                Path filePath = Paths.get(uncompressed_dir.toString(), name.toString());
+                Path filePath = Paths.get(uncompressed_dir, name);
                 File file = filePath.toFile();
+                logger.info("file: " + file.getName());
+                
                 if (name.endsWith("/")) {
+                    logger.info("name ends with /");
                     file.mkdirs();
                     continue;
                 }
 
                 File parent = file.getParentFile();
+                logger.info("parent file: " + parent.getName());
                 if (parent != null) {
+                    logger.info("parent not null");
                     parent.mkdirs();
                 }
 
-                InputStream is = zipFile.getInputStream(zipEntry);
-                FileOutputStream fos = new FileOutputStream(file);
+                InputStream inputStream = zipFile.getInputStream(zipEntry);
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
                 byte[] bytes = new byte[1024];
                 int length;
-                while ((length = is.read(bytes)) >= 0) {
-                    fos.write(bytes, 0, length);
+                while ((length = inputStream.read(bytes)) >= 0) {
+                    logger.info("writing to outputstream");
+                    fileOutputStream.write(bytes, 0, length);
                 }
-                is.close();
-                fos.close();
+                inputStream.close();
+                fileOutputStream.close();
+                logger.info("added to inventory: " + file.getAbsolutePath());
                 inventory.add(file.getAbsolutePath());
             }
             zipFile.close();
@@ -152,5 +168,4 @@ public class ZipFileUtil {
         }
         return inventory;
     }
-
 }
