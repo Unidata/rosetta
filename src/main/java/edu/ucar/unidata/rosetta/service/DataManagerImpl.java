@@ -1,32 +1,25 @@
 package edu.ucar.unidata.rosetta.service;
 
-import edu.ucar.unidata.rosetta.converters.XlsToCsv;
+import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.resources.*;
-import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.exceptions.*;
 import edu.ucar.unidata.rosetta.repository.DataDao;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
 import edu.ucar.unidata.rosetta.repository.resources.CommunityDao;
 import edu.ucar.unidata.rosetta.repository.resources.FileTypeDao;
 import edu.ucar.unidata.rosetta.repository.resources.PlatformDao;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import java.util.*;
 
-import javax.activation.UnsupportedDataTypeException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import ucar.ma2.InvalidRangeException;
 
 /**
@@ -36,7 +29,7 @@ import ucar.ma2.InvalidRangeException;
  */
 public class DataManagerImpl implements DataManager {
 
-    protected static final Logger logger = Logger.getLogger(DataManagerImpl.class);
+    private static final Logger logger = Logger.getLogger(DataManagerImpl.class);
 
     private DataDao dataDao;
     private PropertiesDao propertiesDao;
@@ -45,14 +38,59 @@ public class DataManagerImpl implements DataManager {
     private FileTypeDao fileTypeDao;
 
     // The other managers we make use of in this file.
-    @Resource(name = "convertManager")
-    private ConvertManager convertManager;
-
     @Resource(name = "fileParserManager")
     private FileManager fileManager;
 
     @Resource(name = "metadataManager")
     private MetadataManager metadataManager;
+
+
+    /**
+     * Converts the uploaded data file(s) to netCDF and writes a template for to aid in future conversions.
+     *
+     * @param data  The Data object representing the uploaded data file to convert.
+     * @return The updated data object containing the converted file information.
+     * @throws InvalidRangeException If unable to convert the data file to netCDF.
+     * @throws RosettaFileException If unable to create the template file from the Data object.
+     */
+    public Data convertToNetCDF(Data data) throws InvalidRangeException, RosettaFileException {
+
+        // Create full file path to upload sub directory where uploaded data is stored.
+        String filePathUploadDir = FilenameUtils.concat(getUploadDir(), data.getId());
+        // Create full file path to download sub directory into which the converted .nc files & template will be written.
+        String filePathDownloadDir = fileManager.createDownloadSubDirectory(getDownloadDir(), data.getId());
+
+        // Create the new name of the datafile with the .nc extension (netCDF version of the file).
+        String netcdfFileName = FilenameUtils.removeExtension(data.getDataFileName()) + ".nc";
+        // Create the full path to the converted netCDF file in the download sub directory.
+        String ncFileToCreate = FilenameUtils.concat(filePathDownloadDir, netcdfFileName);
+
+        // The data file type uploaded by the user decides how it is converted to netCDF.
+        // TODO: remove hard coding and get these & converter file processors from DB.
+        switch(data.getDataFileType()) {
+            case "eTuff":
+
+                // Tag Universal File Format.
+                TagUniversalFileFormat tagUniversalFileFormat = new TagUniversalFileFormat();
+                tagUniversalFileFormat.parse(FilenameUtils.concat(filePathUploadDir, data.getDataFileName()));
+                tagUniversalFileFormat.convert(ncFileToCreate);
+
+            default:
+                // Custom file type, so we need to convert it here.
+                // INSERT CUSTOM FILE CONVERSION CODE HERE.
+        }
+
+        // Persists the netCDF file information (used for constructing download link).
+        data.setNetcdfFile(netcdfFileName);
+
+        // Create the template file for the user to download along with the netCDF file.
+        fileManager.writeDataObject(filePathDownloadDir, data);
+
+        // Update persisted data.
+        updatePersistedData(data);
+
+        return data;
+    }
 
     /**
      * Creates a unique id for the file name from the clients IP address and the date.
@@ -164,16 +202,6 @@ public class DataManagerImpl implements DataManager {
             communityAttributes.add(attributes);
         }
         return communityAttributes;
-    }
-
-    /**
-     * Sets the data access object (DAO) for the Community object which will acquire and persist
-     * the data passed to it via the methods of this DataManager.
-     *
-     * @param communityDao  The service DAO representing a Community object.
-     */
-    public void setCommunityDao(CommunityDao communityDao) {
-        this.communityDao = communityDao;
     }
 
     /**
@@ -326,10 +354,10 @@ public class DataManagerImpl implements DataManager {
      * @param id  The unique id associated with the file (a subdir in the uploads directory).
      * @param dataFileName  The file to parse.
      * @return  A JSON String of the file data parsed by line.
-     * @throws IOException  For any file I/O or JSON conversions problems.
+     * @throws RosettaFileException  For any file I/O or JSON conversions problems.
      */
     @Override
-    public String parseDataFileByLine(String id, String dataFileName) throws IOException {
+    public String parseDataFileByLine(String id, String dataFileName) throws RosettaFileException {
         String filePath = FilenameUtils.concat( FilenameUtils.concat(getUploadDir(), id), dataFileName);
         return fileManager.parseByLine(filePath);
     }
@@ -426,11 +454,10 @@ public class DataManagerImpl implements DataManager {
      *
      * @param id    The unique ID corresponding to already persisted data.
      * @param data  The Data object submitted by the user containing the uploaded file information.
-     * @throws IOException  If unable to write file(s) to disk.
-     * @throws RosettaDataException If a file conversion exception occurred.
+     * @throws RosettaFileException If unable to write file(s) to disk or a file conversion exception occurred.
      */
     @Override
-    public void processFileUpload(String id, Data data) throws IOException, RosettaDataException {
+    public void processFileUpload(String id, Data data) throws RosettaFileException {
 
         // Get the persisted data corresponding to this ID.
         Data persistedData = lookupPersistedDataById(id);
@@ -488,12 +515,10 @@ public class DataManagerImpl implements DataManager {
      *
      * @param id    The unique ID corresponding to already persisted data.
      * @param metadata  The Metadata object submitted by the user containing the general metadata information.
-     * @throws InvalidRangeException // If encounters an invalid range while converting file to netCDF.
-     * @throws IOException  // If unable to convert file to netCDF format.
      * @throws RosettaDataException  If unable to populate the metadata object.
      */
     @Override
-    public void processGeneralMetadata(String id, GeneralMetadata metadata) throws InvalidRangeException, IOException, RosettaDataException {
+    public void processGeneralMetadata(String id, GeneralMetadata metadata) throws RosettaDataException {
 
         // The placeholder for what we are going to return.
         String previousStep;
@@ -503,15 +528,6 @@ public class DataManagerImpl implements DataManager {
 
         // Persist the global metadata.
         metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(metadata, id));
-
-        // Convert the file to netCDF so we may persist its name.
-        String netcdfFile = convertManager.convertToNetCDF(persistedData);
-
-        // Persists the netCDF file information (name).
-        persistedData.setNetcdfFile(netcdfFile);
-
-        // Update persisted data.
-        updatePersistedData(persistedData);
     }
 
     /**
@@ -578,6 +594,16 @@ public class DataManagerImpl implements DataManager {
 
         // Persist the variable metadata.
         metadataManager.persistMetadata(metadataManager.parseVariableMetadata(data.getVariableMetadata(), id));
+    }
+
+    /**
+     * Sets the data access object (DAO) for the Community object which will acquire and persist
+     * the data passed to it via the methods of this DataManager.
+     *
+     * @param communityDao  The service DAO representing a Community object.
+     */
+    public void setCommunityDao(CommunityDao communityDao) {
+        this.communityDao = communityDao;
     }
 
     /**
