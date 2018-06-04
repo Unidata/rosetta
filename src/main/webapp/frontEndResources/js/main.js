@@ -232,49 +232,15 @@ $(document).ready(function ($) {
      * all required fields have data, so show next button.
      */
     $("input.required").change(function (){
-      console.log($(this));
+        if (metadataType === "general") {
+            if($("input#title").val() && $("input#description").val() && $("input#institution").val()) {
+                // remove disabled status for submit button.
+                $("input[type=submit]#Next").removeAttr("disabled");
+                // remove disabled class for submit button.
+                $("input[type=submit]#Next").removeClass("disabled");
+            }
+        }
 
-/*
-        if($("input#species_capture").val() &&
-           $("input#speciesTSN_capture").val() && 
-           $("input#length_type_capture").val() && 
-           $("input#length_method_capture").val() && 
-           $("input#condition_capture").val() &&
-           $("input#length_recapture").val() && 
-           $("input#length_unit_recapture").val() && 
-           $("input#length_type_recapture").val() && 
-           $("input#length_method_recapture").val() && 
-           $("input#attachment_method").val() && 
-           $("input#lon_release").val() && 
-           $("input#lat_release").val() && 
-           $("input#person_tagger_capture").val() && 
-           $("input#datetime_release").val() && 
-           $("input#device_type").val() && 
-           $("input#manufacturer").val() && 
-           $("input#model").val() && 
-           $("input#serial_number").val() && 
-           $("input#device_name").val() && 
-           $("input#person_owner").val() && 
-           $("input#owner_contact").val() && 
-           $("input#firmware").val() && 
-           $("input#end_details").val() && 
-           $("input#datetime_end").val() && 
-           $("input#lon_end").val() && 
-           $("input#lat_end").val() && 
-           $("input#end_type").val() && 
-           $("input#programming_software").val() && 
-           $("input#programming_report").val() && 
-           $("input#found_problem").val() && 
-           $("input#person_qc").val() && 
-           $("input#waypoints_source").val()
-        ) {
-            // remove disabled status for submit button.
-            $("input[type=submit]#Next").removeAttr("disabled");
-            // remove disabled class for submit button.
-            $("input[type=submit]#Next").removeClass("disabled");
-        } 
-
-        */
         // kludgy!
         if($("input#species_capture").val()){
         if($("input#speciesTSN_capture").val()){
@@ -317,26 +283,6 @@ $(document).ready(function ($) {
     });
 
 
-      function quickSave() {
-        $.post("QuickSave", getAllDataInSession(),
-            function (data) {
-                var info = JSON.parse(data);
-                var link = "fileDownload/" + info["uniqueId"] + "/" + info["fileName"];
-                // hidden iFrame method based on
-                // http://stackoverflow.com/questions/3749231/download-file-using-javascript-jquery/3749395#3749395
-                var hiddenIFrame = 'hiddenDownloadFrame',
-                       iframe = document.getElementById(hiddenIFrame);
-                if (iframe === null) {
-                    iframe = document.createElement('iframe');
-                    iframe.id = hiddenIFrame;
-                    iframe.style.display = 'none';
-                    document.body.appendChild(iframe);
-                 }
-                 iframe.src = link;
-               },
-           "text");
-        ;
-      }
 });
 
 
