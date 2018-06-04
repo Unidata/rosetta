@@ -119,33 +119,33 @@ public class ZipFileUtil {
 
         String zipFilePath = FilenameUtils.concat(uncompressed_dir, zipFileName);
 
-        logger.info("uncomepressed dir: "  + uncompressed_dir);
+       // logger.info("uncomepressed dir: "  + uncompressed_dir);
         String template = "";
         List<String> inventory = new ArrayList<>();
         try {
             ZipFile zipFile = new ZipFile(new File(zipFilePath));
-            logger.info("Files in " + zipFile.getName() + ":");
+         //   logger.info("Files in " + zipFile.getName() + ":");
             Enumeration<?> e = zipFile.entries();
             while (e.hasMoreElements()) {
                 ZipEntry zipEntry = (ZipEntry) e.nextElement();
 
                 String name = zipEntry.getName();
-                logger.info(" " + name);
+               // logger.info(" " + name);
 
                 Path filePath = Paths.get(uncompressed_dir, name);
                 File file = filePath.toFile();
-                logger.info("file: " + file.getName());
+               // logger.info("file: " + file.getName());
                 
                 if (name.endsWith("/")) {
-                    logger.info("name ends with /");
+                  //  logger.info("name ends with /");
                     file.mkdirs();
                     continue;
                 }
 
                 File parent = file.getParentFile();
-                logger.info("parent file: " + parent.getName());
+             //   logger.info("parent file: " + parent.getName());
                 if (parent != null) {
-                    logger.info("parent not null");
+                  //  logger.info("parent not null");
                     parent.mkdirs();
                 }
 
@@ -154,12 +154,12 @@ public class ZipFileUtil {
                 byte[] bytes = new byte[1024];
                 int length;
                 while ((length = inputStream.read(bytes)) >= 0) {
-                    logger.info("writing to outputstream");
+                  //  logger.info("writing to outputstream");
                     fileOutputStream.write(bytes, 0, length);
                 }
                 inputStream.close();
                 fileOutputStream.close();
-                logger.info("added to inventory: " + file.getAbsolutePath());
+               // logger.info("added to inventory: " + file.getAbsolutePath());
                 inventory.add(file.getAbsolutePath());
             }
             zipFile.close();
