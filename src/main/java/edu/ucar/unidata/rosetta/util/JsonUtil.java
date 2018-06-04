@@ -15,7 +15,10 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
+ * JSON conversion utilities.
  *
+ * @author sarms@ucar.edu
+ * @author oxelson@ucar.edu
  */
 public class JsonUtil {
 
@@ -31,6 +34,8 @@ public class JsonUtil {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(obj);
     }
+
+
 
 
 
