@@ -5,16 +5,14 @@ import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.resources.Community;
 import edu.ucar.unidata.rosetta.domain.resources.FileType;
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import ucar.ma2.InvalidRangeException;
 
 /**
@@ -24,7 +22,17 @@ import ucar.ma2.InvalidRangeException;
  */
 public interface DataManager {
 
-       /**
+    /**
+     * Converts the uploaded data file(s) to netCDF and writes a template for to aid in future conversions.
+     *
+     * @param data  The Data object representing the uploaded data file to convert.
+     * @return The updated data object containing the converted file information.
+     * @throws InvalidRangeException If unable to convert the data file to netCDF.
+     * @throws RosettaFileException If unable to create the template file from the Data object.
+     */
+    public Data convertToNetCDF(Data data) throws InvalidRangeException, RosettaFileException;
+
+    /**
      * Deletes the persisted data object information.
      *
      * @param id    The id of the Data object to delete.
@@ -151,9 +159,9 @@ public interface DataManager {
      * @param id  The unique id associated with the file (a subdir in the uploads directory).
      * @param dataFileName  The file to parse.
      * @return  A JSON String of the file data parsed by line.
-     * @throws IOException  For any file I/O or JSON conversions problems.
+     * @throws RosettaFileException  For any file I/O or JSON conversions problems.
      */
-    public String parseDataFileByLine(String id, String dataFileName) throws IOException;
+    public String parseDataFileByLine(String id, String dataFileName) throws RosettaFileException;
 
     /**
      * Persists the information in the given data object.
@@ -189,10 +197,9 @@ public interface DataManager {
      *
      * @param id    The unique ID corresponding to already persisted data.
      * @param data  The Data object submitted by the user containing the uploaded file information.
-     * @throws IOException  If unable to write file(s) to disk.
-     * @throws RosettaDataException If a file conversion exception occurred.
+     * @throws RosettaFileException If unable to write file(s) to disk or a file conversion exception occurred.
      */
-    public void processFileUpload(String id, Data data) throws IOException, RosettaDataException;
+    public void processFileUpload(String id, Data data) throws RosettaFileException;
 
     /**
      * Processes the data submitted by the user containing general metadata information.  Since this
@@ -201,11 +208,9 @@ public interface DataManager {
      *
      * @param id    The unique ID corresponding to already persisted data.
      * @param metadata  The Metadata object submitted by the user containing the general metadata information.
-     * @throws InvalidRangeException // If encounters an invalid range while converting file to netCDF.
-     * @throws IOException  // If unable to convert file to netCDF format.
      * @throws RosettaDataException  If unable to populate the metadata object.
      */
-    public void processGeneralMetadata(String id, GeneralMetadata metadata) throws InvalidRangeException, IOException, RosettaDataException;
+    public void processGeneralMetadata(String id, GeneralMetadata metadata) throws RosettaDataException;
 
     /**
      * Determines the next step in the wizard based the user specified data file type.
