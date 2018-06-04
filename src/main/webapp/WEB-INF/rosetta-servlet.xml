@@ -88,8 +88,6 @@
     <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.validators.FileValidator"/>
     <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean"
           init-method="init"/>
-    <bean id="netcdfFileManager" class="edu.ucar.unidata.rosetta.dsg.SingleStationTrajectory"/>
-    <bean id="convertManager" class="edu.ucar.unidata.rosetta.service.ConvertManagerImpl"/>
     <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.service.resources.EmbeddedDerbyDbInitManager"/>
 
     <!-- DAO injection -->
