@@ -6,6 +6,8 @@
     <html>
         <head>
             <title><spring:message code="global.title"/></title>
+            <link rel="shortcut icon" href="<c:out value="${baseUrl}" />/resources/img/logo/favicon.ico" type="image/x-icon" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <script>
                 var baseUrl = '<c:out value="${baseUrl}" />';
             </script>
@@ -73,6 +75,9 @@
                                             <%@ include file="/WEB-INF/views/jspf/oiipGeneralMetadata.jspf" %>
                                         </c:when>
                                          <c:otherwise>
+                                             <script>
+                                                 var metadataType = "general";
+                                             </script>
                                              <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
                                          </c:otherwise>
                                      </c:choose>
