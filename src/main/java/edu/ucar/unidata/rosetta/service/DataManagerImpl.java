@@ -78,6 +78,7 @@ public class DataManagerImpl implements DataManager {
             default:
                 // Custom file type, so we need to convert it here.
                 // INSERT CUSTOM FILE CONVERSION CODE HERE.
+                List<List<String>> parseFileData = fileManager.parseByDelimiterUsingStream(FilenameUtils.concat(filePathUploadDir, data.getDataFileName()),  Arrays.asList(data.getHeaderLineNumbers().split(",")), getDelimiterSymbol(data.getDelimiter()));
         }
 
         // Persists the netCDF file information (used for constructing download link).

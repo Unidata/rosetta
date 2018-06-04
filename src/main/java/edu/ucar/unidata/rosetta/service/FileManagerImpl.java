@@ -6,10 +6,14 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.util.*;
 
 import java.io.*;
-import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -135,9 +139,10 @@ public class FileManagerImpl implements FileManager {
         return headerData;
     }
 
+
     /**
-     * Creates a list of header lines (Strings) from the data file useful for AsciiFile
-     * (custom file type) for netCDF conversion.
+     * Creates a list of header lines (Strings) from the data file
+     * useful for custom file type for netCDF conversion.
      *
      * @param filePath  The path to the data file to parse.
      * @param headerLineList A list of the header lines.
@@ -178,6 +183,34 @@ public class FileManagerImpl implements FileManager {
                 lineCount++;
             }
         } catch (IOException e) {
+            throw new RosettaFileException("Unable to parse file by delimiter: " + e);
+        }
+        return parsedData;
+    }
+
+    /**
+     * Creates a list of header lines (Strings) using streams and lambdas from the data file
+     * useful for custom file type for netCDF conversion.
+     *
+     * @param filePath  The path to the data file to parse.
+     * @param headerLineList A list of the header lines.
+     * @param delimiter The delimiter to parse the non-header line data.
+     * @return  The parsed file data in List<List<String>> format (inner list is tokens of each line parsed by delimiter).
+     * @throws RosettaFileException  If unable to parse the file.
+     */
+    @Override
+    public List<List<String>> parseByDelimiterUsingStream(String filePath, List<String> headerLineList, String delimiter) throws RosettaFileException {
+
+        List<List<String>> parsedData = new ArrayList<>();
+
+        try (LineNumberReader lineNumberReader = new LineNumberReader(Files.newBufferedReader(Paths.get(filePath)))) {
+            lineNumberReader.lines() // Turns this into a Stream.
+                    .filter(StringUtils::isNotBlank)  // Filter out blank lines.
+                    .filter(line -> !headerLineList.contains(String.valueOf(lineNumberReader.getLineNumber() -1) )) // Filter out header lines.
+                    .map(line -> line.split(delimiter)) // Tokenize the line using provided delimiter.
+                    .forEach(tokenizedLineData -> parsedData.add(Arrays.asList(tokenizedLineData))); // Add tokenized line data to list.
+
+        } catch(IOException e) {
             throw new RosettaFileException("Unable to parse file by delimiter: " + e);
         }
         return parsedData;
