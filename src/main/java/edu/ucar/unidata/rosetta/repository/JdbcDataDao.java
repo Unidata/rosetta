@@ -91,8 +91,7 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 "noHeaderLines = ?, " +
                 "delimiter = ?, " +
                 "otherDelimiter = ?, " +
-                "netcdfFile = ?, " +
-                "template = ? " +
+                "netcdfFile = ? " +
                 "WHERE id = ?";
         int rowsAffected  = getJdbcTemplate().update(sql, new Object[] {
                 // order matters here
@@ -108,7 +107,6 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 data.getDelimiter(),
                 data.getOtherDelimiter(),
                 data.getNetcdfFile(),
-                data.getTemplate(),
                 data.getId()
         });
         if (rowsAffected  <= 0) {
@@ -166,7 +164,6 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
             data.setDelimiter(rs.getString("delimiter"));
             data.setOtherDelimiter(rs.getString("otherDelimiter"));
             data.setNetcdfFile(rs.getString("netcdfFile"));
-            data.setTemplate(rs.getString("template"));
             return data;
         }
     }
