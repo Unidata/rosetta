@@ -3,13 +3,16 @@ package edu.ucar.unidata.rosetta.domain;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import java.io.Serializable;
+import java.util.*;
+
 /**
  * A POJO to hold the data collected from the user in the Rosetta application
  * (acts as a form-backing-object).
  *
  * @author oxelson@ucar.edu
  */
-public class Data {
+public class Data implements Serializable {
 
     private String id;
     private String cfType;
@@ -29,7 +32,8 @@ public class Data {
     private String submit;
     private String variableMetadata;
     private String netcdfFile;
-    private String template;
+    private Locale decimalSeparatorLocale = Locale.ENGLISH;
+
 
     /**
      * Returns the unique id associated with this object.
@@ -242,13 +246,14 @@ public class Data {
     }
 
     /**
-     *  * Sets the header line numbers of the data file.
+     * Sets the header line numbers of the data file.
      *
      * @param headerLineNumbers The header line numbers.
      */
     public void setHeaderLineNumbers(String headerLineNumbers) {
         this.headerLineNumbers = headerLineNumbers;
     }
+
 
     /**
      * Returns the no leader lines value.
@@ -285,6 +290,7 @@ public class Data {
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
+
 
     /**
      * Returns the other data file delimiter.
@@ -340,20 +346,51 @@ public class Data {
         this.variableMetadata = variableMetadata;
     }
 
+    /**
+     * Returns the name of the converted netCDF file.
+     *
+     * @return  The name of the converted netCDF File.
+     */
     public String getNetcdfFile() {
         return netcdfFile;
     }
 
+    /**
+     * Sets the name of the converted netCDF file.
+     *
+     * @param netcdfFile The name of the converted netCDF File.
+     */
     public void setNetcdfFile(String netcdfFile) {
         this.netcdfFile = netcdfFile;
     }
 
-    public String getTemplate() {
-        return template;
+    /**
+     * Returns the Locale to use for the decimal separator.
+     * 
+     * @return The Locale.
+     */
+    public Locale getDecimalSeparatorLocale() {
+        return decimalSeparatorLocale;
     }
 
-    public void setTemplate(String template) {
-        this.template = template;
+    /**
+     * Sets the locale to FRENCH if "Comma" is given as input.
+     *
+     * Else it sets it to ENGLISH (for Point as separator), which is the
+     * default.
+     *
+     * @param decimalSeparator Text representation of the decimal separator to be used.
+     */
+    public void setDecimalSeparator(String decimalSeparator) {
+        switch (decimalSeparator) {
+            case "Comma":
+                this.decimalSeparatorLocale = Locale.FRENCH;
+                break;
+            case "Point":
+            default:
+                this.decimalSeparatorLocale = Locale.ENGLISH;
+                break;
+        }
     }
 
     /**
