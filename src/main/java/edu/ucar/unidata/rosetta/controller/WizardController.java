@@ -2,7 +2,7 @@ package edu.ucar.unidata.rosetta.controller;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.exceptions.*;
 import edu.ucar.unidata.rosetta.service.*;
 
 import java.io.IOException;
@@ -72,7 +72,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @return  View and the Model for the wizard to process.
      */
     @RequestMapping(value = "/cfType", method = RequestMethod.GET)
-    public ModelAndView displayCFTypeSelectionForm(Model model, HttpServletRequest request){
+    public ModelAndView displayCFTypeSelectionForm(Model model, HttpServletRequest request) {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -102,9 +102,11 @@ public class WizardController implements HandlerExceptionResolver {
      *
      * @param model  The Model object to be populated.
      * @return  View and the Model for the wizard to process.
+     * @throws InvalidRangeException If unable to convert the data file to netCDF.
+     * @throws RosettaFileException If unable to create the template file from the Data object.
      */
     @RequestMapping(value = "/convertAndDownload", method = RequestMethod.GET)
-    public ModelAndView displayConvertedFileDownloadPage(Model model, HttpServletRequest request) {
+    public ModelAndView displayConvertedFileDownloadPage(Model model, HttpServletRequest request) throws InvalidRangeException, RosettaFileException{
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -115,6 +117,9 @@ public class WizardController implements HandlerExceptionResolver {
 
         // Create a Data form-backing object.
         Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
+
+        // Convert the uploaded file to netCDF & create a template for future conversions.
+        data = dataManager.convertToNetCDF(data);
 
         // Add data object to Model.
         model.addAttribute("data", data);
@@ -131,9 +136,11 @@ public class WizardController implements HandlerExceptionResolver {
      *
      * @param model  The Model object to be populated.
      * @return  View and the Model for the wizard to process.
+     * @throws IllegalAccessException  If cookie is null.
+     * @throws RosettaFileException  For any file I/O or JSON conversions problems while parsing data.
      */
     @RequestMapping(value = "/customFileTypeAttributes", method = RequestMethod.GET)
-    public ModelAndView displayCustomFileTypeAttributesForm(Model model, HttpServletRequest request) throws IOException {
+    public ModelAndView displayCustomFileTypeAttributesForm(Model model, HttpServletRequest request) throws RosettaFileException, IllegalStateException {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -196,6 +203,7 @@ public class WizardController implements HandlerExceptionResolver {
      *
      * @param model  The Model object to be populated.
      * @return  View and the Model for the wizard to process.
+     * @throws RosettaDataException If unable to populate the GeneralMetadata object.
      */
     @RequestMapping(value = "/generalMetadata", method = RequestMethod.GET)
     public ModelAndView displayGeneralMetadataForm(Model model, HttpServletRequest request) throws RosettaDataException {
@@ -232,9 +240,10 @@ public class WizardController implements HandlerExceptionResolver {
      *
      * @param model  The Model object to be populated.
      * @return  View and the Model for the wizard to process.
+     * @throws RosettaFileException  For any file I/O or JSON conversions problems while parsing data.
      */
     @RequestMapping(value = "/variableMetadata", method = RequestMethod.GET)
-    public ModelAndView displayVariableMetadataForm(Model model, HttpServletRequest request) throws IOException {
+    public ModelAndView displayVariableMetadataForm(Model model, HttpServletRequest request) throws RosettaFileException {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -296,13 +305,10 @@ public class WizardController implements HandlerExceptionResolver {
      * this method is to capture if the user clicked the previous button, in which case they
      * are redirected back to general metadata collection step.
      *
-     * @param data      The form-backing object.
-     * @param model     The Model object to be populated by file upload data in the next step.
-     * @param request   HttpServletRequest needed to get the cookie.
-     * @return          Redirect to next step.
+     * @return  Redirect to previous step.
      */
     @RequestMapping(value = "/convertAndDownload", method = RequestMethod.POST)
-    public ModelAndView processConvertAndDownload(Data data, Model model, HttpServletRequest request) {
+    public ModelAndView processConvertAndDownload() {
         return new ModelAndView(new RedirectView("/generalMetadata", true));
     }
 
@@ -311,9 +317,9 @@ public class WizardController implements HandlerExceptionResolver {
      * Processes the submitted data and persists it to the database.  Redirects user to next
      * step or previous step depending on submitted form button (Next or Previous).
      *
-     * STEP 3 is only accessed/processed when the user uploads a 'custom' data file type (specified
+     * Thi sstep is only accessed/processed when the user uploads a 'custom' data file type (specified
      * during prior step).  Otherwise, if they upload a known data type, they are taken directly to
-     * STEP 4.
+     * general metadata collection step.
      *
      * @param data      The form-backing object.
      * @param result    The BindingResult for error handling.
@@ -351,9 +357,10 @@ public class WizardController implements HandlerExceptionResolver {
      * @param model     The Model object to be populated by file upload data in the next step.
      * @param request   HttpServletRequest needed to get the cookie.
      * @return          Redirect to next step.
+     * @throws RosettaFileException If unable to write file(s) to disk or a file conversion exception occurred.
      */
     @RequestMapping(value = "/fileUpload", method = RequestMethod.POST)
-    public ModelAndView processFileUpload(Data data, BindingResult result, Model model, HttpServletRequest request) throws IOException, RosettaDataException{
+    public ModelAndView processFileUpload(Data data, BindingResult result, Model model, HttpServletRequest request) throws RosettaFileException {
 
         // Take user back to the CF type selection step (and don't save any data to this step).
         if (data.getSubmit().equals("Previous"))
@@ -386,9 +393,10 @@ public class WizardController implements HandlerExceptionResolver {
      * @param model     The Model object to be populated by file upload data in the next step.
      * @param request   HttpServletRequest needed to get the cookie.
      * @return          Redirect to next step.
+     * @throws RosettaDataException  If unable to populate the metadata object.
      */
     @RequestMapping(value = "/generalMetadata", method = RequestMethod.POST)
-    public ModelAndView processGeneralMetadata(Data data, GeneralMetadata metadata, BindingResult result, Model model, HttpServletRequest request) throws RosettaDataException, IOException, InvalidRangeException {
+    public ModelAndView processGeneralMetadata(Data data, GeneralMetadata metadata, BindingResult result, Model model, HttpServletRequest request) throws RosettaDataException {
 
         // Get the cookie so we can get the persisted data.
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
