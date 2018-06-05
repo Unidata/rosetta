@@ -67,15 +67,13 @@ public class DataManagerImpl implements DataManager {
 
         // The data file type uploaded by the user decides how it is converted to netCDF.
         // TODO: remove hard coding and get these & converter file processors from DB.
-        switch(data.getDataFileType()) {
-            case "eTuff":
+        if(data.getDataFileType().equals("eTuff")) {
+            // Tag Universal File Format.
+            TagUniversalFileFormat tagUniversalFileFormat = new TagUniversalFileFormat();
+            tagUniversalFileFormat.parse(FilenameUtils.concat(filePathUploadDir, data.getDataFileName()));
+            tagUniversalFileFormat.convert(ncFileToCreate);
 
-                // Tag Universal File Format.
-                TagUniversalFileFormat tagUniversalFileFormat = new TagUniversalFileFormat();
-                tagUniversalFileFormat.parse(FilenameUtils.concat(filePathUploadDir, data.getDataFileName()));
-                tagUniversalFileFormat.convert(ncFileToCreate);
-
-            default:
+        } else {
                 // Custom file type, so we need to convert it here.
                 // INSERT CUSTOM FILE CONVERSION CODE HERE.
                 List<List<String>> parseFileData = fileManager.parseByDelimiterUsingStream(FilenameUtils.concat(filePathUploadDir, data.getDataFileName()),  Arrays.asList(data.getHeaderLineNumbers().split(",")), getDelimiterSymbol(data.getDelimiter()));
@@ -86,9 +84,13 @@ public class DataManagerImpl implements DataManager {
 
         // Create the template file for the user to download along with the netCDF file.
         fileManager.writeDataObject(filePathDownloadDir, data);
+        data.setTemplateFileName("rosetta.template");
 
         // Update persisted data.
         updatePersistedData(data);
+
+        // Zip it!
+        fileManager.compress(filePathDownloadDir, data.getDataFileName());
 
         return data;
     }
@@ -452,6 +454,7 @@ public class DataManagerImpl implements DataManager {
      * Processes the data submitted by the user containing uploaded file information.
      * Writes the uploaded files to disk. Updates the persisted data corresponding
      * to the provided unique ID with the uploaded file information.
+     * TODO: refactor to allow more than one data file for batch processing.
      *
      * @param id    The unique ID corresponding to already persisted data.
      * @param data  The Data object submitted by the user containing the uploaded file information.
@@ -468,12 +471,36 @@ public class DataManagerImpl implements DataManager {
             // Set the data file type.
             persistedData.setDataFileType(data.getDataFileType());
 
+            // Get the data file name as a lot of the following code keys off of it.
             String dataFileName = data.getDataFileName();
+
             // Write data file to disk.
             dataFileName = fileManager.writeUploadedFileToDisk(getUploadDir(), persistedData.getId(), dataFileName, data.getDataFile());
 
+
+            // May need to uncompress the uploaded data file(s) and handle them.
+            String dataFileNameExtension = FilenameUtils.getExtension(dataFileName);
+
             // Set the data file name.
             persistedData.setDataFileName(dataFileName);
+
+            // Is it a Zip file?
+            if (dataFileNameExtension.equals("zip")) {
+                // Unzip.
+                fileManager.uncompress(getUploadDir(), persistedData.getId(), dataFileName);
+                // Get the zip file contents inventory
+                List<String> inventory = fileManager.getInventoryData( FilenameUtils.concat(getUploadDir(), persistedData.getId()));
+                // Looks at the inventory contents and assign to the data object accordingly.
+                for (String entry : inventory) {
+                    if (entry.contains("rosetta.template"))
+                        // Template file.
+                        persistedData.setTemplateFileName(entry);
+                    else
+                        // Data file.
+                        persistedData.setDataFileName(entry);
+                }
+            }
+
         } else {
             persistedData.setDataFileType(data.getDataFileType());
         }

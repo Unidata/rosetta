@@ -9,11 +9,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,11 +31,23 @@ public class FileManagerImpl implements FileManager {
 
     private static final Logger logger = Logger.getLogger(FileManagerImpl.class);
 
+
+    /**
+     * Compresses the contents of a directory.
+     *
+     * @param directoryToCompress  The path to the directory to compress.
+     * @param fileName  The name of the compressed file.
+     * @throws RosettaFileException If unable to compress the contents of the directory.
+     */
+    public void compress(String directoryToCompress, String fileName) throws RosettaFileException {
+        ZipFileUtil.zip(directoryToCompress, FilenameUtils.removeExtension(fileName));
+    }
+
     /**
      * Converts .xls and .xlsx files to .csv files.
      *
      * @param uploadDirPath The path to the uploads directory.
-     * @param id        The unique id associated with the file (a subdir in the uploads directory).
+     * @param id        The unique id associated with the file (a subdirectory in the uploads directory).
      * @param fileName  The name of the .xls or .xlsx file to convert.
      * @return  The name of the converted .csv file.
      * @throws RosettaFileException If unable to convert xls/xlsx file to csv.
@@ -67,21 +77,44 @@ public class FileManagerImpl implements FileManager {
      *
      * @param downloadDir   The path to the Rosetta download directory.
      * @param id    The unique ID that will become the name of the subdirectory.
-     * @return  The full path name to the created download sub directory.
-     * @throws RosettaFileException  If unable to create download sub directory.
+     * @return  The full path name to the created download subdirectory.
+     * @throws RosettaFileException  If unable to create download subdirectory.
      */
     public String createDownloadSubDirectory(String downloadDir, String id) throws RosettaFileException {
         String filePathDownloadDir = FilenameUtils.concat(downloadDir, id);
 
-        // File-ize the download sub directory.
+        // File-ize the download subdirectory.
         File localFileDir = new File(filePathDownloadDir);
 
-        // Check to see if the download sub dir has been created yet; if not, create it.
+        // Check to see if the download subdirectory has been created yet; if not, create it.
         if (!localFileDir.exists())
             if (!localFileDir.mkdirs())
                 throw new RosettaFileException("Unable to create " + id + " subdirectory in download directory.");
 
         return filePathDownloadDir;
+    }
+
+    /**
+     * Creates a subdirectory in the Rosetta upload directory with the name of the provided
+     * unique ID, into which uploaded files with be stashed.
+     *
+     * @param uploadDir   The path to the Rosetta upload directory.
+     * @param id    The unique ID that will become the name of the subdirectory.
+     * @return  The full path name to the created upload subdirectory.
+     * @throws RosettaFileException  If unable to create upload subdirectory.
+     */
+    public String createUploadSubDirectory(String uploadDir, String id) throws RosettaFileException {
+        String filePathUploadDir = FilenameUtils.concat(uploadDir, id);
+
+        // File-ize the upload subdirectory.
+        File localFileDir = new File(filePathUploadDir);
+
+        // Check to see if the upload subdirectory has been created yet; if not, create it.
+        if (!localFileDir.exists())
+            if (!localFileDir.mkdirs())
+                throw new RosettaFileException("Unable to create " + id + " subdirectory in upload directory.");
+
+        return filePathUploadDir;
     }
 
 
@@ -137,6 +170,17 @@ public class FileManagerImpl implements FileManager {
             throw new RosettaFileException("Unable to find header lines from file: " + e);
         }
         return headerData;
+    }
+
+    /**
+     * Retrieves the contents of a compressed file's inventory.
+     *
+     * @param filePath  The path to the inventory file.
+     * @return  The compressed file contents.
+     * @throws RosettaFileException If unable to get the inventory contents.
+     */
+    public List<String> getInventoryData(String filePath) throws RosettaFileException {
+        return ZipFileUtil.getInventory(filePath);
     }
 
 
@@ -252,13 +296,25 @@ public class FileManagerImpl implements FileManager {
      */
     public Data readDataObject(String filePathUploadDir) throws RosettaFileException {
         Data data;
-        String template = FilenameUtils.concat(filePathUploadDir, "template.dat");
+        String template = FilenameUtils.concat(filePathUploadDir, "rosetta.template");
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(template))) {
             data = (Data) objectInputStream.readObject();
         } catch (IOException| ClassNotFoundException | SecurityException e) {
             throw new RosettaFileException("Unable to write Data object: " + e);
         }
         return data;
+    }
+
+    /**
+     * Uncompresses the provided file into the given directory.
+     *
+     * @param uploadDirPath The path to the uploads directory.
+     * @param id        The unique id associated with the file (a subdirectory in the uploads directory).
+     * @param fileName  The data file to uncompress.
+     * @throws RosettaFileException If unable to uncompress data file.
+     */
+    public void uncompress(String uploadDirPath, String id, String fileName) throws RosettaFileException {
+        ZipFileUtil.unZip(fileName, FilenameUtils.concat(uploadDirPath, id));
     }
 
     /**
@@ -270,7 +326,7 @@ public class FileManagerImpl implements FileManager {
      */
     public void writeDataObject(String filePathDownloadDir, Data data) throws RosettaFileException {
 
-        String downloadableTemplate = FilenameUtils.concat(filePathDownloadDir, "template.dat");
+        String downloadableTemplate = FilenameUtils.concat(filePathDownloadDir, "rosetta.template");
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(downloadableTemplate))) {
             objectOutputStream.writeObject(data);
         } catch (IOException | SecurityException e) {
@@ -283,10 +339,10 @@ public class FileManagerImpl implements FileManager {
      * and writes the given file to the uploads subdirectory.
      *
      * @param uploadDirPath The path to the uploads directory.
-     * @param id        The unique id associated with the file (a subdir in the uploads directory).
+     * @param id        The unique id associated with the file (a subdirectory in the uploads directory).
      * @param fileName  The name of the file to save to disk.
      * @param file      The CommonsMultipartFile to save to disk.
-     * @return fileName The name of the saved file on disk (can be different than the downloaded file).
+     * @return The name of the saved file on disk (can be different than the downloaded file).
      * @throws SecurityException  If unable to write file to disk because of a JVM security manager violation.
      * @throws RosettaFileException  If unable to write file to disk.
      * @throws RosettaFileException  If a file conversion exception occurred.
@@ -294,15 +350,11 @@ public class FileManagerImpl implements FileManager {
     @Override
     public String writeUploadedFileToDisk(String uploadDirPath, String id, String fileName, CommonsMultipartFile file) throws RosettaFileException {
 
-        String filePath = FilenameUtils.concat(uploadDirPath, id);
-        File localFileDir = new File(filePath);
-
-        if (!localFileDir.exists())
-            if (!localFileDir.mkdirs())
-                throw new RosettaFileException("Unable to create " + id + " subdirectory in uploads directory.");
+        // Create full file path to upload subdirectory.
+        String filePathUploadDir = createUploadSubDirectory(uploadDirPath, id);
 
         logger.info("Writing uploaded file " + fileName + " to disk");
-        File uploadedFile = new File(FilenameUtils.concat(filePath, fileName));
+        File uploadedFile = new File(FilenameUtils.concat(filePathUploadDir, fileName));
 
         try (FileOutputStream outputStream = new FileOutputStream(uploadedFile)) {
             outputStream.write(file.getFileItem().get());
@@ -313,20 +365,10 @@ public class FileManagerImpl implements FileManager {
         // May need to process the uploaded file depending on its type (.zip, excel file, etc.).
         String dataFileNameExtension = FilenameUtils.getExtension(fileName);
 
-        // Is it a Zip file?
-        if (dataFileNameExtension.equals("zip")) {
-            List<String> inventory = unZip(uploadDirPath, id, fileName);
-        }
-
         // If the uploaded file was .xls or .xlsx, convert it to .csv
         if (dataFileNameExtension.equals("xls") || dataFileNameExtension.equals("xlsx"))
             fileName = convertToCSV(uploadDirPath, id, fileName);
 
         return fileName;
-    }
-
-    private List<String> unZip(String uploadDirPath, String id, String fileName) {
-        return ZipFileUtil.unzipAndInventory(fileName, FilenameUtils.concat(uploadDirPath, id));
-
     }
 }

@@ -5,7 +5,6 @@ import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.exceptions.*;
 import edu.ucar.unidata.rosetta.service.*;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -40,13 +39,17 @@ import ucar.ma2.InvalidRangeException;
 @Controller
 public class WizardController implements HandlerExceptionResolver {
 
-    protected static Logger logger = Logger.getLogger(WizardController.class);
+    private static final Logger logger = Logger.getLogger(WizardController.class);
 
-    @Autowired
-    ServletContext servletContext;
+    private final ServletContext servletContext;
 
     @Resource(name = "dataManager")
     private DataManager dataManager;
+
+    @Autowired
+    public WizardController(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
     // Validators
     /*
@@ -136,7 +139,7 @@ public class WizardController implements HandlerExceptionResolver {
      *
      * @param model  The Model object to be populated.
      * @return  View and the Model for the wizard to process.
-     * @throws IllegalAccessException  If cookie is null.
+     * @throws IllegalStateException  If cookie is null.
      * @throws RosettaFileException  For any file I/O or JSON conversions problems while parsing data.
      */
     @RequestMapping(value = "/customFileTypeAttributes", method = RequestMethod.GET)
@@ -171,6 +174,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @param model  The Model object to be populated.
      * @param request   HttpServletRequest needed to get the cookie.
      * @return  View and the Model for the wizard to process.
+     * @throws IllegalStateException  If cookie is null.
      */
     @RequestMapping(value = "/fileUpload", method = RequestMethod.GET)
     public ModelAndView displayFileUploadForm(Model model, HttpServletRequest request) {
@@ -204,6 +208,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @param model  The Model object to be populated.
      * @return  View and the Model for the wizard to process.
      * @throws RosettaDataException If unable to populate the GeneralMetadata object.
+     * @throws IllegalStateException  If cookie is null.
      */
     @RequestMapping(value = "/generalMetadata", method = RequestMethod.GET)
     public ModelAndView displayGeneralMetadataForm(Model model, HttpServletRequest request) throws RosettaDataException {
@@ -240,6 +245,7 @@ public class WizardController implements HandlerExceptionResolver {
      *
      * @param model  The Model object to be populated.
      * @return  View and the Model for the wizard to process.
+     * @throws IllegalStateException  If cookie is null.
      * @throws RosettaFileException  For any file I/O or JSON conversions problems while parsing data.
      */
     @RequestMapping(value = "/variableMetadata", method = RequestMethod.GET)
@@ -317,7 +323,7 @@ public class WizardController implements HandlerExceptionResolver {
      * Processes the submitted data and persists it to the database.  Redirects user to next
      * step or previous step depending on submitted form button (Next or Previous).
      *
-     * Thi sstep is only accessed/processed when the user uploads a 'custom' data file type (specified
+     * This step is only accessed/processed when the user uploads a 'custom' data file type (specified
      * during prior step).  Otherwise, if they upload a known data type, they are taken directly to
      * general metadata collection step.
      *
@@ -326,6 +332,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @param model     The Model object to be populated by file upload data in the next step.
      * @param request   HttpServletRequest needed to get the cookie.
      * @return          Redirect to next step.
+     * @throws IllegalStateException  If cookie is null.
      */
     @RequestMapping(value = "/customFileTypeAttributes", method = RequestMethod.POST)
     public ModelAndView processCustomFileTypeAttributes(Data data, BindingResult result, Model model, HttpServletRequest request) {
@@ -357,6 +364,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @param model     The Model object to be populated by file upload data in the next step.
      * @param request   HttpServletRequest needed to get the cookie.
      * @return          Redirect to next step.
+     * @throws IllegalStateException  If cookie is null.
      * @throws RosettaFileException If unable to write file(s) to disk or a file conversion exception occurred.
      */
     @RequestMapping(value = "/fileUpload", method = RequestMethod.POST)
@@ -393,6 +401,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @param model     The Model object to be populated by file upload data in the next step.
      * @param request   HttpServletRequest needed to get the cookie.
      * @return          Redirect to next step.
+     * @throws IllegalStateException  If cookie is null.
      * @throws RosettaDataException  If unable to populate the metadata object.
      */
     @RequestMapping(value = "/generalMetadata", method = RequestMethod.POST)
@@ -428,6 +437,7 @@ public class WizardController implements HandlerExceptionResolver {
      * @param model     The Model object to be populated by file upload data in the next step.
      * @param request   HttpServletRequest needed to get the cookie.
      * @return          Redirect to next step.
+     * @throws IllegalStateException  If cookie is null.
      */
     @RequestMapping(value = "/variableMetadata", method = RequestMethod.POST)
     public ModelAndView processVariableMetadata(Data data, BindingResult result, Model model, HttpServletRequest request) {
@@ -462,7 +472,7 @@ public class WizardController implements HandlerExceptionResolver {
     @Override
     public ModelAndView resolveException(HttpServletRequest arg0,
                                          HttpServletResponse arg1, Object arg2, Exception exception) {
-        String message = "";
+        String message;
         if (exception instanceof MaxUploadSizeExceededException) {
             // this value is declared in the /WEB-INF/rosetta-servlet.xml file
             // (we can move it elsewhere for convenience)
@@ -478,10 +488,9 @@ public class WizardController implements HandlerExceptionResolver {
         }
         // log it
         logger.error(message);
-        Map<String, Object> model = new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<>();
         model.put("message", message);
-        ModelAndView modelAndView = new ModelAndView("fatalError", model);
-        return modelAndView;
+        return new ModelAndView("fatalError", model);
     }
 
 }
