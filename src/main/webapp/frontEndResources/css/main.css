@@ -37,7 +37,7 @@ a[href$='.nc'] {
 a[href$='.template'] {
     padding-left: 18px;
     line-height: 18px;
-    background: transparent url('../img/logo/rosetta-12x12.png') center left no-repeat;
+    background: transparent url('../img/icon/rosetta-12x12.png') center left no-repeat;
 }
 
 main {
