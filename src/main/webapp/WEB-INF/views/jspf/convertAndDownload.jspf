@@ -4,6 +4,10 @@
     <c:if test="${not empty data.netcdfFile}">
         NetCDF File: <a href="${baseUrl}/download/${data.id}/${data.netcdfFile}">${data.netcdfFile}</a>
     </c:if>
+    <c:if test="${not empty data.templateFileName}">
+        <br>
+        Rosetta Template File: <a href="${baseUrl}/download/${data.id}/${data.templateFileName}">${data.templateFileName}</a>
+    </c:if>
 </ul>
 
 
