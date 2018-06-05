@@ -72,6 +72,9 @@
                                  <c:when test="${currentStep eq 'generalMetadata'}">
                                      <c:choose>
                                         <c:when test="${not empty data.platform && data.platform eq 'eTag'}">
+                                            <script>
+                                                var metadataType = "oiip";
+                                            </script>
                                             <%@ include file="/WEB-INF/views/jspf/oiipGeneralMetadata.jspf" %>
                                         </c:when>
                                          <c:otherwise>
