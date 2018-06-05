@@ -76,7 +76,7 @@ public class XlsToCsvUtil {
                         if (row.length > 0) {
                             Boolean rowIsEmpty = Boolean.TRUE;
                             Boolean skipFirstComma = Boolean.FALSE;
-                           contents = getCellContents(row[0]);
+                            contents = getCellContents(row[0]);
                             if (!contents.equals("")) {
                                 rowIsEmpty = Boolean.FALSE;
                                 bw.write(contents);
