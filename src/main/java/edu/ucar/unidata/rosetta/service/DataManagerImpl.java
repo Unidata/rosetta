@@ -77,6 +77,11 @@ public class DataManagerImpl implements DataManager {
                 // Custom file type, so we need to convert it here.
                 // INSERT CUSTOM FILE CONVERSION CODE HERE.
                 List<List<String>> parseFileData = fileManager.parseByDelimiterUsingStream(FilenameUtils.concat(filePathUploadDir, data.getDataFileName()),  Arrays.asList(data.getHeaderLineNumbers().split(",")), getDelimiterSymbol(data.getDelimiter()));
+                for (List<String> stringList : parseFileData) {
+                    for (String s : stringList) {
+                        logger.info(s);
+                    }
+                }
         }
 
         // Persists the netCDF file information (used for constructing download link).
@@ -86,11 +91,14 @@ public class DataManagerImpl implements DataManager {
         fileManager.writeDataObject(filePathDownloadDir, data);
         data.setTemplateFileName("rosetta.template");
 
+        // Zip it!
+        String dataFileName = data.getDataFileName();
+        fileManager.compress(filePathDownloadDir, dataFileName);
+        String zipFileName = FilenameUtils.removeExtension(dataFileName);
+        data.setZip(FilenameUtils.getName(zipFileName));
+
         // Update persisted data.
         updatePersistedData(data);
-
-        // Zip it!
-        fileManager.compress(filePathDownloadDir, data.getDataFileName());
 
         return data;
     }
@@ -477,7 +485,6 @@ public class DataManagerImpl implements DataManager {
             // Write data file to disk.
             dataFileName = fileManager.writeUploadedFileToDisk(getUploadDir(), persistedData.getId(), dataFileName, data.getDataFile());
 
-
             // May need to uncompress the uploaded data file(s) and handle them.
             String dataFileNameExtension = FilenameUtils.getExtension(dataFileName);
 
@@ -485,23 +492,10 @@ public class DataManagerImpl implements DataManager {
             persistedData.setDataFileName(dataFileName);
 
             // Is it a Zip file?
-            if (dataFileNameExtension.equals("zip")) {
-                // Unzip.
-                fileManager.uncompress(getUploadDir(), persistedData.getId(), dataFileName);
-                // Get the zip file contents inventory
-                List<String> inventory = fileManager.getInventoryData( FilenameUtils.concat(getUploadDir(), persistedData.getId()));
-                // Looks at the inventory contents and assign to the data object accordingly.
-                for (String entry : inventory) {
-                    if (entry.contains("rosetta.template"))
-                        // Template file.
-                        persistedData.setTemplateFileName(entry);
-                    else
-                        // Data file.
-                        persistedData.setDataFileName(entry);
-                }
-            }
+            if (dataFileNameExtension.equals("zip"))
+                uncompress(persistedData,dataFileName);
 
-        } else {
+            } else {
             persistedData.setDataFileType(data.getDataFileType());
         }
 
@@ -672,6 +666,30 @@ public class DataManagerImpl implements DataManager {
      */
     public void setPropertiesDao(PropertiesDao propertiesDao) {
         this.propertiesDao = propertiesDao;
+    }
+
+    /**
+     * Uncompresses a compressed file, looks at the inventory of that file and updates the
+     * persisted data information based on the file contents.
+     *
+     * @param data The Data object containing the relevant data needed for the uncompression.
+     * @param dataFileName  The data file name to uncompress.
+     * @throws RosettaFileException If unable to uncompress data file.
+     */
+    private void uncompress(Data data, String dataFileName) throws RosettaFileException {
+        // Unzip.
+        fileManager.uncompress(getUploadDir(), data.getId(), dataFileName);
+        // Get the zip file contents inventory
+        List<String> inventory = fileManager.getInventoryData(FilenameUtils.concat(getUploadDir(), data.getId()));
+        // Looks at the inventory contents and assign to the data object accordingly.
+        for (String entry : inventory) {
+            if (entry.contains("rosetta.template"))
+                // Template file.
+                data.setTemplateFileName(entry);
+            else
+                // Data file.
+                data.setDataFileName(entry);
+        }
     }
 
     /**

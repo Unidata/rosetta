@@ -18,7 +18,6 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import ucar.unidata.util.StringUtil2;
 
 /**
  * Utility class for zip file manipulation. Method code taken from the following and modified:
@@ -46,24 +45,27 @@ public class ZipFileUtil {
         if (directoryToZip.list() == null)
             throw new RosettaFileException("No data in directory " + pathToDir + " to zip.");
 
-        ArrayList<String> dirContents = new ArrayList<String>(Arrays.asList(directoryToZip.list()));
+        ArrayList<String> dirContents = new ArrayList<>(Arrays.asList(directoryToZip.list()));
 
         FileInputStream inStream;
         byte[] buffer = new byte[1024];
         int bytesRead;
+
+        // Construct zip file name and path.
+        zipFileName = FilenameUtils.getName(zipFileName);
         zipFileName = zipFileName.replace("file://", "");
         zipFileName = FilenameUtils.concat(pathToDir, zipFileName + ".zip");
+        File zipFile = new File(zipFileName);
 
         // Create input and output streams.
-        try (ZipOutputStream outStream = new ZipOutputStream(new FileOutputStream(zipFileName))) {
-
+        try (ZipOutputStream outStream = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            logger.info("Zipping contents of " + directoryToZip);
             for (String inputFile : dirContents) {
                 inStream = new FileInputStream(FilenameUtils.concat(pathToDir, inputFile));
                 String filenameInZip = FilenameUtils.getName(inputFile);
                 //if (!pathToDir.equals(""))
                 //    filenameInZip = pathToDir + "/" + filenameInZip;
 
-                logger.info("ZIP: " + filenameInZip);
                 // Add a zip entry to the output stream.
                 outStream.putNextEntry(new ZipEntry(filenameInZip));
 
