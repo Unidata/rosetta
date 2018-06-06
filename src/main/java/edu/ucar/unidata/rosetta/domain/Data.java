@@ -32,6 +32,7 @@ public class Data implements Serializable {
     private String submit;
     private String variableMetadata;
     private String netcdfFile;
+    private String zip;
     private Locale decimalSeparatorLocale = Locale.ENGLISH;
 
 
@@ -362,6 +363,24 @@ public class Data implements Serializable {
      */
     public void setNetcdfFile(String netcdfFile) {
         this.netcdfFile = netcdfFile;
+    }
+
+    /**
+     * Returns the name of the zip file.
+     *
+     * @return  The name of the zip File.
+     */
+    public String getZip() {
+        return zip;
+    }
+
+    /**
+     * Sets the name of the zip file.
+     *
+     * @param zip The name of the zip File.
+     */
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 
     /**
