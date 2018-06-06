@@ -24,6 +24,89 @@ public class MetadataManagerTest {
     private Metadata metadata2;
     private GeneralMetadata generalMetadata;
 
+    @Test(expected = DataRetrievalFailureException.class)
+    public void deleteMetadataByIdTest() throws Exception {
+        metadataManager.deletePersistedMetadata("000000345HDV4");
+        metadataManager.lookupPersistedMetadata("000000345HDV4");
+    }
+
+    @Test(expected = DataRetrievalFailureException.class)
+    public void deleteMetadataByIdAndTypeTest() throws Exception {
+        metadataManager.deletePersistedMetadata("000000345HDV4", "general");
+        metadataManager.lookupPersistedMetadata("000000345HDV4");
+    }
+
+    @Test
+    public void getMetadataStringForClientTest() throws Exception {
+        String metadata = metadataManager.getMetadataStringForClient("000000345HDV4", "general");
+        assertEquals(metadata, "variableName0<>year");
+    }
+
+    @Test
+    public void getStringFromParsedVariableMetadataTest() throws Exception {
+        String metadata = metadataManager.getStringFromParsedVariableMetadata(Arrays.asList(metadata1, metadata2));
+        assertEquals(metadata, "variableName0<>year");
+    }
+
+
+    @Test
+    public void lookupMetadataByIdTest() throws Exception {
+        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4");
+        assertTrue(persistedMetadata.size() == 2);
+        for (Metadata metadata : persistedMetadata) {
+            assertEquals(metadata.getMetadataKey(), "temp");
+        }
+    }
+
+    @Test
+    public void lookupMetadataByIdAndTypeTest() throws Exception {
+        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4", "general");
+        assertTrue(persistedMetadata.size() == 1);
+        Metadata metadata = persistedMetadata.get(0);
+        assertEquals(metadata.getMetadataValue(), "degrees C");
+    }
+
+    @Test
+    public void mockCreationTest() throws Exception {
+        assertNotNull(metadataManager);
+        assertNotNull(metadata1);
+        assertNotNull(metadataDao);
+        assertNotNull(generalMetadata);
+    }
+
+    @Test
+    public void parseGeneralMetadataTest() throws Exception {
+        List<Metadata> parsedMetadata =  metadataManager.parseGeneralMetadata(generalMetadata, "000000345HDV4");
+        assertTrue(parsedMetadata.size() == 2);
+    }
+
+    @Test
+    public void parseVariableMetadataTest() throws Exception {
+        List<Metadata> parsedMetadata = metadataManager.parseVariableMetadata("variableName0<>year", "000000345HDV4");
+        assertTrue(parsedMetadata.size() == 2);
+        for (Metadata metadata : parsedMetadata) {
+            assertEquals(metadata.getMetadataKey(), "temp");
+        }
+    }
+
+    @Test
+    public void persistMetadataObjectListTest() throws Exception {
+        metadataManager.persistMetadata(Arrays.asList(metadata1, metadata2));
+        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4");
+        assertTrue(persistedMetadata.size() == 2);
+        for (Metadata metadata : persistedMetadata) {
+            assertEquals(metadata.getMetadataKey(), "temp");
+        }
+    }
+
+    @Test
+    public void persistMetadataObjectTest() throws Exception {
+        metadataManager.persistMetadata(metadata1);
+        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4", "general");
+        Metadata metadata = persistedMetadata.get(0);
+        assertEquals(metadata.getMetadataValue(), "degrees C");
+    }
+
     @Before
     public void setUp() throws Exception {
         metadataManager = mock(MetadataManagerImpl.class);
@@ -53,48 +136,6 @@ public class MetadataManagerTest {
         when(metadataManager.parseGeneralMetadata(generalMetadata, "000000345HDV4")).thenReturn(Arrays.asList(metadata1, metadata2));
     }
 
-    @Test
-    public void mockCreationTest() throws Exception {
-        assertNotNull(metadataManager);
-        assertNotNull(metadata1);
-        assertNotNull(metadataDao);
-        assertNotNull(generalMetadata);
-    }
-
-    @Test
-    public void lookupMetadataByIdTest() throws Exception {
-        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4");
-        assertTrue(persistedMetadata.size() == 2);
-        for (Metadata metadata : persistedMetadata) {
-            assertEquals(metadata.getMetadataKey(), "temp");
-        }
-    }
-
-    @Test
-    public void lookupMetadataByIdAndTypeTest() throws Exception {
-        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4", "general");
-        assertTrue(persistedMetadata.size() == 1);
-        Metadata metadata = persistedMetadata.get(0);
-        assertEquals(metadata.getMetadataValue(), "degrees C");
-    }
-
-    @Test
-    public void persistMetadataObjectListTest() throws Exception {
-        metadataManager.persistMetadata(Arrays.asList(metadata1, metadata2));
-        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4");
-        assertTrue(persistedMetadata.size() == 2);
-        for (Metadata metadata : persistedMetadata) {
-            assertEquals(metadata.getMetadataKey(), "temp");
-        }
-    }
-
-    @Test
-    public void persistMetadataObjectTest() throws Exception {
-        metadataManager.persistMetadata(metadata1);
-        List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4", "general");
-        Metadata metadata = persistedMetadata.get(0);
-        assertEquals(metadata.getMetadataValue(), "degrees C");
-    }
 
     @Test
     public void updateMetadataObjectListTest() throws Exception {
@@ -112,44 +153,5 @@ public class MetadataManagerTest {
         metadataManager.updatePersistedMetadata(metadata1);
         List<Metadata> persistedMetadata = metadataManager.lookupPersistedMetadata("000000345HDV4", "general");
         assertEquals(persistedMetadata.get(0).getMetadataValue(), "degrees F");
-    }
-
-    @Test(expected = DataRetrievalFailureException.class)
-    public void deleteMetadataByIdTest() throws Exception {
-        metadataManager.deletePersistedMetadata("000000345HDV4");
-        metadataManager.lookupPersistedMetadata("000000345HDV4");
-    }
-
-    @Test(expected = DataRetrievalFailureException.class)
-    public void deleteMetadataByIdAndTypeTest() throws Exception {
-        metadataManager.deletePersistedMetadata("000000345HDV4", "general");
-        metadataManager.lookupPersistedMetadata("000000345HDV4");
-    }
-
-    @Test
-    public void parseVariableMetadataTest() throws Exception {
-        List<Metadata> parsedMetadata = metadataManager.parseVariableMetadata("variableName0<>year", "000000345HDV4");
-        assertTrue(parsedMetadata.size() == 2);
-        for (Metadata metadata : parsedMetadata) {
-            assertEquals(metadata.getMetadataKey(), "temp");
-        }
-    }
-
-    @Test
-    public void getStringFromParsedVariableMetadataTest() throws Exception {
-        String metadata = metadataManager.getStringFromParsedVariableMetadata(Arrays.asList(metadata1, metadata2));
-        assertEquals(metadata, "variableName0<>year");
-    }
-
-    @Test
-    public void getMetadataStringForClientTest() throws Exception {
-        String metadata = metadataManager.getMetadataStringForClient("000000345HDV4", "general");
-        assertEquals(metadata, "variableName0<>year");
-    }
-
-    @Test
-    public void parseGeneralMetadataTest() throws Exception {
-        List<Metadata> parsedMetadata =  metadataManager.parseGeneralMetadata(generalMetadata, "000000345HDV4");
-        assertTrue(parsedMetadata.size() == 2);
     }
 }

@@ -14,7 +14,32 @@ public class DataDaoTest {
 
     private JdbcDataDao dataDao;
     private Data data;
-    
+
+    @Test(expected = DataRetrievalFailureException.class)
+    public void deletePersistedDataTest() throws Exception {
+        dataDao.deletePersistedData("000000345HDV4");
+        dataDao.lookupById("000000345HDV4");
+    }
+
+    @Test
+    public void lookupByIdTest() throws Exception {
+        Data persistedData = dataDao.lookupById("000000345HDV4");
+        assertEquals(persistedData.getCfType(), "trajectory");
+    }
+
+    @Test
+    public void mockCreationTest() throws Exception {
+        assertNotNull(data);
+        assertNotNull(dataDao);
+    }
+
+    @Test
+    public void persistDataTest() throws Exception {
+        dataDao.persistData(data);
+        Data persistedData = dataDao.lookupById("000000345HDV4");
+        assertEquals(persistedData.getCfType(), "trajectory");
+    }
+
     @Before
     public void setUp() throws Exception {
         dataDao = mock(JdbcDataDao.class);
@@ -29,36 +54,10 @@ public class DataDaoTest {
     }
 
     @Test
-    public void mockCreationTest() throws Exception {
-        assertNotNull(data);
-        assertNotNull(dataDao);
-    }
-    
-    
-    @Test
-    public void lookupByIdTest() throws Exception {
-        Data persistedData = dataDao.lookupById("000000345HDV4");
-        assertEquals(persistedData.getCfType(), "trajectory");
-    }
-
-    @Test
-    public void persistDataTest() throws Exception {
-        dataDao.persistData(data);
-        Data persistedData = dataDao.lookupById("000000345HDV4");
-        assertEquals(persistedData.getCfType(), "trajectory");
-    }
-
-    @Test
     public void updatePersistedDataTest() throws Exception {
         data.setCfType("profile"); // Update data cfType.
         dataDao.updatePersistedData(data);
         Data persistedData = dataDao.lookupById("000000345HDV4");
         assertEquals(persistedData.getCfType(), "profile");
-    }
-
-    @Test(expected = DataRetrievalFailureException.class)
-    public void deletePersistedDataTest() throws Exception {
-        dataDao.deletePersistedData("000000345HDV4");
-        dataDao.lookupById("000000345HDV4");
     }
 }

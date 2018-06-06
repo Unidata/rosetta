@@ -45,7 +45,6 @@ public class ResourceManagerTest {
     @Test
     public void loadResourcesTest() throws Exception {
         assertTrue(resourceManager.loadResources() instanceof List);
-
     }
 
 }
