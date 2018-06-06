@@ -1,13 +1,26 @@
 <h3>Download Converted File</h3>
 
 <ul id="download">
-    <c:if test="${not empty data.netcdfFile}">
-        NetCDF File: <a href="${baseUrl}/download/${data.id}/${data.netcdfFile}">${data.netcdfFile}</a>
-    </c:if>
-    <c:if test="${not empty data.templateFileName}">
-        <br>
-        Rosetta Template File: <a href="${baseUrl}/download/${data.id}/${data.templateFileName}">${data.templateFileName}</a>
-    </c:if>
+    <%--
+<c:choose>
+    <c:when test="${not empty data.zip}">
+    --%>
+        <%-- Show the zip file. --%>
+        <%--   <li>Converted file and template: <a href="${baseUrl}/download/${data.id}/${data.zip}">${data.zip}</a></li>
+   </c:when>
+   <c:otherwise>
+   --%>
+       <%-- List individual files. --%>
+        <c:if test="${not empty data.netcdfFile}">
+            <li>NetCDF File: <a href="${baseUrl}/download/${data.id}/${data.netcdfFile}">${data.netcdfFile}</a></li>
+        </c:if>
+        <c:if test="${not empty data.templateFileName}">
+            <li>Rosetta Template File: <a href="${baseUrl}/download/${data.id}/${data.templateFileName}">${data.templateFileName}</a></li>
+        </c:if>
+        <%--
+</c:otherwise>
+</c:choose>
+--%>
 </ul>
 
 
