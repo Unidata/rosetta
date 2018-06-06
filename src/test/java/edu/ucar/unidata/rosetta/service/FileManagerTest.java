@@ -2,6 +2,7 @@ package edu.ucar.unidata.rosetta.service;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.theories.suppliers.TestedOn;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,14 +14,58 @@ import static org.mockito.Mockito.when;
 
 public class FileManagerTest {
 
-    private FileManagerImpl fileParserManager;
+    private FileManagerImpl fileManager;
     private List<String> headerLineList;
     private List<List<String>> fileData;
 
+    @Test
+    public void getBlankLinesTest() throws Exception {
+        int numberOfBlankLines = fileManager.getBlankLines(new File("/dev/null"));
+        assertEquals(numberOfBlankLines, 20);
+    }
+
+    @Test
+    public void getHeaderLinesFromFileTest() throws Exception {
+        List<String> headerLines = new ArrayList<>();
+        headerLines.add("1");
+        headerLines.add("2");
+        List<String> lines = fileManager.getHeaderLinesFromFile("/tmp/test.xls", headerLines);
+        assertEquals(lines, headerLineList);
+    }
+
+    @Test
+    public void getInventoryDataTest() throws Exception {
+        List<String> inventory = fileManager.getInventoryData("/dev/null");
+        assertTrue(inventory.contains("rosetta.template"));
+        assertTrue(inventory.contains("datafile.txt"));
+    }
+
+    @Test
+    public void MockCreationTest() throws Exception {
+        assertNotNull(fileManager);
+    }
+
+    @Test
+    public void parseByDelimiterTest() throws Exception {
+        List<List<String>> parsedData = fileManager.parseByDelimiter("/tmp/test.xls", headerLineList, ",");
+        assertEquals(parsedData, fileData);
+    }
+
+    @Test
+    public void parseByDelimiterUsingStreamTest() throws Exception {
+        List<List<String>> parsedData = fileManager.parseByDelimiter("/tmp/test.xls", headerLineList, ",");
+        assertEquals(parsedData, fileData);
+    }
+
+    @Test
+    public void parseByLineTest() throws Exception {
+        String jsonString = fileManager.parseByLine("/tmp/test.xls");
+        assertEquals(jsonString, "{\"x\":5,\"y\":6}");
+    }
 
     @Before
     public void setUp() throws Exception {
-        fileParserManager = mock(FileManagerImpl.class);
+        fileManager = mock(FileManagerImpl.class);
 
         List<String> headerLines = new ArrayList<>();
         headerLines.add("1");
@@ -32,41 +77,14 @@ public class FileManagerTest {
         fileData = new ArrayList<>();
         fileData.add(headerLines);
 
-        when(fileParserManager.parseByLine("/tmp/test.xls")).thenReturn("{\"x\":5,\"y\":6}");
-        when(fileParserManager.getHeaderLinesFromFile("/tmp/test.xls", headerLines)).thenReturn(headerLineList);
-        when(fileParserManager.parseByDelimiter("/tmp/test.xls", headerLineList, ",")).thenReturn(fileData);
-        when(fileParserManager.getBlankLines(new File("/dev/null"))).thenReturn(20);
-    }
+        List<String> inventory = new ArrayList<>();
+        inventory.add("rosetta.template");
+        inventory.add("datafile.txt");
 
-    @Test
-    public void MockCreationTest() throws Exception {
-        assertNotNull(fileParserManager);
-    }
-
-    @Test
-    public void parseByLineTest() throws Exception {
-        String jsonString = fileParserManager.parseByLine("/tmp/test.xls");
-        assertEquals(jsonString, "{\"x\":5,\"y\":6}");
-    }
-
-    @Test
-    public void getHeaderLinesFromFileTest() throws Exception {
-        List<String> headerLines = new ArrayList<>();
-        headerLines.add("1");
-        headerLines.add("2");
-        List<String> lines = fileParserManager.getHeaderLinesFromFile("/tmp/test.xls", headerLines);
-        assertEquals(lines, headerLineList);
-    }
-
-    @Test
-    public void parseByDelimiterTest() throws Exception {
-        List<List<String>> parsedData = fileParserManager.parseByDelimiter("/tmp/test.xls", headerLineList, ",");
-        assertEquals(parsedData, fileData);
-    }
-
-    @Test
-    public void getBlankLinesTest() throws Exception {
-        int numberOfBlankLines = fileParserManager.getBlankLines(new File("/dev/null"));
-        assertEquals(numberOfBlankLines, 20);
+        when(fileManager.parseByLine("/tmp/test.xls")).thenReturn("{\"x\":5,\"y\":6}");
+        when(fileManager.getHeaderLinesFromFile("/tmp/test.xls", headerLines)).thenReturn(headerLineList);
+        when(fileManager.parseByDelimiter("/tmp/test.xls", headerLineList, ",")).thenReturn(fileData);
+        when(fileManager.getBlankLines(new File("/dev/null"))).thenReturn(20);
+        when(fileManager.getInventoryData("/dev/null")).thenReturn(inventory);
     }
 }
