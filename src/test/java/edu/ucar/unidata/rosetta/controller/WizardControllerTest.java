@@ -78,7 +78,7 @@ public class WizardControllerTest {
         mockMvc.perform(get("/convertAndDownload")
                 .cookie(new Cookie("rosetta", "123456"))
         )
-                .andExpect(model().attribute("currentStep", equalTo("downloadAndConvert")))
+                .andExpect(model().attribute("currentStep", equalTo("convertAndDownload")))
                 .andExpect(view().name("wizard"))
                 .andExpect(forwardedUrl("/WEB-INF/views/wizard.jsp"));
         //.andDo(print());
