@@ -35,6 +35,10 @@ public class Community extends RosettaResource {
         this.fileType.add(fileType);
     }
 
+    public void addToFileType(String fileType) {
+        this.fileType.add(fileType);
+    }
+
     public void setFileType(List<String> fileType) {
         this.fileType = fileType;
     }
