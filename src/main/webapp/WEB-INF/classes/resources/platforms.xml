@@ -1,4 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
+<!-- Modify the database data type a text entry exceeds 255 characters. -->
 <platforms>
     <platform>
         <name>Single Station</name>
