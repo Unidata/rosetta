@@ -1,15 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
+<!-- Order matters here!  These resources will be loaded into the database in the following order.
+If a resource depends upon or references another, the dependency resource MUST be loaded first. -->
 <resources>
     <resource>
         <fileName>fileTypes.xml</fileName>
         <type>fileType</type>
     </resource>
     <resource>
-        <fileName>platforms.xml</fileName>
-        <type>platform</type>
-    </resource>
-    <resource>
         <fileName>communities.xml</fileName>
         <type>community</type>
+    </resource>
+    <resource>
+        <fileName>platforms.xml</fileName>
+        <type>platform</type>
     </resource>
 </resources>
