@@ -1,6 +1,7 @@
 package edu.ucar.unidata.rosetta.repository.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.Community;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
 
 import java.util.List;
@@ -14,9 +15,9 @@ public interface CommunityDao {
      * Looks up and retrieves a list of persisted Community objects.
      *
      * @return  A List of all persisted communities.
-     * @throws DataRetrievalFailureException  If unable to retrieve persisted communities.
+     * @throws DataAccessException  If unable to retrieve persisted communities.
      */
-    public List<Community> getCommunities() throws DataRetrievalFailureException;
+    public List<Community> getCommunities() throws DataAccessException;
     
     /**
      * Looks up and retrieves a persisted Community object using the provided name.

@@ -1,128 +1,85 @@
 package edu.ucar.unidata.rosetta.repository.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.Community;
-import org.apache.log4j.Logger;
-import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JdbcCommunityDao  extends JdbcDaoSupport implements CommunityDao {
-    
-    protected static Logger logger = Logger.getLogger(JdbcCommunityDao.class);
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
-    private SimpleJdbcInsert insertActor;
-    
+public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
+
     /**
      * Looks up and retrieves a list of persisted Community objects.
      *
-     * @return  A List of all persisted communities.
-     * @throws DataRetrievalFailureException  If unable to retrieve persisted communities.
+     * @return A List of all persisted communities.
+     * @throws DataAccessException If unable to retrieve persisted communities.
      */
-    public List<Community> getCommunities() throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM community";
-        List<Community> communities = getJdbcTemplate().query(sql, new JdbcCommunityDao.CommunityMapper());
-        if (communities.isEmpty()) {
-            String message = "Unable to find persisted Community objects.";
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        }
-        return mergeCommunities(communities);
+    public List<Community> getCommunities() throws DataAccessException {
+        String sql = "SELECT community.id, community.name, fileType.name FROM community INNER JOIN fileType ON community.fileType = fileType.id";
+        return getCommunities(sql);
     }
 
     /**
      * Looks up and retrieves a persisted Community object using the provided name.
      *
      * @param name The name of the community to retrieve.
-     * @return  The Community object matching the provided name.
-     * @throws DataRetrievalFailureException If unable to retrieve persisted community.
+     * @return The Community object matching the provided name.
+     * @throws DataAccessException If unable to retrieve persisted community.
      */
-    public Community lookupCommunityByName(String name) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM community WHERE name = ?";
-        List<Community> communities = getJdbcTemplate().query(sql, new JdbcCommunityDao.CommunityMapper(), name);
-        if (communities.isEmpty()) {
-            String message = "Unable to find persisted Community object corresponding to name " + name;
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        }
-        return communities.get(0);
+    public Community lookupCommunityByName(String name) throws DataAccessException {
+        String sql = "SELECT community.id, community.name, fileType.name FROM community LEFT JOIN fileType ON community.fileType = fileType.id WHERE community.name = ?";
+        return getJdbcTemplate().query(sql, rs -> {
+            Community comm = new Community();
+            comm.setName(name);
+            while (rs.next()) {
+                comm.addToFileType(rs.getString(3));
+            }
+            return comm;
+        });
     }
 
     /**
      * Lookups and returns a list of persisted Community objects using the provided file type.
      *
      * @param fileType The file type of the community to retrieve.
-     * @return   A List of persisted Communities matching the provided file type.
-     * @throws DataRetrievalFailureException  If unable to retrieve persisted Communities.
+     * @return A List of persisted Communities matching the provided file type.
+     * @throws DataAccessException If unable to retrieve persisted Communities.
      */
-    public List<Community> lookupCommunitiesByFileType(String fileType) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM community WHERE fileType = ?";
-        List<Community> communities = getJdbcTemplate().query(sql, new JdbcCommunityDao.CommunityMapper(), fileType);
-        if (communities.isEmpty()) {
-            String message = "Unable to find persisted Community object corresponding to fileType " + fileType;
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        }
-        return communities;
+    public List<Community> lookupCommunitiesByFileType(String fileType) throws DataAccessException {
+        String sql = "SELECT community.id, community.name, fileType.name FROM community LEFT JOIN fileType ON community.fileType = fileType.id WHERE fileType.name = ?";
+        return getCommunities(sql);
     }
 
     /**
-     * Merges Community objects so that there are no duplicates.
-     * TODO: redo how community info is stored in the db to avoid this.
+     * Performs the given SQL query and returns a list of Community objects.
      *
-     * @param communities The list of un-merged community objects.
-     * @return The list of merged Community Objects.
+     * @param sql The SQL select query to perform.
+     * @return  A list of community objects populated according to the SQL query.
+     * @throws DataAccessException If unable to execute and retrieve the SQL query successfully.
      */
-    private List<Community> mergeCommunities(List<Community> communities) {
-        List<Community> mergedCommunities = new ArrayList<>();
-        // Merge the community objects.
-        Map<String, List<String>> communityData = new HashMap<>();
-        for (Community community : communities) {
-            String name = community.getName();
-            if (!communityData.containsKey(name)) {
-                communityData.put(name, community.getFileType());
-            } else {
-                List<String> fileTypes = communityData.get(name);
-                fileTypes.addAll(community.getFileType());
-                communityData.replace(name, fileTypes);
+    private List<Community> getCommunities(String sql) throws DataAccessException {
+        return getJdbcTemplate().query(sql, (ResultSetExtractor<List<Community>>) rs -> {
+            Map<String, Community> communityMap = new HashMap<>();
+            while (rs.next()) {
+                String communityName = rs.getString(2);
+                if (!communityMap.containsKey(communityName)) {
+                    Community community = new Community();
+                    community.setId(rs.getInt(1));
+                    community.setName(communityName);
+                    community.addToFileType(rs.getString(3));
+                    communityMap.put(communityName, community);
+                } else {
+                    Community community = communityMap.get(communityName);
+                    community.addToFileType(rs.getString(3));
+                    communityMap.replace(communityName, community);
+                }
             }
-        }
-        for (Map.Entry<String, List<String>> entry : communityData.entrySet()) {
-            Community community = new Community();
-            community.setName(entry.getKey());
-            community.setFileType(entry.getValue());
-            mergedCommunities.add(community);
-        }
-        return mergedCommunities;
+            return new ArrayList<>(communityMap.values());
+        });
     }
-
-
-    /**
-     * This CommunityMapper only used by JdbcCommunityDao.
-     */
-    private static class CommunityMapper implements RowMapper<Community> {
-        /**
-         * Maps each row of data in the ResultSet to the Community object.
-         *
-         * @param rs  The ResultSet to be mapped.
-         * @param rowNum  The number of the current row.
-         * @return  The populated Community object.
-         * @throws SQLException  If an SQLException is encountered getting column values.
-         */
-        public Community mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Community community = new Community();
-            community.setId(rs.getInt("id"));
-            community.setName(rs.getString("name"));
-            community.setFileType(rs.getString("FileType"));
-            return community;
-        }
-    }
-
 }

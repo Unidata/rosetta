@@ -9,9 +9,12 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
@@ -100,7 +103,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     "name VARCHAR(255), " +
                     "imgPath VARCHAR(255), " +
                     "cfType VARCHAR(255), " +
-                    "community VARCHAR(255)" +
+                    "community INTEGER" +
                     ")";
             createTable(createPlatformTable, props);
 
@@ -115,7 +118,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     "(" +
                     "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
                     "name VARCHAR(255), " +
-                    "fileType VARCHAR(255)" +
+                    "fileType INTEGER" +
                     ")";
             createTable(createCommunityTable, props);
 
@@ -306,19 +309,42 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
             } else if (resource instanceof Platform) {
                 // Platform resource.
+
+                // Get the primary key values for the communities and stash them in a map for quick access.
+                Map<String, Integer> communityMap = new HashMap<>();
+                String getCommunityStatement = "SELECT DISTINCT id, name FROM community";
+                preparedStatement = connection.prepareStatement(getCommunityStatement);
+                ResultSet rs = preparedStatement.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    communityMap.put(name, id);
+                }
                 preparedStatement = connection.prepareStatement(platformStatement);
                 preparedStatement.setString(1, resource.getName());
                 preparedStatement.setString(2, ((Platform) resource).getImgPath());
                 preparedStatement.setString(3, ((Platform) resource).getCfType());
-                preparedStatement.setString(4, ((Platform) resource).getCommunity());
+                preparedStatement.setInt(4, communityMap.get(((Platform) resource).getCommunity()));
                 preparedStatement.executeUpdate();
             } else {
                 // Community resource.
+
+                // Get the primary key values for the file types and stash them in a map for quick access.
+                Map<String, Integer> fileTypeMap = new HashMap<>();
+                String getFileTypeStatement = "SELECT * FROM fileType";
+                preparedStatement = connection.prepareStatement(getFileTypeStatement);
+                ResultSet rs = preparedStatement.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    fileTypeMap.put(name, id);
+                }
+                // Create an entry in the community database for all of the file types.
                 List<String> fileTypes = ((Community) resource).getFileType();
                 for (String fileType: fileTypes) {
                     preparedStatement = connection.prepareStatement(communityStatement);
                     preparedStatement.setString(1, resource.getName());
-                    preparedStatement.setString(2, fileType);
+                    preparedStatement.setInt(2, fileTypeMap.get(fileType));
                     preparedStatement.executeUpdate();
                 }
             }
