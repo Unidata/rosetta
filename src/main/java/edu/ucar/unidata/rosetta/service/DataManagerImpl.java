@@ -180,7 +180,14 @@ public class DataManagerImpl implements DataManager {
      */
     @Override
     public List<Community> getCommunities() {
-        return communityDao.getCommunities();
+        List<Community> communities = communityDao.getCommunities();
+        for (Community community : communities){
+            // Get the associated platforms and add them to the Community object.
+            List<Platform> platforms = platformDao.lookupPlatformsByCommunity(community.getName());
+            community.setPlatforms(platforms);
+            communities.set(communities.indexOf(community), community);
+        }
+        return communities;
     }
 
     /**
