@@ -46,7 +46,10 @@
                             </c:if>
                         ">
                             <img src="${platform.imgPath}" alt="${platform.name}" />
-                            <small>${platform.name}</small>
+                            <small>
+                            ${platform.name}<br>
+                            (${platform.cfType})
+                            </small>
 
                             <input type="radio" name="platform" value="${fn:replace(platform.name, ' ', '_')}"
                                 <%-- Mark as selected if platform has already been chosen. --%>
@@ -60,40 +63,28 @@
 
                 </div> <!--/#${community.name} -->
             </c:forEach>
-            <div id="cfTypeSpecified">
-                <p>I know what I'm doing and I want to directly select a CF Type:</p>
-                <select name="cfType">
-                    <option value="">Select a CF Type</option>
-                        <%-- Populate the cfType field if the data exists & it matches point --%>
-                    <option
-                            <c:if test="${not empty data.cfType && data.cfType == 'point'}">
-                                selected
-                            </c:if>
-                            value="point">Point</option>
 
-                        <%-- Populate the cfType field if the data exists & it matches trajectory --%>
-                    <option
-                            <c:if test="${not empty data.cfType && data.cfType == 'trajectory'}">
-                                selected
-                            </c:if>
-                            value="trajectory">Trajectory</option>
+            <%-- Need the communities to load platforms by community. --%>
+            <c:if test="${fn:length(cfTypes) gt 0}">
+           
 
-                        <%-- Populate the cfType field if the data exists & it matches profile --%>
-                    <option
-                            <c:if test="${not empty data.cfType && data.cfType == 'profile'}">
-                                selected
-                            </c:if>
-                            value="profile">Profile</option>
-
-
-                        <%-- Populate the cfType field if the data exists & it matches timerseries --%>
-                    <option
-                            <c:if test="${not empty data.cfType && data.cfType == 'timeseries'}">
-                                selected
-                            </c:if>
-                            value="timeseries">Time Series</option>
-                </select>
-            </div> <!-- /#cfType -->
+                <div id="cfTypeSpecified">
+                    <p>I know what I'm doing and I want to directly select a CF Type:</p>
+                    <select name="cfType">
+                        <option value="">Select a CF Type</option>
+                        <%-- Populate the cfType field if the data exists & it matches --%>
+                        <c:forEach items="${cfTypes}" var="cfType">
+                            <option
+                                <c:if test="${not empty data.cfType && data.cfType == fn:replace(cfType.name, ' ', '_')}">
+                                    selected
+                                </c:if>
+                            value="${fn:replace(cfType.name, ' ', '_')}">
+                                ${cfType.name}
+                            </option>
+                        </c:forEach>
+                    </select>
+                </div> <!-- /#cfType -->
+            </c:if>
         </div> <!-- /#tabs -->
 
         <c:if test="${not empty error}">
@@ -110,8 +101,6 @@
                 disabled
             </c:if>
         "/>
-
-
     </c:when>
     <c:otherwise>
        <p class="error">Unable to load CF type selection.  <spring:message code="fatal.error.message"/></p>
