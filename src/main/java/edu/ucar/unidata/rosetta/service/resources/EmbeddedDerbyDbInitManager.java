@@ -102,7 +102,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
                     "name VARCHAR(255), " +
                     "imgPath VARCHAR(255), " +
-                    "cfType VARCHAR(255), " +
+                    "cfType INTEGER, " +
                     "community INTEGER" +
                     ")";
             createTable(createPlatformTable, props);
@@ -113,6 +113,13 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     "name VARCHAR(255)" +
                     ")";
             createTable(createFileTypeTable, props);
+
+            String createCfTypeTable = "CREATE TABLE cfType " +
+                    "(" +
+                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                    "name VARCHAR(255)" +
+                    ")";
+            createTable(createCfTypeTable, props);
 
             String createCommunityTable = "CREATE TABLE community " +
                     "(" +
@@ -293,6 +300,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
             connection = DriverManager.getConnection(url);
 
         // Define our statements for the various resource types.
+        String cfTypeStatement = "INSERT INTO cfType(name) VALUES (?)";
         String fileTypeStatement = "INSERT INTO fileType(name) VALUES (?)";
         String platformStatement = "INSERT INTO platform(name, imgPath, cfType, community) VALUES (?, ?, ?, ?)";
         String communityStatement = "INSERT INTO community(name, fileType) VALUES (?, ?)";
@@ -301,7 +309,13 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         List<RosettaResource> resources = resourceManager.loadResources();
         for (RosettaResource resource: resources) {
             // Set the resources depending on the type.
-            if (resource instanceof FileType) {
+            if (resource instanceof CfType) {
+                // File Type resource.
+                preparedStatement = connection.prepareStatement(cfTypeStatement);
+                preparedStatement.setString(1, resource.getName());
+                preparedStatement.executeUpdate();
+
+            } else if (resource instanceof FileType) {
                 // File Type resource.
                 preparedStatement = connection.prepareStatement(fileTypeStatement);
                 preparedStatement.setString(1, resource.getName());
@@ -310,11 +324,22 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
             } else if (resource instanceof Platform) {
                 // Platform resource.
 
+                // Get the primary key values for the cfTypes and stash them in a map for quick access.
+                Map<String, Integer> cfTypeMap = new HashMap<>();
+                String getCfTypeStatement = "SELECT * FROM cfType";
+                preparedStatement = connection.prepareStatement(getCfTypeStatement);
+                ResultSet rs = preparedStatement.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    cfTypeMap.put(name, id);
+                }
+
                 // Get the primary key values for the communities and stash them in a map for quick access.
                 Map<String, Integer> communityMap = new HashMap<>();
                 String getCommunityStatement = "SELECT DISTINCT id, name FROM community";
                 preparedStatement = connection.prepareStatement(getCommunityStatement);
-                ResultSet rs = preparedStatement.executeQuery();
+                rs = preparedStatement.executeQuery();
                 while (rs.next()) {
                     int id = rs.getInt("id");
                     String name = rs.getString("name");
@@ -323,7 +348,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                 preparedStatement = connection.prepareStatement(platformStatement);
                 preparedStatement.setString(1, resource.getName());
                 preparedStatement.setString(2, ((Platform) resource).getImgPath());
-                preparedStatement.setString(3, ((Platform) resource).getCfType());
+                preparedStatement.setInt(3, cfTypeMap.get(((Platform) resource).getCfType()));
                 preparedStatement.setInt(4, communityMap.get(((Platform) resource).getCommunity()));
                 preparedStatement.executeUpdate();
             } else {

@@ -3,6 +3,10 @@
 If a resource depends upon or references another, the dependency resource MUST be loaded first. -->
 <resources>
     <resource>
+        <fileName>cfTypes.xml</fileName>
+        <type>cfType</type>
+    </resource>
+    <resource>
         <fileName>fileTypes.xml</fileName>
         <type>fileType</type>
     </resource>
