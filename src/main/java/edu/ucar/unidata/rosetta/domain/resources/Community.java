@@ -7,9 +7,9 @@ import java.util.List;
 
 public class Community extends RosettaResource {
 
-    public int id;
-    public List<String> fileType = new ArrayList<>();
-    public List<String> platforms = new ArrayList<>();
+    private int id;
+    private List<String> fileType = new ArrayList<>();
+    private List<Platform> platforms = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -43,12 +43,12 @@ public class Community extends RosettaResource {
         this.fileType = fileType;
     }
 
-    public List<String> getPlatforms() {
+    public List<Platform> getPlatforms() {
         return platforms;
     }
 
-    public void addToPlatforms(String platform) {
-        this.platforms.add(platform);
+    public void setPlatforms(List<Platform> platforms) {
+        this.platforms = platforms;
     }
 
     /**
