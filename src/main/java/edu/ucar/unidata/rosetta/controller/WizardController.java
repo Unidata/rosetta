@@ -92,11 +92,9 @@ public class WizardController implements HandlerExceptionResolver {
         // Add current step to the Model (used by view to keep track of where we are in the wizard).
         model.addAttribute("currentStep", "cfType");
         // Add communities data to Model (for platform display).
-        model.addAttribute("domains", dataManager.getCommunitiesForView());
-        // Add platforms data to Model (for platform selection).
-        model.addAttribute("platforms", dataManager.getPlatformsForView());
-
         model.addAttribute("communities", dataManager.getCommunities());
+        // Add CF types data to Model (for direct display).
+        model.addAttribute("cfTypes", dataManager.getCFTypes());
 
         // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
@@ -196,9 +194,10 @@ public class WizardController implements HandlerExceptionResolver {
         // Add current step to the Model.
         model.addAttribute("currentStep", "fileUpload");
         // Add community data to Model (for file upload display based on community type).
-        model.addAttribute("domains", dataManager.getCommunitiesForView());
+        model.addAttribute("communities", dataManager.getCommunities());
         // Add file type data to Model (for file type selection if cfType was directly specified).
-        model.addAttribute("fileTypes", dataManager.getFileTypesForView());
+        model.addAttribute("fileTypes", dataManager.getFileTypes());
+
 
         // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
