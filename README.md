@@ -38,14 +38,12 @@ Basic Architecture
 Front-end user interface:
 
 * jQuery and jQuery UI Javascript Library
-* jWizard (jQuery Plugin)
 * SlickGrid (jQuery Plugin)
 * HTML5
-* Asynchronous AJAX communication with the back-end (JQuery)
 
 Back-end:
 
-* Spring 3 MVC Framework
+* Spring MVC Framework
 * The Common Data Model (CDM) (netCDF-Java)
 * CF-1.6 Standard
 
