@@ -10,7 +10,7 @@
     </delimiter>
     <delimiter>
         <name>Whitespace</name>
-        <character></character>
+        <character> </character>
     </delimiter>
     <delimiter>
         <name>Colon</name>

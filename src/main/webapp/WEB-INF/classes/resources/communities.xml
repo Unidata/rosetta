@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<!-- Modify the database data type a text entry exceeds 255 characters. -->
+<!-- Modify the database data type if a text entry exceeds 255 characters. -->
 <communities>
     <community>
         <name>Atmospheric Sciences</name>
