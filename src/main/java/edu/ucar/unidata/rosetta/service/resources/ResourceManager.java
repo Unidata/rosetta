@@ -81,24 +81,19 @@ public class ResourceManager {
 
                 // Loop through the resource list and populate the relevant RosettaResource objects.
                 for (Map<String, List<String>> resourceMap : resourceData) {
+
                     // Figure out which type of RosettaResource object we are going to populate.
-                    RosettaResource rosettaResource;
-                    if (type.equals("platform")) {
-                        rosettaResource = new Platform();
-                    } else if (type.equals("community")) {
-                        rosettaResource = new Community();
-                    } else {
-                        rosettaResource = new FileType();
-                    }
+                    String classToInstantiate = "edu.ucar.unidata.rosetta.domain.resources." + type.substring(0, 1).toUpperCase() + type.substring(1);
+                    Object rosettaResource = Class.forName(classToInstantiate).getDeclaredConstructor().newInstance();
 
                     // Populate the RosettaResource object using generics.
                     ResourcePopulator<RosettaResource> populator = new ResourcePopulator<RosettaResource>();
-                    populator.setRosettaResource(rosettaResource);
+                    populator.setRosettaResource((RosettaResource) rosettaResource);
                     resources.addAll(populator.populate(resourceMap));
                 }
             }
 
-        } catch (IOException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (IOException | IllegalAccessException | NoSuchMethodException | InstantiationException | ClassNotFoundException | InvocationTargetException e) {
             throw new RosettaDataException("Unable to load resources: " + e);
         }
         return resources;
