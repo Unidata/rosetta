@@ -97,6 +97,7 @@
         <property name="communityDao" ref="communityDao"/>
         <property name="platformDao" ref="platformDao"/>
         <property name="fileTypeDao" ref="fileTypeDao"/>
+        <property name="cfTypeDao" ref="cfTypeDao"/>
     </bean>
 
     <bean id="metadataManager" class="edu.ucar.unidata.rosetta.service.MetadataManagerImpl">
@@ -116,6 +117,10 @@
     </bean>
 
     <bean id="fileTypeDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcFileTypeDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="cfTypeDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcCfTypeDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
