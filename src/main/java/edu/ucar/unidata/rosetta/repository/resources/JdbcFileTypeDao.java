@@ -4,18 +4,18 @@ import edu.ucar.unidata.rosetta.domain.resources.FileType;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * @author oxelson@ucar.edu
+ */
 public class JdbcFileTypeDao extends JdbcDaoSupport implements FileTypeDao {
 
-    protected static Logger logger = Logger.getLogger(JdbcFileTypeDao.class);
-
-    private SimpleJdbcInsert insertActor;
+    private static final Logger logger = Logger.getLogger(JdbcFileTypeDao.class);
 
     /**
      * Looks up and retrieves a list of persisted FileType objects.
