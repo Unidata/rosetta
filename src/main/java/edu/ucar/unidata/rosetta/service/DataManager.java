@@ -2,6 +2,7 @@ package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
+import edu.ucar.unidata.rosetta.domain.resources.CfType;
 import edu.ucar.unidata.rosetta.domain.resources.Community;
 import edu.ucar.unidata.rosetta.domain.resources.FileType;
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
@@ -48,19 +49,18 @@ public interface DataManager {
     public String getCFTypeFromPlatform(String platform);
 
     /**
+     * Retrieves a list of all the persisted CfType objects.
+     *
+     * @return  A list of CfType objects.
+     */
+    public List<CfType> getCFTypes();
+
+    /**
      * Retrieves a list of all the persisted communities.
      *
      * @return  A list of Community objects.
      */
     public List<Community> getCommunities();
-
-    /**
-     * Reformats community information for use by the view.
-     * TODO: Refactor view to use raw Community objects.
-     *
-     * @return  The community information as a List<Map<String, Object>>.
-     */
-    public List<Map<String, Object>> getCommunitiesForView();
 
     /**
      * Retrieves the community associated with the given platform.
@@ -93,14 +93,6 @@ public interface DataManager {
     public List<FileType> getFileTypes();
 
     /**
-     * Reformats file type information for use by the view.
-     * TODO: Refactor view to use raw FileType objects.
-     *
-     * @return  The file type information as a List<Map<String, Object>>.
-     */
-    public List<Map<String, Object>> getFileTypesForView();
-
-    /**
      * Pulls the general metadata from a data known file and populates the provided
      * GeneralMetadata object. If the data file type is a custom file (not a known type)
      * then an empty, non-populated GeneralMetadata object is returned.
@@ -129,14 +121,6 @@ public interface DataManager {
      * @return  A list of Platform objects.
      */
     public List<Platform> getPlatforms();
-
-    /**
-     * Reformats platform information for use by the view.
-     * TODO: Refactor view to use raw Platform objects.
-     *
-     * @return  The platform information as a List<Map<String, Object>>.
-     */
-    public List<Map<String, Object>> getPlatformsForView();
 
     /**
      * Retrieves the name of the directory used for storing uploaded files.

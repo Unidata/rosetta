@@ -7,6 +7,7 @@ import edu.ucar.unidata.rosetta.domain.resources.*;
 import edu.ucar.unidata.rosetta.exceptions.*;
 import edu.ucar.unidata.rosetta.repository.DataDao;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
+import edu.ucar.unidata.rosetta.repository.resources.CfTypeDao;
 import edu.ucar.unidata.rosetta.repository.resources.CommunityDao;
 import edu.ucar.unidata.rosetta.repository.resources.FileTypeDao;
 import edu.ucar.unidata.rosetta.repository.resources.PlatformDao;
@@ -36,6 +37,7 @@ public class DataManagerImpl implements DataManager {
     private CommunityDao communityDao;
     private PlatformDao platformDao;
     private FileTypeDao fileTypeDao;
+    private CfTypeDao cfTypeDao;
 
     // The other managers we make use of in this file.
     @Resource(name = "fileParserManager")
@@ -174,6 +176,16 @@ public class DataManagerImpl implements DataManager {
     }
 
     /**
+     * Retrieves a list of all the persisted CfType objects.
+     *
+     * @return  A list of CfType objects.
+     */
+    @Override
+    public List<CfType> getCFTypes() {
+        return cfTypeDao.getCfTypes();
+    }
+
+    /**
      * Retrieves a list of all the persisted communities.
      *
      * @return  A list of Community objects.
@@ -190,37 +202,6 @@ public class DataManagerImpl implements DataManager {
         return communities;
     }
 
-    /**
-     * Reformats community information for use by the view.
-     * TODO: Refactor view to use raw Community objects.
-     *
-     * @return  The community information as a List<Map<String, Object>>.
-     */
-    @Override
-    public List<Map<String, Object>> getCommunitiesForView() {
-        // Our return data structure.
-        List<Map<String, Object>> communityAttributes = new ArrayList<>();
-
-        // Get the needed data for each community object.
-        for (Community community : getCommunities()) {
-            Map<String, Object> attributes = new HashMap<>();
-            // Make a list of the platforms for each community.
-            List<String> platforms = new ArrayList<>();
-            for (Platform platform : getPlatforms()) {
-                if (community.getName().equals(platform.getCommunity())) {
-                    platforms.add(platform.getName());
-                }
-            }
-            // Add platforms list to Map.
-            attributes.put("platform", platforms);
-            // Add file types to Map.
-            attributes.put("fileType", community.getFileType());
-            attributes.put("name", community.getName());
-            // Add Map to List.
-            communityAttributes.add(attributes);
-        }
-        return communityAttributes;
-    }
 
     /**
      * Retrieves the community associated with the given platform.
@@ -242,26 +223,6 @@ public class DataManagerImpl implements DataManager {
     @Override
     public List<FileType> getFileTypes() {
         return fileTypeDao.getFileTypes();
-    }
-
-    /**
-     * Reformats file type information for use by the view.
-     * TODO: Refactor view to use raw FileType objects.
-     *
-     * @return  The file type information as a List<Map<String, Object>>.
-     */
-    @Override
-    public List<Map<String, Object>> getFileTypesForView() {
-        // Our return data structure.
-        List<Map<String, Object>> fileTypeAttributes = new ArrayList<>();
-        for (FileType fileType : getFileTypes()) {
-            Map<String, Object> attributes = new HashMap<>();
-            attributes.put("name", fileType.getName());
-
-            // Add Map to List.
-            fileTypeAttributes.add(attributes);
-        }
-        return fileTypeAttributes;
     }
 
     /**
@@ -319,30 +280,6 @@ public class DataManagerImpl implements DataManager {
     @Override
     public List<Platform> getPlatforms() {
         return platformDao.getPlatforms();
-    }
-
-    /**
-     * Reformats platform information for use by the view.
-     * TODO: Refactor view to use raw Platform objects.
-     *
-     * @return  The platform information as a List<Map<String, Object>>.
-     */
-    @Override
-    public List<Map<String, Object>> getPlatformsForView() {
-
-        // Our return data structure.
-        List<Map<String, Object>> platformAttributes = new ArrayList<>();
-
-        for (Platform platform : getPlatforms()) {
-            Map<String, Object> attributes = new HashMap<>();
-            attributes.put("name", platform.getName());
-            attributes.put("imgPath", platform.getImgPath());
-            attributes.put("cfType", platform.getCfType());
-
-            // Add Map to List.
-            platformAttributes.add(attributes);
-        }
-        return platformAttributes;
     }
 
     /**
@@ -422,6 +359,8 @@ public class DataManagerImpl implements DataManager {
             // Update community if needed.
             if (data.getPlatform() != null)
                 persistedData.setCommunity(getCommunityFromPlatform(data.getPlatform()));
+            else
+                persistedData.setCommunity(null);
 
             // Update CF type.
             persistedData.setCfType(data.getCfType());
@@ -623,6 +562,16 @@ public class DataManagerImpl implements DataManager {
 
         // Persist the variable metadata.
         metadataManager.persistMetadata(metadataManager.parseVariableMetadata(data.getVariableMetadata(), id));
+    }
+
+    /**
+     * Sets the data access object (DAO) for the CFType object which will acquire and persist
+     * the data passed to it via the methods of this DataManager.
+     *
+     * @param cfTypeDao  The service DAO representing a CfType object.
+     */
+    public void setCfTypeDao(CfTypeDao cfTypeDao) {
+        this.cfTypeDao = cfTypeDao;
     }
 
     /**
