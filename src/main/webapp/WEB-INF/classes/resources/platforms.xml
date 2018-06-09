@@ -1,52 +1,52 @@
 <?xml version='1.0' encoding='utf-8'?>
-<!-- Modify the database data type a text entry exceeds 255 characters. -->
+<!-- Modify the database data type if a text entry exceeds 255 characters. -->
 <platforms>
     <platform>
         <name>Single Station</name>
         <imgPath>resources/img/platforms/tower.jpeg</imgPath>
-        <cfType>timeSeries</cfType>
+        <cfType>Time Series</cfType>
         <community>Atmospheric Sciences</community>
     </platform>
     <platform>
         <name>Moored Buoy</name>
         <imgPath>resources/img/platforms/buoy_NA.gif</imgPath>
-        <cfType>profile</cfType>
+        <cfType>Profile</cfType>
         <community>Physical Ocean Sciences</community>
     </platform>
     <platform>
         <name>CTD Sonde</name>
         <imgPath>resources/img/platforms/ctd.jpeg</imgPath>
-        <cfType>profile</cfType>
+        <cfType>Profile</cfType>
         <community>Physical Ocean Sciences</community>
     </platform>
     <platform>
         <name>Radiosonde</name>
         <imgPath>resources/img/platforms/balloon.jpeg</imgPath>
-        <cfType>trajectory</cfType>
+        <cfType>Trajectory</cfType>
         <community>Atmospheric Sciences</community>
     </platform>
     <platform>
         <name>Wind Profiler</name>
         <imgPath>resources/img/platforms/windprofiler_NA.gif</imgPath>
-        <cfType>profile</cfType>
+        <cfType>Profile</cfType>
         <community>Atmospheric Sciences</community>
     </platform>
     <platform>
         <name>Aircraft</name>
         <imgPath>resources/img/platforms/aircraft.jpeg</imgPath>
-        <cfType>trajectory</cfType>
+        <cfType>Trajectory</cfType>
         <community>Atmospheric Sciences</community>
     </platform>
     <platform>
         <name>Glider</name>
         <imgPath>resources/img/platforms/glider.jpeg</imgPath>
-        <cfType>trajectory</cfType>
+        <cfType>Trajectory</cfType>
         <community>Physical Ocean Sciences</community>
     </platform>
     <platform>
         <name>eTag</name>
         <imgPath>resources/img/platforms/etag.jpeg</imgPath>
-        <cfType>trajectory</cfType>
+        <cfType>Trajectory</cfType>
         <community>Bio-Logging</community>
     </platform>
 </platforms>
