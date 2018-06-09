@@ -32,7 +32,7 @@ public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
      * @throws DataAccessException If unable to retrieve persisted community.
      */
     public Community lookupCommunityByName(String name) throws DataAccessException {
-        String sql = "SELECT community.id, community.name, fileType.name FROM community LEFT JOIN fileType ON community.fileType = fileType.id WHERE community.name = ?";
+        String sql = "SELECT community.id, community.name, fileType.name FROM community LEFT JOIN fileType ON community.fileType = fileType.id WHERE community.name = '" + name+ "'";
         return getJdbcTemplate().query(sql, rs -> {
             Community comm = new Community();
             comm.setName(name);
@@ -51,7 +51,7 @@ public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
      * @throws DataAccessException If unable to retrieve persisted Communities.
      */
     public List<Community> lookupCommunitiesByFileType(String fileType) throws DataAccessException {
-        String sql = "SELECT community.id, community.name, fileType.name FROM community LEFT JOIN fileType ON community.fileType = fileType.id WHERE fileType.name = ?";
+        String sql = "SELECT community.id, community.name, fileType.name FROM community LEFT JOIN fileType ON community.fileType = fileType.id WHERE fileType.name = '" + fileType + "'";
         return getCommunities(sql);
     }
 
@@ -68,12 +68,14 @@ public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
             while (rs.next()) {
                 String communityName = rs.getString(2);
                 if (!communityMap.containsKey(communityName)) {
+                    // Update Community object.
                     Community community = new Community();
                     community.setId(rs.getInt(1));
                     community.setName(communityName);
                     community.addToFileType(rs.getString(3));
                     communityMap.put(communityName, community);
                 } else {
+                    // Create new Community object.
                     Community community = communityMap.get(communityName);
                     community.addToFileType(rs.getString(3));
                     communityMap.replace(communityName, community);
