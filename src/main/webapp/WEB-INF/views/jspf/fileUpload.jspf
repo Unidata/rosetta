@@ -3,17 +3,17 @@
     <%-- Load file types by community. --%>
     <c:when test="${not empty data.community || not empty data.cfType}">
         <c:choose>
-            <%-- Need the domains & fileTypes to load dataFileType options. --%>
-            <c:when test="${fn:length(domains) gt 0 && fn:length(fileTypes) gt 0}">
+            <%-- Need the communities & fileTypes to load dataFileType options. --%>
+            <c:when test="${fn:length(communities) gt 0 && fn:length(fileTypes) gt 0}">
                 Select your data file type:
                 <select id="dataFileType" name="dataFileType">
                     <option value="">--</option>
                     <c:choose>
-                        <%-- Create file type selection options from domains. --%>
+                        <%-- Create file type selection options from communities. --%>
                         <c:when test="${not empty data.community}">
-                            <c:forEach items="${domains}" var="domain">
-                                <c:if test="${data.community == domain.name}">
-                                    <c:forEach items="${domain.fileType}" var="fileType">
+                            <c:forEach items="${communities}" var="community">
+                                <c:if test="${data.community == community.name}">
+                                    <c:forEach items="${community.fileType}" var="fileType">
                                         <option value="${fn:replace(fileType, ' ', '_')}"
                                             <%-- Mark as selected if dataFileType has already been chosen. --%>
                                             <c:if test="${not empty data.dataFileType && data.dataFileType == fn:replace(fileType, ' ', '_')}">
