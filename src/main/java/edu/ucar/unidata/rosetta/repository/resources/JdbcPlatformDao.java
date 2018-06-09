@@ -2,14 +2,18 @@ package edu.ucar.unidata.rosetta.repository.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
 
@@ -18,20 +22,14 @@ public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
     private SimpleJdbcInsert insertActor;
 
     /**
-     * Looks up and retrieves a list of persisted Platform objects.
+     * Looks up and retrieves a list of all persisted Platform objects.
      *
      * @return  A List of all persisted Platforms.
-     * @throws DataRetrievalFailureException  If unable to retrieve persisted Platforms.
+     * @throws DataAccessException  If unable to retrieve persisted Platforms.
      */
-    public List<Platform> getPlatforms() throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM platform";
-        List<Platform> platforms = getJdbcTemplate().query(sql, new JdbcPlatformDao.PlatformMapper());
-        if (platforms.isEmpty()) {
-            String message = "Unable to find persisted Platform objects.";
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        }
-        return platforms;
+    public List<Platform> getPlatforms() throws DataAccessException {
+        String sql = "SELECT platform.id, platform.name, platform.imgPath, platform.cfType, community.name FROM platform INNER JOIN community ON platform.community = community.id";
+        return getPlatforms(sql);
     }
 
     /**
@@ -39,17 +37,18 @@ public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
      *
      * @param name The name of the platform to retrieve.
      * @return  The Platform matching the provided name.
-     * @throws DataRetrievalFailureException  If unable to retrieve persisted Platform.
+     * @throws DataAccessException  If unable to retrieve persisted Platform.
      */
-    public Platform lookupPlatformByName(String name) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM platform WHERE name = ?";
-        List<Platform> platforms = getJdbcTemplate().query(sql, new JdbcPlatformDao.PlatformMapper(), name);
-        if (platforms.isEmpty()) {
-            String message = "Unable to find persisted Platform object corresponding to name " + name;
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        }
-        return platforms.get(0);
+    public Platform lookupPlatformByName(String name) throws DataAccessException {
+        String sql = "SELECT platform.id, platform.name, platform.imgPath, platform.cfType, community.name FROM platform LEFT JOIN community ON platform.community = community.id WHERE platform.name = '" + name + "'";
+        return getJdbcTemplate().query(sql, rs -> {
+            Platform platform = new Platform();
+            platform.setName(name);
+            while (rs.next()) {
+                platform.setCommunity(rs.getString(5));
+            }
+            return platform;
+        });
     }
 
     /**
@@ -57,17 +56,11 @@ public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
      *
      * @param cfType The CF type of the platforms to retrieve.
      * @return   A List of persisted Platforms matching the provided CF type.
-     * @throws DataRetrievalFailureException  If unable to retrieve persisted Platforms.
+     * @throws DataAccessException  If unable to retrieve persisted Platforms.
      */
-    public List<Platform> lookupPlatformsByCfType(String cfType) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM platform WHERE cfType = ?";
-        List<Platform> platforms = getJdbcTemplate().query(sql, new JdbcPlatformDao.PlatformMapper(), cfType);
-        if (platforms.isEmpty()) {
-            String message = "Unable to find persisted Platform objects corresponding to cfType " + cfType;
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        }
-        return platforms;
+    public List<Platform> lookupPlatformsByCfType(String cfType) throws DataAccessException {
+        String sql = "SELECT platform.id, platform.name, platform.imgPath, platform.cfType, community.name FROM platform LEFT JOIN community ON platform.community = community.id WHERE platform.cfType = '" + cfType + "'";
+        return getPlatforms(sql);
     }
 
     /**
@@ -75,40 +68,35 @@ public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
      *
      * @param community The community of the platforms to retrieve.
      * @return   A List of persisted Platforms matching the provided community.
-     * @throws DataRetrievalFailureException  If unable to retrieve persisted Platforms.
+     * @throws DataAccessException  If unable to retrieve persisted Platforms.
      */
-    public List<Platform> lookupPlatformsByCommunity(String community) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM platform WHERE community = ?";
-        List<Platform> platforms = getJdbcTemplate().query(sql, new JdbcPlatformDao.PlatformMapper(), community);
-        if (platforms.isEmpty()) {
-            String message = "Unable to find persisted Platform objects corresponding to community " + community;
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        }
-        return platforms;
+    public List<Platform> lookupPlatformsByCommunity(String community) throws DataAccessException {
+        String sql = "SELECT platform.id, platform.name, platform.imgPath, platform.cfType, community.name FROM platform LEFT JOIN community ON platform.community = community.id WHERE platform.cfType = '" + community + "'";
+        return getPlatforms(sql);
     }
 
     /**
-     * This PlatformMapper only used by JdbcPlatformDao.
+     * Performs the given SQL query and returns a list of Platform objects.
+     *
+     * @param sql The SQL select query to perform.
+     * @return  A list of platform objects populated according to the SQL query.
+     * @throws DataAccessException If unable to execute and retrieve the SQL query successfully.
      */
-    private static class PlatformMapper implements RowMapper<Platform> {
-        /**
-         * Maps each row of data in the ResultSet to the Platform object.
-         *
-         * @param rs  The ResultSet to be mapped.
-         * @param rowNum  The number of the current row.
-         * @return  The populated Platform object.
-         * @throws SQLException  If an SQLException is encountered getting column values.
-         */
-        public Platform mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Platform platform = new Platform();
-            platform.setId(rs.getInt("id"));
-            platform.setName(rs.getString("name"));
-            platform.setImgPath(rs.getString("imgPath"));
-            platform.setCfType(rs.getString("cfType"));
-            platform.setCommunity(rs.getString("community"));
-            return platform;
-        }
+    private List<Platform> getPlatforms(String sql) throws DataAccessException {
+        return getJdbcTemplate().query(sql, (ResultSetExtractor<List<Platform>>) rs -> {
+            List<Platform> platforms = new ArrayList<>();
+            while (rs.next()) {
+                // Create Platform object.
+                Platform platform = new Platform();
+                platform.setId(rs.getInt(1));
+                platform.setName(rs.getString(2));
+                platform.setImgPath(rs.getString(3));
+                platform.setCfType(rs.getString(4));
+                platform.setCommunity(rs.getString(5));
+                platforms.add(platform);
+            }
+            return platforms;
+        });
     }
 
 }
