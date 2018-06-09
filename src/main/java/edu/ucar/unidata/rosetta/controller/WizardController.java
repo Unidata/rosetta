@@ -96,6 +96,8 @@ public class WizardController implements HandlerExceptionResolver {
         // Add platforms data to Model (for platform selection).
         model.addAttribute("platforms", dataManager.getPlatformsForView());
 
+        model.addAttribute("communities", dataManager.getCommunities());
+
         // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
     }
