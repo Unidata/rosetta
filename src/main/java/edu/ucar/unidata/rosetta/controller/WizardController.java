@@ -94,7 +94,7 @@ public class WizardController implements HandlerExceptionResolver {
         // Add communities data to Model (for platform display).
         model.addAttribute("communities", dataManager.getCommunities());
         // Add CF types data to Model (for direct display).
-        model.addAttribute("cfTypes", dataManager.getCFTypes());
+        model.addAttribute("cfTypes", dataManager.getCfTypes());
 
         // The currentStep variable will determine which jsp frag to load in the wizard.
         return new ModelAndView("wizard");
@@ -160,6 +160,8 @@ public class WizardController implements HandlerExceptionResolver {
         model.addAttribute("data", data);
         // Add current step to the Model.
         model.addAttribute("currentStep", "customFileTypeAttributes");
+        // Add delimiters to Model.
+        model.addAttribute("delimiters", dataManager.getDelimiters());
         // Add parsed file data in JSON string format (to sho win the SlickGrid).
         model.addAttribute("parsedData", dataManager.parseDataFileByLine(data.getId(),data.getDataFileName()));
 
