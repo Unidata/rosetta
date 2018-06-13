@@ -7,10 +7,7 @@ import edu.ucar.unidata.rosetta.domain.resources.*;
 import edu.ucar.unidata.rosetta.exceptions.*;
 import edu.ucar.unidata.rosetta.repository.DataDao;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
-import edu.ucar.unidata.rosetta.repository.resources.CfTypeDao;
-import edu.ucar.unidata.rosetta.repository.resources.CommunityDao;
-import edu.ucar.unidata.rosetta.repository.resources.FileTypeDao;
-import edu.ucar.unidata.rosetta.repository.resources.PlatformDao;
+import edu.ucar.unidata.rosetta.repository.resources.*;
 
 import java.util.*;
 
@@ -32,12 +29,13 @@ public class DataManagerImpl implements DataManager {
 
     private static final Logger logger = Logger.getLogger(DataManagerImpl.class);
 
-    private DataDao dataDao;
-    private PropertiesDao propertiesDao;
-    private CommunityDao communityDao;
-    private PlatformDao platformDao;
-    private FileTypeDao fileTypeDao;
     private CfTypeDao cfTypeDao;
+    private CommunityDao communityDao;
+    private DataDao dataDao;
+    private DelimiterDao delimiterDao;
+    private FileTypeDao fileTypeDao;
+    private PlatformDao platformDao;
+    private PropertiesDao propertiesDao;
 
     // The other managers we make use of in this file.
     @Resource(name = "fileParserManager")
@@ -134,6 +132,16 @@ public class DataManagerImpl implements DataManager {
     }
 
     /**
+     * Retrieves a list of all the persisted Delimiter objects.
+     *
+     * @return  The Delimiter objects.
+     */
+    @Override
+    public List<Delimiter> getDelimiters() {
+        return delimiterDao.getDelimiters();
+    }
+
+    /**
      * Returns the symbol corresponding to the given delimiter string.
      *
      * @param delimiter The delimiter string.
@@ -141,16 +149,7 @@ public class DataManagerImpl implements DataManager {
      */
     @Override
     public String getDelimiterSymbol(String delimiter) {
-        Map<String, String> delimiters = new HashMap<>();
-        delimiters.put("Tab", "\t");
-        delimiters.put("Comma", ",");
-        delimiters.put("Whitespace", " ");
-        delimiters.put("Colon", ":");
-        delimiters.put("Semicolon", ";");
-        delimiters.put("Single Quote", "'");
-        delimiters.put("Double Quote", "\"");
-
-        return delimiters.get(delimiter);
+        return delimiterDao.lookupDelimiterByName(delimiter).getCharacterSymbol();
     }
 
     /**
@@ -181,7 +180,7 @@ public class DataManagerImpl implements DataManager {
      * @return  A list of CfType objects.
      */
     @Override
-    public List<CfType> getCFTypes() {
+    public List<CfType> getCfTypes() {
         return cfTypeDao.getCfTypes();
     }
 
@@ -592,6 +591,16 @@ public class DataManagerImpl implements DataManager {
      */
     public void setDataDao(DataDao dataDao) {
         this.dataDao = dataDao;
+    }
+
+    /**
+     * Sets the data access object (DAO) for the Delimiter object which will acquire and persist
+     * the data passed to it via the methods of this DataManager.
+     *
+     * @param delimiterDao  The service DAO representing a Delimiter object.
+     */
+    public void setDelimiterDao(DelimiterDao delimiterDao) {
+        this.delimiterDao = delimiterDao;
     }
 
     /**

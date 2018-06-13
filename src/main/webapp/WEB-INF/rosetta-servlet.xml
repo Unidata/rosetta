@@ -92,27 +92,33 @@
 
     <!-- DAO injection -->
     <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl">
-        <property name="dataDao" ref="dataDao"/>
-        <property name="propertiesDao" ref="propertiesDao"/>
-        <property name="communityDao" ref="communityDao"/>
-        <property name="platformDao" ref="platformDao"/>
-        <property name="fileTypeDao" ref="fileTypeDao"/>
         <property name="cfTypeDao" ref="cfTypeDao"/>
+        <property name="communityDao" ref="communityDao"/>
+        <property name="dataDao" ref="dataDao"/>
+        <property name="delimiterDao" ref="delimiterDao"/>
+        <property name="fileTypeDao" ref="fileTypeDao"/>
+        <property name="platformDao" ref="platformDao"/>
+        <property name="propertiesDao" ref="propertiesDao"/>
     </bean>
 
     <bean id="metadataManager" class="edu.ucar.unidata.rosetta.service.MetadataManagerImpl">
         <property name="metadataDao" ref="metadataDao"/>
     </bean>
 
+
+    <bean id="cfTypeDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcCfTypeDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="communityDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcCommunityDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
     <bean id="dataDao" class="edu.ucar.unidata.rosetta.repository.JdbcDataDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <bean id="propertiesDao" class="edu.ucar.unidata.rosetta.repository.JdbcPropertiesDao">
-        <property name="dataSource" ref="dbDataSource"/>
-    </bean>
-
-    <bean id="metadataDao" class="edu.ucar.unidata.rosetta.repository.JdbcMetadataDao">
+    <bean id="delimiterDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcDelimiterDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
@@ -120,7 +126,7 @@
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <bean id="cfTypeDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcCfTypeDao">
+    <bean id="metadataDao" class="edu.ucar.unidata.rosetta.repository.JdbcMetadataDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
@@ -128,9 +134,10 @@
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <bean id="communityDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcCommunityDao">
+    <bean id="propertiesDao" class="edu.ucar.unidata.rosetta.repository.JdbcPropertiesDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
+
 
 
     <!-- Declare a datasource that has pooling capabilities-->
