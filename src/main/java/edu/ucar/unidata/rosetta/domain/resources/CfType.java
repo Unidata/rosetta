@@ -2,6 +2,9 @@ package edu.ucar.unidata.rosetta.domain.resources;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+/**
+ * @author oxelson@ucar.edu
+ */
 public class CfType extends RosettaResource {
 
     private int id;

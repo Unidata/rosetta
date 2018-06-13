@@ -1,15 +1,17 @@
 package edu.ucar.unidata.rosetta.repository.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.CfType;
-import org.apache.log4j.Logger;
-import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
+
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 /**
  * @author oxelson@ucar.edu
  */
