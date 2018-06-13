@@ -13,9 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.springframework.dao.DataRetrievalFailureException;
 
@@ -27,14 +25,17 @@ import java.util.List;
 public class DataManagerTest {
 
     private DataManagerImpl dataManager;
-    private FileManagerImpl fileManager;
     private DataDao dataDao;
     private Community community1;
     private Community community2;
+    private CfType cfType1;
+    private CfType cfType2;
     private Platform platform1;
     private Platform platform2;
     private FileType fileType1;
     private FileType fileType2;
+    private Delimiter tabDelimiter;
+    private Delimiter commaDelimiter;
     private GeneralMetadata generalMetadata;
     private Data data;
     private HttpServletRequest request;
@@ -58,21 +59,27 @@ public class DataManagerTest {
     }
 
     @Test
+    public void getCFTypeTest() throws Exception {
+        List<CfType> cfTypes = dataManager.getCfTypes();
+        assertTrue(cfTypes.size() == 2);
+    }
+
+    @Test
     public void getCommunitiesTest() throws Exception {
         List<Community> communities = dataManager.getCommunities();
         assertTrue(communities.size() == 2);
     }
 
     @Test
-    public void getCommunitiesForViewTest() throws Exception {
-        List<Map<String,Object>> communities = dataManager.getCommunitiesForView();
-        assertTrue(communities instanceof List);
-    }
-
-    @Test
     public void getCommunityFromPlatform() throws Exception {
         String community = dataManager.getCommunityFromPlatform("Single Station");
         assertEquals(community, "Atmospheric Sciences");
+    }
+
+    @Test
+    public void getDelimitersTest() throws Exception {
+        List<Delimiter> delimiters = dataManager.getDelimiters();
+        assertTrue(delimiters.size() == 2);
     }
 
     @Test
@@ -93,11 +100,6 @@ public class DataManagerTest {
         assertTrue(fileTypes.size() == 2);
     }
 
-    @Test
-    public void getFileTypesForViewTest() throws Exception {
-        List<Map<String,Object>> fileTypes = dataManager.getFileTypesForView();
-        assertTrue(fileTypes instanceof List);
-    }
 
     @Test
     public void getMetadataFromKnownFileTest() throws Exception {
@@ -118,17 +120,10 @@ public class DataManagerTest {
     }
 
     @Test
-    public void getPlatformsForViewTest() throws Exception {
-        List<Map<String,Object>> platforms = dataManager.getPlatformsForView();
-        assertTrue(platforms instanceof List);
-    }
-
-    @Test
     public void getUploadDirTest() throws Exception {
         String uploadsDir = dataManager.getUploadDir();
         assertEquals(uploadsDir, "/dev/null");
     }
-
 
     @Test
     public void lookupPersistedDataByIdTest() throws Exception {
@@ -203,24 +198,39 @@ public class DataManagerTest {
         fileType2 = new FileType();
         fileType2.setName("EOL Composite Sounding File");
 
-        List<Map<String,Object>> test = new ArrayList<>();
+        tabDelimiter = new Delimiter();
+        tabDelimiter.setName("Tab");
+        tabDelimiter.setCharacterSymbol("\t");
+
+        commaDelimiter = new Delimiter();
+        commaDelimiter.setName("Comma");
+        commaDelimiter.setCharacterSymbol(",");
 
         // The behavior we want to see.
+        cfType1 = new CfType();
+        cfType1.setId(123);
+        cfType1.setName("Trajectory");
+
+        cfType2 = new CfType();
+        cfType2.setId(345);
+        cfType2.setName("Profile");
+
+        List<Map<String,Object>> test = new ArrayList<>();
+
+        when(dataManager.getCfTypes()).thenReturn(Arrays.asList(cfType1, cfType2));
         when(dataManager.lookupPersistedDataById("000000345HDV4")).thenReturn(data);
         doThrow(new DataRetrievalFailureException("Unable to find persisted Data object corresponding to id " + data.getId())).when(dataManager).deletePersistedData(data.getId());
         when(dataManager.getUploadDir()).thenReturn("/dev/null");
         when(dataManager.getDownloadDir()).thenReturn("/tmp");
         when(dataManager.parseDataFileByLine("000000345HDV4", "test.xls")).thenReturn("{\"x\":5,\"y\":6}");
+        when(dataManager.getDelimiters()).thenReturn(Arrays.asList(tabDelimiter, commaDelimiter));
         when(dataManager.getDelimiterSymbol("Comma")).thenReturn(",");
         when(dataManager.getCFTypeFromPlatform("eTag")).thenReturn("trajectory");
         when(dataManager.convertToNetCDF(data)).thenReturn(data);
         when(dataManager.getCommunities()).thenReturn(Arrays.asList(community1, community2));
-        when(dataManager.getCommunitiesForView()).thenReturn(test);
         when(dataManager.getCommunityFromPlatform("Single Station")).thenReturn("Atmospheric Sciences");
         when(dataManager.getPlatforms()).thenReturn(Arrays.asList(platform1, platform2));
-        when(dataManager.getPlatformsForView()).thenReturn(test);
         when(dataManager.getFileTypes()).thenReturn(Arrays.asList(fileType1, fileType2));
-        when(dataManager.getFileTypesForView()).thenReturn(test);
         when(dataManager.getMetadataFromKnownFile("/foo/bar/baz", "eTuff", generalMetadata)).thenReturn(generalMetadata);
         when(dataManager.getMetadataStringForClient("12345", "eTuff")).thenReturn("oiip");
         when(dataManager.processNextStep("12345")).thenReturn("/generalMetadata");
