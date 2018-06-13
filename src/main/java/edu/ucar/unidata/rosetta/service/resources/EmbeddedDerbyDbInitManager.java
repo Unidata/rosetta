@@ -129,6 +129,14 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     ")";
             createTable(createCommunityTable, props);
 
+            String createDelimiterTable = "CREATE TABLE delimiter " +
+                    "(" +
+                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                    "name VARCHAR(255), " +
+                    "characterSymbol VARCHAR(10)" +
+                    ")";
+            createTable(createDelimiterTable, props);
+
 
             // Populate properties table.
             populatePropertiesTable(props);
@@ -300,6 +308,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
             connection = DriverManager.getConnection(url);
 
         // Define our statements for the various resource types.
+        String delimiterStatement = "INSERT INTO delimiter(name, characterSymbol) VALUES (?, ?)";
         String cfTypeStatement = "INSERT INTO cfType(name) VALUES (?)";
         String fileTypeStatement = "INSERT INTO fileType(name) VALUES (?)";
         String platformStatement = "INSERT INTO platform(name, imgPath, cfType, community) VALUES (?, ?, ?, ?)";
@@ -313,6 +322,13 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                 // File Type resource.
                 preparedStatement = connection.prepareStatement(cfTypeStatement);
                 preparedStatement.setString(1, resource.getName());
+                preparedStatement.executeUpdate();
+
+            } else if (resource instanceof Delimiter) {
+                // File Type resource.
+                preparedStatement = connection.prepareStatement(delimiterStatement);
+                preparedStatement.setString(1, resource.getName());
+                preparedStatement.setString(2, ((Delimiter) resource).getCharacterSymbol());
                 preparedStatement.executeUpdate();
 
             } else if (resource instanceof FileType) {

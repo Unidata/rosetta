@@ -2,15 +2,11 @@ package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.domain.resources.CfType;
-import edu.ucar.unidata.rosetta.domain.resources.Community;
-import edu.ucar.unidata.rosetta.domain.resources.FileType;
-import edu.ucar.unidata.rosetta.domain.resources.Platform;
+import edu.ucar.unidata.rosetta.domain.resources.*;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -53,7 +49,7 @@ public interface DataManager {
      *
      * @return  A list of CfType objects.
      */
-    public List<CfType> getCFTypes();
+    public List<CfType> getCfTypes();
 
     /**
      * Retrieves a list of all the persisted communities.
@@ -69,6 +65,13 @@ public interface DataManager {
      * @return  The community associated with the given platform.
      */
     public String getCommunityFromPlatform(String platform);
+
+    /**
+     * Retrieves a list of all the persisted Delimiter objects.
+     *
+     * @return  The Delimiter objects.
+     */
+    public List<Delimiter> getDelimiters();
 
     /**
      * Returns the symbol corresponding to the given delimiter string.
