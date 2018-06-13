@@ -54,8 +54,6 @@ public class CommunityDaoTest {
         community.setName("Atmospheric Sciences");
         community.setId(123);
         community.setFileType(fileTypes);
-        community.addToPlatforms("Single Station");
-        community.addToPlatforms("Aircraft");
 
         when(communityDao.lookupCommunitiesByFileType("GeoCSV")).thenReturn(Arrays.asList(community));
         when(communityDao.lookupCommunityByName("Atmospheric Sciences")).thenReturn(community);
