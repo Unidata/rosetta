@@ -11,6 +11,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
+/**
+ * Implementation of a community DAO.
+ *
+ * @author oxelson@ucar.edu
+ */
 public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
 
     /**
@@ -20,7 +25,7 @@ public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
      * @throws DataAccessException If unable to retrieve persisted communities.
      */
     public List<Community> getCommunities() throws DataAccessException {
-        String sql = "SELECT community.id, community.name, fileType.name FROM community INNER JOIN fileType ON community.fileType = fileType.id";
+        String sql = "SELECT communities.id, communities.name, fileType.name FROM communities INNER JOIN fileType ON communities.fileType = fileType.id";
         return getCommunities(sql);
     }
 
@@ -32,7 +37,7 @@ public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
      * @throws DataAccessException If unable to retrieve persisted community.
      */
     public Community lookupCommunityByName(String name) throws DataAccessException {
-        String sql = "SELECT community.id, community.name, fileType.name FROM community LEFT JOIN fileType ON community.fileType = fileType.id WHERE community.name = '" + name+ "'";
+        String sql = "SELECT communities.id, communities.name, fileType.name FROM communities LEFT JOIN fileType ON communities.fileType = fileType.id WHERE communities.name = '" + name+ "'";
         return getJdbcTemplate().query(sql, rs -> {
             Community comm = new Community();
             comm.setName(name);
@@ -51,7 +56,7 @@ public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
      * @throws DataAccessException If unable to retrieve persisted Communities.
      */
     public List<Community> lookupCommunitiesByFileType(String fileType) throws DataAccessException {
-        String sql = "SELECT community.id, community.name, fileType.name FROM community LEFT JOIN fileType ON community.fileType = fileType.id WHERE fileType.name = '" + fileType + "'";
+        String sql = "SELECT communities.id, communities.name, fileType.name FROM communities LEFT JOIN fileType ON communities.fileType = fileType.id WHERE fileType.name = '" + fileType + "'";
         return getCommunities(sql);
     }
 

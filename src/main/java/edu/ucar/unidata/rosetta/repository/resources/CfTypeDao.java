@@ -6,6 +6,8 @@ import org.springframework.dao.DataRetrievalFailureException;
 import java.util.List;
 
 /**
+ * The data access object representing a CF type.
+ *
  * @author oxelson@ucar.edu
  */
 public interface CfTypeDao {

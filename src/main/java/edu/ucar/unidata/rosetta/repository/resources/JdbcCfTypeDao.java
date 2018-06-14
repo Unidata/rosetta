@@ -12,7 +12,10 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+
 /**
+ * Implementation of a CfType DAO.
+ *
  * @author oxelson@ucar.edu
  */
 public class JdbcCfTypeDao extends JdbcDaoSupport implements CfTypeDao {
@@ -26,7 +29,7 @@ public class JdbcCfTypeDao extends JdbcDaoSupport implements CfTypeDao {
      * @throws DataRetrievalFailureException  If unable to retrieve persisted CF types.
      */
     public List<CfType> getCfTypes() throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM cfType";
+        String sql = "SELECT * FROM cfTypes";
         List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper());
         if (cfTypes.isEmpty()) {
             String message = "Unable to find persisted CfType objects.";
@@ -44,7 +47,7 @@ public class JdbcCfTypeDao extends JdbcDaoSupport implements CfTypeDao {
      * @throws DataRetrievalFailureException If unable to retrieve persisted CF type.
      */
     public CfType lookupCfTypeById(int id) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM cfType WHERE id = ?";
+        String sql = "SELECT * FROM cfTypes WHERE id = ?";
         List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper(), id);
         if (cfTypes.isEmpty()) {
             String message = "Unable to find persisted CfType object corresponding to id " + id;
@@ -62,7 +65,7 @@ public class JdbcCfTypeDao extends JdbcDaoSupport implements CfTypeDao {
      * @throws DataRetrievalFailureException If unable to retrieve persisted CF type.
      */
     public CfType lookupCfTypeByName(String name) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM cfType WHERE name = ?";
+        String sql = "SELECT * FROM cfTypes WHERE name = ?";
         List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper(), name);
         if (cfTypes.isEmpty()) {
             String message = "Unable to find persisted CfType object corresponding to name " + name;

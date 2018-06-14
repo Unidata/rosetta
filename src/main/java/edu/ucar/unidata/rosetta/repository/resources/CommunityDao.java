@@ -7,6 +7,8 @@ import org.springframework.dao.DataRetrievalFailureException;
 import java.util.List;
 
 /**
+ * The data access object representing a community.
+ *
  * @author oxelson@ucar.edu
  */
 public interface CommunityDao {

@@ -1,6 +1,8 @@
 package edu.ucar.unidata.rosetta.repository;
 
 /**
+ * The data access object representing a properties.
+ *
  * @author oxelson@ucar.edu
  */
 public interface PropertiesDao {
