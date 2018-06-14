@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
+ * Implementation of a file type DAO.
+ *
  * @author oxelson@ucar.edu
  */
 public class JdbcFileTypeDao extends JdbcDaoSupport implements FileTypeDao {
@@ -24,7 +26,7 @@ public class JdbcFileTypeDao extends JdbcDaoSupport implements FileTypeDao {
      * @throws DataRetrievalFailureException  If unable to retrieve persisted file types.
      */
     public List<FileType> getFileTypes() throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM fileType";
+        String sql = "SELECT * FROM fileTypes";
         List<FileType> fileTypes = getJdbcTemplate().query(sql, new JdbcFileTypeDao.FileTypeMapper());
         if (fileTypes.isEmpty()) {
             String message = "Unable to find persisted FileType objects.";
@@ -42,7 +44,7 @@ public class JdbcFileTypeDao extends JdbcDaoSupport implements FileTypeDao {
      * @throws DataRetrievalFailureException If unable to retrieve persisted file type.
      */
     public FileType lookupFileTypeById(int id) throws DataRetrievalFailureException{
-        String sql = "SELECT * FROM fileType WHERE id = ?";
+        String sql = "SELECT * FROM fileTypes WHERE id = ?";
         List<FileType> fileTypes = getJdbcTemplate().query(sql, new JdbcFileTypeDao.FileTypeMapper(), id);
         if (fileTypes.isEmpty()) {
             String message = "Unable to find persisted FileType object corresponding to id " + id;
@@ -60,7 +62,7 @@ public class JdbcFileTypeDao extends JdbcDaoSupport implements FileTypeDao {
      * @throws DataRetrievalFailureException If unable to retrieve persisted file type.
      */
     public FileType lookupFileTypeByName(String name) throws DataRetrievalFailureException{
-        String sql = "SELECT * FROM fileType WHERE name = ?";
+        String sql = "SELECT * FROM fileTypes WHERE name = ?";
         List<FileType> fileTypes = getJdbcTemplate().query(sql, new JdbcFileTypeDao.FileTypeMapper(), name);
         if (fileTypes.isEmpty()) {
             String message = "Unable to find persisted FileType object corresponding to name " + name;

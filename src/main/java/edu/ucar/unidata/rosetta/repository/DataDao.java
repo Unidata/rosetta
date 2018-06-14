@@ -4,6 +4,8 @@ import edu.ucar.unidata.rosetta.domain.Data;
 import org.springframework.dao.DataRetrievalFailureException;
 
 /**
+ * The data access object representing data.
+ *
  * @author oxelson@ucar.edu
  */
 public interface DataDao {

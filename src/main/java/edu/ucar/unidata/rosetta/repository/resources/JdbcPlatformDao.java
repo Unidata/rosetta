@@ -15,6 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of a platform DAO.
+ *
+ * @author oxelson@ucar.edu
+ */
 public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
 
     protected static Logger logger = Logger.getLogger(JdbcPlatformDao.class);
@@ -28,7 +33,7 @@ public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
      * @throws DataAccessException  If unable to retrieve persisted Platforms.
      */
     public List<Platform> getPlatforms() throws DataAccessException {
-        String sql = "SELECT platform.id, platform.name, platform.imgPath, cfType.name, community.name FROM platform JOIN community ON platform.community = community.id JOIN cfType ON platform.cfType = cfType.id";
+        String sql = "SELECT platforms.id, platforms.name, platforms.imgPath, cfType.name, community.name FROM platforms JOIN community ON platforms.community = community.id JOIN cfType ON platforms.cfType = cfType.id";
         return getPlatforms(sql);
     }
 
@@ -40,7 +45,7 @@ public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
      * @throws DataAccessException  If unable to retrieve persisted Platform.
      */
     public Platform lookupPlatformByName(String name) throws DataAccessException {
-        String sql = "SELECT platform.id, platform.name, platform.imgPath, cfType.name, community.name FROM platform JOIN community ON platform.community = community.id JOIN cfType ON platform.cfType = cfType.id WHERE platform.name = '" + name + "'";
+        String sql = "SELECT platforms.id, platforms.name, platforms.imgPath, cfType.name, community.name FROM platforms JOIN community ON platforms.community = community.id JOIN cfType ON platforms.cfType = cfType.id WHERE platforms.name = '" + name + "'";
         return getJdbcTemplate().query(sql, rs -> {
             Platform platform = new Platform();
             platform.setName(name);
@@ -59,7 +64,7 @@ public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
      * @throws DataAccessException  If unable to retrieve persisted Platforms.
      */
     public List<Platform> lookupPlatformsByCfType(String cfType) throws DataAccessException {
-        String sql = "SELECT platform.id, platform.name, platform.imgPath, cfType.name, community.name FROM platform JOIN community ON platform.community = community.id JOIN cfType ON platform.cfType = cfType.id WHERE cfType.name = '" + cfType + "'";
+        String sql = "SELECT platforms.id, platforms.name, platforms.imgPath, cfType.name, community.name FROM platforms JOIN community ON platforms.community = community.id JOIN cfType ON platforms.cfType = cfType.id WHERE cfType.name = '" + cfType + "'";
         return getPlatforms(sql);
     }
 
@@ -71,7 +76,7 @@ public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
      * @throws DataAccessException  If unable to retrieve persisted Platforms.
      */
     public List<Platform> lookupPlatformsByCommunity(String community) throws DataAccessException {
-        String sql = "SELECT platform.id, platform.name, platform.imgPath, cfType.name, community.name FROM platform JOIN community ON platform.community = community.id JOIN cfType ON platform.cfType = cfType.id WHERE community.name = '" + community + "'";
+        String sql = "SELECT platforms.id, platforms.name, platforms.imgPath, cfType.name, community.name FROM platforms JOIN community ON platforms.community = community.id JOIN cfType ON platforms.cfType = cfType.id WHERE community.name = '" + community + "'";
         return getPlatforms(sql);
     }
 

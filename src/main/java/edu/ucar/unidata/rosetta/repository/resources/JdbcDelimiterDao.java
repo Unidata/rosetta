@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
+ * Implementation of a delimiter DAO.
+ *
  * @author oxelson@ucar.edu
  */
 public class JdbcDelimiterDao extends JdbcDaoSupport implements DelimiterDao {
@@ -26,7 +28,7 @@ public class JdbcDelimiterDao extends JdbcDaoSupport implements DelimiterDao {
      * @throws DataRetrievalFailureException  If unable to retrieve persisted delimiters.
      */
     public List<Delimiter> getDelimiters() throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM delimiter ORDER BY name";
+        String sql = "SELECT * FROM delimiters ORDER BY name";
         List<Delimiter> delimiters = getJdbcTemplate().query(sql, new JdbcDelimiterDao.DelimiterMapper());
         if (delimiters.isEmpty()) {
             String message = "Unable to find persisted Delimiter objects.";
@@ -44,7 +46,7 @@ public class JdbcDelimiterDao extends JdbcDaoSupport implements DelimiterDao {
      * @throws DataRetrievalFailureException If unable to retrieve persisted dlimiter.
      */
     public Delimiter lookupDelimiterByName(String name) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM delimiter WHERE name = ?";
+        String sql = "SELECT * FROM delimiters WHERE name = ?";
         List<Delimiter> delimiters = getJdbcTemplate().query(sql, new JdbcDelimiterDao.DelimiterMapper(), name);
         if (delimiters.isEmpty()) {
             String message = "Unable to find persisted Delimiter object corresponding to name " + name;

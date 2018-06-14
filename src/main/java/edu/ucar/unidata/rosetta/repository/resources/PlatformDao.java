@@ -6,6 +6,8 @@ import org.springframework.dao.DataAccessException;
 import java.util.List;
 
 /**
+ * The data access object representing a platform.
+ *
  * @author oxelson@ucar.edu
  */
 public interface PlatformDao {

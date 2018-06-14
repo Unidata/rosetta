@@ -16,6 +16,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
+ * Implementation of a data DAO.
+ *
  * @author oxelson@ucar.edu
  */
 public class JdbcDataDao extends JdbcDaoSupport implements DataDao {

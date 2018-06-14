@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
+ * Implementation of a properties DAO.
+ *
  * @author oxelson@ucar.edu
  */
 public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {

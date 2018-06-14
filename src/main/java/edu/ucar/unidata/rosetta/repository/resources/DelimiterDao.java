@@ -6,6 +6,8 @@ import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
 import org.springframework.dao.DataRetrievalFailureException;
 
 /**
+ * The data access object representing a delimiter.
+ *
  * @author oxelson@ucar.edu
  */
 public interface DelimiterDao {

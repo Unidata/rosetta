@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
+ * Implementation of a metadata DAO.
+ *
  * @author oxelson@ucar.edu
  */
 public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
