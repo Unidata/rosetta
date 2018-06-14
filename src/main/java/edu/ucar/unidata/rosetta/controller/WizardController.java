@@ -493,7 +493,7 @@ public class WizardController implements HandlerExceptionResolver {
         logger.error(message);
         Map<String, Object> model = new HashMap<>();
         model.put("message", message);
-        return new ModelAndView("fatalError", model);
+        return new ModelAndView("error", model);
     }
 
 }
