@@ -85,8 +85,11 @@
                                          </c:otherwise>
                                      </c:choose>
                                  </c:when>
-                                 <c:otherwise>
+                                 <c:when test="${currentStep eq 'convertAndDownload'}">
                                      <%@ include file="/WEB-INF/views/jspf/convertAndDownload.jspf" %>
+                                 </c:when>
+                                 <c:otherwise>
+                                     <%@ include file="/WEB-INF/views/jspf/cfType.jspf" %>
                                  </c:otherwise>
                             </c:choose>
                          </div>
