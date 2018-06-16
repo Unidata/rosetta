@@ -1,11 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/views/jspf/taglibs.jspf" %>
-<%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean" %>
-<c:set var="baseUrl" value="${pageContext.request.contextPath}" />
 <!DOCTYPE HTML>
     <html>
         <head>
-            <title><spring:message code="global.title"/> : Login</title>
+            <title><spring:message code="global.title"/> : Error</title>
             <link rel="shortcut icon" href="<c:out value="${baseUrl}" />/resources/img/logo/favicon.ico" type="image/x-icon" />
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <%@ include file="/WEB-INF/views/jspf/css.jspf" %>

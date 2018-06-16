@@ -10,3 +10,7 @@
 
 <!-- custom -->
 <link type="text/css" rel="stylesheet" href="resources/css/main.css"/>
+
+<script>
+    var baseUrl = '<c:out value="${baseUrl}" />';
+</script>
