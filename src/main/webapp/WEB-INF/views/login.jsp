@@ -1,9 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/views/jspf/taglibs.jspf" %>
-<%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean" %>
-<c:set var="baseUrl" value="${pageContext.request.contextPath}" />
-<!DOCTYPE HTML>
-    <html>
+<c:choose>
+    <c:when test="${loggedIn}">
+        <c:redirect url="${baseUrl}/cfType"/>
+    </c:when>
+    <c:otherwise>
+        <!DOCTYPE HTML>
+        <html>
         <head>
             <title><spring:message code="global.title"/> : Login</title>
             <link rel="shortcut icon" href="<c:out value="${baseUrl}" />/resources/img/logo/favicon.ico" type="image/x-icon" />
@@ -59,5 +62,6 @@
 
             <%@ include file="/WEB-INF/views/jspf/footer.jspf" %>
         </body>
-    </html>
-
+        </html>
+    </c:otherwise>
+</c:choose>
