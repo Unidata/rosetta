@@ -35,7 +35,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         // Since we have created our custom success handler, its up to us
         // to decide where we will redirect the user after successfully login.
-        httpServletResponse.sendRedirect("wizard");
+        httpServletResponse.sendRedirect("cfType");
     }
 }
 
