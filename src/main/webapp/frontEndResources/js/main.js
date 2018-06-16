@@ -8,6 +8,9 @@ $(document).ready(function ($) {
         }
     });
 
+    /* horizontal nav drop down menu */
+    $("ul.nav").dropit({ action: "click", triggerEl: "b" });
+
 
     /**
      * STEP 1: CF Type selection step.

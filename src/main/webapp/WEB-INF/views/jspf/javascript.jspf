@@ -19,6 +19,9 @@
 <script type="text/javascript" src="resources/js/SlickGrid/custom/headerLineSelection.js"></script>
 <script type="text/javascript" src="resources/js/SlickGrid/custom/variableSpecification.js"></script>
 
+<!-- DropIt -->
+<script type="text/javascript" src="resources/js/plugins/jquery.dropit.js"></script>
+
 <!-- custom -->
 <script type="text/javascript" src="resources/js/main.js"></script>
 <script type="text/javascript" src="resources/js/globalResources.js"></script>
