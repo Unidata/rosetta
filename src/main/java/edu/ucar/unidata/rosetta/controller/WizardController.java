@@ -463,18 +463,19 @@ public class WizardController implements HandlerExceptionResolver {
     }
 
     /**
-     * This method gracefully handles any uncaught exception that are fatal in
-     * nature and unresolvable by the user.
+     * This method gracefully handles any uncaught exception that are fatal in nature and unresolvable by the user.
      *
-     * @param arg0      The current HttpServletRequest request.
-     * @param arg1      The current HttpServletRequest response.
-     * @param arg2      The executed handler, or null if none chosen at the time of the exception.
+     * @param request   The current HttpServletRequest request.
+     * @param response  The current HttpServletRequest response.
+     * @param handler   The executed handler, or null if none chosen at the time of the exception.
      * @param exception The exception that got thrown during handler execution.
      * @return The error page containing the appropriate message to the user.
      */
     @Override
-    public ModelAndView resolveException(HttpServletRequest arg0,
-                                         HttpServletResponse arg1, Object arg2, Exception exception) {
+    public ModelAndView resolveException(HttpServletRequest request,
+                                         HttpServletResponse response,
+                                         java.lang.Object handler,
+                                         Exception exception) {
         String message;
         if (exception instanceof MaxUploadSizeExceededException) {
             // this value is declared in the /WEB-INF/rosetta-servlet.xml file
@@ -489,7 +490,7 @@ public class WizardController implements HandlerExceptionResolver {
                     + exception.getClass().getName() + ":"
                     + errors;
         }
-        // log it
+        // Log it!
         logger.error(message);
         Map<String, Object> model = new HashMap<>();
         model.put("message", message);
