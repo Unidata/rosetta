@@ -25,7 +25,7 @@ public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
      * @throws DataAccessException If unable to retrieve persisted communities.
      */
     public List<Community> getCommunities() throws DataAccessException {
-        String sql = "SELECT communities.id, communities.name, fileType.name FROM communities INNER JOIN fileType ON communities.fileType = fileType.id";
+        String sql = "SELECT communities.id, communities.name, fileTypes.name FROM communities INNER JOIN fileTypes ON communities.fileType = fileTypes.id";
         return getCommunities(sql);
     }
 
@@ -37,7 +37,7 @@ public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
      * @throws DataAccessException If unable to retrieve persisted community.
      */
     public Community lookupCommunityByName(String name) throws DataAccessException {
-        String sql = "SELECT communities.id, communities.name, fileType.name FROM communities LEFT JOIN fileType ON communities.fileType = fileType.id WHERE communities.name = '" + name+ "'";
+        String sql = "SELECT communities.id, communities.name, fileTypes.name FROM communities LEFT JOIN fileTypes ON communities.fileType = fileTypes.id WHERE communities.name = '" + name+ "'";
         return getJdbcTemplate().query(sql, rs -> {
             Community comm = new Community();
             comm.setName(name);
@@ -56,7 +56,7 @@ public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
      * @throws DataAccessException If unable to retrieve persisted Communities.
      */
     public List<Community> lookupCommunitiesByFileType(String fileType) throws DataAccessException {
-        String sql = "SELECT communities.id, communities.name, fileType.name FROM communities LEFT JOIN fileType ON communities.fileType = fileType.id WHERE fileType.name = '" + fileType + "'";
+        String sql = "SELECT communities.id, communities.name, fileTypes.name FROM communities LEFT JOIN fileTypes ON communities.fileType = fileTypes.id WHERE fileTypes.name = '" + fileType + "'";
         return getCommunities(sql);
     }
 
