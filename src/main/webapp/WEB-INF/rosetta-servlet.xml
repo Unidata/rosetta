@@ -13,12 +13,6 @@
            http://www.springframework.org/schema/context/spring-context-3.0.xsd
            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-
-    <!-- Static resources since we are handling all requests.
-         These are front end resources (css, etc.) and xml files -->
-    <mvc:resources mapping="/resources/**" location="/frontEndResources/, /WEB-INF/classes/resources/"/>
-    <mvc:resources mapping="/download/**" location="file:/usr/local/tomcat/rosetta/downloads/"/>
-
     <!-- Activates various annotations to be detected in bean classes -->
     <context:annotation-config />
 
@@ -37,6 +31,11 @@
             </list>
         </property>
     </bean>
+
+    <!-- Static resources since we are handling all requests.
+         These are front end resources (css, etc.) and xml files -->
+    <mvc:resources mapping="/resources/**" location="/frontEndResources/, /WEB-INF/classes/resources/"/>
+    <mvc:resources mapping="/download/**" location="file:/usr/local/tomcat/rosetta/downloads/"/>
 
 
     <!-- Configure Spring-Security  -->
@@ -63,6 +62,13 @@
         <security:intercept-url pattern="/register" access="permitAll" />
         <security:intercept-url pattern="/login/**" access="permitAll" />
         <security:intercept-url pattern="/denied" access="permitAll" />
+        <security:intercept-url pattern="/error" access="permitAll" />
+        <security:intercept-url pattern="/cfType" access="permitAll" />
+        <security:intercept-url pattern="/convertAndDownload" access="permitAll" />
+        <security:intercept-url pattern="/customFileTypeAttributes" access="permitAll" />
+        <security:intercept-url pattern="/fileUpload" access="permitAll" />
+        <security:intercept-url pattern="/generalMetadata" access="permitAll" />
+        <security:intercept-url pattern="/variableMetadata" access="permitAll" />
         <security:intercept-url pattern="/**" access="isAuthenticated()" />
 
         <!-- enable csrf protection -->
