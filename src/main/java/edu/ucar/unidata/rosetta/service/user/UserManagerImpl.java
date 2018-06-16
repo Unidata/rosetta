@@ -113,6 +113,18 @@ public class UserManagerImpl implements UserManager {
     }
 
     /**
+     * Used to determine if the user with provided user name is the same user with the
+     * matching (provided) email address.
+     *
+     * @param userName  The user name of the user to locate.
+     * @param emailAddress  The email address of the user.
+     * @return true if it is the same user; otherwise false.
+     */
+    public boolean sameUser(String userName, String emailAddress) {
+        return userDao.sameUser(userName, emailAddress);
+    }
+
+    /**
      * Sets the data access object which will acquire and persist the data
      * passed to it via the methods of this UserManager.
      *
@@ -154,5 +166,16 @@ public class UserManagerImpl implements UserManager {
         } catch (DataAccessException e) {
             throw new RosettaUserException("Unable to update user with ID '" + user.getUserId() + "' " + e);
         }
+    }
+
+    /**
+     * A boolean method used to determine if a user has already been persisted.
+     *
+     * @param columnName  The table column against which run the query.
+     * @param stringToQueryFor The data to query for.
+     * @return  true if the user has already been persisted; otherwise false.
+     */
+    public boolean userExists(String columnName, String stringToQueryFor) {
+        return userDao.userExists(columnName, stringToQueryFor);
     }
 }

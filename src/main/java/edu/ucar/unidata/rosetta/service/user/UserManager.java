@@ -63,6 +63,16 @@ public interface UserManager {
     public User lookupUserByEmailAddress(String emailAddress) throws RosettaUserException;
 
     /**
+     * Used to determine if the user with provided user name is the same user with the
+     * matching (provided) email address.
+     *
+     * @param userName  The user name of the user to locate.
+     * @param emailAddress  The email address of the user.
+     * @return true if it is the same user; otherwise false.
+     */
+    public boolean sameUser(String userName, String emailAddress);
+
+    /**
      * Updates the user's password.
      *
      * @param user  The user whose password needs to be update.
@@ -77,4 +87,13 @@ public interface UserManager {
      * @throws RosettaUserException  If unable to update the persisted user.
      */
     public User updateUser(User user) throws RosettaUserException;
+
+    /**
+     * A boolean method used to determine if a user has already been persisted.
+     *
+     * @param columnName  The table column against which run the query.
+     * @param stringToQueryFor The data to query for.
+     * @return  true if the user has already been persisted; otherwise false.
+     */
+    public boolean userExists(String columnName, String stringToQueryFor);
 }
