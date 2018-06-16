@@ -34,9 +34,7 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
      * @throws DataAccessException  If unable to persists the user.
      */
     public User createUser(User user) throws DataAccessException {
-        String sql = "SELECT * FROM users WHERE userName = ?";
-        List<User> users = getJdbcTemplate().query(sql, new UserMapper(), user.getUserName());
-        if (!users.isEmpty()) {
+        if (userExists("userName", user.getUserName()))  {
             throw new DataRetrievalFailureException("User with user name \"" +  user.getUserName() + "\" already exists.");
         } else {
             SimpleJdbcInsert insertActor = new SimpleJdbcInsert(getDataSource()).withTableName("users").usingGeneratedKeyColumns("userId");
@@ -140,6 +138,24 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
     }
 
     /**
+     * Used to determine if the user with provided user name is the same user with the
+     * matching (provided) email address.
+     *
+     * @param userName  The user name of the user to locate.
+     * @param emailAddress  The email address of the user.
+     * @return true if it is the same user; otherwise false.
+     */
+    public boolean sameUser(String userName, String emailAddress) {
+        String sql = "SELECT * FROM users WHERE userName = ?";
+        List<User> users = getJdbcTemplate().query(sql, new UserMapper(), userName);
+        if (users.get(0).getEmailAddress().equals(emailAddress))
+            return true;
+        else
+            return false;
+    }
+
+
+    /**
      * Updates the persisted user's password .
      *
      * @param user  The user whose password needs to be update.
@@ -188,6 +204,26 @@ public class JdbcUserDao extends JdbcDaoSupport implements UserDao {
             logger.info("Updated user " + user.getUserName());
         }
         return user;
+    }
+
+    /**
+     * A boolean method used to determine if a user has already been persisted.
+     *
+     * @param columnName  The table column against which run the query.
+     * @param stringToQueryFor The data to query for.
+     * @return  true if the user has already been persisted; otherwise false.
+     */
+    public boolean userExists(String columnName, String stringToQueryFor) {
+        String sql;
+        if (columnName.equals("userName"))
+            sql = "SELECT * FROM users WHERE userName = ?";
+        else
+            sql = "SELECT * FROM users WHERE emailAddress = ?";
+        List<User> users = getJdbcTemplate().query(sql, new UserMapper(), stringToQueryFor);
+        if (!users.isEmpty())
+            return true;
+        else
+            return false;
     }
 
     /**
