@@ -13,10 +13,12 @@ import org.springframework.validation.Validator;
 @Component
 public class CFTypeValidator extends CommonValidator implements Validator {
 
+    @Override
     public boolean supports(Class clazz) {
         return Data.class.equals(clazz);
     }
 
+    @Override
     public void validate(Object obj, Errors errors) {
         Data data = (Data) obj;
         String cfType = data.getCfType();
