@@ -1,0 +1,87 @@
+<%-- This view is for listing all users in the database.  Admin access only. --%>
+<h3>Manage Users</h3>
+
+<table class="list">
+    <c:choose>
+        <c:when test="${fn:length(users) gt 0}">
+            <thead>
+            <tr>
+                <th>
+                    Username/Full Name
+                </th>
+                <th>
+                    Email Address
+                </th>
+                <th>
+                    Access Level
+                </th>
+                <th>
+                    Account Status
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach items="${users}" var="user">
+                <tr id="<c:out value="${user.userName}" />Toggle" class="toggle">
+                    <td class="main">
+                        <c:out value="${user.userName}" /><br>
+                        <c:out value="${user.fullName}" />
+                    </td>
+                    <td>
+                        <c:out value="${user.emailAddress}" />
+                    </td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${user.accessLevel == 2}">
+                                Administrator
+                            </c:when>
+                            <c:otherwise>
+                                User
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${user.accountStatus == 1}">
+                                Enabled
+                            </c:when>
+                            <c:otherwise>
+                                Disabled
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                </tr>
+                <tr id="<c:out value="${user.userName}" />ToggleSection" class="hideandshow">
+                    <td colspan="4">
+                        <div>
+                            <form action="${baseUrl}/user/view/<c:out value="${user.userName}" />" method="GET">
+                                <input type="submit" value="View User Details" />
+                            </form>
+                            <form action="${baseUrl}/user/edit/<c:out value="${user.userName}" />" method="GET">
+                                <input type="submit" value="Edit User" />
+                            </form>
+                            <form action="${baseUrl}/user/password/<c:out value="${user.userName}" />" method="GET">
+                                <input type="submit" value="Reset Password" />
+                            </form>
+                            <c:choose>
+                                <c:when test="${user.userName ne authUserName}">
+                                    <form action="${baseUrl}/user/delete/<c:out value="${user.userName}" />" method="GET">
+                                        <input type="submit" value="Delete User"/>
+                                    </form>
+                                </c:when>
+                            </c:choose>
+                        </div>
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </c:when>
+        <c:otherwise>
+            <tr>
+                <td>
+                    No users have been created yet.
+                </td>
+            </tr>
+        </c:otherwise>
+    </c:choose>
+</table>

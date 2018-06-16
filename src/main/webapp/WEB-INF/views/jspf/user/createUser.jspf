@@ -1,0 +1,105 @@
+<%-- This view is used for user creation by the admin and user regsitration. --%>
+<c:choose>
+    <c:when test="${loggedIn}">
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
+            <h3>Create New User</h3>
+        </sec:authorize>
+    </c:when>
+    <c:otherwise>
+        <h3>Register with CloudControl</h3>
+    </c:otherwise>
+</c:choose>
+
+<p>* Indicates a required field.</p>
+
+<c:choose>
+    <c:when test="${loggedIn}">
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
+            <c:set var="baseUrl" value="${baseUrl}/user/${action}" />
+        </sec:authorize>
+    </c:when>
+    <c:otherwise>
+        <c:set var="baseUrl" value="${baseUrl}/welcome/${action}" />
+    </c:otherwise>
+</c:choose>
+
+<form:form action="${formAction}" commandName="user" method="POST">
+    <ul class="format half">
+        <li>
+            <label for="userName" class="tooltip" title="The username should contain only alphanumeric characters, dashed and/or underscores (spaces are NOT allowed) and be between 2 and 50 characters in length.">
+                Username*
+            </label>
+            <form:input path="userName" />
+            <form:errors path="userName" cssClass="error" />
+        </li>
+        <li>
+            <label for="fullName" class="tooltip" title="The full name must be between 2 and 75 characters in length.">
+                Full Name*
+            </label>
+            <form:input path="fullName"/>
+            <form:errors path="fullName" cssClass="error" />
+        </li>
+        <li>
+            <label for="emailAddress" class="tooltip" title="A legitimate, working email address please.">
+                Email Address*
+            </label>
+            <form:input path="emailAddress"/>
+            <form:errors path="emailAddress" cssClass="error" />
+        </li>
+        <li>
+            <label for="password" class="tooltip" title="The password must be between 8 and 25 characters in length.  Suspicious and invalid character combinations will not be permitted.">
+                Password*
+            </label>
+            <form:password path="password"/>
+            <form:errors path="password" cssClass="error" />
+
+            <label for="confirmPassword" class="tooltip" title="The confirmation password must match the provided password.">
+                Confirm Password*
+            </label>
+            <form:password path="confirmPassword"/>
+            <form:errors path="confirmPassword" cssClass="error" />
+        </li>
+    </ul>
+
+
+    <c:choose>
+        <c:when test="${loggedIn}">
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <ul class="format half">
+                    <li>
+                        <label for="accessLevel" class="tooltip" title="The user's access level/privilege.">
+                            User Access Level*
+                        </label>
+                        <form:select path="accessLevel">
+                            <form:option value="1">User</form:option>
+                            <form:option value="2">Administrator</form:option>
+                        </form:select>
+                        <form:errors path="accessLevel" cssClass="error" />
+                    </li>
+                    <li>
+                        <label for="accountStatus" class="tooltip" title="Whether the user's account is active or not.">
+                            Account Status*
+                        </label>
+                        <form:select path="accountStatus">
+                            <form:option value="1">Active</form:option>
+                            <form:option value="0">Disabled</form:option>
+                        </form:select>
+                        <form:errors path="accountStatus" cssClass="error" />
+                    </li>
+                </ul>
+                <ul class="format">
+                    <li>
+                        <input type="submit" value="Create New User" />
+                    </li>
+                </ul>
+            </sec:authorize>
+        </c:when>
+        <c:otherwise>
+            <ul class="format">
+                <li>
+                    <input type="submit" value="Register" />
+                </li>
+            </ul>
+        </c:otherwise>
+    </c:choose>
+</form:form>
