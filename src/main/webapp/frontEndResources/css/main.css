@@ -8,6 +8,8 @@
 @import url("footer.css");
 @import url("clearfix.css");
 @import url("nav.css");
+@import url("lists.css");
+@import url("tables.css");
 @import url("jQuery/custom.css");
 @import url("SlickGrid/custom.css");
 
@@ -55,6 +57,12 @@ section {
     border-left:1px solid #CFCFCF;
 }
 
+section.user {
+    width:95%;
+    border:none;
+}
+
+
 /* some divs to format a page into left & right */
 .left, .right {
     padding: 10px;
@@ -73,7 +81,6 @@ section {
     float: right;
     clear: right;
 }
-
 
 
 /* form */
@@ -121,6 +128,29 @@ input[type="submit"] {
     margin: 1em 0 1em 10px;
 }
 
+input[type="submit"].noformat {
+    margin: 1em 0;
+}
+
+label,
+.profileKey {
+    vertical-align:middle;
+    width:100%;
+    line-height:25px;
+    float:left;
+    margin-top:10px;
+}
+
+.profileValue {
+    font-size:9pt;
+    width:200px;
+    color:#696969;
+    line-height:25px;
+    padding:0;
+    float:left;
+}
+
+
 .disabled {
     color:#CFCFCF;
     background: #F8F8F8; /* Old browsers */
@@ -130,6 +160,11 @@ input[type="submit"] {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F8F8F8', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
     border: 1px solid #F8F8F8;
 }
+
+label.format {
+    display:block;
+}
+
 
 /* commonly used class used to hide elements */
 .hideMe {
@@ -157,8 +192,6 @@ label.noHeaderLines {
     font-family: "Courier New", Courier, monospace;
 }
 
-
-
 /* list of radio buttons  for template selection */
 ul.template {
     list-style: none;
@@ -167,8 +200,6 @@ ul.template {
     float: left;
     width:100%;
 }
-
-
 
 /* general image format (help icon)*/
 ul li label img {
