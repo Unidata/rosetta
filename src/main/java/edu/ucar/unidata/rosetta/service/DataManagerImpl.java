@@ -38,7 +38,7 @@ public class DataManagerImpl implements DataManager {
     private PropertiesDao propertiesDao;
 
     // The other managers we make use of in this file.
-    @Resource(name = "fileParserManager")
+    @Resource(name = "fileManager")
     private FileManager fileManager;
 
     @Resource(name = "metadataManager")
