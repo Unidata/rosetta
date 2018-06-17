@@ -1,0 +1,71 @@
+
+/* tablesorter */
+table.list thead tr .header {
+    background-image:url('../img/bg.gif');
+    background-repeat:no-repeat;
+    background-position:center right;
+    cursor:pointer;
+}
+table.list thead tr .hidebg {
+    background:none !important;
+    cursor:default !important;
+}
+table.list thead tr .headerSortUp {
+    background-image:url('../img/asc.gif');
+}
+table.list thead tr .headerSortDown {
+    background-image:url('../img/desc.gif');
+}
+
+table.list tbody {
+    border:1px solid #FF0000;
+}
+table thead tr th {
+    margin:0;
+    padding:5px 20px 5px 5px;
+    border:1px solid #BCC4D0;
+    white-space:nowrap;
+}
+table thead tr th img {
+    margin:0;
+    padding:0;
+    width:12px;
+    height:12px;
+}
+table tbody tr {
+    background-color:#FFFFFF;
+}
+table.nodec tbody tr {
+    background-color:transparent !important;
+    border-bottom:1px solid #BCC4D0;
+}
+
+table tbody tr.odd {
+    background-color:#FCFCFC;
+}
+
+table.list tbody tr:hover {
+    background-color:#EEE9E9;
+    cursor:pointer;
+}
+
+table tbody td {
+    cursor:default;
+    margin:0;
+    padding:5px;
+    vertical-align:top;
+    border:1px solid #BCC4D0;
+    word-wrap:break-word;
+}
+table.nodec tbody td {
+    border:none !important;
+}
+table tbody td form {
+    margin:0;
+    padding:0;
+    display:inline;
+}
+
+
+
+
