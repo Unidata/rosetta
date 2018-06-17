@@ -1,12 +1,15 @@
         <header>
             <a href="${baseUrl}/">
-                <img src="<spring:message code="global.logo.path"/>" alt="<spring:message code="global.logo.alt"/>"/>
+                <img src="${baseUrl}/<spring:message code="global.logo.path"/>" alt="<spring:message code="global.logo.alt"/>"/>
                 <h1><spring:message code="global.title"/></h1>
             </a>
             <%-- future login & account links will go here --%>
             <ul class="nav"> 
          		<c:choose>
 		        	<c:when test="${loggedIn}">
+                        <sec:authorize access="hasRole('ROLE_ADMIN')">
+                            <li><a href="${baseUrl}/user">Manage Rosetta Users</a></li>
+                        </sec:authorize>
         		   		<li>
 		            		<b>${authFullName} (${authUserName})</b>
         		    		<c:url var="logoutUrl" value="/j_spring_security_logout" />
@@ -30,8 +33,8 @@
         		<li class="help">
 		            <b>&nbsp;</b>
 		            <ul>
-        		        <li><a href="${baseUrl}">About</a></li>
-		             	<li><a href="${baseUrl}">Help</a></li>
+        		        <li><a href="https://www.unidata.ucar.edu/software/rosetta/">About Rosetta</a></li>
+		             	<li><a href="https://www.unidata.ucar.edu/about/index.html#contact">Contact Information</a></li>
         		    </ul>
 		        </li>  
 		    </ul>
