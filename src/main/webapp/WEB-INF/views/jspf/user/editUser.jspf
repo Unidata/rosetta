@@ -6,19 +6,21 @@
 <form:form action="${baseUrl}/user/edit/${user.userName}" commandName="user" method="POST">
     <ul class="format half">
         <li>
-            <label for="userName" class="tooltip" title="The username cannot be changed.">
+            <label for="userName" class="tooltip format" title="The username cannot be changed.">
                 Username
             </label>
             <form:input path="userName" cssClass="fieldDisabled" readonly="readonly"/>
             <form:errors path="userName" cssClass="error" />
-
-            <label for="fullName" class="tooltip" title="The full name must be between 2 and 75 characters in length.">
+        </li>
+        <li>
+            <label for="fullName" class="tooltip format" title="The full name must be between 2 and 75 characters in length.">
                 Full Name*
             </label>
             <form:input path="fullName"/>
             <form:errors path="fullName" cssClass="error" />
-
-            <label for="emailAddress" class="tooltip" title="A legitimate, working email address please.">
+        </li>
+        <li>
+            <label for="emailAddress" class="tooltip format" title="A legitimate, working email address please.">
                 Email Address*
             </label>
             <form:input path="emailAddress"/>
@@ -26,7 +28,7 @@
         </li>
         <sec:authorize access="hasRole('ROLE_ADMIN')">
             <li>
-                <label for="accessLevel" class="tooltip" title="The user's access level/privilege.">
+                <label for="accessLevel" class="tooltip format" title="The user's access level/privilege.">
                     User Access Level*
                 </label>
                 <form:select path="accessLevel">
@@ -34,8 +36,9 @@
                     <form:option value="2">Administrator</form:option>
                 </form:select>
                 <form:errors path="accessLevel" cssClass="error" />
-
-                <label for="accountStatus" class="tooltip" title="Whether the user's account is active or not.">
+        </li>
+        <li>
+                <label for="accountStatus" class="tooltip format" title="Whether the user's account is active or not.">
                     Account Status*
                 </label>
                 <form:select path="accountStatus">
@@ -60,7 +63,7 @@
     </ul>
     <ul class="format">
         <li>
-            <input type="submit" value="Update Account Information" />
+            <input type="submit" class="noformat" value="Update Account Information" />
         </li>
     </ul>
 </form:form>
