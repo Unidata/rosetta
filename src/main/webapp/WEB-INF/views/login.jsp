@@ -11,7 +11,7 @@
             <title><spring:message code="global.title"/> : Login</title>
             <link rel="shortcut icon" href="<c:out value="${baseUrl}" />/resources/img/logo/favicon.ico" type="image/x-icon" />
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <%@ include file="/WEB-INF/views/jspf/css.jspf" %>
+            <%@ include file="/WEB-INF/views/jspf/resources.jspf" %>
         </head>
         <body>
             <%@ include file="/WEB-INF/views/jspf/header.jspf" %>
@@ -43,19 +43,19 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 <ul class="format">
                     <li>
-                        <label for="userName">
+                        <label for="userName" class="format">
                             Username
-                            <input type="text" id="userName" name="userName" value="" />
                         </label>
+                        <input type="text" id="userName" name="userName" value="" />
                     </li>
                     <li>
-                        <label for="password">
+                        <label for="password" class="format">
                             Password
-                            <input type="password" id="password" name="password" value="" />
                         </label>
+                        <input type="password" id="password" name="password" value="" />
                     </li>
                     <li>
-                        <input type="submit" value="Login" />
+                        <input type="submit" class="noformat" value="Login" />
                     </li>
                 </ul>
             </form>

@@ -3,13 +3,12 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean" %>
 <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
 
-<jsp:useBean id="myDate" class="java.util.Date"/>
-
-<c:set var="baseUrl" value="${pageContext.request.contextPath}" />
 <sec:authorize var="loggedIn" access="isAuthenticated()" />
 <c:choose>
     <c:when test="${loggedIn}">

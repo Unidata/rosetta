@@ -97,16 +97,16 @@ public class ViewUserController implements HandlerExceptionResolver {
      *
      * @param userName  The 'userName' as provided by @PathVariable.
      * @param model  The Model used by the View.
-     * @return  The path for the ViewResolver.
+     * @return  The View and Model for the ViewResolver.
      * @throws RosettaUserException If unable to locate user.
      */
     @PreAuthorize("hasRole('ROLE_ADMIN') or #userName == authentication.name")
     @RequestMapping(value="/user/view/{userName}", method=RequestMethod.GET)
-    public String viewUserAccount(@PathVariable String userName, Model model) throws RosettaUserException {
+    public ModelAndView viewUserAccount(@PathVariable String userName, Model model) throws RosettaUserException {
         logger.debug("Get specified user information view.");
         User user = userManager.lookupUser(userName);
         model.addAttribute("user", user);
         model.addAttribute("action", "viewUser");
-        return "user";
+        return new ModelAndView("user");
     }
 }

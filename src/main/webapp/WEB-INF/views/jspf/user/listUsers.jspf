@@ -1,13 +1,18 @@
 <%-- This view is for listing all users in the database.  Admin access only. --%>
 <h3>Manage Users</h3>
 
+<p><a href="/user/create">Create New User</a></p>
+
 <table class="list">
     <c:choose>
         <c:when test="${fn:length(users) gt 0}">
             <thead>
-            <tr>
+            <tr class="header">
                 <th>
-                    Username/Full Name
+                    Full Name
+                </th>
+                <th>
+                    Username
                 </th>
                 <th>
                     Email Address
@@ -18,14 +23,19 @@
                 <th>
                     Account Status
                 </th>
+                <th>
+                    Actions
+                </th>
             </tr>
             </thead>
             <tbody>
             <c:forEach items="${users}" var="user">
-                <tr id="<c:out value="${user.userName}" />Toggle" class="toggle">
+                <tr>
                     <td class="main">
-                        <c:out value="${user.userName}" /><br>
                         <c:out value="${user.fullName}" />
+                    </td>
+                    <td class="main">
+                        <c:out value="${user.userName}" />
                     </td>
                     <td>
                         <c:out value="${user.emailAddress}" />
@@ -50,10 +60,8 @@
                             </c:otherwise>
                         </c:choose>
                     </td>
-                </tr>
-                <tr id="<c:out value="${user.userName}" />ToggleSection" class="hideandshow">
-                    <td colspan="4">
-                        <div>
+                
+                    <td>
                             <form action="${baseUrl}/user/view/<c:out value="${user.userName}" />" method="GET">
                                 <input type="submit" value="View User Details" />
                             </form>
@@ -70,7 +78,6 @@
                                     </form>
                                 </c:when>
                             </c:choose>
-                        </div>
                     </td>
                 </tr>
             </c:forEach>

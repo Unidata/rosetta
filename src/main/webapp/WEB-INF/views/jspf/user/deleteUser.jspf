@@ -9,5 +9,5 @@
 </form:form>
 
 <form action="${baseUrl}/user/view/<c:out value="${user.userName}" />" method="GET">
-    <input type="submit" value="No, Cancel Transaction" />
+    <input type="submit" class="noformat" value="No, Cancel Transaction" />
 </form>
