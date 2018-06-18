@@ -1,13 +1,10 @@
-package edu.ucar.unidata.rosetta.service.validators;
+package edu.ucar.unidata.rosetta.service.validators.wizard;
 
-import org.apache.commons.lang3.StringUtils;
+import edu.ucar.unidata.rosetta.service.validators.CommonValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.List;
 
 import edu.ucar.unidata.rosetta.domain.AsciiFile;
