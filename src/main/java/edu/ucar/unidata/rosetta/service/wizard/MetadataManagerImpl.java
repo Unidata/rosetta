@@ -1,9 +1,8 @@
-package edu.ucar.unidata.rosetta.service;
+package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
-import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.domain.Metadata;
-import edu.ucar.unidata.rosetta.repository.MetadataDao;
+import edu.ucar.unidata.rosetta.domain.wizard.GeneralMetadata;
+import edu.ucar.unidata.rosetta.repository.wizard.MetadataDao;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 
 import org.apache.log4j.Logger;
@@ -56,10 +55,10 @@ public class MetadataManagerImpl implements MetadataManager {
      */
     @Override
     public Map<String, String> getGeneralMetadataMap(String id, String type) {
-        List<Metadata> metadataList = lookupPersistedMetadata(id, type);
+        List<GeneralMetadata> metadataList = lookupPersistedMetadata(id, type);
         // Hack to convert metadata to a format useful for AsciiFile for netcdf conversion.
         Map<String, String> generalMetadataMap = new HashMap<>();
-        for (Metadata metadata : metadataList) {
+        for (GeneralMetadata metadata : metadataList) {
             generalMetadataMap.put(metadata.getMetadataKey(), metadata.getMetadataValue());
         }
         return generalMetadataMap;
@@ -78,7 +77,7 @@ public class MetadataManagerImpl implements MetadataManager {
      * @throws RosettaDataException If unable to populate the GeneralMetadata object.
      */
     @Override
-    public GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType, GeneralMetadata metadata) throws RosettaDataException {
+    public edu.ucar.unidata.rosetta.domain.GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType, edu.ucar.unidata.rosetta.domain.GeneralMetadata metadata) throws RosettaDataException {
 
         // Only process known file types.
         if (!fileType.equals("Custom_File_Type")) {
@@ -127,7 +126,7 @@ public class MetadataManagerImpl implements MetadataManager {
     @Override
     public String getMetadataStringForClient(String id, String type) {
         try {
-            List<Metadata> metadata = lookupPersistedMetadata(id, type);
+            List<GeneralMetadata> metadata = lookupPersistedMetadata(id, type);
             return getStringFromParsedVariableMetadata(metadata);
         } catch (DataRetrievalFailureException e) {
             // No data persisted.
@@ -142,9 +141,9 @@ public class MetadataManagerImpl implements MetadataManager {
      * @return  The string version of the metadata used by client side.
      */
     @Override
-    public String getStringFromParsedVariableMetadata(List<Metadata> metadataList) {
+    public String getStringFromParsedVariableMetadata(List<GeneralMetadata> metadataList) {
         StringBuilder metadataString = new StringBuilder();
-        for (Metadata metadata: metadataList) {
+        for (GeneralMetadata metadata: metadataList) {
             metadataString.append("<=>");
             metadataString.append(metadata.getMetadataKey());
             metadataString.append("<>");
@@ -163,15 +162,15 @@ public class MetadataManagerImpl implements MetadataManager {
      */
     @Override
     public Map<String, Map<String,String>> getVariableMetadataMap(String id, String type) {
-        List<Metadata> metadataList = lookupPersistedMetadata(id, type);
+        List<GeneralMetadata> metadataList = lookupPersistedMetadata(id, type);
         // Hack to convert metadata to a format useful for AsciiFile for netcdf conversion.
         Map<String, Map<String,String>> variableMetadataMap = new HashMap<>();
-        for (Metadata metadata : metadataList) {
+        for (GeneralMetadata metadata : metadataList) {
             Map<String, String> metadataMapping = new HashMap<>();
             // Omit the 'do not use' entries.
             if (!metadata.getMetadataValue().equals("Do Not Use")) {
                 // Only look at the metadata entries
-                if (metadata.getMetadataKey().contains("Metadata")) {
+                if (metadata.getMetadataKey().contains("GeneralMetadata")) {
                     String[] metadataValues = metadata.getMetadataValue().split(",");
 
                     for(int i=0; i< metadataValues.length; i++) {
@@ -184,7 +183,7 @@ public class MetadataManagerImpl implements MetadataManager {
                     }
                 }
             }
-            variableMetadataMap.put(metadata.getMetadataKey().replace("Metadata", ""), metadataMapping);
+            variableMetadataMap.put(metadata.getMetadataKey().replace("GeneralMetadata", ""), metadataMapping);
         }
         return variableMetadataMap;
     }
@@ -199,14 +198,14 @@ public class MetadataManagerImpl implements MetadataManager {
      */
     @Override
     public Map<String, String> getVariableNameMap(String id, String type) {
-        List<Metadata> metadataList = lookupPersistedMetadata(id, type);
+        List<GeneralMetadata> metadataList = lookupPersistedMetadata(id, type);
         // Hack to convert metadata to a format useful for AsciiFile for netcdf conversion.
         Map<String, String> variableNameMap = new HashMap<>();
-        for (Metadata metadata : metadataList) {
+        for (GeneralMetadata metadata : metadataList) {
             // Omit the 'do not use' entries.
             if (!metadata.getMetadataValue().equals("Do Not Use")) {
                 // Omit the metadata entries and just grab the names
-                if (!metadata.getMetadataKey().contains("Metadata")) {
+                if (!metadata.getMetadataKey().contains("GeneralMetadata")) {
                     variableNameMap.put(metadata.getMetadataKey(), metadata.getMetadataValue());
                 }
             }
@@ -215,25 +214,25 @@ public class MetadataManagerImpl implements MetadataManager {
     }
 
     /**
-     * Looks up and retrieves a list of persisted Metadata objects using the given id.
+     * Looks up and retrieves a list of persisted GeneralMetadata objects using the given id.
      *
      * @param id    The id of the corresponding Data object.
-     * @return      The Metadata object.
+     * @return      The GeneralMetadata object.
      */
     @Override
-    public List<Metadata> lookupPersistedMetadata(String id) {
+    public List<GeneralMetadata> lookupPersistedMetadata(String id) {
         return metadataDao.lookupMetadata(id);
     }
 
     /**
-     * Looks up and retrieves a list of persisted Metadata objects using the given id & type.
+     * Looks up and retrieves a list of persisted GeneralMetadata objects using the given id & type.
      *
      * @param id    The id of the corresponding Data object.
-     * @param type  The type of the Metadata.
-     * @return      The Metadata object.
+     * @param type  The type of the GeneralMetadata.
+     * @return      The GeneralMetadata object.
      */
     @Override
-    public List<Metadata> lookupPersistedMetadata(String id, String type) {
+    public List<GeneralMetadata> lookupPersistedMetadata(String id, String type) {
         return metadataDao.lookupMetadata(id, type);
     }
 
@@ -242,12 +241,12 @@ public class MetadataManagerImpl implements MetadataManager {
      *
      * @param metadata  The metadata inputted by the user.
      * @param id    The id of the Data object to which this metadata corresponds.
-     * @return  A list containing Metadata objects.
+     * @return  A list containing GeneralMetadata objects.
      * @throws RosettaDataException  If unable to populate the metadata object by reflection.
      */
     @Override
-    public List<Metadata> parseGeneralMetadata(GeneralMetadata metadata, String id) throws RosettaDataException {
-        List<Metadata> parsedGeneralMetadata = new ArrayList<>();
+    public List<GeneralMetadata> parseGeneralMetadata(edu.ucar.unidata.rosetta.domain.GeneralMetadata metadata, String id) throws RosettaDataException {
+        List<GeneralMetadata> parsedGeneralMetadata = new ArrayList<>();
 
         try {
             for (Method method : metadata.getClass().getDeclaredMethods()) {
@@ -264,7 +263,7 @@ public class MetadataManagerImpl implements MetadataManager {
                         if (value instanceof String) {
 
                             if (!"".equals((String) value)) {
-                                Metadata m = new Metadata();
+                                GeneralMetadata m = new GeneralMetadata();
                                 m.setId(id);
                                 m.setType("general");
 
@@ -290,20 +289,20 @@ public class MetadataManagerImpl implements MetadataManager {
     }
 
     /**
-     * Parses a string of metadata into Metadata objects and places them into a list.
+     * Parses a string of metadata into GeneralMetadata objects and places them into a list.
      *
      * @param goryStringOfMetadata  The string of metadata sent from the client-side.
      * @param id The id of the corresponding Data object to which the metadata belongs.
-     * @return  A list containing Metadata objects.
+     * @return  A list containing GeneralMetadata objects.
      */
     @Override
-    public List<Metadata> parseVariableMetadata(String goryStringOfMetadata, String id) {
-        List<Metadata> parsedVariableMetadata = new ArrayList<>();
+    public List<GeneralMetadata> parseVariableMetadata(String goryStringOfMetadata, String id) {
+        List<GeneralMetadata> parsedVariableMetadata = new ArrayList<>();
 
         String[] keyValuePairs = goryStringOfMetadata.split("<=>");
         for (String pair: keyValuePairs) {
             String[] metadata = pair.split("<>");
-            Metadata m = new Metadata();
+            GeneralMetadata m = new GeneralMetadata();
             m.setId(id);
             m.setType("variable");
             m.setMetadataKey(metadata[0]);
@@ -316,28 +315,28 @@ public class MetadataManagerImpl implements MetadataManager {
     /**
      * Persists the information in the given list of metadata objects.
      *
-     * @param metadata  The list of Metadata objects to persist.
+     * @param metadata  The list of GeneralMetadata objects to persist.
      */
     @Override
-    public void persistMetadata(List<Metadata> metadata) {
+    public void persistMetadata(List<GeneralMetadata> metadata) {
         metadataDao.persistMetadata(metadata);
     }
 
     /**
      * Persists the information in the give metadata object.
      *
-     * @param metadata  The Metadata object to persist.
+     * @param metadata  The GeneralMetadata object to persist.
      */
     @Override
-    public void persistMetadata(Metadata metadata) {
+    public void persistMetadata(GeneralMetadata metadata) {
         metadataDao.persistMetadata(metadata);
     }
 
     /**
-     * Sets the data access object (DAO) for the Metadata object which will acquire and persist
+     * Sets the data access object (DAO) for the GeneralMetadata object which will acquire and persist
      * the data passed to it via the methods of this MetadataManager.
      *
-     * @param dataDao  The service DAO representing a Metadata object.
+     * @param dataDao  The service DAO representing a GeneralMetadata object.
      */
     public void setMetadataDao(MetadataDao dataDao) {
         this.metadataDao = dataDao;
@@ -349,7 +348,7 @@ public class MetadataManagerImpl implements MetadataManager {
      * @param metadata  The list of metadata objects to update.
      */
     @Override
-    public void updatePersistedMetadata(List<Metadata> metadata) {
+    public void updatePersistedMetadata(List<GeneralMetadata> metadata) {
         metadataDao.updatePersistedMetadata(metadata);
     }
 
@@ -359,7 +358,7 @@ public class MetadataManagerImpl implements MetadataManager {
      * @param metadata  The metadata object to update.
      */
     @Override
-    public void updatePersistedMetadata(Metadata metadata) {
+    public void updatePersistedMetadata(GeneralMetadata metadata) {
         metadataDao.updatePersistedMetadata(metadata);
     }
 }

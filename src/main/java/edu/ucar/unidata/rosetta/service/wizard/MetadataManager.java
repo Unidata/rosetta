@@ -1,7 +1,6 @@
-package edu.ucar.unidata.rosetta.service;
+package edu.ucar.unidata.rosetta.service.wizard;
 
-import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.domain.Metadata;
+import edu.ucar.unidata.rosetta.domain.wizard.GeneralMetadata;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 
 import java.util.List;
@@ -50,7 +49,7 @@ public interface MetadataManager {
      * @return  The GeneralMetadata object to populated with the general metadata.
      * @throws RosettaDataException If unable to populate the GeneralMetadata object.
      */
-    public GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType, GeneralMetadata metadata) throws RosettaDataException;
+    public edu.ucar.unidata.rosetta.domain.GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType, edu.ucar.unidata.rosetta.domain.GeneralMetadata metadata) throws RosettaDataException;
 
     /**
      * Retrieves the persisted metadata associated with the given id & type.
@@ -68,7 +67,7 @@ public interface MetadataManager {
      * @param metadataList  The parsed metadata.
      * @return  The string version of the metadata used by client side.
      */
-    public String getStringFromParsedVariableMetadata(List<Metadata> metadataList);
+    public String getStringFromParsedVariableMetadata(List<GeneralMetadata> metadataList);
 
     /**
      * Converts metadata to a format useful for AsciiFile (custom file type) for netCDF conversion.
@@ -91,66 +90,66 @@ public interface MetadataManager {
     public Map<String, String> getVariableNameMap(String id, String type);
 
     /**
-     * Looks up and retrieves a list of persisted Metadata objects using the given id.
+     * Looks up and retrieves a list of persisted GeneralMetadata objects using the given id.
      *
      * @param id    The id of the corresponding Data object.
-     * @return      The Metadata object.
+     * @return      The GeneralMetadata object.
      */
-    public List<Metadata> lookupPersistedMetadata(String id);
+    public List<GeneralMetadata> lookupPersistedMetadata(String id);
 
     /**
-     * Looks up and retrieves a list of persisted Metadata objects using the given id & type.
+     * Looks up and retrieves a list of persisted GeneralMetadata objects using the given id & type.
      *
      * @param id    The id of the corresponding Data object.
-     * @param type  The type of the Metadata.
-     * @return      The Metadata object.
+     * @param type  The type of the GeneralMetadata.
+     * @return      The GeneralMetadata object.
      */
-    public List<Metadata> lookupPersistedMetadata(String id, String type);
+    public List<GeneralMetadata> lookupPersistedMetadata(String id, String type);
 
     /**
      * Populates metadata objects from the user input provided and places the objects into a list.
      *
      * @param metadata  The metadata inputted by the user.
      * @param id    The id of the Data object to which this metadata corresponds.
-     * @return  A list containing Metadata objects.
+     * @return  A list containing GeneralMetadata objects.
      * @throws RosettaDataException  If unable to populate the metadata object by reflection.
      */
-    public List<Metadata> parseGeneralMetadata(GeneralMetadata metadata, String id) throws RosettaDataException;
+    public List<GeneralMetadata> parseGeneralMetadata(edu.ucar.unidata.rosetta.domain.GeneralMetadata metadata, String id) throws RosettaDataException;
 
     /**
-     * Parses a string of metadata into Metadata objects and places them into a list.
+     * Parses a string of metadata into GeneralMetadata objects and places them into a list.
      *
      * @param goryStringOfMetadata  The string of metadata sent from the client-side.
      * @param id The id of the corresponding Data object to which the metadata belongs.
-     * @return  A list containing Metadata objects.
+     * @return  A list containing GeneralMetadata objects.
      */
-    public List<Metadata> parseVariableMetadata(String goryStringOfMetadata, String id);
+    public List<GeneralMetadata> parseVariableMetadata(String goryStringOfMetadata, String id);
 
     /**
      * Persists the information in the given list of metadata objects.
      *
-     * @param metadata  The list of Metadata objects to persist.
+     * @param metadata  The list of GeneralMetadata objects to persist.
      */
-    public void persistMetadata(List<Metadata> metadata);
+    public void persistMetadata(List<GeneralMetadata> metadata);
 
     /**
      * Persists the information in the give metadata object.
      *
-     * @param metadata  The Metadata object to persist.
+     * @param metadata  The GeneralMetadata object to persist.
      */
-    public void persistMetadata(Metadata metadata);
+    public void persistMetadata(GeneralMetadata metadata);
 
     /**
      * Updated the information corresponding to the given list of metadata objects.
      *
      * @param metadata  The list of metadata objects to update.
      */
-    public void updatePersistedMetadata(List<Metadata> metadata);
+    public void updatePersistedMetadata(List<GeneralMetadata> metadata);
 
     /**
      * Updated the information corresponding to the given metadata object.
      *
      * @param metadata  The metadata object to update.
      */
-    public void updatePersistedMetadata(Metadata metadata);
+    public void updatePersistedMetadata(GeneralMetadata metadata);
 }
