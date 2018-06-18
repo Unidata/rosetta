@@ -3,7 +3,7 @@ package edu.ucar.unidata.rosetta.controller.user;
 import edu.ucar.unidata.rosetta.domain.user.User;
 import edu.ucar.unidata.rosetta.exceptions.RosettaUserException;
 import edu.ucar.unidata.rosetta.service.user.UserManager;
-import edu.ucar.unidata.rosetta.service.user.validators.EditUserValidator;
+import edu.ucar.unidata.rosetta.service.validators.user.EditUserValidator;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
