@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.service.user.validators;
+package edu.ucar.unidata.rosetta.service.validators.user;
 
 import edu.ucar.unidata.rosetta.domain.user.User;
 

@@ -1,6 +1,7 @@
-package edu.ucar.unidata.rosetta.service.validators;
+package edu.ucar.unidata.rosetta.service.validators.wizard;
 
 import edu.ucar.unidata.rosetta.domain.Data;
+import edu.ucar.unidata.rosetta.service.validators.CommonValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
