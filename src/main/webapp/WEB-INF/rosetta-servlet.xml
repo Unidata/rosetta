@@ -131,15 +131,15 @@
     </bean>
 
     <!-- Declaration for resource use -->
-    <bean id="fileManager" class="edu.ucar.unidata.rosetta.service.FileManagerImpl"/>
-    <bean id="cfTypeValidator" class="edu.ucar.unidata.rosetta.service.validators.CFTypeValidator"/>
-    <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.validators.FileValidator"/>
+    <bean id="fileManager" class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl"/>
+    <bean id="cfTypeValidator" class="edu.ucar.unidata.rosetta.service.validators.wizard.CFTypeValidator"/>
+    <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.validators.wizard.FileValidator"/>
     <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean"
           init-method="init"/>
     <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.service.resources.EmbeddedDerbyDbInitManager"/>
 
     <!-- DAO injection -->
-    <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl">
+    <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl">
         <property name="cfTypeDao" ref="cfTypeDao"/>
         <property name="communityDao" ref="communityDao"/>
         <property name="dataDao" ref="dataDao"/>
@@ -149,7 +149,7 @@
         <property name="propertiesDao" ref="propertiesDao"/>
     </bean>
 
-    <bean id="metadataManager" class="edu.ucar.unidata.rosetta.service.MetadataManagerImpl">
+    <bean id="metadataManager" class="edu.ucar.unidata.rosetta.service.wizard.MetadataManagerImpl">
         <property name="metadataDao" ref="metadataDao"/>
     </bean>
 
@@ -169,7 +169,7 @@
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <bean id="dataDao" class="edu.ucar.unidata.rosetta.repository.JdbcDataDao">
+    <bean id="dataDao" class="edu.ucar.unidata.rosetta.repository.wizard.JdbcDataDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
@@ -181,7 +181,7 @@
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <bean id="metadataDao" class="edu.ucar.unidata.rosetta.repository.JdbcMetadataDao">
+    <bean id="metadataDao" class="edu.ucar.unidata.rosetta.repository.wizard.JdbcMetadataDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
@@ -189,7 +189,7 @@
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <bean id="propertiesDao" class="edu.ucar.unidata.rosetta.repository.JdbcPropertiesDao">
+    <bean id="propertiesDao" class="edu.ucar.unidata.rosetta.repository.wizard.JdbcPropertiesDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
