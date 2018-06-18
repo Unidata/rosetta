@@ -1,12 +1,12 @@
-package edu.ucar.unidata.rosetta.service;
+package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.resources.*;
 import edu.ucar.unidata.rosetta.exceptions.*;
-import edu.ucar.unidata.rosetta.repository.DataDao;
-import edu.ucar.unidata.rosetta.repository.PropertiesDao;
+import edu.ucar.unidata.rosetta.repository.wizard.DataDao;
+import edu.ucar.unidata.rosetta.repository.wizard.PropertiesDao;
 import edu.ucar.unidata.rosetta.repository.resources.*;
 
 import java.util.*;
@@ -481,7 +481,7 @@ public class DataManagerImpl implements DataManager {
      * netCDF format in preparation for user download.
      *
      * @param id    The unique ID corresponding to already persisted data.
-     * @param metadata  The Metadata object submitted by the user containing the general metadata information.
+     * @param metadata  The GeneralMetadata object submitted by the user containing the general metadata information.
      * @throws RosettaDataException  If unable to populate the metadata object.
      */
     @Override
