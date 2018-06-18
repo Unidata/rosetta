@@ -1,6 +1,6 @@
-package edu.ucar.unidata.rosetta.repository;
+package edu.ucar.unidata.rosetta.repository.wizard;
 
-import edu.ucar.unidata.rosetta.domain.Metadata;
+import edu.ucar.unidata.rosetta.domain.wizard.GeneralMetadata;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -24,15 +24,15 @@ public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
     private SimpleJdbcInsert insertActor;
 
     /**
-     * Looks up and retrieves a list of persisted Metadata objects using the given id.
+     * Looks up and retrieves a list of persisted GeneralMetadata objects using the given id.
      *
      * @param id    The id of the corresponding Data object.
-     * @return      The Metadata object.
-     * @throws DataRetrievalFailureException  If unable to lookup Metadata with the given id.
+     * @return      The GeneralMetadata object.
+     * @throws DataRetrievalFailureException  If unable to lookup GeneralMetadata with the given id.
      */
-    public List<Metadata> lookupMetadata(String id) throws DataRetrievalFailureException {
+    public List<GeneralMetadata> lookupMetadata(String id) throws DataRetrievalFailureException {
         String sql = "SELECT * FROM metadata WHERE id = ?";
-        List<Metadata> metadata = getJdbcTemplate().query(sql, new JdbcMetadataDao.MetadataMapper(), id);
+        List<GeneralMetadata> metadata = getJdbcTemplate().query(sql, new JdbcMetadataDao.MetadataMapper(), id);
         if (metadata.isEmpty()) {
             String message = "Unable to find persisted metadata corresponding to id " + id;
             logger.error(message);
@@ -42,17 +42,17 @@ public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
     }
 
     /**
-     * Looks up and retrieves a list of persisted Metadata objects using the given id & type.
+     * Looks up and retrieves a list of persisted GeneralMetadata objects using the given id & type.
      *
      * @param id    The id of the corresponding Data object.
-     * @param type  The type of the Metadata.
-     * @return      The Metadata object.
-     * @throws DataRetrievalFailureException  If unable to lookup Metadata with the given id & type.
+     * @param type  The type of the GeneralMetadata.
+     * @return      The GeneralMetadata object.
+     * @throws DataRetrievalFailureException  If unable to lookup GeneralMetadata with the given id & type.
      */
     @Override
-    public List<Metadata> lookupMetadata(String id,String type) throws DataRetrievalFailureException {
+    public List<GeneralMetadata> lookupMetadata(String id, String type) throws DataRetrievalFailureException {
         String sql = "SELECT * FROM metadata WHERE id = ? AND type = ?";
-        List<Metadata> metadata = getJdbcTemplate().query(sql, new JdbcMetadataDao.MetadataMapper(), id, type);
+        List<GeneralMetadata> metadata = getJdbcTemplate().query(sql, new JdbcMetadataDao.MetadataMapper(), id, type);
         if (metadata.isEmpty()) {
             String message = "Unable to find persisted metadata corresponding to id " + id + " and type " + type;
             logger.error(message);
@@ -64,11 +64,11 @@ public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
     /**
      * Persists the information in the given list of metadata objects.
      *
-     * @param metadataList  The list of Metadata objects to persist.
-     * @throws DataRetrievalFailureException  If unable to persist the Metadata objects.
+     * @param metadataList  The list of GeneralMetadata objects to persist.
+     * @throws DataRetrievalFailureException  If unable to persist the GeneralMetadata objects.
      */
-    public void persistMetadata(List<Metadata> metadataList) throws DataRetrievalFailureException {
-        for (Metadata metadata : metadataList)
+    public void persistMetadata(List<GeneralMetadata> metadataList) throws DataRetrievalFailureException {
+        for (GeneralMetadata metadata : metadataList)
             persistMetadata(metadata);
 
     }
@@ -76,20 +76,20 @@ public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
     /**
      * Persists the information in the give metadata object.
      *
-     * @param metadata  The Metadata object to persist.
-     * @throws DataRetrievalFailureException  If unable to persist the Metadata object.
+     * @param metadata  The GeneralMetadata object to persist.
+     * @throws DataRetrievalFailureException  If unable to persist the GeneralMetadata object.
      */
-    public void persistMetadata(Metadata metadata) throws DataRetrievalFailureException {
+    public void persistMetadata(GeneralMetadata metadata) throws DataRetrievalFailureException {
         // Persist the metadata object.
         this.insertActor = new SimpleJdbcInsert(getDataSource()).withTableName("metadata");
         SqlParameterSource parameters = new BeanPropertySqlParameterSource(metadata);
         int rowsAffected = insertActor.execute(parameters);
         if (rowsAffected <= 0) {
-            String message = "Unable to persist Metadata object  " + metadata.toString();
+            String message = "Unable to persist GeneralMetadata object  " + metadata.toString();
             logger.error(message);
             throw new DataRetrievalFailureException(message);
         } else {
-            logger.info("Metadata object persisted " + metadata.toString());
+            logger.info("GeneralMetadata object persisted " + metadata.toString());
         }
 
     }
@@ -98,10 +98,10 @@ public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
      * Updated the information corresponding to the given list of metadata objects.
      *
      * @param metadataList  The list of metadata objects to update.
-     * @throws DataRetrievalFailureException  If unable to update persisted Metadata objects.
+     * @throws DataRetrievalFailureException  If unable to update persisted GeneralMetadata objects.
      */
-    public void updatePersistedMetadata(List<Metadata> metadataList) throws DataRetrievalFailureException {
-        for (Metadata metadata : metadataList)
+    public void updatePersistedMetadata(List<GeneralMetadata> metadataList) throws DataRetrievalFailureException {
+        for (GeneralMetadata metadata : metadataList)
             updatePersistedMetadata(metadata);
     }
 
@@ -109,9 +109,9 @@ public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
      * Updated the information corresponding to the given metadata object.
      *
      * @param metadata  The metadata object to update.
-     * @throws DataRetrievalFailureException  If unable to update persisted Metadata object.
+     * @throws DataRetrievalFailureException  If unable to update persisted GeneralMetadata object.
      */
-    public void updatePersistedMetadata(Metadata metadata) throws DataRetrievalFailureException {
+    public void updatePersistedMetadata(GeneralMetadata metadata) throws DataRetrievalFailureException {
         String sql = "UPDATE metadata SET " +
                 "type = ?, " +
                 "metadataKey = ?, " +
@@ -125,11 +125,11 @@ public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
                 metadata.getId()
         });
         if (rowsAffected  <= 0) {
-            String message ="Unable to update persisted Metadata object " + metadata.toString();
+            String message ="Unable to update persisted GeneralMetadata object " + metadata.toString();
             logger.error(message);
             throw new DataRetrievalFailureException(message);
         } else {
-            logger.info("Updated persisted Metadata object " + metadata.toString());
+            logger.info("Updated persisted GeneralMetadata object " + metadata.toString());
         }
 
     }
@@ -175,17 +175,17 @@ public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
     /**
      * This MetadataMapper only used by JdbcMetadataDao.
      */
-    private static class MetadataMapper implements RowMapper<Metadata> {
+    private static class MetadataMapper implements RowMapper<GeneralMetadata> {
         /**
-         * Maps each row of metadata in the ResultSet to the Metadata object.
+         * Maps each row of metadata in the ResultSet to the GeneralMetadata object.
          *
          * @param rs  The ResultSet to be mapped.
          * @param rowNum  The number of the current row.
-         * @return  The populated Metadata object.
+         * @return  The populated GeneralMetadata object.
          * @throws SQLException  If an SQLException is encountered getting column values.
          */
-        public Metadata mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Metadata metadata = new Metadata();
+        public GeneralMetadata mapRow(ResultSet rs, int rowNum) throws SQLException {
+            GeneralMetadata metadata = new GeneralMetadata();
             metadata.setId(rs.getString("id"));
             metadata.setType(rs.getString("type"));
             metadata.setMetadataKey(rs.getString("metadataKey"));
