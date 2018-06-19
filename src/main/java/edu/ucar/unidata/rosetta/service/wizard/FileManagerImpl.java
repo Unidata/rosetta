@@ -1,5 +1,6 @@
 package edu.ucar.unidata.rosetta.service.wizard;
 
+
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.util.*;
@@ -115,6 +116,7 @@ public class FileManagerImpl implements FileManager {
 
         return filePathUploadDir;
     }
+
 
     /**
      * A simple method that reads each line of a file, and looks for blank lines.

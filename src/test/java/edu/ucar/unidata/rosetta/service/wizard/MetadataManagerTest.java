@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.service;
+package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
@@ -24,6 +24,35 @@ public class MetadataManagerTest {
     private Metadata metadata1;
     private Metadata metadata2;
     private GeneralMetadata generalMetadata;
+
+    @Before
+    public void setUp() throws Exception {
+        metadataManager = mock(MetadataManagerImpl.class);
+        metadataDao = mock(MetadataDao.class);
+        metadataManager.setMetadataDao(metadataDao);
+
+        metadata1 = new Metadata();
+        metadata1.setId("000000345HDV4");
+        metadata1.setType("general");
+        metadata1.setMetadataKey("temp");
+        metadata1.setMetadataValue("degrees C");
+
+        metadata2 = new Metadata();
+        metadata2.setId("000000345HDV4");
+        metadata2.setType("variable");
+        metadata2.setMetadataKey("temp");
+        metadata2.setMetadataValue("degrees F");
+        generalMetadata = new GeneralMetadata();
+
+        when(metadataManager.lookupPersistedMetadata("000000345HDV4")).thenReturn(Arrays.asList(metadata1, metadata2));
+        when(metadataManager.lookupPersistedMetadata("000000345HDV4", "general")).thenReturn(Arrays.asList(metadata1));
+        doThrow(new DataRetrievalFailureException("Unable to delete metadata entries corresponding to id " + metadata1.getId())).when(metadataManager).deletePersistedMetadata(metadata1.getId());
+        doThrow(new DataRetrievalFailureException("Unable to delete metadata entries corresponding to id " + metadata1.getId() + " and type " + metadata1.getType())).when(metadataManager).deletePersistedMetadata(metadata1.getId(), metadata1.getType());
+        when(metadataManager.parseVariableMetadata("variableName0<>year", "000000345HDV4")).thenReturn(Arrays.asList(metadata1, metadata2));
+        when(metadataManager.getStringFromParsedVariableMetadata(Arrays.asList(metadata1, metadata2))).thenReturn("variableName0<>year");
+        when(metadataManager.getMetadataStringForClient("000000345HDV4", "general")).thenReturn("variableName0<>year");
+        when(metadataManager.parseGeneralMetadata(generalMetadata, "000000345HDV4")).thenReturn(Arrays.asList(metadata1, metadata2));
+    }
 
     @Test(expected = DataRetrievalFailureException.class)
     public void deleteMetadataByIdTest() throws Exception {
@@ -108,37 +137,7 @@ public class MetadataManagerTest {
         assertEquals(metadata.getMetadataValue(), "degrees C");
     }
 
-    @Before
-    public void setUp() throws Exception {
-        metadataManager = mock(MetadataManagerImpl.class);
-        metadataDao = mock(MetadataDao.class);
-        metadataManager.setMetadataDao(metadataDao);
-
-        metadata1 = new Metadata();
-        metadata1.setId("000000345HDV4");
-        metadata1.setType("general");
-        metadata1.setMetadataKey("temp");
-        metadata1.setMetadataValue("degrees C");
-
-        metadata2 = new Metadata();
-        metadata2.setId("000000345HDV4");
-        metadata2.setType("variable");
-        metadata2.setMetadataKey("temp");
-        metadata2.setMetadataValue("degrees F");
-        generalMetadata = new GeneralMetadata();
-
-        when(metadataManager.lookupPersistedMetadata("000000345HDV4")).thenReturn(Arrays.asList(metadata1, metadata2));
-        when(metadataManager.lookupPersistedMetadata("000000345HDV4", "general")).thenReturn(Arrays.asList(metadata1));
-        doThrow(new DataRetrievalFailureException("Unable to delete metadata entries corresponding to id " + metadata1.getId())).when(metadataManager).deletePersistedMetadata(metadata1.getId());
-        doThrow(new DataRetrievalFailureException("Unable to delete metadata entries corresponding to id " + metadata1.getId() + " and type " + metadata1.getType())).when(metadataManager).deletePersistedMetadata(metadata1.getId(), metadata1.getType());
-        when(metadataManager.parseVariableMetadata("variableName0<>year", "000000345HDV4")).thenReturn(Arrays.asList(metadata1, metadata2));
-        when(metadataManager.getStringFromParsedVariableMetadata(Arrays.asList(metadata1, metadata2))).thenReturn("variableName0<>year");
-        when(metadataManager.getMetadataStringForClient("000000345HDV4", "general")).thenReturn("variableName0<>year");
-        when(metadataManager.parseGeneralMetadata(generalMetadata, "000000345HDV4")).thenReturn(Arrays.asList(metadata1, metadata2));
-    }
-
-
-    @Test
+        @Test
     public void updateMetadataObjectListTest() throws Exception {
         metadata1.setMetadataKey("internal_temperature"); // Update
         metadata2.setMetadataKey("external_temperature"); // Update

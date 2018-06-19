@@ -18,6 +18,23 @@ public class FileTypeDaoTest {
     private FileType fileType1;
     private FileType fileType2;
 
+    @Before
+    public void setUp() throws Exception {
+        fileTypeDao = mock(JdbcFileTypeDao.class);
+
+        fileType1 = new FileType();
+        fileType1.setId(123);
+        fileType1.setName("GeoCSV");
+
+        fileType2 = new FileType();
+        fileType2.setId(345);
+        fileType2.setName("eTuff");
+
+        when(fileTypeDao.getFileTypes()).thenReturn(Arrays.asList(fileType1, fileType2));
+        when(fileTypeDao.lookupFileTypeById(123)).thenReturn(fileType1);
+        when(fileTypeDao.lookupFileTypeByName("eTuff")).thenReturn(fileType2);
+    }
+
     @Test
     public void getFileTypes() throws Exception {
         List<FileType> fileTypes = fileTypeDao.getFileTypes();
@@ -43,21 +60,6 @@ public class FileTypeDaoTest {
         assertNotNull(fileTypeDao);
     }
 
-    @Before
-    public void setUp() throws Exception {
-        fileTypeDao = mock(JdbcFileTypeDao.class);
 
-        fileType1 = new FileType();
-        fileType1.setId(123);
-        fileType1.setName("GeoCSV");
-
-        fileType2 = new FileType();
-        fileType2.setId(345);
-        fileType2.setName("eTuff");
-
-        when(fileTypeDao.getFileTypes()).thenReturn(Arrays.asList(fileType1, fileType2));
-        when(fileTypeDao.lookupFileTypeById(123)).thenReturn(fileType1);
-        when(fileTypeDao.lookupFileTypeByName("eTuff")).thenReturn(fileType2);
-    }
 
 }

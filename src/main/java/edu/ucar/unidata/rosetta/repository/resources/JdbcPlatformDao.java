@@ -33,7 +33,7 @@ public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
      * @throws DataAccessException  If unable to retrieve persisted Platforms.
      */
     public List<Platform> getPlatforms() throws DataAccessException {
-        String sql = "SELECT platforms.id, platforms.name, platforms.imgPath, cfTypes.name, communities.name FROM platforms JOIN communities ON platforms.community = communities.id JOIN cfTypes ON platforms.cfType = cfType.id";
+        String sql = "SELECT platforms.id, platforms.name, platforms.imgPath, cfTypes.name, communities.name FROM platforms JOIN communities ON platforms.community = communities.id JOIN cfTypes ON platforms.cfType = cfTypes.id";
         return getPlatforms(sql);
     }
 
@@ -69,7 +69,7 @@ public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
     }
 
     /**
-     * Lookups and returns a list of persisted Platform using the provided community.
+     * Lookups and returns a list of persisted Platform using the provided communities.
      *
      * @param community The community of the platforms to retrieve.
      * @return   A List of persisted Platforms matching the provided community.

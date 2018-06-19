@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.repository.wizard;
+package edu.ucar.unidata.rosetta.repository;
 
 import edu.ucar.unidata.rosetta.domain.Metadata;
 import org.springframework.dao.DataRetrievalFailureException;

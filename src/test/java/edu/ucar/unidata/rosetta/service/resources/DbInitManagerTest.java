@@ -25,7 +25,4 @@ public class DbInitManagerTest {
     public void MockCreationTest() throws Exception {
         assertNotNull(dbInitManager);
     }
-
-    // The methods of the EmbeddedDerbyDbInitManager class involve I/O, so difficult to test.
-
 }

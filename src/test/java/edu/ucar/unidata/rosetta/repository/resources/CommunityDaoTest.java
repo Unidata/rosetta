@@ -17,6 +17,23 @@ public class CommunityDaoTest {
 
     private JdbcCommunityDao communityDao;
     private Community community;
+    @Before
+    public void setUp() throws Exception {
+        communityDao = mock(JdbcCommunityDao.class);
+
+        List<String> fileTypes = new ArrayList<>();
+        fileTypes.add("EOL Composite Sounding File");
+        fileTypes.add("GeoCSV");
+
+        community = new Community();
+        community.setName("Atmospheric Sciences");
+        community.setId(123);
+        community.setFileType(fileTypes);
+
+        when(communityDao.lookupCommunitiesByFileType("GeoCSV")).thenReturn(Arrays.asList(community));
+        when(communityDao.lookupCommunityByName("Atmospheric Sciences")).thenReturn(community);
+        when(communityDao.getCommunities()).thenReturn(Arrays.asList(community));
+    }
 
     @Test
     public void getCommunities() throws Exception {
@@ -42,21 +59,5 @@ public class CommunityDaoTest {
         assertNotNull(communityDao);
     }
 
-    @Before
-    public void setUp() throws Exception {
-        communityDao = mock(JdbcCommunityDao.class);
 
-        List<String> fileTypes = new ArrayList<>();
-        fileTypes.add("EOL Composite Sounding File");
-        fileTypes.add("GeoCSV");
-
-        community = new Community();
-        community.setName("Atmospheric Sciences");
-        community.setId(123);
-        community.setFileType(fileTypes);
-
-        when(communityDao.lookupCommunitiesByFileType("GeoCSV")).thenReturn(Arrays.asList(community));
-        when(communityDao.lookupCommunityByName("Atmospheric Sciences")).thenReturn(community);
-        when(communityDao.getCommunities()).thenReturn(Arrays.asList(community));
-    }
 }

@@ -12,17 +12,6 @@
 
 <p>All fields are required.</p>
 
-<c:choose>
-    <c:when test="${loggedIn}">
-        <sec:authorize access="hasRole('ROLE_ADMIN')">
-            <c:set var="baseUrl" value="${baseUrl}/user/${action}" />
-        </sec:authorize>
-    </c:when>
-    <c:otherwise>
-        <c:set var="baseUrl" value="${baseUrl}/welcome/${action}" />
-    </c:otherwise>
-</c:choose>
-
 <form:form action="${formAction}" commandName="user" method="POST">
     <ul class="format">
         <li>

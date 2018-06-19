@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.repository.wizard;
+package edu.ucar.unidata.rosetta.repository;
 
 /**
  * The data access object representing a properties.
