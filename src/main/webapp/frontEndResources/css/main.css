@@ -8,9 +8,10 @@
 @import url("footer.css");
 @import url("clearfix.css");
 @import url("nav.css");
+@import url("lists.css");
+@import url("tables.css");
 @import url("jQuery/custom.css");
 @import url("SlickGrid/custom.css");
-@import url("uploader/custom.css");
 
 /* document body */
 body {
@@ -32,13 +33,13 @@ h4 {
 a[href$='.nc'] {
     padding-left: 18px;
     line-height: 18px;
-    background: transparent url('../img/logo/netcdf.png') center left no-repeat;
+    background: transparent url('../img/icon/netcdf.png') center left no-repeat;
 }
 
 a[href$='.template'] {
     padding-left: 18px;
     line-height: 18px;
-    background: transparent url('../img/logo/rosetta-12x12.png') center left no-repeat;
+    background: transparent url('../img/icon/rosetta-12x12.png') center left no-repeat;
 }
 
 main {
@@ -55,6 +56,12 @@ section {
     width:75%;
     border-left:1px solid #CFCFCF;
 }
+
+section.user {
+    width:95%;
+    border:none;
+}
+
 
 /* some divs to format a page into left & right */
 .left, .right {
@@ -74,7 +81,6 @@ section {
     float: right;
     clear: right;
 }
-
 
 
 /* form */
@@ -110,9 +116,40 @@ button,
     margin-left:0;
 }
 
+button.clearFileUpload {
+    background:none;
+    padding:3px 5px !important;
+    margin-left:20px;
+    border-radius:0 !important;
+    font-size:8pt;
+}
+
 input[type="submit"] {
     margin: 1em 0 1em 10px;
 }
+
+input[type="submit"].noformat {
+    margin: 1em 0;
+}
+
+label,
+.profileKey {
+    vertical-align:middle;
+    width:100%;
+    line-height:25px;
+    float:left;
+    margin-top:10px;
+}
+
+.profileValue {
+    font-size:9pt;
+    width:200px;
+    color:#696969;
+    line-height:25px;
+    padding:0;
+    float:left;
+}
+
 
 .disabled {
     color:#CFCFCF;
@@ -123,6 +160,11 @@ input[type="submit"] {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F8F8F8', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
     border: 1px solid #F8F8F8;
 }
+
+label.format {
+    display:block;
+}
+
 
 /* commonly used class used to hide elements */
 .hideMe {
@@ -150,8 +192,6 @@ label.noHeaderLines {
     font-family: "Courier New", Courier, monospace;
 }
 
-
-
 /* list of radio buttons  for template selection */
 ul.template {
     list-style: none;
@@ -161,41 +201,6 @@ ul.template {
     width:100%;
 }
 
-
-
-
-
-
-/* unordered lists are used to display/format form items in the jWizard */
-/*
-ul {
-    width: 70%;
-    list-style: none;
-    margin: 0 0 10px 0;
-    padding: 0;
-    float: left;
-}
-
-ul li {
-    width: 15%;
-    display: inline;
-    margin: 0 15px 10px 0;
-    padding: 0;
-    float: left;
-    position: relative;
-    bottom: 0;
-}
-
-ul.oiipGlobalMetadata li {
-    width: 45%;
-}
-
-ul li label {
-    margin: 0;
-    padding: 0;
-    text-align: left;
-}
-*/
 /* general image format (help icon)*/
 ul li label img {
     width: 10px;
@@ -205,8 +210,127 @@ ul li label img {
 }
 
 
+/**
+ * CF type step of wizard.
+ */
+#cfType {
+    width:100%;
+}
 
-/* step 4: variable dialog box */
+/* tabs */
+#cfType ul {
+    width:100%;
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    float: left;
+}
+
+#cfType ul li {
+    display: inline;
+    margin: 0 5px 0 0;
+    padding: 0;
+    float: left;
+    position: relative;
+    bottom: 0;
+}
+#cfType ul li.cfTypeSpecified {
+    margin: 0;
+    float: right;
+}
+
+#cfType ul li.cfTypeSpecified small {
+    font-size:7pt;
+}
+
+
+/* platform display */
+#cfType ul.platforms {
+    margin: 0;
+    padding: 0;
+}
+
+#cfType ul.platforms li {
+    display: inline;
+    margin: 0 10px 10px 0;
+    padding: 0;
+    float: left;
+    font-size:9pt;
+    text-align:center;
+    background:#FFFFFF;
+}
+
+#cfType ul.platforms li.ui-selected{
+    background-color: #F39814;
+}
+
+#cfType ul.platforms li img {
+    width: 75px;
+    height: 75px;
+    margin: 0 0 10px 0px;
+    padding: 10px;
+    display: block;
+}
+
+#cfType ul.platforms li small {
+    display:block;
+    margin: 0 0 5px 0;
+}
+
+#cfType ul.platforms li input {
+    display: none;
+}
+
+/**
+ * File upload step of wizard.
+ */
+#fileUpload #upload {
+    margin:10px 0;
+    padding:0;
+}
+
+#fileUpload #upload .files {
+    margin:10px 10px 20px 10px;
+}
+
+
+/**
+ * Custom file attributes step of wizard.
+ */
+#customFileTypeAttributes #delimiters {
+    display:block;
+    float:left;
+    width:100%;
+}
+
+/* The delimiter list needs this to have decimal separator selection placed properly */
+ul#delimiterList {
+    width: 100%;
+    list-style: none;
+    position: relative;
+    margin-bottom:10px;
+}
+
+ul#delimiterList li {
+    width: 20%;
+    display: inline;
+    margin: 0 15px 10px 0;
+    padding: 0;
+    float: left;
+    position: relative;
+    bottom: 0;
+}
+#customFileTypeAttributes .buttonNav {
+    display:block;
+    float:left;
+    width:100%;
+}
+
+
+/** 
+ * Variable metadata collection step of the wizard.
+ */ 
+/*variable dialog box  */
 .ui-dialog #dialog {
     font-size: 9pt;
     margin: 5px;
@@ -216,17 +340,6 @@ ul li label img {
     -webkit-border-radius: 4px;
     -khtml-border-radius: 4px;
     border-radius: 4px;
-}
-
-/* steps 5 & 6 */
-#step5 ul li,
-#step6 ul li {
-    width: 40%;
-}
-
-/* step 7 */
-#step7 ul li {
-    width: 100%;
 }
 
 /* dialog box section titles */
@@ -380,109 +493,34 @@ ul li label img {
 }
 
 /**
- * CF type step of wizard.
+ * General metadata collection step of the wizard.
  */
 
-#cfType {
+#generalMetadata h5.toggle{
+    height: 25px !important;
+     margin:10px 0 0 0;
+    padding: 0 0 0 20px;
+    text-align: left;
+    font-size:10pt;
     width:100%;
+    border-bottom: 1px solid #CFCFCF;
 }
 
-/* tabs */
-#cfType ul {
-    width:100%;
-    list-style: none;
-    margin: 0 0 10px 0;
-    padding: 0;
-    float: left;
-}
-
-#cfType ul li {
-    display: inline;
-    margin: 0 5px 0 0;
-    padding: 0;
-    float: left;
-    position: relative;
-    bottom: 0;
-}
-#cfType ul li.cfTypeSpecified {
-    margin: 0;
-    float: right;
-}
-
-#cfType ul li.cfTypeSpecified small {
-    font-size:7pt;
-}
-
-
-/* platform display */
-#cfType ul.platforms {
-    margin: 0;
-    padding: 0;
-}
-
-#cfType ul.platforms li {
-    display: inline;
-    margin: 0 10px 10px 0;
-    padding: 0;
-    float: left;
-    font-size:9pt;
-    text-align:center;
-    background:#FFFFFF;
-}
-
-#cfType ul.platforms li.ui-selected{
-    background-color: #F39814;
-}
-
-#cfType ul.platforms li img {
-    width: 75px;
-    height: 75px;
-    margin: 0 0 10px 0px;
-    padding: 10px;
-    display: block;
-}
-
-#cfType ul.platforms li small {
-    display:block;
-    margin: 0 0 5px 0;
-}
-
-#cfType ul.platforms li input {
-    display: none;
-}
-
-/**
- * File upload step of wizard.
- */
-#fileUpload #upload {
-    margin:10px 0;
-    padding:0;
-}
-
-#fileUpload #upload .files {
-    margin:10px 10px 20px 10px;
-}
-
-
-/**
- * Custom file attributes step of wizard.
- */
-#customFileTypeAttributes #delimiters {
-    display:block;
-    float:left;
-    width:100%;
-}
-
-/* The delimiter list needs this to have decimal separator selection placed properly */
-ul#delimiterList {
+#generalMetadata ul {
     width: 100%;
     list-style: none;
-    position: relative;
-    margin-bottom:10px;
+    margin: 0 0 10px 0;
+    padding: 10px;
+    float: left;
+    background: #F8F8F8; /* Old browsers */
+    background: -moz-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #F8F8F8 -1%,#F9F9F9 0%,#F6F6F6 0%,#F6F6F6 0%,#F8F8F8 2%,#F8F8F8 4%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #F8F8F8 -1%,#F9F9F9 0%,#F6F6F6 0%,#F6F6F6 0%,#F8F8F8 2%,#F8F8F8 4%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F8F8F8', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
 }
 
-ul#delimiterList li {
-    width: 20%;
+#generalMetadata ul li {
+    width: 30%;
     display: inline;
     margin: 0 15px 10px 0;
     padding: 0;
@@ -490,10 +528,32 @@ ul#delimiterList li {
     position: relative;
     bottom: 0;
 }
-#customFileTypeAttributes .buttonNav {
-    display:block;
-    float:left;
-    width:100%;
+
+#generalMetadata ul li label {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+/**
+ * Download step
+ */
+ul#download {
+    width: 100%;
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    float: left;
+    position: relative;
+}
+
+/* li has width of 100% */
+ul#download li {
+    width: 100%;
+    display: inline;
+    margin: 10px 0 0 10px;
+    padding: 0;
+    float: left;
 }
 
 

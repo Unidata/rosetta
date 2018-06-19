@@ -1,61 +1,119 @@
 <h3>Specify General Information</h3>
-<c:choose>
-    <c:when test="${fn:length(globalMetadataItems) gt 0}">
-        <ul>
-            <c:forEach items="${globalMetadataItems}" var="globalMetadataItem">
-                <script type="text/javascript">
-                    var obj = {};
-                    obj["tagName"] = "<c:out value="${globalMetadataItem.tagName}" />";
-                    obj["displayName"] = "<c:out value="${globalMetadataItem.displayName}" />";
-                    <c:choose>
-                    <c:when test="${globalMetadataItem.isRequired != null}">
-                    obj["isRequired"] = true;
-                    </c:when>
-                    <c:otherwise>
-                    obj["isRequired"] = false;
-                    </c:otherwise>
-                    </c:choose>
-                    <c:choose>
-                    <c:when test="${globalMetadataItem.units != null}">
-                    obj["units"] = true;
-                    </c:when>
-                    <c:otherwise>
-                    obj["units"] = false;
-                    </c:otherwise>
-                    </c:choose>
-                    generalMetadata.push(obj);
-                </script>
-                <li>
-                    <label>
-                        <c:choose>
-                            <c:when test="${globalMetadataItem.isRequired}">
-                                *
-                            </c:when>
-                        </c:choose>
-                        <c:out value="${globalMetadataItem.displayName}"/>
-                        <c:choose>
-                            <c:when test="${globalMetadataItem.description != null}">
-                                <img src="resources/img/help.png"
-                                     alt="<c:out value="${globalMetadataItem.description}" />"/>
-                            </c:when>
-                        </c:choose>
-                        <br/>
-                        <input type="text" name="<c:out value="${globalMetadataItem.tagName}" />"
-                               value=""/>
-                    </label>
-                    <label for="<c:out value="${globalMetadataItem.tagName}" />"
-                           class="error"></label>
-                </li>
-            </c:forEach>
-            <div id="containerForCustomAttributes"/>
-        </ul>
-    </c:when>
-    <c:otherwise>
-        <!-- insert error handling -->
-    </c:otherwise>
-</c:choose>
 
-<%-- Show the previous button. --%>
-<input type="submit" name="submit" value="Previous" class="button"/>
-<%-- Show the next button. --%>
-<input id="next" type="submit" name="submit" value="Next" disabled class="button disabled"/>
+
+<p>Please provide the requested metadata:</p>
+
+    <ul>
+        <li>
+            <label>
+                Title <small>(required)</small>
+                <img src="resources/img/help.png" alt="The title of this data set."/>
+                <br/>
+                <input class="required" type="text" name="title" id="title" value="${generalMetadata.title}"/>
+            </label>
+            <label for="title" class="error"></label>
+        </li>
+
+        <li>
+            <label>
+                Description <small>(required)</small>
+                <img src="resources/img/help.png" alt="General description of this dataset."/>
+                <br/>
+                <input class="required" type="text" name="description" id="description" value="${generalMetadata.description}"/>
+            </label>
+            <label for="description" class="error"></label>
+        </li>
+
+        <li>
+            <label>
+                Institution <small>(required)</small>
+                <img src="resources/img/help.png" alt="TThe name of the institution or organization providing the dataset."/>
+                <br/>
+                <input class="required" type="text" name="institution" id="institution" value="${generalMetadata.institution}"/>
+            </label>
+            <label for="institution" class="error"></label>
+        </li>
+
+        <li>
+            <label>
+                Data Author
+                <img src="resources/img/help.png" alt="The name of the person collecting the data."/>
+                <br/>
+                <input type="text" name="dataAuthor" id="dataAuthor" value="${generalMetadata.dataAuthor}"/>
+            </label>
+            <label for="dataAuthor" class="error"></label>
+        </li>
+
+        <li>
+            <label>
+                Version
+                <img src="resources/img/help.png" alt="The version number of this dataset."/>
+                <br/>
+                <input type="text" name="version" id="version" value="${generalMetadata.version}"/>
+            </label>
+            <label for="version" class="error"></label>
+        </li>
+
+        <li>
+            <label>
+                Data Source
+                <img src="resources/img/help.png" alt="The data logger/instrumentation make and model."/>
+                <br/>
+                <input type="text" name="dataSource" id="dataSource" value="${generalMetadata.dataSource}"/>
+            </label>
+            <label for="dataSource" class="error"></label>
+        </li>
+
+
+        <li>
+            <label>
+                Comment
+                <img src="resources/img/help.png" alt="Any comments applicable to this dataset."/>
+                <br/>
+                <input type="text" name="comment" id="comment" value="${generalMetadata.comment}"/>
+            </label>
+            <label for="comment" class="error"></label>
+        </li>
+
+        <li>
+            <label>
+                History
+                <img src="resources/img/help.png" alt="History of this dataset."/>
+                <br/>
+                <input type="text" name="history" id="history" value="${generalMetadata.history}"/>
+            </label>
+            <label for="history" class="error"></label>
+        </li>
+
+        <li>
+            <label>
+                References
+                <img src="resources/img/help.png" alt="TAny references applicable to this dataset."/>
+                <br/>
+                <input type="text" name="references" id="references" value="${generalMetadata.references}"/>
+            </label>
+            <label for="references" class="error"></label>
+        </li>
+
+
+        <div id="containerForCustomAttributes"/>
+    </ul>
+
+
+<div class="buttonNav">
+    <%-- Show the previous button. --%>
+    <input type="submit" name="submit" value="Previous" class="button"/>
+    <%-- Show the next button. --%>
+    <input type="submit" name="submit" id="Next" value="Next"
+            <c:if test="${empty generalMetadata.title || empty generalMetadata.description || empty generalMetadata.institution}">
+                disabled
+            </c:if>
+           class="button
+            <c:if test="${empty generalMetadata.title || empty generalMetadata.description || empty generalMetadata.institution}">
+                disabled
+            </c:if>
+        "/>
+</div>
+
+
+

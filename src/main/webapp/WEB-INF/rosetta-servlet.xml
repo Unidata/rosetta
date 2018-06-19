@@ -4,18 +4,15 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/mvc
            http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
 	       http://www.springframework.org/schema/beans 
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	       http://www.springframework.org/schema/context 
-           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-
-
-    <!-- Static resources since we are handling all requests.
-         These are front end resources (css, etc.) and xml files -->
-    <mvc:resources mapping="/resources/**" location="/frontEndResources/"/>
-    <mvc:resources mapping="/resources/**" location="/WEB-INF/classes/resources/"/>
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security.xsd">
 
     <!-- Activates various annotations to be detected in bean classes -->
     <context:annotation-config />
@@ -33,6 +30,78 @@
             <list>
                 <value>classpath:application.properties</value>
             </list>
+        </property>
+    </bean>
+
+    <!-- Static resources since we are handling all requests.
+         These are front end resources (css, etc.) and xml files -->
+    <mvc:resources mapping="/resources/**" location="/frontEndResources/, /WEB-INF/classes/resources/"/>
+    <mvc:resources mapping="/download/**" location="file:${rosetta.home}/downloads/"/>
+
+    <!-- Configure Spring-Security  -->
+    <!--
+    <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true"/>
+    <security:http pattern="/resources/**" security="none"/>
+    <security:http auto-config="true" use-expressions="true">
+
+        <security:access-denied-handler error-page="/denied" />
+
+        <security:form-login
+                login-processing-url="/j_spring_security_check"
+                login-page="/login"
+                username-parameter="userName"
+                password-parameter="password"
+                authentication-success-handler-ref="customAuthenticationSuccessHandler"
+                authentication-failure-handler-ref="authenticationFailureHandler"/>
+
+        <security:logout
+                invalidate-session="true"
+                logout-success-url="/login"
+                logout-url="/j_spring_security_logout"/>
+
+
+        <security:intercept-url pattern="/index.jsp" access="permitAll" />
+        <security:intercept-url pattern="/register" access="permitAll" />
+        <security:intercept-url pattern="/login/**" access="permitAll" />
+        <security:intercept-url pattern="/denied" access="permitAll" />
+        <security:intercept-url pattern="/error" access="permitAll" />
+        <security:intercept-url pattern="/cfType" access="permitAll" method="GET"/>
+        <security:intercept-url pattern="/cfType" access="permitAll" method="POST"/>
+        <security:intercept-url pattern="/convertAndDownload/**" access="permitAll" />
+        <security:intercept-url pattern="/customFileTypeAttributes/**" access="permitAll" />
+        <security:intercept-url pattern="/fileUpload/**" access="permitAll" />
+        <security:intercept-url pattern="/generalMetadata/**" access="permitAll" />
+        <security:intercept-url pattern="/variableMetadata/**" access="permitAll" />
+        <security:intercept-url pattern="/**" access="isAuthenticated()" />
+-->
+        <!-- enable csrf protection -->
+    <!--
+        <security:csrf/>
+    </security:http>
+    -->
+
+    <!-- Declare an authentication-manager to use a custom userDetailsService -->
+    <!--
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="userDetailsService">
+            <security:password-encoder ref="passwordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+-->
+
+    <!-- Use a password encoder since the user's passwords are stored encrypted in the database -->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <bean id="customAuthenticationSuccessHandler" class="edu.ucar.unidata.rosetta.service.CustomAuthenticationSuccessHandler"/>
+
+    <bean id="authenticationFailureHandler"
+          class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.springframework.security.authentication.BadCredentialsException">/login/badCredentials</prop>
+                <prop key="org.springframework.security.authentication.LockedException">/login/accountLocked</prop>
+                <prop key="org.springframework.security.authentication.DisabledException">/login/accountDisabled</prop>
+            </props>
         </property>
     </bean>
 
@@ -82,29 +151,71 @@
         <property name="suffix" value=".jsp"></property>
     </bean>
 
-    <!-- Declaration for Resource use -->
-    <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.FileParserManagerImpl"/>
-    <bean id="resourceManager" class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl"/>
-    <bean id="cfTypeValidator" class="edu.ucar.unidata.rosetta.service.validators.CFTypeValidator"/>
-    <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.validators.FileValidator"/>
+    <!-- Declaration for resource use -->
+    <bean id="fileParserManager" class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl"/>
+    <bean id="cfTypeValidator" class="edu.ucar.unidata.rosetta.service.validators.wizard.CFTypeValidator"/>
+    <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.validators.wizard.FileValidator"/>
     <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean"
           init-method="init"/>
-    <bean id="netcdfFileManager" class="edu.ucar.unidata.rosetta.dsg.SingleStationTimeSeries"/>
-
-    <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.service.EmbeddedDerbyDbInitManager"/>
-
+    <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.service.resources.EmbeddedDerbyDbInitManager"/>
 
     <!-- DAO injection -->
-    <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.DataManagerImpl">
+    <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl">
+        <property name="cfTypeDao" ref="cfTypeDao"/>
+        <property name="communityDao" ref="communityDao"/>
         <property name="dataDao" ref="dataDao"/>
+        <property name="delimiterDao" ref="delimiterDao"/>
+        <property name="fileTypeDao" ref="fileTypeDao"/>
+        <property name="platformDao" ref="platformDao"/>
         <property name="propertiesDao" ref="propertiesDao"/>
     </bean>
 
-    <bean id="dataDao" class="edu.ucar.unidata.rosetta.repository.JdbcDataDao">
+    <bean id="metadataManager" class="edu.ucar.unidata.rosetta.service.wizard.MetadataManagerImpl">
+        <property name="metadataDao" ref="metadataDao"/>
+    </bean>
+
+    <bean id="userDetailsService" class="edu.ucar.unidata.rosetta.service.user.UserDetailsServiceImpl">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+
+    <bean id="userManager" class="edu.ucar.unidata.rosetta.service.user.UserManagerImpl">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+
+    <!-- Datasource injection -->
+    <bean id="cfTypeDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcCfTypeDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="communityDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcCommunityDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="dataDao" class="edu.ucar.unidata.rosetta.repository.wizard.JdbcDataDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="delimiterDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcDelimiterDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="fileTypeDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcFileTypeDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="metadataDao" class="edu.ucar.unidata.rosetta.repository.wizard.JdbcMetadataDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="platformDao" class="edu.ucar.unidata.rosetta.repository.resources.JdbcPlatformDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
     <bean id="propertiesDao" class="edu.ucar.unidata.rosetta.repository.JdbcPropertiesDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean id="userDao" class="edu.ucar.unidata.rosetta.repository.user.JdbcUserDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 

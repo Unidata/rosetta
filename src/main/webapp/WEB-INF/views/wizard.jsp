@@ -1,18 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/views/jspf/taglibs.jspf" %>
-<%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean" %>
-<c:set var="baseUrl" value="${pageContext.request.contextPath}" />
+<%-- View handling user-related tasks. Loads jspf according to provided action value.  The default index page gets redirected to here. --%>
 <!DOCTYPE HTML>
     <html>
         <head>
             <title><spring:message code="global.title"/></title>
-            <script>
-                var baseUrl = '<c:out value="${baseUrl}" />';
-            </script>
-
-            <%@ include file="/WEB-INF/views/jspf/css.jspf" %>
-            <%@ include file="/WEB-INF/views/jspf/javascript.jspf" %>
-
+            <link rel="shortcut icon" href="<c:out value="${baseUrl}" />/resources/img/logo/favicon.ico" type="image/x-icon" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <%@ include file="/WEB-INF/views/jspf/resources.jspf" %>
             <script type="text/javascript">
                 var platformMetadata = [];
                 var generalMetadata = [];
@@ -25,7 +20,7 @@
             <c:choose>
                 <c:when test="${not empty currentStep}">
 
-                <form id="FORM" action="/rosetta/${currentStep}" method="POST" enctype="multipart/form-data">
+                <form id="FORM" action="${baseUrl}/${currentStep}" method="POST" enctype="multipart/form-data">
                     <nav>
                         <ul id="steps">
                             <li id="${currentStep}" <c:if test="${currentStep eq 'cfType'}">class="current"</c:if>>
@@ -38,10 +33,10 @@
                                 <li id="${currentStep}" <c:if test="${currentStep eq 'customFileTypeAttributes'}">class="current"</c:if>>
                                     Specify Custom File Type Attributes
                                 </li>
+                                <li id="${currentStep}" <c:if test="${currentStep eq 'variableMetadata'}">class="current"</c:if>>
+                                    Specify Variable Attributes
+                                </li>
                             </c:if>
-                            <li id="${currentStep}" <c:if test="${currentStep eq 'variableMetadata'}">class="current"</c:if>>
-                                Specify Variable Attributes
-                            </li>
                             <li id="${currentStep}" <c:if test="${currentStep eq 'generalMetadata'}">class="current"</c:if>>
                                 Specify General Information
                             </li>
@@ -68,10 +63,26 @@
                                      <%@ include file="/WEB-INF/views/jspf/variableMetadata.jspf" %>
                                  </c:when>
                                  <c:when test="${currentStep eq 'generalMetadata'}">
-                                     <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
+                                     <c:choose>
+                                        <c:when test="${not empty data.platform && data.platform eq 'eTag'}">
+                                            <script>
+                                                var metadataType = "oiip";
+                                            </script>
+                                            <%@ include file="/WEB-INF/views/jspf/oiipGeneralMetadata.jspf" %>
+                                        </c:when>
+                                         <c:otherwise>
+                                             <script>
+                                                 var metadataType = "general";
+                                             </script>
+                                             <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
+                                         </c:otherwise>
+                                     </c:choose>
+                                 </c:when>
+                                 <c:when test="${currentStep eq 'convertAndDownload'}">
+                                     <%@ include file="/WEB-INF/views/jspf/convertAndDownload.jspf" %>
                                  </c:when>
                                  <c:otherwise>
-                                     <%@ include file="/WEB-INF/views/jspf/convertAndDownload.jspf" %>
+                                     <%@ include file="/WEB-INF/views/jspf/cfType.jspf" %>
                                  </c:otherwise>
                             </c:choose>
                          </div>

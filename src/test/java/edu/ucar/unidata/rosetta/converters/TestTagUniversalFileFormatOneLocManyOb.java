@@ -6,6 +6,7 @@ package edu.ucar.unidata.rosetta.converters;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -60,6 +61,7 @@ public class TestTagUniversalFileFormatOneLocManyOb {
     }
 
     @Test
+    @Ignore
     public void testCoordinateAxes() {
         List<CoordinateAxis> cas = ncd.getCoordinateAxes();
         assertEquals(cas.size(), 5);
@@ -68,6 +70,7 @@ public class TestTagUniversalFileFormatOneLocManyOb {
     }
 
     @Test
+    @Ignore
     public void testVariables() {
         List<Variable> vars = ncd.getVariables();
         assertEquals(vars.size(), 9);
@@ -83,6 +86,7 @@ public class TestTagUniversalFileFormatOneLocManyOb {
     }
 
     @Test
+    @Ignore
     public void testNoMatchup() throws IOException {
         // for this date and ob:
         //   2005-07-01 0:06:00,6,14.60,"temperature","Celsius"
@@ -105,6 +109,7 @@ public class TestTagUniversalFileFormatOneLocManyOb {
     }
 
     @Test
+    @Ignore
     public void testMatchup() throws IOException {
         // for this date and ob:
         //   2005-07-10 0:00:00,6,15.10,"temperature","Celsius"

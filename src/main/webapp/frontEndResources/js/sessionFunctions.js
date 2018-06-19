@@ -11,7 +11,6 @@
  * @param value  The data to be stored in the session.
  */
 function addToSession(key, value) {
-    addToVariableString(key, value);
     if (typeof(Storage) !== "undefined") {
         sessionStorage.setItem(key, value);
     } else {
@@ -32,8 +31,8 @@ function addToVariableString(key, value) {
         } else { // found so replace
             var keyValPairs = currentString.split("<=>");
             for (i = 0; i < keyValPairs.length; i++) {
-                // matches
-                if (keyValPairs[i].search(key) !== -1) {
+                var variablekeyValuePair = keyValPairs[i].split("<>");
+                if (variablekeyValuePair[0] === key) {
                     newString += key + "<>"  + value;
                 } else {
                     newString += keyValPairs[i];
@@ -85,16 +84,14 @@ function getFromSession(key) {
 }
 
 function getFromVariableString(key) {
-    console.log("key: " + key);
     var valueToReturn;
     var currentString = $("input#variableMetadata").val();
     var keyValPairs = currentString.split("<=>");
     for (i = 0; i < keyValPairs.length; i++) {
-        // matches
-        if (keyValPairs[i].search(key) !== -1) {
-            var variablekeyValuePair = keyValPairs[i].split("<>");
+        var variablekeyValuePair = keyValPairs[i].split("<>");
+        if (variablekeyValuePair[0] === key) {
             valueToReturn = variablekeyValuePair[1];
-        } 
+        }
     }
     return valueToReturn;
 }
@@ -113,19 +110,23 @@ function removeFromSession(key) {
     }
 }
 
-function removeFromVariableString(key, value) {
-    var newString;
+function removeFromVariableString(key) {
+    var newString="";
     var currentString = $("input#variableMetadata").val();
     var keyValPairs = currentString.split("<=>");
     for (i = 0; i < keyValPairs.length; i++) {
-        // matches
-        if (keyValPairs[i].search(key) === -1) {
+        var variablekeyValuePair = keyValPairs[i].split("<>");
+        if (variablekeyValuePair[0] !== key) {
             newString = newString + keyValPairs[i];
             if (i !== (keyValPairs.length - 1)) {
                 newString = newString + "<=>";
             }
-        } 
+        }
     }
+    if (newString.endsWith("<=>")) {
+        newString = newString.substr(0, newString.lastIndexOf("<=>"));
+    }
+
     // update hidden form variable
     $("input#variableMetadata").prop("value", newString);
 }
@@ -181,7 +182,7 @@ function removeAllButTheseFromSession(keep) {
 
 
 function removeAllButTheseFromVariableString(keep) {
-    var newString;
+    var newString="";
     var currentString = $("input#variableMetadata").val();
     var remove = [];
     var keyValPairs = currentString.split("<=>");
@@ -225,7 +226,7 @@ function getItemEnteredFromVariableString(key, sought) {
         var pairs = data.match(/(\\.|[^,])+/g);
         for (var i = 0; i < pairs.length; i++) {
             var keyValuePair = pairs[i].match(/(\\.|[^:])+/g);
-            if (keyValuePair[0] == data && typeof keyValuePair[1] == "string") {
+            if (keyValuePair[0] == sought && typeof keyValuePair[1] == "string") {
                 return unescapeCharacters(keyValuePair[1]);
             }
         }

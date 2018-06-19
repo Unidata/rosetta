@@ -16,10 +16,11 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
+ * Implementation of a data DAO.
+ *
  * @author oxelson@ucar.edu
  */
 public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
-
 
     protected static Logger logger = Logger.getLogger(JdbcDataDao.class);
 
@@ -92,7 +93,8 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 "noHeaderLines = ?, " +
                 "delimiter = ?, " +
                 "otherDelimiter = ?, " +
-                "variableMetadata = ? " +
+                "netcdfFile = ?, " +
+                "zip = ? " +
                 "WHERE id = ?";
         int rowsAffected  = getJdbcTemplate().update(sql, new Object[] {
                 // order matters here
@@ -107,7 +109,8 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
                 String.valueOf(data.getNoHeaderLines()),
                 data.getDelimiter(),
                 data.getOtherDelimiter(),
-                data.getVariableMetadata(),
+                data.getNetcdfFile(),
+                data.getZip(),
                 data.getId()
         });
         if (rowsAffected  <= 0) {
@@ -164,7 +167,8 @@ public class JdbcDataDao extends JdbcDaoSupport implements DataDao {
             data.setNoHeaderLines(Boolean.parseBoolean(rs.getString("noHeaderLines")));
             data.setDelimiter(rs.getString("delimiter"));
             data.setOtherDelimiter(rs.getString("otherDelimiter"));
-            data.setVariableMetadata(rs.getString("variableMetadata"));
+            data.setNetcdfFile(rs.getString("netcdfFile"));
+            data.setZip(rs.getString("zip"));
             return data;
         }
     }

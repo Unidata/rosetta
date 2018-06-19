@@ -2,30 +2,30 @@
 <delimiters>
     <delimiter>
         <name>Tab</name>
-        <character>\t</character>
+        <characterSymbol>\t</characterSymbol>
     </delimiter>
     <delimiter>
         <name>Comma</name>
-        <character>,</character>
+        <characterSymbol>,</characterSymbol>
     </delimiter>
     <delimiter>
         <name>Whitespace</name>
-        <character></character>
+        <characterSymbol> </characterSymbol>
     </delimiter>
     <delimiter>
         <name>Colon</name>
-        <character>:</character>
+        <characterSymbol>:</characterSymbol>
     </delimiter>
     <delimiter>
         <name>Semicolon</name>
-        <character>;</character>
+        <characterSymbol>;</characterSymbol>
     </delimiter>
     <delimiter>
         <name>Single Quote</name>
-        <character>'</character>
+        <characterSymbol>'</characterSymbol>
     </delimiter>
     <delimiter>
         <name>Double Quote</name>
-        <character>"</character>
+        <characterSymbol>"</characterSymbol>
     </delimiter>
 </delimiters>

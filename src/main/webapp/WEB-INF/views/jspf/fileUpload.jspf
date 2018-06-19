@@ -1,20 +1,19 @@
 <h3>Upload Data File</h3>
-
 <c:choose>
     <%-- Load file types by community. --%>
     <c:when test="${not empty data.community || not empty data.cfType}">
         <c:choose>
-            <%-- Need the domains & fileTypes to load dataFileType options. --%>
-            <c:when test="${fn:length(domains) gt 0 && fn:length(fileTypes) gt 0}">
+            <%-- Need the communities & fileTypes to load dataFileType options. --%>
+            <c:when test="${fn:length(communities) gt 0 && fn:length(fileTypes) gt 0}">
                 Select your data file type:
                 <select id="dataFileType" name="dataFileType">
                     <option value="">--</option>
                     <c:choose>
-                        <%-- Create file type selection options from domains. --%>
+                        <%-- Create file type selection options from communities. --%>
                         <c:when test="${not empty data.community}">
-                            <c:forEach items="${domains}" var="domain">
-                                <c:if test="${data.community == fn:replace(domain.name, ' ', '_')}">
-                                    <c:forEach items="${domain.fileType}" var="fileType">
+                            <c:forEach items="${communities}" var="community">
+                                <c:if test="${data.community == community.name}">
+                                    <c:forEach items="${community.fileType}" var="fileType">
                                         <option value="${fn:replace(fileType, ' ', '_')}"
                                             <%-- Mark as selected if dataFileType has already been chosen. --%>
                                             <c:if test="${not empty data.dataFileType && data.dataFileType == fn:replace(fileType, ' ', '_')}">
@@ -28,7 +27,7 @@
                         <%-- Create file type selection options from fileTypes. --%>
                         <c:otherwise>
                             <c:forEach items="${fileTypes}" var="fileType">
-                                <option value="${fn:replace(fileType.name, ' ', '_')}
+                                <option value="${fn:replace(fileType.name, ' ', '_')}"
                                     <%-- Mark as selected if dataFileType has already been chosen. --%>
                                     <c:if test="${not empty data.dataFileType && data.dataFileType == fn:replace(fileType.name, ' ', '_')}">
                                           selected
@@ -53,26 +52,38 @@
     Upload your data file(s):
 
     <div class="files">
-        Data File (Required)
+        Data File <small>(Required)</small>
 
         <label for="dataFile" class="error"></label>
-        <input id="dataFile" name="dataFile" type="file" value=""/>
+        <c:if test="${not empty data.dataFileName}">
+            <i>${data.dataFileName}</i> <button type="button" id="clearDataFileUpload" class="clearFileUpload">Clear file upload</button>
+        </c:if>
+        <input id="dataFile" name="dataFile" type="file" class="<c:if test="${not empty data.dataFileName}">hideMe</c:if>" value=""/>
+        <input id="dataFileName" name="dataFileName" type="hidden" value="${data.dataFileName}"/>
         <div id="dataFileNotice"></div>
     </div>
 
     <div id="custom" class="files <c:if test="${not empty data.dataFileType && data.dataFileType ne 'Custom_File_Type'}">hideMe</c:if>">
-        External Positional File (Optional)
+        External Positional File <small>(Optional)</small>
 
         <label for="positionalFile" class="error"></label>
-        <input id="positionalFile" name="positionalFile" type="file" value=""/>
+        <c:if test="${not empty data.positionalFileName}">
+            <i>${data.positionalFileName}</i> <button type="button" id="clearPositionalFileUpload" class="clearFileUpload">Clear file upload</button>
+        </c:if>
+        <input id="positionalFile" name="positionalFile" type="file" class="<c:if test="${not empty data.positionalFileName}">hideMe</c:if>" value=""/>
+        <input id="positionalFileName" name="positionalFileName" type="hidden" value="${data.positionalFileName}"/>
         <div id="positionalFileNotice"></div>
     </div>
 
     <div class="files">
-        Rosetta Template (Optional)
+        Rosetta Template <small>(Optional)</small>
 
         <label for="templateFile" class="error"></label>
-        <input id="templateFile" name="templateFile" type="file" value=""/>
+        <c:if test="${not empty data.templateFileName}">
+            <i>${data.templateFileName}</i> <button type="button" id="clearTemplateFileUpload" class="clearFileUpload">Clear file upload</button>
+        </c:if>
+        <input id="templateFile" name="templateFile" type="file" class="<c:if test="${not empty data.templateFileName}">hideMe</c:if>" value=""/>
+        <input id="templateFileName" name="templateFileName" type="hidden" value="${data.templateFileName}"/>
         <div id="templateFileNotice"></div>
     </div>
 

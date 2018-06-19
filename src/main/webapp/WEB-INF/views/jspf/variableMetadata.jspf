@@ -1,14 +1,26 @@
 <h3>Specify Variable Attributes</h3>
 
+<p>Please click on the column headers and provide the requested metadata.</p>
+
 <label for="variableGrid" class="error"></label>
 <div id="variableGrid" class="rosettaGrid"></div>
 <div id="dialog"></div>
 <input type="hidden" name="variableMetadata" value="${data.variableMetadata}" id="variableMetadata"/>
 
-<%-- Show the previous button. --%>
-<input type="submit" name="submit" value="Previous" class="button"/>
-<%-- Show the next button. --%>
-<input id="Next" type="submit" name="submit" value="Next" disabled class="button disabled"/>
+<div class="buttonNav">
+    <%-- Show the previous button. --%>
+    <input type="submit" name="submit" value="Previous" class="button"/>
+    <%-- Show the next button. --%>
+    <input type="submit" name="submit" id="Next" value="Next"
+            <c:if test="${empty data.variableMetadata}">
+                disabled
+            </c:if>
+           class="button
+            <c:if test="${empty data.variableMetadata}">
+                disabled
+            </c:if>
+        "/>
+</div>
 
 
 <script>

@@ -60,4 +60,4 @@ rosetta.tgz
 src/test/resources/testData/esc/*.nc
 src/test/rosetta_home/downloads
 src/test/rosetta_home/uploads
-rosetaDb
+rosettaDb

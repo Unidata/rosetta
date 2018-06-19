@@ -1,10 +1,18 @@
-This directory contains xml files that are read by Spring as a Resource  (see Spring Resoure Interface).
-Contents of the xml files are read in and placed in the Model to be used by the View.  The corresponding
-View files will display the data contained in these files.  
+This directory contains xml files that are read by Spring as a Resource (see Spring Resource Interface).
+Contents of the xml files are read in and loaded into the database during application initialization.
+This information is added to the Model to be used by the View.  The corresponding View files will display
+the data contained in these files.
 
 To add a Resource to be used in the View:
 
-1) Have a look at the TemplateController.java to see how these files are parsed.
-2) Make your own XML file. 
-3) Document your new file in index.xml.
-4) Add the appropriate JSTL in the corresponding View file.
+1) Make your own XML file.  NOTE: Be sure that the allotted data type in the corresponding database table
+   is sufficient to hold the text data without truncation.  Platform, Community, and & FileType data currently
+   has a max length of 255 characters. Modify the database table data type if one of these text entries exceeds
+   255 characters.
+2) Modify the edu.ucar.unidata.rosetta.service.resource.EmbeddedDerbyDbInitManager class in the to add database
+   table creation and population of those tables.
+3) Document your new file in index.xml.  NOTE: Order matters here in the index.xml file! The resources in that file
+   will be loaded into the database in the order in which they appear. If a resource depends upon or references
+   another, the dependency resource MUST be loaded first
+4) Create a corresponding domain object in edu.ucar.unidata.domain.resources for your resource.
+5) Add the appropriate JSTL in the corresponding View file.

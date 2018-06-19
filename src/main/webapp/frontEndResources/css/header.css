@@ -2,20 +2,144 @@
  * header.css
  */
 header{
-    border-bottom:1px solid #06778F;
-    width:100%;
-    float:left;
-    clear:left;
+ border-bottom:1px solid #06778F;
+ width:100%;
+ float:left;
+ padding:0 0 2px 0;
+ margin:0;
+ height:32px;
+}
+
+header a.title {
+ float:left;
+ padding:0;
+ margin:0;
 }
 
 header img {
-    float:left;
+ float:left;
 }
 
 header h1 {
-    float:left;
-    margin:0;
-    padding:0 0 5px 5px;
+ float:left;
+ margin:0;
+ padding:0;
+ text-decoration:none;
+ color:#000000;
+}
+
+/* horizontal navigation */
+header ul.nav {
+ float:right;
+ margin:0 10px 0 0;
+ padding:0;
+ height:32px;
+}
+
+header ul.nav li {
+ display:inline-block;
+ margin:10px 0 0 0;
+ padding:0 12px 0 10px;
+ border-right: 1px solid #BCC4D0;
+ line-height:22px;
+}
+
+header ul.nav li a:link,
+header ul.nav li a:visited {
     text-decoration:none;
     color:#000000;
+}
+
+header ul.nav li a:active,
+header ul.nav li a:hover{
+    text-decoration:none;
+    color:#0088B5;
+}
+
+header ul.nav li.dropit-trigger b {
+ line-height:22px;
+ font-weight:normal;
+ cursor:pointer;
+ padding-right:20px;
+ background: transparent url('../img/down.png') no-repeat right 0px;
+}
+
+header ul.nav li.dropit-trigger.help {
+ padding: 0px 0px 0px 8px;
+ border-right: none;
+ background: transparent url('../img/question.png') no-repeat right 0px;
+}
+header ul.nav li.dropit-trigger.help b {
+ background: none;
+}
+header ul.nav li.dropit-trigger b:active, 
+header ul.nav li.dropit-trigger b:hover {
+ text-decoration:none;
+}
+
+/* dropdown submenu */
+header ul.nav ul.dropit-submenu {
+ float:right;	
+ left:auto;
+ right:0;
+ background: #FFFFFF;
+ color: #23538A;
+ padding:5px 0;
+ margin:3px 0 0 1px;
+ border:1px solid #06778F;
+ font-size:9pt;
+ -moz-box-shadow:5px 5px 5px rgba(0,0,0,0.3);
+ -webkit-box-shadow:5px 5px 5px rgba(0,0,0,0.3);
+ box-shadow:5px 5px 5px rgba(0,0,0,0.3);
+} 
+
+header ul.nav ul.dropit-submenu li {
+ white-space:nowrap;
+ margin:5px;
+ display:block;
+ padding:0;
+ float:left;
+ clear:both;
+ border:none;
+}
+header ul.nav ul.dropit-submenu li a {
+ line-height:20px;
+}
+.dropit .dropit-submenu {
+ min-width:150px;
+}
+
+
+/* logout links (form needed for Spring POST logout request) */
+header ul.nav ul.dropit-submenu li form {
+ padding:0;
+ margin:0;
+ display:inline;
+ position:relative;
+ float:left;
+ clear:both;
+}
+header ul.nav ul.dropit-submenu li input {
+ color:#0088B5;
+ font-size:9pt;
+ background:none !important;
+ padding:0;
+ border:none !important;
+ cursor:pointer;
+ height:20px;
+}
+header ul.nav ul.dropit-submenu li input:active,
+header ul.nav ul.dropit-submenu li input:hover {
+ color:#0088B5;
+ text-decoration:none;
+}
+header ul.nav ul.dropit-submenu li input[type=submit]{
+ margin:0;
+ padding:0;
+ cursor:pointer;
+ width: auto;
+ background-color: none !important;
+ -webkit-box-shadow: none !important;
+ -moz-box-shadow: none !important;
+ box-shadow: none !important;
 }

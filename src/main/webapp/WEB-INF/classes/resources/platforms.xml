@@ -1,43 +1,52 @@
 <?xml version='1.0' encoding='utf-8'?>
+<!-- Modify the database data type if a text entry exceeds 255 characters. -->
 <platforms>
     <platform>
         <name>Single Station</name>
-        <img>resources/img/platforms/tower.jpeg</img>
-        <type>timeSeries</type>
+        <imgPath>resources/img/platforms/tower.jpeg</imgPath>
+        <cfType>Time Series</cfType>
+        <community>Atmospheric Sciences</community>
     </platform>
     <platform>
         <name>Moored Buoy</name>
-        <img>resources/img/platforms/buoy_NA.gif</img>
-        <type>profile</type>
+        <imgPath>resources/img/platforms/buoy_NA.gif</imgPath>
+        <cfType>Profile</cfType>
+        <community>Physical Ocean Sciences</community>
     </platform>
     <platform>
         <name>CTD Sonde</name>
-        <img>resources/img/platforms/ctd.jpeg</img>
-        <type>profile</type>
+        <imgPath>resources/img/platforms/ctd.jpeg</imgPath>
+        <cfType>Profile</cfType>
+        <community>Physical Ocean Sciences</community>
     </platform>
     <platform>
         <name>Radiosonde</name>
-        <img>resources/img/platforms/balloon.jpeg</img>
-        <type>trajectory</type>
+        <imgPath>resources/img/platforms/balloon.jpeg</imgPath>
+        <cfType>Trajectory</cfType>
+        <community>Atmospheric Sciences</community>
     </platform>
     <platform>
         <name>Wind Profiler</name>
-        <img>resources/img/platforms/windprofiler_NA.gif</img>
-        <type>profile</type>
+        <imgPath>resources/img/platforms/windprofiler_NA.gif</imgPath>
+        <cfType>Profile</cfType>
+        <community>Atmospheric Sciences</community>
     </platform>
     <platform>
         <name>Aircraft</name>
-        <img>resources/img/platforms/aircraft.jpeg</img>
-        <type>trajectory</type>
+        <imgPath>resources/img/platforms/aircraft.jpeg</imgPath>
+        <cfType>Trajectory</cfType>
+        <community>Atmospheric Sciences</community>
     </platform>
     <platform>
         <name>Glider</name>
-        <img>resources/img/platforms/glider.jpeg</img>
-        <type>trajectory</type>
+        <imgPath>resources/img/platforms/glider.jpeg</imgPath>
+        <cfType>Trajectory</cfType>
+        <community>Physical Ocean Sciences</community>
     </platform>
     <platform>
         <name>eTag</name>
-        <img>resources/img/platforms/etag.jpeg</img>
-        <type>trajectory</type>
+        <imgPath>resources/img/platforms/etag.jpeg</imgPath>
+        <cfType>Trajectory</cfType>
+        <community>Bio-Logging</community>
     </platform>
 </platforms>

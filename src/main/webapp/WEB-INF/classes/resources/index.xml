@@ -1,47 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
+<!-- Order matters here!  These resources will be loaded into the database in the following order.
+If a resource depends upon or references another, the dependency resource MUST be loaded first. -->
 <resources>
-    <resource>
-        <fileName>platforms.xml</fileName>
-        <type>platform</type>
-    </resource>
     <resource>
         <fileName>delimiters.xml</fileName>
         <type>delimiter</type>
     </resource>
     <resource>
-        <fileName>units.xml</fileName>
-        <type>unit</type>
-    </resource>
-    <resource>
-        <fileName>platformMetadata.xml</fileName>
-        <type>platformMetadataItem</type>
-    </resource>
-    <resource>
-        <fileName>platformMetadataTrajectory.xml</fileName>
-        <type>platformMetadataTrajectoryItem</type>
-    </resource>
-    <resource>
-        <fileName>globalMetadata.xml</fileName>
-        <type>globalMetadataItem</type>
-    </resource>
-    <resource>
-        <fileName>oiip/eTag_1.0_all_attributes.xml</fileName>
-        <type>etagGlobalMetadataItem</type>
-    </resource>
-    <resource>
-        <fileName>publishers.xml</fileName>
-        <type>publisher</type>
-    </resource>
-    <resource>
-        <fileName>domains.xml</fileName>
-        <type>domain</type>
-    </resource>
-    <resource>
-        <fileName>steps.xml</fileName>
-        <type>step</type>
+        <fileName>cfTypes.xml</fileName>
+        <type>cfType</type>
     </resource>
     <resource>
         <fileName>fileTypes.xml</fileName>
         <type>fileType</type>
+    </resource>
+    <resource>
+        <fileName>communities.xml</fileName>
+        <type>community</type>
+    </resource>
+    <resource>
+        <fileName>platforms.xml</fileName>
+        <type>platform</type>
     </resource>
 </resources>

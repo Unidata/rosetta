@@ -1,5 +1,5 @@
 <h3>Specify Custom File Type Attributes</h3>
-<p>Because you specified your data file type as <i>custom</i>, we need the following information from you before can continue.</p>
+<p>Because you specified a <i>custom</i> data file type, we need the following information before continuing.</p>
 
 <p>Please tell us which lines in your data file are header lines:</p>
 <label for="headerLineGrid" class="error"></label>
@@ -10,82 +10,42 @@
 <div id="headerLineGrid" class="rosettaGrid"></div>
 <input type="hidden" name="headerLineNumbers" value="${data.headerLineNumbers}" id="headerLineNumbers"/>
 <div id="delimiters" class="<c:if test="${empty data.delimiter}">hideMe</c:if>">
-    <p>Please specify delimiter(s) used in this file:</p>
-    <label for="delimiter" class="error"></label>
-    <ul id="delimiterList">
-        <li>
-            <label>
-                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Tab'}">checked</c:if>
-                       value="Tab"
-                       validate="required:true"/>
-                Tab
-            </label>
-        </li>
-        <li>
-            <label>
-                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Comma'}">checked</c:if>
-                       value="Comma"
-                    validate="required:true"/>
-                Comma
-            </label>
-        </li>
-        <li>
-            <label>
-                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Whitespace'}">checked</c:if>
-                       value="Whitespace"
-                     validate="required:true"/>
-                Whitespace
-            </label>
-        </li>
-        <li>
-            <label>
-                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Colon'}">checked</c:if>
-                       value="Colon"
-                    validate="required:true"/>
-                Colon
-            </label>
-        </li>
-        <li>
-            <label>
-                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Semicolon'}">checked</c:if>
-                       value="Semicolon"
-                       validate="required:true"/>
-                Semicolon
-            </label>
-        </li>
-        <li>
-            <label>
-                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Single Quote'}">checked</c:if>
-                       value="Single Quote"
-                    validate="required:true"/>
-                Single Quote
-            </label>
-        </li>
-        <li>
-            <label>
-                <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq 'Double Quote'}">checked</c:if>
-                       value="Double Quote"
-                    validate="required:true"/>
-                Double Quote
-            </label>
-        </li>
-        <li>
-            <label>
-                <input type="radio" name="delimiter" id="delimiter" value="Other" <c:if test="${not empty data.delimiter && data.delimiter eq 'Other'}">checked</c:if>
-                       validate="required:true"/> Other
-            </label>
-            <label>
-                <input type="text" id="otherDelimiter" name="otherDelimiter" size="1" value="${data.otherDelimiter}"
-                     maxlength="10" class="<c:if test="${empty data.otherDelimiter}">hideMe</c:if>"/>
-            </label>
-        </li>
-    </ul>
+<c:choose>
+    <%-- Load the delimiter selection.  --%>
+    <c:when test="${fn:length(delimiters) gt 0}">
+        <p>Please specify delimiter(s) used in this file:</p>
+        <label for="delimiter" class="error"></label>
+        <ul id="delimiterList">
+            <c:forEach items="${delimiters}" var="delimiter">
+                <li>
+                    <label>
+                    <input type="radio" name="delimiter" id="delimiter" <c:if test="${not empty data.delimiter && data.delimiter eq delimiter.name}">checked</c:if>
+                       value="${fn:replace(delimiter.name, ' ', '_')}"/>
+                    ${delimiter.name}
+                    </label>
+                </li>
+            </c:forEach>
+        </ul>
+    </c:when>
+    <c:otherwise>
+       <p class="error">Unable to load delimiter selection.  <spring:message code="fatal.error.message"/></p>
+    </c:otherwise>
+</c:choose>
 
     <div class="buttonNav">
         <%-- Show the previous button. --%>
         <input type="submit" name="submit" value="Previous" class="button"/>
+
         <%-- Show the next button. --%>
-        <input type="submit" name="submit" id="Next" value="Next" disabled class="button disabled"/>
+        <input type="submit" name="submit" id="Next" value="Next"
+            <c:if test="${(empty data.delimiter || empty data.delimiter) && (empty data.delimiter || data.noHeaderLines eq 'false')}">
+                disabled
+            </c:if>
+            class="button
+            <c:if test="${(empty data.delimiter || empty data.delimiter) && (empty data.delimiter || data.noHeaderLines eq 'false')}">
+                disabled
+            </c:if>
+        "/>
     </div>
 
 </div>

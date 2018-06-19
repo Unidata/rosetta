@@ -1,6 +1,8 @@
 package edu.ucar.unidata.rosetta.init;
 
-import edu.ucar.unidata.rosetta.service.EmbeddedDerbyDbInitManager;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.service.resources.EmbeddedDerbyDbInitManager;
+
 
 import java.io.*;
 
@@ -23,10 +25,6 @@ import org.springframework.dao.NonTransientDataAccessResourceException;
  * @author oxelson@ucar.edu
  */
 public class ApplicationInitialization implements ServletContextListener {
-
-    // Handles creation & shutdown of the rosetta database.
-   // @Resource(name = "dbInitManager")
-   // private DbInitManager dbInitManager;
 
     protected static Logger logger = Logger.getLogger(ApplicationInitialization.class);
 
@@ -62,7 +60,7 @@ public class ApplicationInitialization implements ServletContextListener {
 
         if (rosettaHome != null) {
             if (servletContainerHome != null) {
-                rosettaHome = rosettaHome.replaceAll("\\$\\{servletContainer.home}", servletContainerHome);
+                rosettaHome = rosettaHome.replaceAll("\\$\\{servletContainer.home\\}", servletContainerHome);
             }
             props.setProperty("rosetta.home", rosettaHome);
         } else {
@@ -99,7 +97,7 @@ public class ApplicationInitialization implements ServletContextListener {
             // Create the database and populate with the relevant prop values if it doesn't already exist.
             dbInitManager.createDatabase(props);
 
-        } catch (SecurityException | IOException | SQLException | NonTransientDataAccessResourceException e) {
+        } catch (SecurityException | IOException | SQLException | NonTransientDataAccessResourceException | RosettaDataException e) {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             logger.error(errors);
