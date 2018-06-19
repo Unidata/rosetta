@@ -1,5 +1,4 @@
-package edu.ucar.unidata.rosetta.service;
-
+package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
@@ -8,7 +7,6 @@ import edu.ucar.unidata.rosetta.repository.wizard.DataDao;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,130 +38,6 @@ public class DataManagerTest {
     private Data data;
     private HttpServletRequest request;
 
-    @Test
-    public void convertToNetCDFTest() throws Exception {
-        Data persistedData = dataManager.convertToNetCDF(data);
-        assertEquals(data, persistedData);
-    }
-
-    @Test(expected = DataRetrievalFailureException.class)
-    public void deletePersistedDataTest() throws Exception {
-        dataManager.deletePersistedData("000000345HDV4");
-        dataManager.lookupPersistedDataById("000000345HDV4");
-    }
-
-    @Test
-    public void getCFTypeFromPlatformTest() throws Exception {
-        String cfType = dataManager.getCFTypeFromPlatform("eTag");
-        assertNotEquals(cfType, "profile");
-    }
-
-    @Test
-    public void getCFTypeTest() throws Exception {
-        List<CfType> cfTypes = dataManager.getCfTypes();
-        assertTrue(cfTypes.size() == 2);
-    }
-
-    @Test
-    public void getCommunitiesTest() throws Exception {
-        List<Community> communities = dataManager.getCommunities();
-        assertTrue(communities.size() == 2);
-    }
-
-    @Test
-    public void getCommunityFromPlatform() throws Exception {
-        String community = dataManager.getCommunityFromPlatform("Single Station");
-        assertEquals(community, "Atmospheric Sciences");
-    }
-
-    @Test
-    public void getDelimitersTest() throws Exception {
-        List<Delimiter> delimiters = dataManager.getDelimiters();
-        assertTrue(delimiters.size() == 2);
-    }
-
-    @Test
-    public void getDelimiterSymbolTest() throws Exception {
-        String symbol = dataManager.getDelimiterSymbol("Comma");
-        assertEquals(symbol, ",");
-    }
-
-    @Test
-    public void getDownloadDirTest() throws Exception {
-        String downloadsDir = dataManager.getDownloadDir();
-        assertEquals(downloadsDir, "/tmp");
-    }
-
-    @Test
-    public void getFileTypesTest() throws Exception {
-        List<FileType> fileTypes = dataManager.getFileTypes();
-        assertTrue(fileTypes.size() == 2);
-    }
-
-
-    @Test
-    public void getMetadataFromKnownFileTest() throws Exception {
-        GeneralMetadata metadata = dataManager.getMetadataFromKnownFile("/foo/bar/baz", "eTuff", generalMetadata);
-        assertEquals(metadata.getInstitution(), "University of Denmark");
-    }
-
-    @Test
-    public void getMetadataStringForClientTest() throws Exception {
-        String metadata = dataManager.getMetadataStringForClient("12345", "eTuff");
-        assertEquals(metadata, "oiip");
-    }
-
-    @Test
-    public void getPlatformsTest() throws Exception {
-        List<Platform> platforms = dataManager.getPlatforms();
-        assertTrue(platforms.size() == 2);
-    }
-
-    @Test
-    public void getUploadDirTest() throws Exception {
-        String uploadsDir = dataManager.getUploadDir();
-        assertEquals(uploadsDir, "/dev/null");
-    }
-
-    @Test
-    public void lookupPersistedDataByIdTest() throws Exception {
-        Data persistedData = dataManager.lookupPersistedDataById("000000345HDV4");
-        assertEquals(persistedData.getCfType(), "trajectory");
-    }
-
-    @Test
-    public void mockCreationTest() throws Exception {
-        assertNotNull(dataManager);
-        assertNotNull(data);
-        assertNotNull(dataDao);
-        assertNotNull(request);
-    }
-
-    @Test
-    public void parseDataFileByLineTest() throws Exception {
-        String jsonString = dataManager.parseDataFileByLine("000000345HDV4", "test.xls");
-        assertEquals(jsonString, "{\"x\":5,\"y\":6}");
-    }
-
-
-    @Test
-    public void persistDataTest() throws Exception {
-        dataManager.persistData(data, request);
-        Data persistedData = dataManager.lookupPersistedDataById("000000345HDV4");
-        assertEquals(persistedData.getCfType(), "trajectory");
-    }
-
-    @Test
-    public void processNextStepTest() throws Exception {
-        String nextStep = dataManager.processNextStep("12345");
-        assertEquals(nextStep, "/generalMetadata");
-    }
-
-    @Test
-    public void processPreviousStepTest() throws Exception {
-        String previousStep = dataManager.processPreviousStep("12345");
-        assertEquals(previousStep, "/fileUpload");
-    }
 
     @Before
     public void setup() throws Exception {
@@ -235,6 +109,130 @@ public class DataManagerTest {
         when(dataManager.getMetadataStringForClient("12345", "eTuff")).thenReturn("oiip");
         when(dataManager.processNextStep("12345")).thenReturn("/generalMetadata");
         when(dataManager.processPreviousStep("12345")).thenReturn("/fileUpload");
+    }
+
+    @Test
+    public void convertToNetCDFTest() throws Exception {
+        Data persistedData = dataManager.convertToNetCDF(data);
+        assertEquals(data, persistedData);
+    }
+
+    @Test(expected = DataRetrievalFailureException.class)
+    public void deletePersistedDataTest() throws Exception {
+        dataManager.deletePersistedData("000000345HDV4");
+        dataManager.lookupPersistedDataById("000000345HDV4");
+    }
+
+    @Test
+    public void getCFTypeFromPlatformTest() throws Exception {
+        String cfType = dataManager.getCFTypeFromPlatform("eTag");
+        assertNotEquals(cfType, "profile");
+    }
+
+    @Test
+    public void getCFTypeTest() throws Exception {
+        List<CfType> cfTypes = dataManager.getCfTypes();
+        assertTrue(cfTypes.size() == 2);
+    }
+
+    @Test
+    public void getCommunitiesTest() throws Exception {
+        List<Community> communities = dataManager.getCommunities();
+        assertTrue(communities.size() == 2);
+    }
+
+    @Test
+    public void getCommunityFromPlatform() throws Exception {
+        String community = dataManager.getCommunityFromPlatform("Single Station");
+        assertEquals(community, "Atmospheric Sciences");
+    }
+
+    @Test
+    public void getDelimitersTest() throws Exception {
+        List<Delimiter> delimiters = dataManager.getDelimiters();
+        assertTrue(delimiters.size() == 2);
+    }
+
+    @Test
+    public void getDelimiterSymbolTest() throws Exception {
+        String symbol = dataManager.getDelimiterSymbol("Comma");
+        assertEquals(symbol, ",");
+    }
+
+    @Test
+    public void getDownloadDirTest() throws Exception {
+        String downloadsDir = dataManager.getDownloadDir();
+        assertEquals(downloadsDir, "/tmp");
+    }
+
+    @Test
+    public void getFileTypesTest() throws Exception {
+        List<FileType> fileTypes = dataManager.getFileTypes();
+        assertTrue(fileTypes.size() == 2);
+    }
+
+    @Test
+    public void getMetadataFromKnownFileTest() throws Exception {
+        GeneralMetadata metadata = dataManager.getMetadataFromKnownFile("/foo/bar/baz", "eTuff", generalMetadata);
+        assertEquals(metadata.getInstitution(), "University of Denmark");
+    }
+
+    @Test
+    public void getMetadataStringForClientTest() throws Exception {
+        String metadata = dataManager.getMetadataStringForClient("12345", "eTuff");
+        assertEquals(metadata, "oiip");
+    }
+
+    @Test
+    public void getPlatformsTest() throws Exception {
+        List<Platform> platforms = dataManager.getPlatforms();
+        assertTrue(platforms.size() == 2);
+    }
+
+    @Test
+    public void getUploadDirTest() throws Exception {
+        String uploadsDir = dataManager.getUploadDir();
+        assertEquals(uploadsDir, "/dev/null");
+    }
+
+    @Test
+    public void lookupPersistedDataByIdTest() throws Exception {
+        Data persistedData = dataManager.lookupPersistedDataById("000000345HDV4");
+        assertEquals(persistedData.getCfType(), "trajectory");
+    }
+
+    @Test
+    public void mockCreationTest() throws Exception {
+        assertNotNull(dataManager);
+        assertNotNull(data);
+        assertNotNull(dataDao);
+        assertNotNull(request);
+    }
+
+    @Test
+    public void parseDataFileByLineTest() throws Exception {
+        String jsonString = dataManager.parseDataFileByLine("000000345HDV4", "test.xls");
+        assertEquals(jsonString, "{\"x\":5,\"y\":6}");
+    }
+
+
+    @Test
+    public void persistDataTest() throws Exception {
+        dataManager.persistData(data, request);
+        Data persistedData = dataManager.lookupPersistedDataById("000000345HDV4");
+        assertEquals(persistedData.getCfType(), "trajectory");
+    }
+
+    @Test
+    public void processNextStepTest() throws Exception {
+        String nextStep = dataManager.processNextStep("12345");
+        assertEquals(nextStep, "/generalMetadata");
+    }
+
+    @Test
+    public void processPreviousStepTest() throws Exception {
+        String previousStep = dataManager.processPreviousStep("12345");
+        assertEquals(previousStep, "/fileUpload");
     }
 
     @Test

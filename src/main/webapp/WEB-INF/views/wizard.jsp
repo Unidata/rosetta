@@ -20,7 +20,7 @@
             <c:choose>
                 <c:when test="${not empty currentStep}">
 
-                <form id="FORM" action="/rosetta/${currentStep}" method="POST" enctype="multipart/form-data">
+                <form id="FORM" action="${baseUrl}/${currentStep}" method="POST" enctype="multipart/form-data">
                     <nav>
                         <ul id="steps">
                             <li id="${currentStep}" <c:if test="${currentStep eq 'cfType'}">class="current"</c:if>>

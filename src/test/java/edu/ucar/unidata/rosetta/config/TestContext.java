@@ -1,9 +1,10 @@
 package edu.ucar.unidata.rosetta.config;
 
-import edu.ucar.unidata.rosetta.service.DataManager;
-import edu.ucar.unidata.rosetta.service.FileManager;
-import edu.ucar.unidata.rosetta.service.MetadataManager;
 import edu.ucar.unidata.rosetta.service.resources.ResourceManager;
+import edu.ucar.unidata.rosetta.service.user.UserManager;
+import edu.ucar.unidata.rosetta.service.wizard.DataManager;
+import edu.ucar.unidata.rosetta.service.wizard.FileManager;
+import edu.ucar.unidata.rosetta.service.wizard.MetadataManager;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,5 +35,8 @@ public class TestContext {
         return Mockito.mock(ResourceManager.class);
     }
 
-
+    @Bean
+    public UserManager userManager() {
+        return Mockito.mock(UserManager.class);
+    }
 }

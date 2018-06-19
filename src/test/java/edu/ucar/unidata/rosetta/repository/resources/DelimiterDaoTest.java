@@ -18,7 +18,21 @@ public class DelimiterDaoTest {
     private Delimiter tabDelimiter;
     private Delimiter commaDelimiter;
 
+    @Before
+    public void setUp() throws Exception {
+        delimiterDao = mock(JdbcDelimiterDao.class);
 
+        tabDelimiter = new Delimiter();
+        tabDelimiter.setName("Tab");
+        tabDelimiter.setCharacterSymbol("\t");
+
+        commaDelimiter = new Delimiter();
+        commaDelimiter.setName("Comma");
+        commaDelimiter.setCharacterSymbol(",");
+
+        when(delimiterDao.getDelimiters()).thenReturn(Arrays.asList(tabDelimiter, commaDelimiter));
+        when(delimiterDao.lookupDelimiterByName("Tab")).thenReturn(tabDelimiter);
+    }
 
     @Test
     public void getDelimitersTest() throws Exception {
@@ -39,19 +53,5 @@ public class DelimiterDaoTest {
         assertNotNull(delimiterDao);
     }
 
-    @Before
-    public void setUp() throws Exception {
-        delimiterDao = mock(JdbcDelimiterDao.class);
 
-        tabDelimiter = new Delimiter();
-        tabDelimiter.setName("Tab");
-        tabDelimiter.setCharacterSymbol("\t");
-
-        commaDelimiter = new Delimiter();
-        commaDelimiter.setName("Comma");
-        commaDelimiter.setCharacterSymbol(",");
-
-        when(delimiterDao.getDelimiters()).thenReturn(Arrays.asList(tabDelimiter, commaDelimiter));
-        when(delimiterDao.lookupDelimiterByName("Tab")).thenReturn(tabDelimiter);
-    }
 }

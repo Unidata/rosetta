@@ -194,7 +194,7 @@ public interface DataManager {
      * netCDF format in preparation for user download.
      *
      * @param id    The unique ID corresponding to already persisted data.
-     * @param metadata  The GeneralMetadata object submitted by the user containing the general metadata information.
+     * @param metadata  The Metadata object submitted by the user containing the general metadata information.
      * @throws RosettaDataException  If unable to populate the metadata object.
      */
     public void processGeneralMetadata(String id, GeneralMetadata metadata) throws RosettaDataException;

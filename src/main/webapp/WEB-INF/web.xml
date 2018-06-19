@@ -16,6 +16,7 @@
     </welcome-file-list>
 
     <!-- Spring Security -->
+    <!--
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -25,6 +26,7 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+-->
 
     <!-- log4j stuff needs to go first: order matters here -->
     <context-param>
@@ -63,11 +65,11 @@
         <servlet-name>rosetta</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-
+<!--
     <session-config>
         <cookie-config>
             <http-only>true</http-only>
         </cookie-config>
     </session-config>
-
+-->
 </web-app>

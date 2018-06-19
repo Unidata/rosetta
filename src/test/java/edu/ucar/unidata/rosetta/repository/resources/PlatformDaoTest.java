@@ -19,6 +19,26 @@ public class PlatformDaoTest {
     private Platform platform1;
     private Platform platform2;
 
+    @Before
+    public void setUp() throws Exception {
+        platformDao = mock(JdbcPlatformDao.class);
+
+        platform1 = new Platform();
+        platform1.setName("Moored Buoy");
+        platform1.setCfType("profile");
+        platform1.setCommunity("Physical Ocean Sciences");
+
+        platform2 = new Platform();
+        platform2.setName("Wind Profiler");
+        platform2.setCfType("profile");
+        platform2.setCommunity("Atmospheric Sciences");
+
+        when(platformDao.getPlatforms()).thenReturn(Arrays.asList(platform1, platform2));
+        when(platformDao.lookupPlatformByName("Wind Profiler")).thenReturn(platform2);
+        when(platformDao.lookupPlatformsByCfType("profile")).thenReturn(Arrays.asList(platform1, platform2));
+        when(platformDao.lookupPlatformsByCommunity("Physical Ocean Sciences")).thenReturn(Arrays.asList(platform1));
+
+    }
 
     @Test
     public void getPlatforms() {
@@ -52,24 +72,5 @@ public class PlatformDaoTest {
         assertNotNull(platformDao);
     }
 
-    @Before
-    public void setUp() throws Exception {
-        platformDao = mock(JdbcPlatformDao.class);
 
-        platform1 = new Platform();
-        platform1.setName("Moored Buoy");
-        platform1.setCfType("profile");
-        platform1.setCommunity("Physical Ocean Sciences");
-
-        platform2 = new Platform();
-        platform2.setName("Wind Profiler");
-        platform2.setCfType("profile");
-        platform2.setCommunity("Atmospheric Sciences");
-
-        when(platformDao.getPlatforms()).thenReturn(Arrays.asList(platform1, platform2));
-        when(platformDao.lookupPlatformByName("Wind Profiler")).thenReturn(platform2);
-        when(platformDao.lookupPlatformsByCfType("profile")).thenReturn(Arrays.asList(platform1, platform2));
-        when(platformDao.lookupPlatformsByCommunity("Physical Ocean Sciences")).thenReturn(Arrays.asList(platform1));
-
-    }
 }

@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.service;
+package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl;
 import org.junit.Before;
@@ -17,6 +17,31 @@ public class FileManagerTest {
     private FileManagerImpl fileManager;
     private List<String> headerLineList;
     private List<List<String>> fileData;
+
+    @Before
+    public void setUp() throws Exception {
+        fileManager = mock(FileManagerImpl.class);
+
+        List<String> headerLines = new ArrayList<>();
+        headerLines.add("1");
+        headerLines.add("2");
+        headerLineList = new ArrayList<>();
+        headerLineList.add("Soil temperature at different depths, Ilu, Greenland");
+        headerLineList.add("Location: N 69.2390  W 51.0623");
+
+        fileData = new ArrayList<>();
+        fileData.add(headerLines);
+
+        List<String> inventory = new ArrayList<>();
+        inventory.add("rosetta.template");
+        inventory.add("datafile.txt");
+
+        when(fileManager.parseByLine("/tmp/test.xls")).thenReturn("{\"x\":5,\"y\":6}");
+        when(fileManager.getHeaderLinesFromFile("/tmp/test.xls", headerLines)).thenReturn(headerLineList);
+        when(fileManager.parseByDelimiter("/tmp/test.xls", headerLineList, ",")).thenReturn(fileData);
+        when(fileManager.getBlankLines(new File("/dev/null"))).thenReturn(20);
+        when(fileManager.getInventoryData("/dev/null")).thenReturn(inventory);
+    }
 
     @Test
     public void getBlankLinesTest() throws Exception {
@@ -63,28 +88,5 @@ public class FileManagerTest {
         assertEquals(jsonString, "{\"x\":5,\"y\":6}");
     }
 
-    @Before
-    public void setUp() throws Exception {
-        fileManager = mock(FileManagerImpl.class);
 
-        List<String> headerLines = new ArrayList<>();
-        headerLines.add("1");
-        headerLines.add("2");
-        headerLineList = new ArrayList<>();
-        headerLineList.add("Soil temperature at different depths, Ilu, Greenland");
-        headerLineList.add("Location: N 69.2390  W 51.0623");
-
-        fileData = new ArrayList<>();
-        fileData.add(headerLines);
-
-        List<String> inventory = new ArrayList<>();
-        inventory.add("rosetta.template");
-        inventory.add("datafile.txt");
-
-        when(fileManager.parseByLine("/tmp/test.xls")).thenReturn("{\"x\":5,\"y\":6}");
-        when(fileManager.getHeaderLinesFromFile("/tmp/test.xls", headerLines)).thenReturn(headerLineList);
-        when(fileManager.parseByDelimiter("/tmp/test.xls", headerLineList, ",")).thenReturn(fileData);
-        when(fileManager.getBlankLines(new File("/dev/null"))).thenReturn(20);
-        when(fileManager.getInventoryData("/dev/null")).thenReturn(inventory);
-    }
 }

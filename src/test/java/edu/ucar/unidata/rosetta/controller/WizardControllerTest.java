@@ -3,7 +3,7 @@ package edu.ucar.unidata.rosetta.controller;
 import edu.ucar.unidata.rosetta.config.WebAppContext;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.service.DataManager;
+import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 
 import javax.servlet.http.Cookie;
 

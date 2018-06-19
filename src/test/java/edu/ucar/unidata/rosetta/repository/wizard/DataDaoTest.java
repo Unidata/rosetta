@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.repository;
+package edu.ucar.unidata.rosetta.repository.wizard;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.repository.wizard.JdbcDataDao;
@@ -15,6 +15,19 @@ public class DataDaoTest {
 
     private JdbcDataDao dataDao;
     private Data data;
+
+    @Before
+    public void setUp() throws Exception {
+        dataDao = mock(JdbcDataDao.class);
+
+        data = new Data();
+        data.setId("000000345HDV4");
+        data.setCfType("trajectory");
+        data.setSubmit("Next");
+
+        when(dataDao.lookupById("000000345HDV4")).thenReturn(data);
+        doThrow(new DataRetrievalFailureException("Unable to find persisted Data object corresponding to id " + data.getId())).when(dataDao).deletePersistedData(data.getId());
+    }
 
     @Test(expected = DataRetrievalFailureException.class)
     public void deletePersistedDataTest() throws Exception {
@@ -39,19 +52,6 @@ public class DataDaoTest {
         dataDao.persistData(data);
         Data persistedData = dataDao.lookupById("000000345HDV4");
         assertEquals(persistedData.getCfType(), "trajectory");
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        dataDao = mock(JdbcDataDao.class);
-
-        data = new Data();
-        data.setId("000000345HDV4");
-        data.setCfType("trajectory");
-        data.setSubmit("Next");
-
-        when(dataDao.lookupById("000000345HDV4")).thenReturn(data);
-        doThrow(new DataRetrievalFailureException("Unable to find persisted Data object corresponding to id " + data.getId())).when(dataDao).deletePersistedData(data.getId());
     }
 
     @Test

@@ -81,7 +81,7 @@ public class DeleteUserController implements HandlerExceptionResolver {
     public ModelAndView processUserDeletion(User user, BindingResult result, Model model) throws RosettaUserException {
         logger.debug("Processing delete user request.");
         // Delete the user.
-        userManager.deleteUser(user.getUserName());
+        userManager.deleteUser(user.getEmailAddress());
         // Get the remaining available users and redirect to the list of users view.
         List<User> users = userManager.getUsers();
         model.addAttribute("action", "listUsers");
