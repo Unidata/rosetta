@@ -24,6 +24,8 @@
     <mvc:annotation-driven/>
 
     <!-- RosettaProperties injection -->
+    <context:property-placeholder location="file:#{systemProperties['rosetta.content.root.path']}/application.properties"/>
+    <!--
     <bean id="applicationProperties"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
@@ -32,11 +34,12 @@
             </list>
         </property>
     </bean>
+    -->
 
     <!-- Static resources since we are handling all requests.
          These are front end resources (css, etc.) and xml files -->
     <mvc:resources mapping="/resources/**" location="/frontEndResources/, /WEB-INF/classes/resources/"/>
-    <mvc:resources mapping="/download/**" location="file:${rosetta.home}/downloads/"/>
+    <mvc:resources mapping="/download/**" location="file:#{systemProperties['rosetta.content.root.path']}/downloads/"/>
 
     <!-- Configure Spring-Security  -->
     <!--
@@ -112,7 +115,7 @@
         <property name="arguments">
             <list>
                 <value>derby.stream.error.file</value>
-                <value>${derby.stream.error.file}</value>
+                <value>${jdbc.derby.stream.error.file}</value>
             </list>
         </property>
     </bean>
@@ -157,7 +160,7 @@
     <bean id="fileValidator" class="edu.ucar.unidata.rosetta.service.validators.wizard.FileValidator"/>
     <bean id="serverInfo" class="edu.ucar.unidata.rosetta.service.ServerInfoBean"
           init-method="init"/>
-    <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.service.resources.EmbeddedDerbyDbInitManager"/>
+    <bean id="dbInitManager" class="edu.ucar.unidata.rosetta.init.resources.EmbeddedDerbyDbInitManager"/>
 
     <!-- DAO injection -->
     <bean id="dataManager" class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl">
