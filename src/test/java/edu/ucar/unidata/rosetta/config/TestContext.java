@@ -1,6 +1,6 @@
 package edu.ucar.unidata.rosetta.config;
 
-import edu.ucar.unidata.rosetta.service.resources.ResourceManager;
+import edu.ucar.unidata.rosetta.init.resources.ResourceManager;
 import edu.ucar.unidata.rosetta.service.user.UserManager;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import edu.ucar.unidata.rosetta.service.wizard.FileManager;

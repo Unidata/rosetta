@@ -2,6 +2,7 @@ package edu.ucar.unidata.rosetta.service.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.RosettaResource;
 
+import edu.ucar.unidata.rosetta.init.resources.ResourceManager;
 import org.junit.Before;
 import org.junit.Test;
 
