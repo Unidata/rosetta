@@ -20,8 +20,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 /**
@@ -55,28 +53,28 @@ public class ApplicationInitialization implements ServletContextListener {
     private Properties comparePropertiesBetweenVersions(Properties props) throws IOException {
 
         try {
+            // Get the default properties.
+            Properties defaultProps = getDefaultProperties();
 
-        Properties defaultProps = getDefaultProperties();
-
-
-        logger.info("Comparing default configuration settings of this version of Rosetta (" +
+            logger.info("Comparing default configuration settings of this version of Rosetta (" +
                 ServerInfoBean.getVersion() + ") with prior configurations in application.properties");
-        Properties missingProperties = new Properties();
-        Enumeration propertyNames = (Enumeration) defaultProps.propertyNames();
-        while (propertyNames.hasMoreElements()) {
-            String key = (String) propertyNames.nextElement();
 
-            // If the application.properties file in ROSETTA_HOME doesn't contain the default prop.
-            if (!props.containsKey(key)) {
-                String value = defaultProps.getProperty(key);
-                logger.info("Default property " + key + " missing from configuration information.");
-                missingProperties.setProperty(key, value); // Add to missing properties.
-                props.setProperty(key, value); // Add to user's collection of properties.
+            Properties missingProperties = new Properties();
+            Enumeration propertyNames = (Enumeration) defaultProps.propertyNames();
+            while (propertyNames.hasMoreElements()) {
+                String key = (String) propertyNames.nextElement();
+
+                // If the application.properties file in ROSETTA_HOME doesn't contain the default prop.
+                if (!props.containsKey(key)) {
+                    String value = defaultProps.getProperty(key);
+                    logger.info("Default property " + key + " missing from configuration information.");
+                    missingProperties.setProperty(key, value); // Add to missing properties.
+                    props.setProperty(key, value); // Add to user's collection of properties.
+                }
             }
-        }
-        // Write any missing default properties to the user's application.properties file in ROSETTA_HOME.
-        if (!missingProperties.isEmpty())
-            writeNewPropertiesToConfigFile(missingProperties);
+            // Write any missing default properties to the user's application.properties file in ROSETTA_HOME.
+            if (!missingProperties.isEmpty())
+                writeNewPropertiesToConfigFile(missingProperties);
         } catch (IOException e) {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
@@ -184,8 +182,9 @@ public class ApplicationInitialization implements ServletContextListener {
     private void createDefaultConfigFile(File destination) throws IOException {
         logger.info("Creating default configuration application.properties file...");
         // Get the default configuration file.
-        Resource resource = new ClassPathResource("resources/config/application.properties");
-        File sourceFile = resource.getFile();
+        ClassLoader classLoader = getClass().getClassLoader();
+        File sourceFile = new File(classLoader.getResource(CONFIG_FILE).getFile());
+
         // Make a copy of the configuration file in ROSETTA_HOME.
         FileUtils.copyFile(sourceFile, destination);
     }
@@ -247,22 +246,23 @@ public class ApplicationInitialization implements ServletContextListener {
     }
 
     /**
-     * Loads and returns all the properties listed in the DEFAULT  application.properties configuration file.
+     * Loads and returns all the properties listed in the DEFAULT application.properties configuration file.
+     * These property values come bundled with the Rosetta application and are found under WEB-INF/classes.
      *
      * @return  All of the properties listed the DEFAULT application.properties configuration file.
      * @throws IOException If unable to load properties from configuration file.
      */
     private Properties getDefaultProperties() throws IOException {
+
         Properties props = new Properties();
         // Get the default configuration file.
-        Resource resource = new ClassPathResource("resources/config/application.properties");
-        File configFile = resource.getFile();
+        ClassLoader classLoader = getClass().getClassLoader();
 
         // Load configuration file properties.
-        logger.info("Reading default " + configFile + " configuration file...");
+        logger.info("Reading default application.properties configuration file...");
 
         // Load the default configuration data, filtering out the unwanted lines.
-        try (Stream<String> stream = Files.lines(Paths.get(FilenameUtils.concat(ROSETTA_HOME, CONFIG_FILE)))) {
+        try (Stream<String> stream = Files.lines(Paths.get(classLoader.getResource(CONFIG_FILE).getFile()))) {
             stream.filter(StringUtils::isNotBlank)  // Filter out blank lines.
                   .filter(line -> !StringUtils.startsWith(line, "#")) // Filter out comment lines
                   .filter(line -> !StringUtils.startsWith(line, "jdbc")) // Filter out database configs
