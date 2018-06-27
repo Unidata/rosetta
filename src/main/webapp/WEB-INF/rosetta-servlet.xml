@@ -24,8 +24,6 @@
     <mvc:annotation-driven/>
 
     <!-- RosettaProperties injection -->
-    <context:property-placeholder location="file:#{systemProperties['rosetta.content.root.path']}/application.properties"/>
-    <!--
     <bean id="applicationProperties"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
@@ -34,7 +32,6 @@
             </list>
         </property>
     </bean>
-    -->
 
     <!-- Static resources since we are handling all requests.
          These are front end resources (css, etc.) and xml files -->
@@ -93,6 +90,7 @@
 -->
 
     <!-- Use a password encoder since the user's passwords are stored encrypted in the database -->
+    <!--
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <bean id="customAuthenticationSuccessHandler" class="edu.ucar.unidata.rosetta.service.CustomAuthenticationSuccessHandler"/>
@@ -107,19 +105,20 @@
             </props>
         </property>
     </bean>
-
+-->
     <!-- Taming the pesky derby.log file -->
+    <!--
     <bean id="setDerbyLog" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass"><value>java.lang.System</value></property>
         <property name="targetMethod"><value>setProperty</value></property>
         <property name="arguments">
             <list>
                 <value>derby.stream.error.file</value>
-                <value>${jdbc.derby.stream.error.file}</value>
+                <value>${catalina.home}/logs/derby.log</value>
             </list>
         </property>
     </bean>
-
+-->
 
     <!-- File upload multipart resolver -->
     <bean id="multipartResolver"
@@ -225,7 +224,7 @@
     <!-- Declare a datasource that has pooling capabilities-->
     <bean id="dbDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${jdbc.driverClassName}"/>
-        <property name="url" value="${jdbc.url}"/>
+        <property name="url" value="${jdbc.url}#{systemProperties['rosetta.content.root.path']}/${jdbc.dbName}"/>
         <property name="username" value="${jdbc.username}"/>
         <property name="password" value="${jdbc.password}"/>
         <property name="initialSize" value="10" />

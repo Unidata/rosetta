@@ -95,10 +95,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         // Get relevant properties.
         String rosettaHome = props.getProperty("rosetta.home");
         String databaseName = props.getProperty("jdbc.dbName");
-        String url = props.getProperty("jdbc.url").replaceAll("\\$\\{rosetta.home\\}", rosettaHome);
-        url = url.replaceAll("\\$\\{jdbc.dbName\\}", databaseName);
+        String url = props.getProperty("jdbc.url") + rosettaHome + "/" + databaseName;
         props.setProperty("jdbc.url", url);
-
         // Create derby database file.
         File dbFile = new File(FilenameUtils.concat(rosettaHome, databaseName));
 
@@ -205,10 +203,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     ")";
             createTable(createUsersTable, props);
 
-
             // Add default admin user to users table.
             addDefaultAdminUser(props);
-
 
             // Okay, we're done.  Shut down this particular connection to the database.
             try {
