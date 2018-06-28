@@ -49,4 +49,5 @@ public interface DbInitManager {
      * @throws SQLException  If an SQL exceptions occurs during database shutdown.
      */
     public void shutdownDatabase(Properties props) throws SQLException;
+
 }

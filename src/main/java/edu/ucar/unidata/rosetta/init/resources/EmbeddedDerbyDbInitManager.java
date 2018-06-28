@@ -219,6 +219,10 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
 
         } else {
+
+            // Update existing properties table.
+            populatePropertiesTable(props);
+
             logger.info("Nothing to do here... Database already exists.");
         }
     }

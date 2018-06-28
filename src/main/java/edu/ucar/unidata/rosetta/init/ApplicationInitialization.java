@@ -8,6 +8,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -50,7 +51,7 @@ public class ApplicationInitialization implements ServletContextListener {
      * @return  Updated properties including any new default properties added in more recent versions of Rosetta.
      * @throws IOException  If unable to compare the configuration properties to the default properties.
      */
-    private Properties comparePropertiesBetweenVersions(Properties props) throws IOException {
+    private Properties comparePropertiesBetweenVersions(Properties props) throws IOException, SQLException {
 
         try {
             // Get the default properties.
@@ -63,7 +64,6 @@ public class ApplicationInitialization implements ServletContextListener {
             Enumeration propertyNames = (Enumeration) defaultProps.propertyNames();
             while (propertyNames.hasMoreElements()) {
                 String key = (String) propertyNames.nextElement();
-
                 // If the application.properties file in ROSETTA_HOME doesn't contain the default prop.
                 if (!props.containsKey(key)) {
                     String value = defaultProps.getProperty(key);
@@ -71,10 +71,12 @@ public class ApplicationInitialization implements ServletContextListener {
                     missingProperties.setProperty(key, value); // Add to missing properties.
                     props.setProperty(key, value); // Add to user's collection of properties.
                 }
+                logger.info(props.toString());
             }
             // Write any missing default properties to the user's application.properties file in ROSETTA_HOME.
-            if (!missingProperties.isEmpty())
+            if (!missingProperties.isEmpty()) {
                 writeNewPropertiesToConfigFile(missingProperties);
+            }
         } catch (IOException e) {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
@@ -179,8 +181,8 @@ public class ApplicationInitialization implements ServletContextListener {
      * @param destination  The file to be created in ROSETTA_HOME.
      * @throws IOException If unable to make a copy of the configuration file in ROSETTA_HOME.
      */
-    private void createDefaultConfigFile(File destination) throws IOException {
-        logger.info("Creating default configuration application.properties file...");
+    private void copyDefaultConfigFile(File destination) throws IOException {
+        logger.info("Copying default configuration application.properties file...");
         // Get the default configuration file.
         ClassLoader classLoader = getClass().getClassLoader();
         File sourceFile = new File(classLoader.getResource(CONFIG_FILE).getFile());
@@ -284,7 +286,7 @@ public class ApplicationInitialization implements ServletContextListener {
 
         // Config file doesn't exist.  Create default file in ROSETTA_HOME.
         if (!configFile.exists())
-            createDefaultConfigFile(configFile);
+            copyDefaultConfigFile(configFile);
 
         // Load configuration file properties.
         logger.info("Reading " + configFile + " configuration file...");
@@ -308,11 +310,14 @@ public class ApplicationInitialization implements ServletContextListener {
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(configFile.getAbsoluteFile(), true))) {
             Enumeration propertyNames = (Enumeration) propsToAdd.propertyNames();
+            Date now = new Date(System.currentTimeMillis());
+            bufferedWriter.write("\n\n# ADDING DEFAULT PROPERTIES VALUES " + now.toString());
+
             while (propertyNames.hasMoreElements()) {
                 String key = (String) propertyNames.nextElement();
                 String value =  propsToAdd.getProperty(key);
                 logger.info("Adding default property " + key + "=" + value + " to configuration file.");
-                bufferedWriter.write(key + "=" + value);
+                bufferedWriter.write("\n" + key + "=" + value);
             }
         }
     }
