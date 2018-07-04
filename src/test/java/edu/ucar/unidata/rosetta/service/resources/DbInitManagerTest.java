@@ -1,6 +1,6 @@
 package edu.ucar.unidata.rosetta.service.resources;
 
-import edu.ucar.unidata.rosetta.service.resources.EmbeddedDerbyDbInitManager;
+import edu.ucar.unidata.rosetta.init.resources.EmbeddedDerbyDbInitManager;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,8 +1,7 @@
-package edu.ucar.unidata.rosetta.service.resources;
+package edu.ucar.unidata.rosetta.init.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.*;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-import edu.ucar.unidata.rosetta.init.resources.*;
 
 import java.io.File;
 import java.io.IOException;

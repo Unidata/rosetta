@@ -32,14 +32,14 @@ public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
      */
     @Override
     public String lookupUploadDirectory() throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM properties";
+        String sql = "SELECT * FROM properties WHERE propertyKey = 'uploadDir'";
         List<RosettaProperties> properties = getJdbcTemplate().query(sql, new JdbcPropertiesDao.DataMapper());
         if (properties.isEmpty()) {
             String message = "Unable to find persisted Rosetta properties";
             logger.error(message);
             throw new DataRetrievalFailureException(message);
         }
-        return properties.get(0).getUploadDir();
+        return properties.get(0).getPropertyValue();
     }
 
     /**
@@ -48,16 +48,15 @@ public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
      * @return The persisted downloads directory.
      */
     public String lookupDownloadDirectory() {
-        String sql = "SELECT * FROM properties";
+        String sql = "SELECT * FROM properties WHERE propertyKey = 'downloadDir'";
         List<RosettaProperties> properties = getJdbcTemplate().query(sql, new JdbcPropertiesDao.DataMapper());
         if (properties.isEmpty()) {
             String message = "Unable to find persisted Rosetta properties";
             logger.error(message);
             throw new DataRetrievalFailureException(message);
         }
-        return properties.get(0).getDownloadDir();
+        return properties.get(0).getPropertyValue();
     }
-
 
     /**
      * This DataMapper only used by JdbcPropertiesDao.
@@ -74,10 +73,8 @@ public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
         public RosettaProperties mapRow(ResultSet rs, int rowNum) throws SQLException {
             RosettaProperties rosettaProperties = new RosettaProperties();
             rosettaProperties.setId(rs.getInt("id"));
-            rosettaProperties.setRosettaHome(rs.getString("rosettaHome"));
-            rosettaProperties.setUploadDir(rs.getString("uploadDir"));
-            rosettaProperties.setDownloadDir(rs.getString("downloadDir"));
-            rosettaProperties.setMaxUpload(rs.getInt("maxUpload"));
+            rosettaProperties.setPropertyKey(rs.getString("propertyKey"));
+            rosettaProperties.setPropertyValue(rs.getString("propertyValue"));
             return rosettaProperties;
         }
     }

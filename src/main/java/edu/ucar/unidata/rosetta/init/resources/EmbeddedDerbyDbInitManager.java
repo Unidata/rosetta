@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.service.resources;
+package edu.ucar.unidata.rosetta.init.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.*;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
@@ -13,10 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -98,10 +95,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         // Get relevant properties.
         String rosettaHome = props.getProperty("rosetta.home");
         String databaseName = props.getProperty("jdbc.dbName");
-        String url = props.getProperty("jdbc.url").replaceAll("\\$\\{rosetta.home\\}", rosettaHome);
-        url = url.replaceAll("\\$\\{jdbc.dbName\\}", databaseName);
+        String url = props.getProperty("jdbc.url") + rosettaHome + "/" + databaseName;
         props.setProperty("jdbc.url", url);
-
         // Create derby database file.
         File dbFile = new File(FilenameUtils.concat(rosettaHome, databaseName));
 
@@ -112,10 +107,9 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
             String createPropertiesTable = "CREATE TABLE properties " +
                     "(" +
                     "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
-                    "rosettaHome VARCHAR(255) not null, " +
-                    "uploadDir VARCHAR(255) not null, " +
-                    "downloadDir VARCHAR(255) not null, " +
-                    "maxUpload INTEGER not null" +
+                    "propertyKey VARCHAR(255) not null, " +
+                    "propertyValue VARCHAR(255) not null, " +
+                    "dateCreated TIMESTAMP not null" +
                     ")";
             createTable(createPropertiesTable, props);
 
@@ -209,10 +203,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     ")";
             createTable(createUsersTable, props);
 
-
             // Add default admin user to users table.
             addDefaultAdminUser(props);
-
 
             // Okay, we're done.  Shut down this particular connection to the database.
             try {
@@ -227,6 +219,10 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
 
         } else {
+
+            // Update existing properties table.
+            populatePropertiesTable(props);
+
             logger.info("Nothing to do here... Database already exists.");
         }
     }
@@ -391,7 +387,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
     }
 
     /**
-     * Populates a table with data.
+     * Populates a table with configuration properties data.
      *
      * @param props RosettaProperties from which the database username and password are glean.
      * @throws NonTransientDataAccessResourceException  If unable to create instance of the database driver.
@@ -416,15 +412,49 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         else
             connection = DriverManager.getConnection(url);
 
-        String statement = "INSERT INTO properties(rosettaHome, uploadDir, downloadDir, maxUpload) " +
-                "VALUES (?,?,?,?)";
+        // See if properties have already been persisted prior to this time.
+        String statement = "SELECT * FROM properties";
         preparedStatement = connection.prepareStatement(statement);
-        preparedStatement.setString(1, props.getProperty("rosetta.home"));
-        preparedStatement.setString(2, props.getProperty("rosetta.uploadDir"));
-        preparedStatement.setString(3, props.getProperty("rosetta.downloadDir"));
-        preparedStatement.setString(4, props.getProperty("rosetta.maxUpload"));
+        ResultSet rs = preparedStatement.executeQuery();
+        Map<String, String> propertiesMap = new HashMap<>();
+        while(rs.next()) {
+            propertiesMap.put(rs.getString("propertyKey"), rs.getString("propertyValue"));
+        }
 
-        preparedStatement.executeUpdate();
+        // Create prepared statements to persist the property data.  If the data is already persisted, compare the
+        // value to what is stored in the database.  Log and differences and update the persisted value if necessary.
+        // TODO: In future, notify admin of first these differences via interface and let him/her sort it out.
+        Enumeration propertyNames = (Enumeration) props.propertyNames();
+        while (propertyNames.hasMoreElements()) {
+            String key = (String) propertyNames.nextElement();
+            String value = props.getProperty(key);
+
+            if (propertiesMap.containsKey(key)) {
+                // Property has been already been persisted.  See if persisted value matches what is in the properties.
+
+                if (!propertiesMap.get(key).equals(value)) {
+                    // Persisted data has different value than what is in the properties file.  Update persisted data.
+                    logger.info("Persisted " + key + " to be changed from " + propertiesMap.get(key) + " to " + value);
+                    statement = "UPDATE properties SET propertyKey = ?, propertyValue = ? AND dateCreated =? WHERE propertyKey = ?";
+                    preparedStatement = connection.prepareStatement(statement);
+                    preparedStatement.setString(1, key);
+                    preparedStatement.setString(2, value);
+                    preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+                    preparedStatement.setString(4, key);
+                    preparedStatement.executeUpdate();
+                }
+
+            } else {
+                // Property has NOT been persisted before. Add it.
+                statement = "INSERT INTO properties(propertyKey, propertyValue, dateCreated) " +
+                        "VALUES (?,?,?)";
+                preparedStatement = connection.prepareStatement(statement);
+                preparedStatement.setString(1, key);
+                preparedStatement.setString(2, value);
+                preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+                preparedStatement.executeUpdate();
+            }
+        }
 
         // Clean up.
         if (preparedStatement != null)

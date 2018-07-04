@@ -1,7 +1,7 @@
 package edu.ucar.unidata.rosetta.repository;
 
 /**
- * The data access object representing a properties.
+ * The data access object representing a rosetta property.
  *
  * @author oxelson@ucar.edu
  */

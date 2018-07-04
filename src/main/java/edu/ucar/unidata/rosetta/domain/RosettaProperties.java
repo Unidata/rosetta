@@ -3,56 +3,76 @@ package edu.ucar.unidata.rosetta.domain;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
+ * An object that represents an arbitrary rosetta configuration property.
+ * This object is used to retrieve persisted property values.
+ *
  * @author oxelson@ucar.edu
  */
 public class RosettaProperties {
 
     private int id;
-    private String rosettaHome;
-    private String uploadDir;
-    private String downloadDir;
-    private int maxUpload;
+    private String propertyKey;
+    private String propertyValue;
 
+    /**
+     * Returns the ID of the persisted property value.
+     *
+     * @return The ID.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Sets the ID of the persisted property value.
+     *
+     * @param id The ID.
+     */
     public void setId(int id) {
         this.id = id;
     }
 
-    public String getRosettaHome() {
-        return rosettaHome;
+    /**
+     * Returns the property key.
+     *
+     * @return The property key.
+     */
+    public String getPropertyKey() {
+        return propertyKey;
     }
 
-    public void setRosettaHome(String rosettaHome) {
-        this.rosettaHome = rosettaHome;
+    /**
+     * Sets the property key.
+     *
+     * @param propertyKey The property key.
+     */
+    public void setPropertyKey(String propertyKey) {
+        this.propertyKey = propertyKey;
     }
 
-    public String getUploadDir() {
-        return uploadDir;
+    /**
+     * Returns the property value.
+     *
+     * @return The property value.
+     */
+    public String getPropertyValue() {
+        return propertyValue;
     }
 
-    public void setUploadDir(String uploadDir) {
-        this.uploadDir = uploadDir;
+    /**
+     * Sets the property value.
+     *
+     * @param propertyValue The property value.
+     */
+    public void setPropertyValue(String propertyValue) {
+        this.propertyValue = propertyValue;
     }
 
-    public String getDownloadDir() {
-        return downloadDir;
-    }
-
-    public void setDownloadDir(String downloadDir) {
-        this.downloadDir = downloadDir;
-    }
-
-    public int getMaxUpload() {
-        return maxUpload;
-    }
-
-    public void setMaxUpload(int maxUpload) {
-        this.maxUpload = maxUpload;
-    }
-
+    /**
+     * Returns the string representation of this object.
+     *
+     * @return The string representation of this object.
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);

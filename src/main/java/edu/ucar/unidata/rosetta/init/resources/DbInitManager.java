@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.service.resources;
+package edu.ucar.unidata.rosetta.init.resources;
 
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import java.sql.SQLException;
@@ -49,4 +49,5 @@ public interface DbInitManager {
      * @throws SQLException  If an SQL exceptions occurs during database shutdown.
      */
     public void shutdownDatabase(Properties props) throws SQLException;
+
 }

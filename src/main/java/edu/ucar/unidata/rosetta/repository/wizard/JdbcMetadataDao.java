@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  */
 public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
 
-    protected static Logger logger = Logger.getLogger(JdbcDataDao.class);
+    protected static Logger logger = Logger.getLogger(JdbcMetadataDao.class);
 
     private SimpleJdbcInsert insertActor;
 
