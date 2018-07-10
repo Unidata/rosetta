@@ -472,16 +472,26 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
      */
     public void shutdownDatabase(Properties props) throws SQLException {
 
-        // Get relevant properties.
-        String rosettaHome = props.getProperty("rosetta.home");
-        String databaseName = props.getProperty("jdbc.dbName");
-        String url = props.getProperty("jdbc.url").replaceAll("\\$\\{rosetta.home\\}", rosettaHome);
-        url = url.replaceAll("\\$\\{jdbc\\.dbName\\}", databaseName);
-        props.setProperty("jdbc.url", url);
+        Connection connection;
+
+        try {
+            Class.forName(props.getProperty("jdbc.driverClassName"));
+        } catch (ClassNotFoundException e) {
+            throw new NonTransientDataAccessResourceException("Unable to find database drive class: " + e);
+        }
+
+        String username = StringUtils.stripToNull(props.getProperty("jdbc.username"));
+        String password = StringUtils.stripToNull(props.getProperty("jdbc.password"));
+        String url = props.getProperty("jdbc.url")  + ";create=true";
+
 
         // Okay, we're done.  Shut down this particular connection to the database.
         try {
-            Connection connection = DriverManager.getConnection(url + ";shutdown=true");
+            if (username != null && password != null) {
+                connection = DriverManager.getConnection(url + ";shutdown=true", username, password);
+            } else {
+                connection = DriverManager.getConnection(url + ";shutdown=true");
+            }
             if (connection != null) {
                 connection.close();
             }

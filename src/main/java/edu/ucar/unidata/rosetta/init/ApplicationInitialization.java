@@ -71,7 +71,6 @@ public class ApplicationInitialization implements ServletContextListener {
                     missingProperties.setProperty(key, value); // Add to missing properties.
                     props.setProperty(key, value); // Add to user's collection of properties.
                 }
-                logger.info(props.toString());
             }
             // Write any missing default properties to the user's application.properties file in ROSETTA_HOME.
             if (!missingProperties.isEmpty()) {
@@ -158,13 +157,10 @@ public class ApplicationInitialization implements ServletContextListener {
             // If a application.properties file exists, get the contents.
             Properties props = getPropertiesFromConfigFile();
 
-            // rosettaHome not specified in config file. Use default.
-            String rosettaHome = props.getProperty("rosetta.home");
-            if (rosettaHome == null) {
-                // check for java property set at startup
-                rosettaHome = System.getProperty("rosetta.home", ROSETTA_HOME);
-                props.setProperty("rosetta.home", rosettaHome);
-            }
+            // Set rosettaHome.
+            String rosettaHome = System.getProperty("rosetta.home", ROSETTA_HOME);
+            props.setProperty("rosetta.home", rosettaHome);
+
             EmbeddedDerbyDbInitManager dbInitManager = new EmbeddedDerbyDbInitManager();
             dbInitManager.shutdownDatabase(props);
         } catch (IOException | SQLException  e) {
