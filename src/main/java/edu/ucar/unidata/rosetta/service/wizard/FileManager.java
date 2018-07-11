@@ -100,7 +100,7 @@ public interface FileManager {
      * @return  The parsed file data in List<List<String>> format (inner list is tokens of each line parsed by delimiter).
      * @throws RosettaFileException  If unable to parse the file.
      */
-    public List<List<String>> parseByDelimiterUsingStream(String filePath, List<String> headerLineList, String delimiter) throws RosettaFileException;
+    public List<List<String>> parseByDelimiter(String filePath, List<String> headerLineList, String delimiter) throws RosettaFileException;
 
     /**
      * A simple method that reads each line of a file, appends a new line

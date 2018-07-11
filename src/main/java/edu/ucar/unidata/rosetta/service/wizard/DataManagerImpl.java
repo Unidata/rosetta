@@ -76,7 +76,7 @@ public class DataManagerImpl implements DataManager {
         } else {
                 // Custom file type, so we need to convert it here.
                 // INSERT CUSTOM FILE CONVERSION CODE HERE.
-                List<List<String>> parseFileData = fileManager.parseByDelimiterUsingStream(FilenameUtils.concat(filePathUploadDir, data.getDataFileName()),  Arrays.asList(data.getHeaderLineNumbers().split(",")), getDelimiterSymbol(data.getDelimiter()));
+                List<List<String>> parseFileData = fileManager.parseByDelimiter(FilenameUtils.concat(filePathUploadDir, data.getDataFileName()),  Arrays.asList(data.getHeaderLineNumbers().split(",")), getDelimiterSymbol(data.getDelimiter()));
                 for (List<String> stringList : parseFileData) {
                     for (String s : stringList) {
                         logger.info(s);
