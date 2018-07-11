@@ -22,11 +22,8 @@ public class PropertiesDaoTest {
 
         rosettaProperties = new RosettaProperties() ;
         rosettaProperties.setId(19993590);
-        rosettaProperties.setUploadDir("/dev/null");
-        rosettaProperties.setDownloadDir("/tmp");
-
-        when(propertiesDao.lookupUploadDirectory()).thenReturn(rosettaProperties.getUploadDir());
-        when(propertiesDao.lookupDownloadDirectory()).thenReturn(rosettaProperties.getDownloadDir());
+        when(propertiesDao.lookupUploadDirectory()).thenReturn("/dev/null");
+        when(propertiesDao.lookupDownloadDirectory()).thenReturn("/dev/null");
     }
 
     @Test
