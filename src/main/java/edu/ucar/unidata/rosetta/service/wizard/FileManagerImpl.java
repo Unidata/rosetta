@@ -20,8 +20,6 @@ import org.apache.log4j.Logger;
 
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import ucar.unidata.util.StringUtil2;
-
 /**
  * Implements FileManager functionality.
  *
@@ -183,55 +181,6 @@ public class FileManagerImpl implements FileManager {
         return ZipFileUtil.getInventory(filePath);
     }
 
-
-    /**
-     * Creates a list of header lines (Strings) from the data file
-     * useful for custom file type for netCDF conversion.
-     *
-     * @param filePath  The path to the data file to parse.
-     * @param headerLineList A list of the header lines.
-     * @param delimiter The delimiter to parse the non-header line data.
-     * @return  The parsed file data in List<List<String>> format (inner list is tokens of each line parsed by delimiter).
-     * @throws RosettaFileException  If unable to parse the file.
-     */
-    @Override
-    public List<List<String>> parseByDelimiter(String filePath, List<String> headerLineList, String delimiter) throws RosettaFileException {
-        List<List<String>> parsedData = new ArrayList<>();
-        int lineCount = 0;
-        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
-            String currentLine;
-            while ((currentLine = bufferedReader.readLine()) != null) {
-                if (StringUtils.isNotBlank(currentLine)) {
-                    // Ignore the header lines.
-                    if (!headerLineList.contains(String.valueOf(lineCount))) {
-                        // Parse line data based on delimiter.
-                        if (delimiter.equals(" ")) {
-                            // This will use ANY white space, variable number spaces, tabs, etc. as
-                            // the delimiter...not that the delimiter is " ".
-                            //
-                            // This special case also needs to be handled by variableSpecification.js
-                            // in the gridForVariableSpecification function.
-                            String[] tokens = StringUtil2.splitString(currentLine);
-                            List<String> valList = Arrays.asList(tokens);
-                            // Add tokenized line data to outer list.
-                            parsedData.add(valList);
-                        } else { // all other delimiters
-                            // Tokenize the line using the delimiter.
-                            String[] lineComponents = currentLine.split(delimiter);
-                            List<String> list = new ArrayList<>(Arrays.asList(lineComponents));
-                            // Add tokenized line data to outer list.
-                            parsedData.add(list);
-                        }
-                    }
-                }
-                lineCount++;
-            }
-        } catch (IOException e) {
-            throw new RosettaFileException("Unable to parse file by delimiter: " + e);
-        }
-        return parsedData;
-    }
-
     /**
      * Creates a list of header lines (Strings) using streams and lambdas from the data file
      * useful for custom file type for netCDF conversion.
@@ -243,7 +192,7 @@ public class FileManagerImpl implements FileManager {
      * @throws RosettaFileException  If unable to parse the file.
      */
     @Override
-    public List<List<String>> parseByDelimiterUsingStream(String filePath, List<String> headerLineList, String delimiter) throws RosettaFileException {
+    public List<List<String>> parseByDelimiter(String filePath, List<String> headerLineList, String delimiter) throws RosettaFileException {
 
         List<List<String>> parsedData = new ArrayList<>();
 
@@ -306,7 +255,7 @@ public class FileManagerImpl implements FileManager {
     }
 
     /**
-     * Uncompresses the provided file into the given directory.
+     * Uncompress the provided file into the given directory.
      *
      * @param uploadDirPath The path to the uploads directory.
      * @param id        The unique id associated with the file (a subdirectory in the uploads directory).
