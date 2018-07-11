@@ -32,7 +32,7 @@ public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
      */
     @Override
     public String lookupUploadDirectory() throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM properties WHERE propertyKey = 'uploadDir'";
+        String sql = "SELECT * FROM properties WHERE propertyKey = 'rosetta.uploadDir'";
         List<RosettaProperties> properties = getJdbcTemplate().query(sql, new JdbcPropertiesDao.DataMapper());
         if (properties.isEmpty()) {
             String message = "Unable to find persisted Rosetta properties";
@@ -48,7 +48,7 @@ public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
      * @return The persisted downloads directory.
      */
     public String lookupDownloadDirectory() {
-        String sql = "SELECT * FROM properties WHERE propertyKey = 'downloadDir'";
+        String sql = "SELECT * FROM properties WHERE propertyKey = 'rosetta.downloadDir'";
         List<RosettaProperties> properties = getJdbcTemplate().query(sql, new JdbcPropertiesDao.DataMapper());
         if (properties.isEmpty()) {
             String message = "Unable to find persisted Rosetta properties";
