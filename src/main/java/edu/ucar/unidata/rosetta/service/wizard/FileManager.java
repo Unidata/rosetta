@@ -91,18 +91,6 @@ public interface FileManager {
     public List<List<String>> parseByDelimiter(String filePath, List<String> headerLineList, String delimiter) throws RosettaFileException;
 
     /**
-     * Creates a list of header lines (Strings) from the data file useful for AsciiFile
-     * (custom file type) for netCDF conversion.
-     *
-     * @param filePath  The path to the data file to parse.
-     * @param headerLineList A list of the header lines.
-     * @param delimiter The delimiter to parse the non-header line data.
-     * @return  The parsed file data in List<List<String>> format (inner list is tokens of each line parsed by delimiter).
-     * @throws RosettaFileException  If unable to parse the file.
-     */
-    public List<List<String>> parseByDelimiter(String filePath, List<String> headerLineList, String delimiter) throws RosettaFileException;
-
-    /**
      * A simple method that reads each line of a file, appends a new line
      * character & adds to a List. The list is then turned into a JSON string.
      *
