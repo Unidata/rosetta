@@ -7,9 +7,10 @@ package edu.ucar.unidata.rosetta.exceptions;
  */
 public class RosettaDataException extends Exception {
 
-    public RosettaDataException() {}
+  public RosettaDataException() {
+  }
 
-    public RosettaDataException(String message) {
-        super(message);
-    }
+  public RosettaDataException(String message) {
+    super(message);
+  }
 }

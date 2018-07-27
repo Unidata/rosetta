@@ -28,11 +28,11 @@ public class FileValidator extends CommonValidator implements Validator {
     */
 
 
-    public boolean supports(Class clazz) {
-        return AsciiFile.class.equals(clazz);
-    }
+  public boolean supports(Class clazz) {
+    return AsciiFile.class.equals(clazz);
+  }
 
-    public void validate(Object obj, Errors errors) {
+  public void validate(Object obj, Errors errors) {
         /*
         AsciiFile file = (AsciiFile) obj;
         validateInput(file.getCfType(), errors);
@@ -42,21 +42,21 @@ public class FileValidator extends CommonValidator implements Validator {
         validateList(file.getHeaderLineList(), errors);
         */
 
-    }
+  }
 
-    private void validateList(List<String> list, Errors errors) {
-        for (String input : list) {
-            validateInput(input, errors);
-        }
+  private void validateList(List<String> list, Errors errors) {
+    for (String input : list) {
+      validateInput(input, errors);
     }
+  }
 
-    /**
-     * Checks to make sure the delimiter count per line is the same for each line.
-     * If the count per line is inconsistent, then there is an error.
-     *
-     * @param filePath The path to the file on disk.
-     */
-    private void validateDelimiterCount(String filePath, Object obj, Errors errors) {
+  /**
+   * Checks to make sure the delimiter count per line is the same for each line. If the count per
+   * line is inconsistent, then there is an error.
+   *
+   * @param filePath The path to the file on disk.
+   */
+  private void validateDelimiterCount(String filePath, Object obj, Errors errors) {
         /*
         AsciiFile file = (AsciiFile) obj;
         List<String> delimiterList = file.getDelimiterList();
@@ -91,7 +91,7 @@ public class FileValidator extends CommonValidator implements Validator {
             errors.reject(e.getMessage());
         }
         */
-    }
+  }
 
 
 }
