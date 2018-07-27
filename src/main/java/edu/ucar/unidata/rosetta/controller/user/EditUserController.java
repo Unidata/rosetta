@@ -45,135 +45,142 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class EditUserController implements HandlerExceptionResolver {
 
-    private static final Logger logger = Logger.getLogger(EditUserController.class);
+  private static final Logger logger = Logger.getLogger(EditUserController.class);
 
-    @Resource(name="userManager")
-    private UserManager userManager;
+  @Resource(name = "userManager")
+  private UserManager userManager;
 
-    private final EditUserValidator editUserValidator;
+  private final EditUserValidator editUserValidator;
 
-    /**
-     * Creates this controller class.
-     *
-     * @param editUserValidator  The validator used to validate User objects associated with this controller class.
-     */
-    @Autowired
-    public EditUserController(EditUserValidator editUserValidator) {
-        this.editUserValidator = editUserValidator;
+  /**
+   * Creates this controller class.
+   *
+   * @param editUserValidator The validator used to validate User objects associated with this
+   * controller class.
+   */
+  @Autowired
+  public EditUserController(EditUserValidator editUserValidator) {
+    this.editUserValidator = editUserValidator;
+  }
+
+
+  /**
+   * Accepts a GET request to edit an existing user.
+   *
+   * The view is the user view.  The model contains the User object to edit and the information
+   * which will be loaded and displayed in the view via jspf.
+   *
+   * Only the User/owner and Users with a role of 'ROLE_ADMIN' are allowed to edit a User account.
+   *
+   * @param userName The 'userName' as provided by @PathVariable.
+   * @param model The Model used by the View.
+   * @return The path for the ViewResolver.
+   * @throws RosettaUserException If unable to locate user.
+   */
+  @PreAuthorize("hasRole('ROLE_ADMIN') or #userName == authentication.name")
+  @RequestMapping(value = "/user/edit/{userName}", method = RequestMethod.GET)
+  public String editUser(@PathVariable String userName, Model model) throws RosettaUserException {
+    logger.debug("Get edit user form.");
+    // Get the user to edit.
+    User user = userManager.lookupUser(userName);
+    model.addAttribute("action", "editUser");
+    model.addAttribute("user", user);
+    return "user";
+  }
+
+  /**
+   * Initialize the WebDataBinder used for populating command and form object arguments.
+   *
+   * @param binder The WebDataBinder.
+   */
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    StringTrimmerEditor stringTrimmer = new StringTrimmerEditor(true);
+    binder.registerCustomEditor(String.class, stringTrimmer);
+    binder.setValidator(editUserValidator);
+  }
+
+  /**
+   * Accepts a POST request to edit an existing user.
+   *
+   * View is the user view.  The model contains: 1) the updated User object (if successful)
+   * displayed in the view via jspf; or 2) the web form to edit the User if there are validation
+   * errors with the user input.
+   *
+   * Only the User/owner and Users with a role of 'ROLE_ADMIN' are allowed to edit the User
+   * account.
+   *
+   * @param user The User to edit.
+   * @param authentication The Authentication object to check roles with.
+   * @param result The BindingResult for error handling.
+   * @param model The Model used by the View.
+   * @return The redirect to the needed View.
+   * @throws RosettaUserException If unable to locate user.
+   */
+  @PreAuthorize("hasRole('ROLE_ADMIN') or #userName == authentication.name")
+  @RequestMapping(value = "/user/edit/{userName}", method = RequestMethod.POST)
+  public ModelAndView processUserModification(@PathVariable String userName, @Valid User user,
+      BindingResult result, Authentication authentication, Model model)
+      throws RosettaUserException {
+    logger.debug("Processing submitted edit user form data.");
+
+    // Check for validation errors.
+    if (result.hasErrors()) {
+      logger
+          .debug("Validation errors detected in edit user form data. Returning user to form view.");
+      model.addAttribute("action", "editUser");
+      model.addAttribute("user", user);
+      return new ModelAndView("user");
+    } else {
+      logger.debug(
+          "No validation errors detected in edit user form data. Proceeding with edit user process.");
+      // Lookup the persisted User object and update the information with the provided user input.
+      User u = userManager.lookupUser(user.getUserName());
+      String name = user.getFullName();
+      u.setFullName(name);
+      u.setEmailAddress(user.getEmailAddress());
+      // Get the user's role and permissions.
+      Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+      if (authorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+        u.setAccessLevel(user.getAccessLevel());
+        u.setAccountStatus(user.getAccountStatus());
+      }
+      // Persist the updated User object.
+      u = userManager.updateUser(u);
+      // Update the session.
+      Authentication auth = new UsernamePasswordAuthenticationToken(u, u.getPassword(),
+          u.getAuthorities());
+      SecurityContextHolder.getContext().setAuthentication(auth);
+      return new ModelAndView(new RedirectView("/user/view/" + userName, true));
     }
+  }
 
+  /**
+   * This method gracefully handles any uncaught exception that are fatal in nature and unresolvable
+   * by the user.
+   *
+   * @param request The current HttpServletRequest request.
+   * @param response The current HttpServletRequest response.
+   * @param handler The executed handler, or null if none chosen at the time of the exception.
+   * @param exception The exception that got thrown during handler execution.
+   * @return The error page containing the appropriate message to the user.
+   */
+  @Override
+  public ModelAndView resolveException(HttpServletRequest request,
+      HttpServletResponse response,
+      java.lang.Object handler,
+      Exception exception) {
 
+    StringWriter errors = new StringWriter();
+    exception.printStackTrace(new PrintWriter(errors));
+    String message = "An error has occurred: "
+        + exception.getClass().getName() + ":"
+        + errors;
 
-    /**
-     * Accepts a GET request to edit an existing user.
-     *
-     * The view is the user view.  The model contains the User object to edit
-     * and the information which will be loaded and displayed in the view via jspf.
-     *
-     * Only the User/owner and Users with a role of 'ROLE_ADMIN' are allowed to edit a User account.
-     *
-     * @param userName  The 'userName' as provided by @PathVariable.
-     * @param model  The Model used by the View.
-     * @return  The path for the ViewResolver.
-     * @throws RosettaUserException If unable to locate user.
-     */
-    @PreAuthorize("hasRole('ROLE_ADMIN') or #userName == authentication.name")
-    @RequestMapping(value="/user/edit/{userName}", method=RequestMethod.GET)
-    public String editUser(@PathVariable String userName, Model model) throws RosettaUserException {
-        logger.debug("Get edit user form.");
-        // Get the user to edit.
-        User user = userManager.lookupUser(userName);
-        model.addAttribute("action", "editUser");
-        model.addAttribute("user", user);
-        return "user";
-    }
-
-    /**
-     * Initialize the WebDataBinder used for populating command and form object arguments.
-     *
-     * @param binder The WebDataBinder.
-     */
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        StringTrimmerEditor stringTrimmer = new StringTrimmerEditor(true);
-        binder.registerCustomEditor(String.class, stringTrimmer);
-        binder.setValidator(editUserValidator);
-    }
-
-    /**
-     * Accepts a POST request to edit an existing user.
-     *
-     * View is the user view.  The model contains:
-     * 1) the updated User object (if successful) displayed in the view via jspf; or
-     * 2) the web form to edit the User if there are validation errors with the user input.
-     *
-     * Only the User/owner and Users with a role of 'ROLE_ADMIN' are allowed to edit the User account.
-     *
-     * @param user  The User to edit.
-     * @param authentication  The Authentication object to check roles with.
-     * @param result  The BindingResult for error handling.
-     * @param model  The Model used by the View.
-     * @return  The redirect to the needed View.
-     * @throws  RosettaUserException If unable to locate user.
-     */
-    @PreAuthorize("hasRole('ROLE_ADMIN') or #userName == authentication.name")
-    @RequestMapping(value="/user/edit/{userName}", method=RequestMethod.POST)
-    public ModelAndView processUserModification(@PathVariable String userName, @Valid User user, BindingResult result, Authentication authentication, Model model) throws RosettaUserException {
-        logger.debug("Processing submitted edit user form data.");
-
-        // Check for validation errors.
-        if (result.hasErrors()) {
-            logger.debug("Validation errors detected in edit user form data. Returning user to form view.");
-            model.addAttribute("action", "editUser");
-            model.addAttribute("user", user);
-            return new ModelAndView("user");
-        } else {
-            logger.debug("No validation errors detected in edit user form data. Proceeding with edit user process.");
-            // Lookup the persisted User object and update the information with the provided user input.
-            User u = userManager.lookupUser(user.getUserName());
-            String name = user.getFullName();
-            u.setFullName(name);
-            u.setEmailAddress(user.getEmailAddress());
-            // Get the user's role and permissions.
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            if (authorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-                u.setAccessLevel(user.getAccessLevel());
-                u.setAccountStatus(user.getAccountStatus());
-            }
-            // Persist the updated User object.
-            u = userManager.updateUser(u);
-            // Update the session.
-            Authentication auth = new UsernamePasswordAuthenticationToken(u, u.getPassword(), u.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            return new ModelAndView(new RedirectView("/user/view/" + userName, true));
-        }
-    }
-
-    /**
-     * This method gracefully handles any uncaught exception that are fatal in nature and unresolvable by the user.
-     *
-     * @param request   The current HttpServletRequest request.
-     * @param response  The current HttpServletRequest response.
-     * @param handler   The executed handler, or null if none chosen at the time of the exception.
-     * @param exception The exception that got thrown during handler execution.
-     * @return The error page containing the appropriate message to the user.
-     */
-    @Override
-    public ModelAndView resolveException(HttpServletRequest request,
-                                         HttpServletResponse response,
-                                         java.lang.Object handler,
-                                         Exception exception) {
-
-        StringWriter errors = new StringWriter();
-        exception.printStackTrace(new PrintWriter(errors));
-        String message = "An error has occurred: "
-                + exception.getClass().getName() + ":"
-                + errors;
-
-        // Log it!
-        logger.error(message);
-        Map<String, Object> model = new HashMap<>();
-        model.put("message", message);
-        return new ModelAndView("error", model);
-    }
+    // Log it!
+    logger.error(message);
+    Map<String, Object> model = new HashMap<>();
+    model.put("message", message);
+    return new ModelAndView("error", model);
+  }
 }

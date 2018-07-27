@@ -14,28 +14,28 @@ import org.springframework.validation.Validator;
 @Component
 public class PasswordValidator extends CommonUserValidator implements Validator {
 
-    /**
-     * Checks to see if Object class can be validated.
-     *
-     * @param clazz  The Object class to validate
-     * @return true if class can be validated
-     */
-    @Override
-    public boolean supports(Class clazz) {
-        return User.class.equals(clazz);
-    }
+  /**
+   * Checks to see if Object class can be validated.
+   *
+   * @param clazz The Object class to validate
+   * @return true if class can be validated
+   */
+  @Override
+  public boolean supports(Class clazz) {
+    return User.class.equals(clazz);
+  }
 
-    /**
-     * Validates the user input contained in the User object.
-     *
-     * @param obj  The target object to validate.
-     * @param errors  Object in which to store any validation errors.
-     */
-    @Override
-    public void validate(Object obj, Errors errors) {
-        User user = (User) obj;
-        validatePassword("password",  user.getPassword(), errors);
-        validatePassword("confirmPassword", user.getConfirmPassword(), errors);
-        comparePasswords(user.getPassword(), user.getConfirmPassword(), errors);
-    }
+  /**
+   * Validates the user input contained in the User object.
+   *
+   * @param obj The target object to validate.
+   * @param errors Object in which to store any validation errors.
+   */
+  @Override
+  public void validate(Object obj, Errors errors) {
+    User user = (User) obj;
+    validatePassword("password", user.getPassword(), errors);
+    validatePassword("confirmPassword", user.getConfirmPassword(), errors);
+    comparePasswords(user.getPassword(), user.getConfirmPassword(), errors);
+  }
 }

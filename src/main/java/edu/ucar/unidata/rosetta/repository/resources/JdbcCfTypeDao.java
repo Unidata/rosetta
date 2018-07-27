@@ -20,79 +20,80 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  */
 public class JdbcCfTypeDao extends JdbcDaoSupport implements CfTypeDao {
 
-    private static final Logger logger = Logger.getLogger(JdbcCfTypeDao.class);
+  private static final Logger logger = Logger.getLogger(JdbcCfTypeDao.class);
+
+  /**
+   * Looks up and retrieves a list of persisted CfType objects.
+   *
+   * @return A List of all persisted CF types.
+   * @throws DataRetrievalFailureException If unable to retrieve persisted CF types.
+   */
+  public List<CfType> getCfTypes() throws DataRetrievalFailureException {
+    String sql = "SELECT * FROM cfTypes";
+    List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper());
+    if (cfTypes.isEmpty()) {
+      String message = "Unable to find persisted CfType objects.";
+      logger.error(message);
+      throw new DataRetrievalFailureException(message);
+    }
+    return cfTypes;
+  }
+
+  /**
+   * Looks up and retrieves a persisted CfType object using the provided id.
+   *
+   * @param id The id of the CF type to retrieve.
+   * @return The CfType object matching the provided id.
+   * @throws DataRetrievalFailureException If unable to retrieve persisted CF type.
+   */
+  public CfType lookupCfTypeById(int id) throws DataRetrievalFailureException {
+    String sql = "SELECT * FROM cfTypes WHERE id = ?";
+    List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper(), id);
+    if (cfTypes.isEmpty()) {
+      String message = "Unable to find persisted CfType object corresponding to id " + id;
+      logger.error(message);
+      throw new DataRetrievalFailureException(message);
+    }
+    return cfTypes.get(0);
+  }
+
+  /**
+   * Looks up and retrieves a persisted CfType object using the provided name.
+   *
+   * @param name The name of the CF type to retrieve.
+   * @return The CfType object matching the provided name.
+   * @throws DataRetrievalFailureException If unable to retrieve persisted CF type.
+   */
+  public CfType lookupCfTypeByName(String name) throws DataRetrievalFailureException {
+    String sql = "SELECT * FROM cfTypes WHERE name = ?";
+    List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper(), name);
+    if (cfTypes.isEmpty()) {
+      String message = "Unable to find persisted CfType object corresponding to name " + name;
+      logger.error(message);
+      throw new DataRetrievalFailureException(message);
+    }
+    return cfTypes.get(0);
+  }
+
+  /**
+   * This CfTypeMapper only used by JdbcCfTypeDao.
+   */
+  private static class CfTypeMapper implements RowMapper<CfType> {
 
     /**
-     * Looks up and retrieves a list of persisted CfType objects.
+     * Maps each row of data in the ResultSet to the CfType object.
      *
-     * @return  A List of all persisted CF types.
-     * @throws DataRetrievalFailureException  If unable to retrieve persisted CF types.
+     * @param rs The ResultSet to be mapped.
+     * @param rowNum The number of the current row.
+     * @return The populated CfType object.
+     * @throws SQLException If an SQLException is encountered getting column values.
      */
-    public List<CfType> getCfTypes() throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM cfTypes";
-        List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper());
-        if (cfTypes.isEmpty()) {
-            String message = "Unable to find persisted CfType objects.";
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        }
-        return cfTypes;
+    public CfType mapRow(ResultSet rs, int rowNum) throws SQLException {
+      CfType cfType = new CfType();
+      cfType.setId(rs.getInt("id"));
+      cfType.setName(rs.getString("name"));
+      return cfType;
     }
+  }
 
-    /**
-     * Looks up and retrieves a persisted CfType object using the provided id.
-     *
-     * @param id The id of the CF type to retrieve.
-     * @return  The CfType object matching the provided id.
-     * @throws DataRetrievalFailureException If unable to retrieve persisted CF type.
-     */
-    public CfType lookupCfTypeById(int id) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM cfTypes WHERE id = ?";
-        List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper(), id);
-        if (cfTypes.isEmpty()) {
-            String message = "Unable to find persisted CfType object corresponding to id " + id;
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        }
-        return cfTypes.get(0);
-    }
-
-    /**
-     * Looks up and retrieves a persisted CfType object using the provided name.
-     *
-     * @param name The name of the CF type to retrieve.
-     * @return  The CfType object matching the provided name.
-     * @throws DataRetrievalFailureException If unable to retrieve persisted CF type.
-     */
-    public CfType lookupCfTypeByName(String name) throws DataRetrievalFailureException {
-        String sql = "SELECT * FROM cfTypes WHERE name = ?";
-        List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper(), name);
-        if (cfTypes.isEmpty()) {
-            String message = "Unable to find persisted CfType object corresponding to name " + name;
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        }
-        return cfTypes.get(0);
-    }
-
-    /**
-     * This CfTypeMapper only used by JdbcCfTypeDao.
-     */
-    private static class CfTypeMapper implements RowMapper<CfType> {
-        /**
-         * Maps each row of data in the ResultSet to the CfType object.
-         *
-         * @param rs     The ResultSet to be mapped.
-         * @param rowNum The number of the current row.
-         * @return The populated CfType object.
-         * @throws SQLException If an SQLException is encountered getting column values.
-         */
-        public CfType mapRow(ResultSet rs, int rowNum) throws SQLException {
-            CfType cfType = new CfType();
-            cfType.setId(rs.getInt("id"));
-            cfType.setName(rs.getString("name"));
-            return cfType;
-        }
-    }
-    
 }
