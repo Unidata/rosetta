@@ -1,14 +1,12 @@
 package edu.ucar.unidata.rosetta.init.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.RosettaResource;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 
 /**

@@ -1,16 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!-- Modify the database data type if a text entry exceeds 255 characters. -->
 <cfTypes>
-    <cfType>
-        <name>Point</name>
-    </cfType>
-    <cfType>
-        <name>Trajectory</name>
-    </cfType>
-    <cfType>
-        <name>Profile</name>
-    </cfType>
-    <cfType>
-        <name>Time Series</name>
-    </cfType>
+  <cfType>
+    <name>Point</name>
+  </cfType>
+  <cfType>
+    <name>Trajectory</name>
+  </cfType>
+  <cfType>
+    <name>Profile</name>
+  </cfType>
+  <cfType>
+    <name>Time Series</name>
+  </cfType>
 </cfTypes>

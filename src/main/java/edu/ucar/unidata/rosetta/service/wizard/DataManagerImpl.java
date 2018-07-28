@@ -3,21 +3,31 @@ package edu.ucar.unidata.rosetta.service.wizard;
 import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.domain.resources.*;
-import edu.ucar.unidata.rosetta.exceptions.*;
-import edu.ucar.unidata.rosetta.repository.wizard.DataDao;
+import edu.ucar.unidata.rosetta.domain.resources.CfType;
+import edu.ucar.unidata.rosetta.domain.resources.Community;
+import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
+import edu.ucar.unidata.rosetta.domain.resources.FileType;
+import edu.ucar.unidata.rosetta.domain.resources.Platform;
+import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
-import edu.ucar.unidata.rosetta.repository.resources.*;
-
-import java.util.*;
-
+import edu.ucar.unidata.rosetta.repository.resources.CfTypeDao;
+import edu.ucar.unidata.rosetta.repository.resources.CommunityDao;
+import edu.ucar.unidata.rosetta.repository.resources.DelimiterDao;
+import edu.ucar.unidata.rosetta.repository.resources.FileTypeDao;
+import edu.ucar.unidata.rosetta.repository.resources.PlatformDao;
+import edu.ucar.unidata.rosetta.repository.wizard.DataDao;
+import edu.ucar.unidata.rosetta.service.wizard.repository.DaoManager;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
 import ucar.ma2.InvalidRangeException;
 
 /**
@@ -38,12 +48,15 @@ public class DataManagerImpl implements DataManager {
   private PropertiesDao propertiesDao;
 
   // The other managers we make use of in this file.
+
+  @Resource(name = "daoManager")
+  private DaoManager daoManager;
+
   @Resource(name = "fileParserManager")
   private FileManager fileManager;
 
   @Resource(name = "metadataManager")
   private MetadataManager metadataManager;
-
 
   /**
    * Converts the uploaded data file(s) to netCDF and writes a template for to aid in future
@@ -345,38 +358,38 @@ public class DataManagerImpl implements DataManager {
    * submitted data.  If no ID exists (is null), the data is persisted for the first time.
    *
    * @param id The unique ID corresponding to already persisted data (may be null).
-   * @param data The Data object submitted by the user containing the CF type information.
-   * @param request The HttpServletRequest used to get the IP address to make unique IDs for new
-   * data.
+   * @param cfTypeData The CfTypeData object containing user-submitted CF type information.
+   * @param request HttpServletRequest used to make unique IDs for new data.
    */
   @Override
-  public void processCfType(String id, Data data, HttpServletRequest request) {
+  public void processCfType(String id, CfTypeData cfTypeData, HttpServletRequest request) {
 
-    // If the id is present, then there is a cookie.  Combine new with previous persisted data.
+    // If the ID is present, then there is a cookie.  Combine new with previous persisted data.
     if (id != null) {
 
-      // Get the persisted data corresponding to this ID.
-      Data persistedData = lookupPersistedDataById(id);
+      // Get the persisted CF type data corresponding to this ID.
+      CfTypeData persistedData = daoManager.lookupPersistedCfTypeDataById(id);
 
       // Update platform value.
-      persistedData.setPlatform(data.getPlatform());
+      persistedData.setPlatform(persistedData.getPlatform());
 
       // Update community if needed.
-      if (data.getPlatform() != null) {
-        persistedData.setCommunity(getCommunityFromPlatform(data.getPlatform()));
+      if (cfTypeData.getPlatform() != null) {
+        persistedData.setCommunity(getCommunityFromPlatform(cfTypeData.getPlatform()));
       } else {
         persistedData.setCommunity(null);
       }
 
       // Update CF type.
-      persistedData.setCfType(data.getCfType());
+      persistedData.setCfType(cfTypeData.getCfType());
 
-      // Update persisted the data.
-      updatePersistedData(persistedData);
+      // Update persisted CF type data.
+      daoManager.updatePersistedCfTypeData(persistedData);
 
     } else {
-      // No cookie, so persist new data.
-      persistData(data, request);
+      // No cookie, so persist new CF type data.
+      cfTypeData.setId(createUniqueDataId(request)); // Create a unique ID for this object.
+      daoManager.persistCfTypeData(cfTypeData);
     }
   }
 
@@ -672,7 +685,7 @@ public class DataManagerImpl implements DataManager {
     // Looks at the inventory contents and assign to the data object accordingly.
     for (String entry : inventory) {
       if (entry.contains("rosetta.template"))
-        // Template file.
+      // Template file.
       {
         data.setTemplateFileName(entry);
       } else
@@ -692,4 +705,10 @@ public class DataManagerImpl implements DataManager {
   public void updatePersistedData(Data data) {
     dataDao.updatePersistedData(data);
   }
+
+
+  public CfTypeData lookupPersistedCfTypeDataById(String id) {
+    return daoManager.lookupPersistedCfTypeDataById(id);
+  }
+
 }

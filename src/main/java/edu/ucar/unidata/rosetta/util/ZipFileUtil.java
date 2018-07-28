@@ -1,8 +1,18 @@
 package edu.ucar.unidata.rosetta.util;
 
-import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
+import static java.util.stream.Collectors.toCollection;
 
-import java.io.*;
+import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -10,13 +20,9 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toCollection;
-
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;

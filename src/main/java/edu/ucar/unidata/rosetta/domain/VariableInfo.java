@@ -25,39 +25,21 @@ public class VariableInfo {
   }
 
   /**
-   * Returns the assigned name of the metadata item.
-   *
-   * @return The metadata name.
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * Returns the rosetta control metadata (used to determine/control the other metadata collected).
-   *
-   * @return The rosetta control metadata.
-   */
-  public List<Attribute> getRosettaControlMetadata() {
-    return rosettaControlMetadata;
-  }
-
-  /**
-   * Returns the metadata specific to the variable.
-   *
-   * @return The variable metadata.
-   */
-  public List<Attribute> getVariableMetadata() {
-    return variableMetadata;
-  }
-
-  /**
    * Sets ID of the column in the CSV file.
    *
    * @param columnId The column ID.
    */
   public void setColumnId(int columnId) {
     this.columnId = columnId;
+  }
+
+  /**
+   * Returns the assigned name of the metadata item.
+   *
+   * @return The metadata name.
+   */
+  public String getName() {
+    return name;
   }
 
   /**
@@ -70,12 +52,30 @@ public class VariableInfo {
   }
 
   /**
+   * Returns the rosetta control metadata (used to determine/control the other metadata collected).
+   *
+   * @return The rosetta control metadata.
+   */
+  public List<Attribute> getRosettaControlMetadata() {
+    return rosettaControlMetadata;
+  }
+
+  /**
    * Sets the rosetta control metadata (used to determine/control the other metadata collected).
    *
    * @param rosettaControlMetadata The rosetta control metadata.
    */
   public void setRosettaControlMetadata(List<Attribute> rosettaControlMetadata) {
     this.rosettaControlMetadata = rosettaControlMetadata;
+  }
+
+  /**
+   * Returns the metadata specific to the variable.
+   *
+   * @return The variable metadata.
+   */
+  public List<Attribute> getVariableMetadata() {
+    return variableMetadata;
   }
 
   /**

@@ -1,11 +1,9 @@
 package edu.ucar.unidata.rosetta.service;
 
-import org.springframework.web.context.ServletContextAware;
-
 import java.io.IOException;
 import java.util.Properties;
-
 import javax.servlet.ServletContext;
+import org.springframework.web.context.ServletContextAware;
 
 public class ServerInfoBean implements ServletContextAware {
 

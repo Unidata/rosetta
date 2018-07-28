@@ -1,9 +1,8 @@
 package edu.ucar.unidata.rosetta.repository.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
-import org.springframework.dao.DataAccessException;
-
 import java.util.List;
+import org.springframework.dao.DataAccessException;
 
 /**
  * The data access object representing a platform.

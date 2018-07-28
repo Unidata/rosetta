@@ -2,14 +2,16 @@ package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.domain.resources.*;
+import edu.ucar.unidata.rosetta.domain.resources.CfType;
+import edu.ucar.unidata.rosetta.domain.resources.Community;
+import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
+import edu.ucar.unidata.rosetta.domain.resources.FileType;
+import edu.ucar.unidata.rosetta.domain.resources.Platform;
+import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import ucar.ma2.InvalidRangeException;
 
 /**
@@ -165,11 +167,10 @@ public interface DataManager {
    * submitted data.  If no ID exists (is null), the data is persisted for the first time.
    *
    * @param id The unique ID corresponding to already persisted data (may be null).
-   * @param data The Data object submitted by the user containing the CF type information.
-   * @param request The HttpServletRequest used to get the IP address to make unique IDs for new
-   * data.
+   * @param cfTypeData The CfTypeData object containing user-submitted CF type information.
+   * @param request HttpServletRequest used to make unique IDs for new data.
    */
-  public void processCfType(String id, Data data, HttpServletRequest request);
+  public void processCfType(String id, CfTypeData cfTypeData, HttpServletRequest request);
 
   /**
    * Processes the data submitted by the user containing custom data file information.
@@ -236,4 +237,8 @@ public interface DataManager {
    * @param data The data object to update.
    */
   public void updatePersistedData(Data data);
+
+
+  public CfTypeData lookupPersistedCfTypeDataById(String id);
+
 }

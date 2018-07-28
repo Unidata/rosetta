@@ -41,12 +41,12 @@ public class Platform extends RosettaResource {
     this.cfType = cfType;
   }
 
-  public void setCommunity(String community) {
-    this.community = community;
-  }
-
   public String getCommunity() {
     return community;
+  }
+
+  public void setCommunity(String community) {
+    this.community = community;
   }
 
   /**

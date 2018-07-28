@@ -1,5 +1,5 @@
 <%-- This view is for displaying details for a single user.  Admin access or authenticated user access. --%>
-<h3>Viewing User:  <c:out value="${user.fullName}" /> (<c:out value="${user.userName}" />)</h3>
+<h3>Viewing User: <c:out value="${user.fullName}"/> (<c:out value="${user.userName}"/>)</h3>
 
 <ul class="format thirds">
     <li>
@@ -7,19 +7,19 @@
             Username:
         </div>
         <div class="profileValue">
-            <c:out value="${user.userName}" />
+            <c:out value="${user.userName}"/>
         </div>
         <div class="profileKey">
             Full Name:
         </div>
         <div class="profileValue">
-            <c:out value="${user.fullName}" />
+            <c:out value="${user.fullName}"/>
         </div>
         <div class="profileKey">
             Email Address:
         </div>
         <div class="profileValue">
-            <c:out value="${user.emailAddress}" />
+            <c:out value="${user.emailAddress}"/>
         </div>
     </li>
 
@@ -69,15 +69,15 @@
     </li>
 </ul>
 <form action="${baseUrl}/user/edit/<c:out value="${user.userName}" />" method="GET">
-    <input type="submit" value="Edit User" />
+    <input type="submit" value="Edit User"/>
 </form>
 <form action="${baseUrl}/user/password/<c:out value="${user.userName}" />" method="GET">
-    <input type="submit" value="Reset Password" />
+    <input type="submit" value="Reset Password"/>
 </form>
 <c:choose>
     <c:when test="${user.userName ne authUserName}">
         <form action="${baseUrl}/user/delete/<c:out value="${user.userName}" />" method="GET">
-            <input type="submit" value="Delete User" />
+            <input type="submit" value="Delete User"/>
         </form>
     </c:when>
 </c:choose>

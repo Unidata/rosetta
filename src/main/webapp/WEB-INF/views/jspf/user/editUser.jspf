@@ -1,5 +1,5 @@
 <%-- This view is for editing a user.  Admin access or authenticated user access. --%>
-<h3>Editing User:  <c:out value="${user.fullName}" /> (<c:out value="${user.userName}" />)</h3>
+<h3>Editing User: <c:out value="${user.fullName}"/> (<c:out value="${user.userName}"/>)</h3>
 
 <p>* Indicates a required field.</p>
 
@@ -10,42 +10,46 @@
                 Username
             </label>
             <form:input path="userName" cssClass="fieldDisabled" readonly="readonly"/>
-            <form:errors path="userName" cssClass="error" />
+            <form:errors path="userName" cssClass="error"/>
         </li>
         <li>
-            <label for="fullName" class="tooltip format" title="The full name must be between 2 and 75 characters in length.">
+            <label for="fullName" class="tooltip format"
+                   title="The full name must be between 2 and 75 characters in length.">
                 Full Name*
             </label>
             <form:input path="fullName"/>
-            <form:errors path="fullName" cssClass="error" />
+            <form:errors path="fullName" cssClass="error"/>
         </li>
         <li>
-            <label for="emailAddress" class="tooltip format" title="A legitimate, working email address please.">
+            <label for="emailAddress" class="tooltip format"
+                   title="A legitimate, working email address please.">
                 Email Address*
             </label>
             <form:input path="emailAddress"/>
-            <form:errors path="emailAddress" cssClass="error" />
+            <form:errors path="emailAddress" cssClass="error"/>
         </li>
         <sec:authorize access="hasRole('ROLE_ADMIN')">
             <li>
-                <label for="accessLevel" class="tooltip format" title="The user's access level/privilege.">
+                <label for="accessLevel" class="tooltip format"
+                       title="The user's access level/privilege.">
                     User Access Level*
                 </label>
                 <form:select path="accessLevel">
                     <form:option value="1">User</form:option>
                     <form:option value="2">Administrator</form:option>
                 </form:select>
-                <form:errors path="accessLevel" cssClass="error" />
-        </li>
-        <li>
-                <label for="accountStatus" class="tooltip format" title="Whether the user's account is active or not.">
+                <form:errors path="accessLevel" cssClass="error"/>
+            </li>
+            <li>
+                <label for="accountStatus" class="tooltip format"
+                       title="Whether the user's account is active or not.">
                     Account Status*
                 </label>
                 <form:select path="accountStatus">
                     <form:option value="1">Active</form:option>
                     <form:option value="0">Disabled</form:option>
                 </form:select>
-                <form:errors path="accountStatus" cssClass="error" />
+                <form:errors path="accountStatus" cssClass="error"/>
             </li>
         </sec:authorize>
         <li>
@@ -63,7 +67,7 @@
     </ul>
     <ul class="format">
         <li>
-            <input type="submit" class="noformat" value="Update Account Information" />
+            <input type="submit" class="noformat" value="Update Account Information"/>
         </li>
     </ul>
 </form:form>

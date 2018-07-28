@@ -3,12 +3,9 @@ package edu.ucar.unidata.rosetta.service.user;
 import edu.ucar.unidata.rosetta.domain.user.User;
 import edu.ucar.unidata.rosetta.exceptions.RosettaUserException;
 import edu.ucar.unidata.rosetta.repository.user.UserDao;
-
 import java.util.Date;
 import java.util.List;
-
 import org.apache.log4j.Logger;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

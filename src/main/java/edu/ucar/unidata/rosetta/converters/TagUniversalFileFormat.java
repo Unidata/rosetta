@@ -4,8 +4,6 @@
 
 package edu.ucar.unidata.rosetta.converters;
 
-import org.apache.log4j.Logger;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,12 +21,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
-
+import org.apache.log4j.Logger;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayFloat;
 import ucar.ma2.ArrayInt;
-import ucar.ma2.ArrayLong;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
@@ -69,44 +66,6 @@ public class TagUniversalFileFormat {
 
 
   public TagUniversalFileFormat() {
-  }
-
-  class HistBin {
-
-    private float binValue;
-    private String binUnit;
-
-    public HistBin(float value, String unit) {
-      this.binValue = value;
-      this.binUnit = unit;
-    }
-
-    public float getBinValue() {
-      return binValue;
-    }
-
-    public String getBinUnit() {
-      return binUnit;
-    }
-  }
-
-  class Ob {
-
-    private String value;
-    private String unit;
-
-    public String getValue() {
-      return value;
-    }
-
-    public String getUnit() {
-      return unit;
-    }
-
-    public Ob(String value, String unit) {
-      this.value = value;
-      this.unit = unit;
-    }
   }
 
   /**
@@ -696,5 +655,43 @@ public class TagUniversalFileFormat {
       e.printStackTrace();
     }
     return ncfile;
+  }
+
+  class HistBin {
+
+    private float binValue;
+    private String binUnit;
+
+    public HistBin(float value, String unit) {
+      this.binValue = value;
+      this.binUnit = unit;
+    }
+
+    public float getBinValue() {
+      return binValue;
+    }
+
+    public String getBinUnit() {
+      return binUnit;
+    }
+  }
+
+  class Ob {
+
+    private String value;
+    private String unit;
+
+    public Ob(String value, String unit) {
+      this.value = value;
+      this.unit = unit;
+    }
+
+    public String getValue() {
+      return value;
+    }
+
+    public String getUnit() {
+      return unit;
+    }
   }
 }

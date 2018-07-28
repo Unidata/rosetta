@@ -13,7 +13,6 @@
     }
   });
 
-
   /***
    * A sample Model implementation.
    * Provides a filtered view of the underlying data.
@@ -27,7 +26,6 @@
       groupItemMetadataProvider: null,
       inlineFilters: false
     };
-
 
     // private
     var idProperty = "id";  // property holding a unique row id
@@ -53,9 +51,8 @@
     var groupingInfoDefaults = {
       getter: null,
       formatter: null,
-      comparer: function(a, b) {
-        return (a.value === b.value ? 0 :
-          (a.value > b.value ? 1 : -1)
+      comparer: function (a, b) {
+        return (a.value === b.value ? 0 : (a.value > b.value ? 1 : -1)
         );
       },
       predefinedValues: [],
@@ -83,7 +80,6 @@
 
     options = $.extend(true, {}, defaults, options);
 
-
     function beginUpdate() {
       suspend = true;
     }
@@ -107,7 +103,8 @@
       for (var i = startingIndex, l = items.length; i < l; i++) {
         id = items[i][idProperty];
         if (id === undefined) {
-          throw new Error("Each data element must implement a unique 'id' property");
+          throw new Error(
+              "Each data element must implement a unique 'id' property");
         }
         idxById[id] = i;
       }
@@ -118,7 +115,8 @@
       for (var i = 0, l = items.length; i < l; i++) {
         id = items[i][idProperty];
         if (id === undefined || idxById[id] !== i) {
-          throw new Error("Each data element must implement a unique 'id' property");
+          throw new Error(
+              "Each data element must implement a unique 'id' property");
         }
       }
     }
@@ -141,11 +139,13 @@
     function setPagingOptions(args) {
       if (args.pageSize != undefined) {
         pagesize = args.pageSize;
-        pagenum = pagesize ? Math.min(pagenum, Math.max(0, Math.ceil(totalRows / pagesize) - 1)) : 0;
+        pagenum = pagesize ? Math.min(pagenum,
+            Math.max(0, Math.ceil(totalRows / pagesize) - 1)) : 0;
       }
 
       if (args.pageNum != undefined) {
-        pagenum = Math.min(args.pageNum, Math.max(0, Math.ceil(totalRows / pagesize) - 1));
+        pagenum = Math.min(args.pageNum,
+            Math.max(0, Math.ceil(totalRows / pagesize) - 1));
       }
 
       onPagingInfoChanged.notify(getPagingInfo(), null, self);
@@ -154,8 +154,15 @@
     }
 
     function getPagingInfo() {
-      var totalPages = pagesize ? Math.max(1, Math.ceil(totalRows / pagesize)) : 1;
-      return {pageSize: pagesize, pageNum: pagenum, totalRows: totalRows, totalPages: totalPages, dataView: self};
+      var totalPages = pagesize ? Math.max(1, Math.ceil(totalRows / pagesize))
+          : 1;
+      return {
+        pageSize: pagesize,
+        pageNum: pagenum,
+        totalRows: totalRows,
+        totalPages: totalPages,
+        dataView: self
+      };
     }
 
     function sort(comparer, ascending) {
@@ -184,9 +191,10 @@
       fastSortField = field;
       sortComparer = null;
       var oldToString = Object.prototype.toString;
-      Object.prototype.toString = (typeof field == "function") ? field : function () {
-        return this[field]
-      };
+      Object.prototype.toString = (typeof field == "function") ? field
+          : function () {
+            return this[field]
+          };
       // an extra reversal for descending sort keeps the sort stable
       // (assuming a stable native sort implementation, which isn't true in some cases)
       if (ascending === false) {
@@ -210,15 +218,14 @@
       }
     }
 
-    function getFilteredItems(){
+    function getFilteredItems() {
       return filteredItems;
     }
 
-
-    function getFilter(){
+    function getFilter() {
       return filter;
     }
-    
+
     function setFilter(filterFn) {
       filter = filterFn;
       if (options.inlineFilters) {
@@ -240,17 +247,20 @@
       groups = [];
       toggledGroupsByLevel = [];
       groupingInfo = groupingInfo || [];
-      groupingInfos = (groupingInfo instanceof Array) ? groupingInfo : [groupingInfo];
+      groupingInfos = (groupingInfo instanceof Array) ? groupingInfo
+          : [groupingInfo];
 
       for (var i = 0; i < groupingInfos.length; i++) {
-        var gi = groupingInfos[i] = $.extend(true, {}, groupingInfoDefaults, groupingInfos[i]);
+        var gi = groupingInfos[i] = $.extend(true, {}, groupingInfoDefaults,
+            groupingInfos[i]);
         gi.getterIsAFn = typeof gi.getter === "function";
 
         // pre-compile accumulator loops
         gi.compiledAccumulators = [];
         var idx = gi.aggregators.length;
         while (idx--) {
-          gi.compiledAccumulators[idx] = compileAccumulatorLoop(gi.aggregators[idx]);
+          gi.compiledAccumulators[idx] = compileAccumulatorLoop(
+              gi.aggregators[idx]);
         }
 
         toggledGroupsByLevel[i] = {};
@@ -280,7 +290,8 @@
      */
     function setAggregators(groupAggregators, includeCollapsed) {
       if (!groupingInfos.length) {
-        throw new Error("At least one grouping must be specified before calling setAggregators().");
+        throw new Error(
+            "At least one grouping must be specified before calling setAggregators().");
       }
 
       groupingInfos[0].aggregators = groupAggregators;
@@ -390,7 +401,7 @@
     }
 
     function sortedAddItem(item) {
-      if(!sortComparer) {
+      if (!sortComparer) {
         throw new Error("sortedAddItem() requires a sort comparer, use sort()");
       }
       insertItem(sortedIndex(item), item);
@@ -400,11 +411,12 @@
       if (idxById[id] === undefined || id !== item[idProperty]) {
         throw new Error("Invalid or non-matching id " + idxById[id]);
       }
-      if(!sortComparer) {
-        throw new Error("sortedUpdateItem() requires a sort comparer, use sort()");
+      if (!sortComparer) {
+        throw new Error(
+            "sortedUpdateItem() requires a sort comparer, use sort()");
       }
       var oldItem = getItemById(id);
-      if(sortComparer(oldItem, item) !== 0) {
+      if (sortComparer(oldItem, item) !== 0) {
         // item affects sorting -> must use sorted add
         deleteItem(id);
         sortedAddItem(item);
@@ -428,7 +440,7 @@
       }
       return low;
     }
-      
+
     function getLength() {
       return rows.length;
     }
@@ -499,7 +511,8 @@
     }
 
     function expandCollapseGroup(level, groupingKey, collapse) {
-      toggledGroupsByLevel[level][groupingKey] = groupingInfos[level].collapsed ^ collapse;
+      toggledGroupsByLevel[level][groupingKey] = groupingInfos[level].collapsed
+          ^ collapse;
       refresh();
     }
 
@@ -513,9 +526,11 @@
       var args = Array.prototype.slice.call(arguments);
       var arg0 = args[0];
       if (args.length == 1 && arg0.indexOf(groupingDelimiter) != -1) {
-        expandCollapseGroup(arg0.split(groupingDelimiter).length - 1, arg0, true);
+        expandCollapseGroup(arg0.split(groupingDelimiter).length - 1, arg0,
+            true);
       } else {
-        expandCollapseGroup(args.length - 1, args.join(groupingDelimiter), true);
+        expandCollapseGroup(args.length - 1, args.join(groupingDelimiter),
+            true);
       }
     }
 
@@ -529,9 +544,11 @@
       var args = Array.prototype.slice.call(arguments);
       var arg0 = args[0];
       if (args.length == 1 && arg0.indexOf(groupingDelimiter) != -1) {
-        expandCollapseGroup(arg0.split(groupingDelimiter).length - 1, arg0, false);
+        expandCollapseGroup(arg0.split(groupingDelimiter).length - 1, arg0,
+            false);
       } else {
-        expandCollapseGroup(args.length - 1, args.join(groupingDelimiter), false);
+        expandCollapseGroup(args.length - 1, args.join(groupingDelimiter),
+            false);
       }
     }
 
@@ -555,7 +572,8 @@
           group = new Slick.Group();
           group.value = val;
           group.level = level;
-          group.groupingKey = (parentGroup ? parentGroup.groupingKey + groupingDelimiter : '') + val;
+          group.groupingKey = (parentGroup ? parentGroup.groupingKey
+              + groupingDelimiter : '') + val;
           groups[groups.length] = group;
           groupsByVal[val] = group;
         }
@@ -569,7 +587,8 @@
           group = new Slick.Group();
           group.value = val;
           group.level = level;
-          group.groupingKey = (parentGroup ? parentGroup.groupingKey + groupingDelimiter : '') + val;
+          group.groupingKey = (parentGroup ? parentGroup.groupingKey
+              + groupingDelimiter : '') + val;
           groups[groups.length] = group;
           groupsByVal[val] = group;
         }
@@ -582,7 +601,7 @@
           group = groups[i];
           group.groups = extractGroups(group.rows, group);
         }
-      }      
+      }
 
       groups.sort(groupingInfos[level].comparer);
 
@@ -632,7 +651,7 @@
       level = level || 0;
       var gi = groupingInfos[level];
       var groupCollapsed = gi.collapsed;
-      var toggledGroups = toggledGroupsByLevel[level];      
+      var toggledGroups = toggledGroupsByLevel[level];
       var idx = groups.length, g;
       while (idx--) {
         g = groups[idx];
@@ -647,14 +666,15 @@
         }
 
         if (gi.aggregators.length && (
-            gi.aggregateEmpty || g.rows.length || (g.groups && g.groups.length))) {
+                gi.aggregateEmpty || g.rows.length || (g.groups
+                && g.groups.length))) {
           addGroupTotals(g);
         }
 
         g.collapsed = groupCollapsed ^ toggledGroups[g.groupingKey];
         g.title = gi.formatter ? gi.formatter(g) : g.value;
       }
-    } 
+    }
 
     function flattenGroupedRows(groups, level) {
       level = level || 0;
@@ -671,7 +691,8 @@
           }
         }
 
-        if (g.totals && gi.displayTotalsRow && (!g.collapsed || gi.aggregateCollapsed)) {
+        if (g.totals && gi.displayTotalsRow && (!g.collapsed
+                || gi.aggregateCollapsed)) {
           groupedRows[gl++] = g.totals;
         }
       }
@@ -691,9 +712,10 @@
       var accumulatorInfo = getFunctionInfo(aggregator.accumulate);
       var fn = new Function(
           "_items",
-          "for (var " + accumulatorInfo.params[0] + ", _i=0, _il=_items.length; _i<_il; _i++) {" +
-              accumulatorInfo.params[0] + " = _items[_i]; " +
-              accumulatorInfo.body +
+          "for (var " + accumulatorInfo.params[0]
+          + ", _i=0, _il=_items.length; _i<_il; _i++) {" +
+          accumulatorInfo.params[0] + " = _items[_i]; " +
+          accumulatorInfo.body +
           "}"
       );
       fn.displayName = fn.name = "compiledAccumulatorLoop";
@@ -707,11 +729,11 @@
       var filterPath2 = "{ _retval[_idx++] = $item$; continue _coreloop; }$1";
       // make some allowances for minification - there's only so far we can go with RegEx
       var filterBody = filterInfo.body
-          .replace(/return false\s*([;}]|\}|$)/gi, filterPath1)
-          .replace(/return!1([;}]|\}|$)/gi, filterPath1)
-          .replace(/return true\s*([;}]|\}|$)/gi, filterPath2)
-          .replace(/return!0([;}]|\}|$)/gi, filterPath2)
-          .replace(/return ([^;}]+?)\s*([;}]|$)/gi,
+      .replace(/return false\s*([;}]|\}|$)/gi, filterPath1)
+      .replace(/return!1([;}]|\}|$)/gi, filterPath1)
+      .replace(/return true\s*([;}]|\}|$)/gi, filterPath2)
+      .replace(/return!0([;}]|\}|$)/gi, filterPath2)
+      .replace(/return ([^;}]+?)\s*([;}]|$)/gi,
           "{ if ($1) { _retval[_idx++] = $item$; }; continue _coreloop; }$2");
 
       // This preserves the function template code after JS compression,
@@ -744,11 +766,11 @@
       var filterPath2 = "{ _cache[_i] = true;_retval[_idx++] = $item$; continue _coreloop; }$1";
       // make some allowances for minification - there's only so far we can go with RegEx
       var filterBody = filterInfo.body
-          .replace(/return false\s*([;}]|\}|$)/gi, filterPath1)
-          .replace(/return!1([;}]|\}|$)/gi, filterPath1)
-          .replace(/return true\s*([;}]|\}|$)/gi, filterPath2)
-          .replace(/return!0([;}]|\}|$)/gi, filterPath2)
-          .replace(/return ([^;}]+?)\s*([;}]|$)/gi,
+      .replace(/return false\s*([;}]|\}|$)/gi, filterPath1)
+      .replace(/return!1([;}]|\}|$)/gi, filterPath1)
+      .replace(/return true\s*([;}]|\}|$)/gi, filterPath2)
+      .replace(/return!0([;}]|\}|$)/gi, filterPath2)
+      .replace(/return ([^;}]+?)\s*([;}]|$)/gi,
           "{ if ((_cache[_i] = $1)) { _retval[_idx++] = $item$; }; continue _coreloop; }$2");
 
       // This preserves the function template code after JS compression,
@@ -808,13 +830,16 @@
 
     function getFilteredAndPagedItems(items) {
       if (filter) {
-        var batchFilter = options.inlineFilters ? compiledFilter : uncompiledFilter;
-        var batchFilterWithCaching = options.inlineFilters ? compiledFilterWithCaching : uncompiledFilterWithCaching;
+        var batchFilter = options.inlineFilters ? compiledFilter
+            : uncompiledFilter;
+        var batchFilterWithCaching = options.inlineFilters
+            ? compiledFilterWithCaching : uncompiledFilterWithCaching;
 
         if (refreshHints.isFilterNarrowing) {
           filteredItems = batchFilter(filteredItems, filterArgs);
         } else if (refreshHints.isFilterExpanding) {
-          filteredItems = batchFilterWithCaching(items, filterArgs, filterCache);
+          filteredItems = batchFilterWithCaching(items, filterArgs,
+              filterCache);
         } else if (!refreshHints.isFilterUnchanged) {
           filteredItems = batchFilter(items, filterArgs);
         }
@@ -835,7 +860,8 @@
             pagenum = Math.floor((filteredItems.length - 1) / pagesize);
           }
         }
-        paged = filteredItems.slice(pagesize * pagenum, pagesize * pagenum + pagesize);
+        paged = filteredItems.slice(pagesize * pagenum, pagesize * pagenum
+            + pagesize);
       } else {
         paged = filteredItems;
       }
@@ -863,17 +889,18 @@
           item = newRows[i];
           r = rows[i];
 
-          if ((groupingInfos.length && (eitherIsNonData = (item.__nonDataRow) || (r.__nonDataRow)) &&
-              item.__group !== r.__group ||
-              item.__group && !item.equals(r))
+          if ((groupingInfos.length && (eitherIsNonData = (item.__nonDataRow)
+                  || (r.__nonDataRow)) &&
+                  item.__group !== r.__group ||
+                  item.__group && !item.equals(r))
               || (eitherIsNonData &&
-              // no good way to compare totals since they are arbitrary DTOs
-              // deep object comparison is pretty expensive
-              // always considering them 'dirty' seems easier for the time being
-              (item.__groupTotals || r.__groupTotals))
+                  // no good way to compare totals since they are arbitrary DTOs
+                  // deep object comparison is pretty expensive
+                  // always considering them 'dirty' seems easier for the time being
+                  (item.__groupTotals || r.__groupTotals))
               || item[idProperty] != r[idProperty]
               || (updated && updated[item[idProperty]])
-              ) {
+          ) {
             diff[diff.length] = i;
           }
         }
@@ -884,8 +911,10 @@
     function recalc(_items) {
       rowsById = null;
 
-      if (refreshHints.isFilterNarrowing != prevRefreshHints.isFilterNarrowing ||
-          refreshHints.isFilterExpanding != prevRefreshHints.isFilterExpanding) {
+      if (refreshHints.isFilterNarrowing != prevRefreshHints.isFilterNarrowing
+          ||
+          refreshHints.isFilterExpanding
+          != prevRefreshHints.isFilterExpanding) {
         filterCache = [];
       }
 
@@ -934,7 +963,9 @@
         onPagingInfoChanged.notify(getPagingInfo(), null, self);
       }
       if (countBefore !== rows.length) {
-        onRowCountChanged.notify({previous: countBefore, current: rows.length, dataView: self}, null, self);
+        onRowCountChanged.notify(
+            {previous: countBefore, current: rows.length, dataView: self}, null,
+            self);
       }
       if (diff.length > 0) {
         onRowsChanged.notify({rows: diff, dataView: self}, null, self);
@@ -960,7 +991,8 @@
      *     access to the full list selected row ids, and not just the ones visible to the grid.
      * @method syncGridSelection
      */
-    function syncGridSelection(grid, preserveHidden, preserveHiddenOnSelectionChange) {
+    function syncGridSelection(grid, preserveHidden,
+        preserveHiddenOnSelectionChange) {
       var self = this;
       var inHandler;
       var selectedRowIds = self.mapRowsToIds(grid.getSelectedRows());
@@ -985,21 +1017,26 @@
           inHandler = true;
           var selectedRows = self.mapIdsToRows(selectedRowIds);
           if (!preserveHidden) {
-            setSelectedRowIds(self.mapRowsToIds(selectedRows));       
+            setSelectedRowIds(self.mapRowsToIds(selectedRows));
           }
           grid.setSelectedRows(selectedRows);
           inHandler = false;
         }
       }
 
-      grid.onSelectedRowsChanged.subscribe(function(e, args) {
-        if (inHandler) { return; }
+      grid.onSelectedRowsChanged.subscribe(function (e, args) {
+        if (inHandler) {
+          return;
+        }
         var newSelectedRowIds = self.mapRowsToIds(grid.getSelectedRows());
-        if (!preserveHiddenOnSelectionChange || !grid.getOptions().multiSelect) {
+        if (!preserveHiddenOnSelectionChange
+            || !grid.getOptions().multiSelect) {
           setSelectedRowIds(newSelectedRowIds);
         } else {
           // keep the ones that are hidden
-          var existing = $.grep(selectedRowIds, function(id) { return self.getRowById(id) === undefined; });
+          var existing = $.grep(selectedRowIds, function (id) {
+            return self.getRowById(id) === undefined;
+          });
           // add the newly selected ones
           setSelectedRowIds(existing.concat(newSelectedRowIds));
         }
@@ -1044,15 +1081,19 @@
         }
       }
 
-      grid.onCellCssStylesChanged.subscribe(function(e, args) {
-        if (inHandler) { return; }
-        if (key != args.key) { return; }
+      grid.onCellCssStylesChanged.subscribe(function (e, args) {
+        if (inHandler) {
+          return;
+        }
+        if (key != args.key) {
+          return;
+        }
         if (args.hash) {
           storeCellCssStyles(args.hash);
         } else {
           grid.onCellCssStylesChanged.unsubscribe(styleChanged);
           self.onRowsChanged.unsubscribe(update);
-          self.onRowCountChanged.unsubscribe(update);          
+          self.onRowCountChanged.unsubscribe(update);
         }
       });
 

@@ -1,10 +1,16 @@
 package edu.ucar.unidata.rosetta.init;
 
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-import edu.ucar.unidata.rosetta.init.resources.*;
+import edu.ucar.unidata.rosetta.init.resources.DbInitManager;
+import edu.ucar.unidata.rosetta.init.resources.EmbeddedDerbyDbInitManager;
 import edu.ucar.unidata.rosetta.service.ServerInfoBean;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -12,15 +18,12 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.stream.Stream;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 /**

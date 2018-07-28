@@ -8,7 +8,6 @@
     }
   });
 
-
   /***
    * A plugin to add custom buttons to column headers.
    *
@@ -70,23 +69,21 @@
       buttonCssClass: "slick-header-button"
     };
 
-
     function init(grid) {
       options = $.extend(true, {}, _defaults, options);
       _grid = grid;
       _handler
-        .subscribe(_grid.onHeaderCellRendered, handleHeaderCellRendered)
-        .subscribe(_grid.onBeforeHeaderCellDestroy, handleBeforeHeaderCellDestroy);
+      .subscribe(_grid.onHeaderCellRendered, handleHeaderCellRendered)
+      .subscribe(_grid.onBeforeHeaderCellDestroy,
+          handleBeforeHeaderCellDestroy);
 
       // Force the grid to re-render the header now that the events are hooked up.
       _grid.setColumns(_grid.getColumns());
     }
 
-
     function destroy() {
       _handler.unsubscribeAll();
     }
-
 
     function handleHeaderCellRendered(e, args) {
       var column = args.column;
@@ -97,9 +94,9 @@
         while (i--) {
           var button = column.header.buttons[i];
           var btn = $("<div></div>")
-            .addClass(options.buttonCssClass)
-            .data("column", column)
-            .data("button", button);
+          .addClass(options.buttonCssClass)
+          .data("column", column)
+          .data("button", button);
 
           if (button.showOnHover) {
             btn.addClass("slick-header-button-hidden");
@@ -126,12 +123,11 @@
           }
 
           btn
-            .on("click", handleButtonClick)
-            .appendTo(args.node);
+          .on("click", handleButtonClick)
+          .appendTo(args.node);
         }
       }
     }
-
 
     function handleBeforeHeaderCellDestroy(e, args) {
       var column = args.column;
@@ -144,7 +140,6 @@
       }
     }
 
-
     function handleButtonClick(e) {
       var command = $(this).data("command");
       var columnDef = $(this).data("column");
@@ -152,11 +147,11 @@
 
       if (command != null) {
         _self.onCommand.notify({
-            "grid": _grid,
-            "column": columnDef,
-            "command": command,
-            "button": button
-          }, e, _self);
+          "grid": _grid,
+          "column": columnDef,
+          "command": command,
+          "button": button
+        }, e, _self);
 
         // Update the header in case the user updated the button definition in the handler.
         _grid.updateColumnHeader(columnDef.id);

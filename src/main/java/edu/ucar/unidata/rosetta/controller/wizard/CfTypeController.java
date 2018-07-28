@@ -1,21 +1,17 @@
 package edu.ucar.unidata.rosetta.controller.wizard;
 
-import edu.ucar.unidata.rosetta.domain.Data;
-
+import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
+import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,18 +56,18 @@ public class CfTypeController implements HandlerExceptionResolver {
 
     // Have we visited this page before during this session?
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-    // Create a Data form-backing object.
-    Data data;
-    if (rosettaCookie != null)
-      // User-provided cfType info already exists.  Populate Data object with info.
-    {
-      data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
+
+    // Create a CfTypeData form-backing object.
+    CfTypeData cfTypeData;
+    if (rosettaCookie != null) {
+      // User-provided CF type data already exists.  Populate CfTypeData object.
+      cfTypeData = dataManager.lookupPersistedCfTypeDataById(rosettaCookie.getValue());
     } else {
-      data = new Data();
+      cfTypeData = new CfTypeData();
     }
 
-    // Add data object to Model.
-    model.addAttribute("data", data);
+    // Add CfType object to Model.
+    model.addAttribute("data", cfTypeData);
     // Add current step to the Model (used by view to keep track of where we are in the wizard).
     model.addAttribute("currentStep", "cfType");
     // Add communities data to Model (for platform display).
@@ -88,7 +84,7 @@ public class CfTypeController implements HandlerExceptionResolver {
    * and persists it to the database.  Redirects user to next step or previous step depending on
    * submitted form button (Next or Previous).
    *
-   * @param data The form-backing object.
+   * @param cfTypeData The form-backing object.
    * @param result The BindingResult for error handling.
    * @param model The Model object to be populated.
    * @param request HttpServletRequest needed to pass to the dataManager to get client IP.
@@ -96,19 +92,19 @@ public class CfTypeController implements HandlerExceptionResolver {
    * @return Redirect to next step.
    */
   @RequestMapping(value = "/cfType", method = RequestMethod.POST)
-  public ModelAndView processCFType(Data data, BindingResult result, Model model,
+  public ModelAndView processCFType(CfTypeData cfTypeData, BindingResult result, Model model,
       HttpServletRequest request, HttpServletResponse response) {
 
     // Have we visited this page before during this session?
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
     if (rosettaCookie != null) {
-      // We've been here before, combine new with previous persisted data.
-      dataManager.processCfType(rosettaCookie.getValue(), data, null);
+      // We've been here before, combine new with previous persisted CF type data.
+      dataManager.processCfType(rosettaCookie.getValue(), cfTypeData, null);
     } else {
-      // Haven't been before, so proceed with persist the data.
-      dataManager.processCfType(null, data, request);
-      // First time posting to this page in this session.
-      response.addCookie(new Cookie("rosetta", data.getId()));
+      // Haven't been before, so proceed with persisting the CF type data.
+      dataManager.processCfType(null, cfTypeData, request);
+      // First time posting to this page in this session; create the cookie.
+      response.addCookie(new Cookie("rosetta", cfTypeData.getId()));
     }
     return new ModelAndView(new RedirectView("/fileUpload", true));
   }

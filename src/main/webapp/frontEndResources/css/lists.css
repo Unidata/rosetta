@@ -3,45 +3,51 @@
  */
 
 ul {
-    margin:0 0 15px 0;
+  margin: 0 0 15px 0;
 }
 
 /* .format used for in-line layouts */
 ul.format {
-    list-style:none;
-    padding:0;
-    float:left;
-    clear:left;
-    width:auto;
+  list-style: none;
+  padding: 0;
+  float: left;
+  clear: left;
+  width: auto;
 }
+
 ul.format li {
-    width:100%;
-    display:inline;
-    margin:0 15px 10px 0;
-    padding:0;
-    float:left;
-    position:relative;
+  width: 100%;
+  display: inline;
+  margin: 0 15px 10px 0;
+  padding: 0;
+  float: left;
+  position: relative;
 }
+
 ul.format li a {
-    float:left;
-    margin-top:10px;
-    line-height:25px;
+  float: left;
+  margin-top: 10px;
+  line-height: 25px;
 }
+
 ul.format li b {
-    float:left;
-    color:#696969;
+  float: left;
+  color: #696969;
 }
 
 /* subsequent classes delineate width values for .format layout */
 ul.format.threeQuarters li {
-    width:60%;
+  width: 60%;
 }
+
 ul.format.half li {
-    width:47%;
+  width: 47%;
 }
+
 ul.format.thirds li {
-    width:30%;
+  width: 30%;
 }
-ul.format.quarters li{
-    width:20%;
+
+ul.format.quarters li {
+  width: 20%;
 }

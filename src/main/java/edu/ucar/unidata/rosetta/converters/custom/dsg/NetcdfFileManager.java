@@ -1,8 +1,7 @@
 package edu.ucar.unidata.rosetta.converters.custom.dsg;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-
+import edu.ucar.unidata.rosetta.converters.custom.dsg.util.DateTimeBluePrint;
+import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,9 +18,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import edu.ucar.unidata.rosetta.domain.AsciiFile;
-import edu.ucar.unidata.rosetta.converters.custom.dsg.util.DateTimeBluePrint;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayFloat;
@@ -193,12 +191,12 @@ public abstract class NetcdfFileManager {
     this.variableMetadataMap = variableMetadataMap;
   }
 
-  private void setParseHeaderForMetadataList(List<String> parseHeaderForMetadataList) {
-    this.parseHeaderForMetadataList = parseHeaderForMetadataList;
-  }
-
   private List<String> getParseHeaderForMetadataList() {
     return this.parseHeaderForMetadataList;
+  }
+
+  private void setParseHeaderForMetadataList(List<String> parseHeaderForMetadataList) {
+    this.parseHeaderForMetadataList = parseHeaderForMetadataList;
   }
 
   public Map<String, String> getVariableNameMap() {

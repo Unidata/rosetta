@@ -4,7 +4,6 @@ import edu.ucar.unidata.rosetta.domain.user.User;
 import edu.ucar.unidata.rosetta.exceptions.RosettaUserException;
 import edu.ucar.unidata.rosetta.service.user.UserManager;
 import edu.ucar.unidata.rosetta.service.validators.user.CreateUserValidator;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -13,9 +12,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,11 +36,9 @@ import org.springframework.web.servlet.view.RedirectView;
 public class CreateUserController implements HandlerExceptionResolver {
 
   private static final Logger logger = Logger.getLogger(CreateUserController.class);
-
+  private final CreateUserValidator createUserValidator;
   @Resource(name = "userManager")
   private UserManager userManager;
-
-  private final CreateUserValidator createUserValidator;
 
   /**
    * Creates this controller class.

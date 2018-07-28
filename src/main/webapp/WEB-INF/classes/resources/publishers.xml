@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <publishers>
-    <!--publisher>
-      <pubName>Unidata RAMADDA</pubName>
-      <pubUrl>motherlode.ucar.edu</pubUrl>
-    </publisher-->
-    <publisher>
-        <pubName>ACADIS Gateway</pubName>
-        <!--pubUrl>cadis.prototype.ucar.edu</pubUrl-->
-        <pubUrl>www.aoncadis.org</pubUrl>
-    </publisher>
+  <!--publisher>
+    <pubName>Unidata RAMADDA</pubName>
+    <pubUrl>motherlode.ucar.edu</pubUrl>
+  </publisher-->
+  <publisher>
+    <pubName>ACADIS Gateway</pubName>
+    <!--pubUrl>cadis.prototype.ucar.edu</pubUrl-->
+    <pubUrl>www.aoncadis.org</pubUrl>
+  </publisher>
 </publishers>

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Set;
-
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayLong;
 import ucar.ma2.DataType;

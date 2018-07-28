@@ -1,897 +1,916 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <etagGlobalMetadataItems>
-    <etagGlobalMetadataItem>
-        <displayName>Ancillary Position Source</displayName>
-        <tagName>ancillary_position_source</tagName>
-        <description>List available source(s) for other known position(s)</description>
-        <metadataType>ancillary_positions</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Ancillary Position Deviceid</displayName>
-        <tagName>ancillary_position_deviceid</tagName>
-        <description>List chronologically the devices collecting the ancillary position(s)</description>
-        <metadataType>ancillary_positions</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Ancillary Position Datetime</displayName>
-        <tagName>ancillary_position_datetime</tagName>
-        <description>List chronologically the datetime (yyyy-mm-dd hh:mm:ss) for ancillary position(s)</description>
-        <metadataType>ancillary_positions</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Ancillary Position Lon</displayName>
-        <tagName>ancillary_position_lon</tagName>
-        <description>List chronologically the longitude for ancillary position(s)</description>
-        <metadataType>ancillary_positions</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Ancillary Position Lat</displayName>
-        <tagName>ancillary_position_lat</tagName>
-        <description>List chronologically the latitude for ancillary position(s)</description>
-        <metadataType>ancillary_positions</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Ancillary Position Quality</displayName>
-        <tagName>ancillary_position_quality</tagName>
-        <description>List chronologically the quality (location class/ accuracy/ range etc.) for ancillary position(s).
-            Can be qualitative.
-        </description>
-        <metadataType>ancillary_positions</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Species Capture</displayName>
-        <tagName>species_capture</tagName>
-        <isRequired>true</isRequired>
-        <description>Common name(s) or FAO code for species name</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Speciestsn Capture</displayName>
-        <tagName>speciesTSN_capture</tagName>
-        <isRequired>true</isRequired>
-        <description>Taxononomic Serial Number (TSN) from ITIS (www.itis.gov)</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Lifestage Capture</displayName>
-        <tagName>lifestage_capture</tagName>
-        <description>Life stage of the animal</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Sex</displayName>
-        <tagName>sex</tagName>
-        <description>Sex of the animal</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Length Capture</displayName>
-        <tagName>length_capture</tagName>
-        <description>Length of the animal</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Length Unit Capture</displayName>
-        <tagName>length_unit_capture</tagName>
-        <description>Unit of length measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Length Type Capture</displayName>
-        <tagName>length_type_capture</tagName>
-        <isRequired>true</isRequired>
-        <description>Type of length measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Length Method Capture</displayName>
-        <tagName>length_method_capture</tagName>
-        <isRequired>true</isRequired>
-        <description>Method used to obtain the measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Weight Capture</displayName>
-        <tagName>weight_capture</tagName>
-        <description>Weight of the animal</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Weight Unit Capture</displayName>
-        <tagName>weight_unit_capture</tagName>
-        <description>Unit of weight measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Weight Type Capture</displayName>
-        <tagName>weight_type_capture</tagName>
-        <description>Type of weight measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Weight Method Capture</displayName>
-        <tagName>weight_method_capture</tagName>
-        <description>Method used to obtain the measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Condition Capture</displayName>
-        <tagName>condition_capture</tagName>
-        <isRequired>true</isRequired>
-        <description>Description of condition/ injury. Or specify scoring system and a score.</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Hours Soaktime Capture</displayName>
-        <tagName>hours_soaktime_capture</tagName>
-        <description>If caught on longline, specify soak time In hours</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Minutes Fighttime Capture</displayName>
-        <tagName>minutes_fighttime_capture</tagName>
-        <description>If caught on rod and wheel or handline, specify fight time</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Minutes Operation</displayName>
-        <tagName>minutes_operation</tagName>
-        <description>Time used (minutes) in carrying out the attachment or surgical procedure.</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Minutes Revival</displayName>
-        <tagName>minutes_revival</tagName>
-        <description>If the animal is revived, specify revival time in minutes</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Tag Placement</displayName>
-        <tagName>tag_placement</tagName>
-        <description>Description of where the tag was placed.</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Mount Numbolts</displayName>
-        <tagName>mount_numbolts</tagName>
-        <description>Number of bolts used for mounting</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Implant Numsuture</displayName>
-        <tagName>implant_numsuture</tagName>
-        <description>Number of suture used to close the wound</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Tissue Sample Capture</displayName>
-        <tagName>tissue_sample_capture</tagName>
-        <description>List other sample types and sample IDs if collected</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Fate Recapture</displayName>
-        <tagName>fate_recapture</tagName>
-        <description>Fate of the animal upon recapture</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Lifestage Recapture</displayName>
-        <tagName>lifestage_recapture</tagName>
-        <description>Life stage of the animal</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Length Recapture</displayName>
-        <tagName>length_recapture</tagName>
-        <isRequired>true</isRequired>
-        <description>Length of the animal</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Length Unit Recapture</displayName>
-        <tagName>length_unit_recapture</tagName>
-        <isRequired>true</isRequired>
-        <description>Unit of length measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Length Type Recapture</displayName>
-        <tagName>length_type_recapture</tagName>
-        <isRequired>true</isRequired>
-        <description>Type of length measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Length Method Recapture</displayName>
-        <tagName>length_method_recapture</tagName>
-        <isRequired>true</isRequired>
-        <description>Method used to obtain the measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Weight Recapture</displayName>
-        <tagName>weight_recapture</tagName>
-        <description>Weight of the animal</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Weight Unit Recapture</displayName>
-        <tagName>weight_unit_recapture</tagName>
-        <description>Unit of weight measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Weight Type Recapture</displayName>
-        <tagName>weight_type_recapture</tagName>
-        <description>Type of weight measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Weight Method Recapture</displayName>
-        <tagName>weight_method_recapture</tagName>
-        <description>Method used to obtain the measurement</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Condition Recapture</displayName>
-        <tagName>condition_recapture</tagName>
-        <description>Description of condition/ injury. Or specify scoring system and a score.</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Hours Soaktime Recapture</displayName>
-        <tagName>hours_soaktime_recapture</tagName>
-        <description>If caught on longline, specify soak time In hours</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Minutes Fighttime Recapture</displayName>
-        <tagName>minutes_fighttime_recapture</tagName>
-        <description>If caught on rod and wheel or handline, specify fight time</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Tissue Sample Recapture</displayName>
-        <tagName>tissue_sample_recapture</tagName>
-        <description>List other sample types and sample IDs if collected</description>
-        <metadataType>animal</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Attachment Method</displayName>
-        <tagName>attachment_method</tagName>
-        <isRequired>true</isRequired>
-        <description>Method used to put the tag on/ in the animal</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Attachment Product</displayName>
-        <tagName>attachment_product</tagName>
-        <description>Brand name and/ product for attachment materials used</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Antifouling Product</displayName>
-        <tagName>antifouling_product</tagName>
-        <description>Brand name and/ product of antifoluling paint or coating applied</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Antiseptic Product</displayName>
-        <tagName>antiseptic_product</tagName>
-        <description>Brand name and/ product of antiseptic or sterilizing agent used during the attachment</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Anesthesic Product</displayName>
-        <tagName>anesthesic_product</tagName>
-        <description>Brand name and/ product of anesthesia used during the attachment</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Anchor Type</displayName>
-        <tagName>anchor_type</tagName>
-        <description>Type of anchor</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Anchor Material</displayName>
-        <tagName>anchor_material</tagName>
-        <description>Material of anchor</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Anchor Dimensions Mm</displayName>
-        <tagName>anchor_dimensions_mm</tagName>
-        <description>Dimensions (millimeter) as length, width, thichkness or diameter.</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Anchor Depth Cm</displayName>
-        <tagName>anchor_depth_cm</tagName>
-        <description>How deep (centimeter) should the anchor be in the animal?</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Tether Material</displayName>
-        <tagName>tether_material</tagName>
-        <description>Tether material for a towed tag</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Tether Assembly</displayName>
-        <tagName>tether_assembly</tagName>
-        <description>Materials and methods in constructing a tether</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Tether Length Cm</displayName>
-        <tagName>tether_length_cm</tagName>
-        <description>End to end length (centimeter) of a tether</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Float Additional</displayName>
-        <tagName>float_additional</tagName>
-        <description>Specify any additional floation used</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Mount Type</displayName>
-        <tagName>mount_type</tagName>
-        <description>Type of mount</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Release Method</displayName>
-        <tagName>release_method</tagName>
-        <description>Method to get a tag detached from the animal/ anchor</description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Release Forced</displayName>
-        <tagName>release_forced</tagName>
-        <description>If a mechanical release is engaged at depth (too avoid crushing the tag), specify the mechanism and
-            depth at which the release is engaged.
-        </description>
-        <metadataType>attachment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Lon Release</displayName>
-        <tagName>lon_release</tagName>
-        <isRequired>true</isRequired>
-        <description>Longitude (decimal degree) of deployment</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Lat Release</displayName>
-        <tagName>lat_release</tagName>
-        <isRequired>true</isRequired>
-        <description>Latitude (decimal degree) of deployment</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Location Capture</displayName>
-        <tagName>location_capture</tagName>
-        <description>Name or standard identifer of location</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Method Capture</displayName>
-        <tagName>method_capture</tagName>
-        <description>Type of gear used to catch the animal</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Method Landed</displayName>
-        <tagName>Method_landed</tagName>
-        <description>how was animal put aboard the vessel</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>School Capture</displayName>
-        <tagName>school_capture</tagName>
-        <description>Type of school in which the animal was caught</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Vessel Capture</displayName>
-        <tagName>vessel_capture</tagName>
-        <description>Name or standard identifer of vessel</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Flag Capture</displayName>
-        <tagName>flag_capture</tagName>
-        <description>The vessel’s country of registration</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Cruise Capture</displayName>
-        <tagName>cruise_capture</tagName>
-        <description>Name or standard identifer of cruise</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Station Capture</displayName>
-        <tagName>station_capture</tagName>
-        <description>Name or standard identifer of station</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Set Float Capture</displayName>
-        <tagName>set_float_capture</tagName>
-        <description>If caught on longline, include set number and float number</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Depth M Capture</displayName>
-        <tagName>depth_m_capture</tagName>
-        <description>Depth (meters) at which the animal was caught</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Hook Capture</displayName>
-        <tagName>hook_capture</tagName>
-        <description>Type of hook used</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Baitlure Capture</displayName>
-        <tagName>baitlure_capture</tagName>
-        <description>Bait, chum, lure or decoy used</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Temp Degc Capture</displayName>
-        <tagName>temp_degC_capture</tagName>
-        <description>Air or sea surface temperature (Celcius) when the animal was caught</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Wind Knots Capture</displayName>
-        <tagName>wind_knots_capture</tagName>
-        <description>Wind speed (knots) when the animal was caught</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Seastate Capture</displayName>
-        <tagName>seastate_capture</tagName>
-        <description>World Meteorological Organization sea state code (0-9)</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Person Angler Capture</displayName>
-        <tagName>person_angler_capture</tagName>
-        <description>Person responsible for angling</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Person Tagger Capture</displayName>
-        <tagName>person_tagger_capture</tagName>
-        <isRequired>true</isRequired>
-        <description>Person responsible for tagging or surgery</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Othertags Capture</displayName>
-        <tagName>othertags_capture</tagName>
-        <description>List tag IDs for conventional, acoustic, PIT, band or satellite tags for multi-tagged situation,
-            photoID, photo/video footage file names
-        </description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Datetime Release</displayName>
-        <tagName>datetime_release</tagName>
-        <isRequired>true</isRequired>
-        <description>Local date time (yyyy-mm-dd hh:mm:ss) of deployment</description>
-        <metadataType>deployment</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Device Type</displayName>
-        <tagName>device_type</tagName>
-        <isRequired>true</isRequired>
-        <description>Type of device</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Manufacturer</displayName>
-        <tagName>manufacturer</tagName>
-        <isRequired>true</isRequired>
-        <description>Name of manufacturer</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Model</displayName>
-        <tagName>model</tagName>
-        <isRequired>true</isRequired>
-        <description>Model name</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Serial Number</displayName>
-        <tagName>serial_number</tagName>
-        <isRequired>true</isRequired>
-        <description>Serial number</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Device Name</displayName>
-        <tagName>device_name</tagName>
-        <isRequired>true</isRequired>
-        <description>Append an identifer that is unique within your organization. This is essential if a device is
-            recycled.
-        </description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Person Owner</displayName>
-        <tagName>person_owner</tagName>
-        <isRequired>true</isRequired>
-        <description>Researcher/ organization owning the device</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Owner Contact</displayName>
-        <tagName>owner_contact</tagName>
-        <isRequired>true</isRequired>
-        <description>Contact email/ telephone/ address</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Project</displayName>
-        <tagName>project</tagName>
-        <description>Name or identifer for project/ grant number</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Firmware</displayName>
-        <tagName>firmware</tagName>
-        <isRequired>true</isRequired>
-        <description>Version number of the firmware used to build the device</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Specs</displayName>
-        <tagName>specs</tagName>
-        <description>Specification document name/ URL/ file (e.g., in xml)</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Date Shipment</displayName>
-        <tagName>date_shipment</tagName>
-        <description>Date (yyyy-mm-dd) of receiving the device from manufacturer</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Ptt</displayName>
-        <tagName>ptt</tagName>
-        <description>Platform Transmitting Terminal (PTT) number for Argos transmission.</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Ptt Hex</displayName>
-        <tagName>ptt_hex</tagName>
-        <description>PTT in hexadecimal</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Code Map</displayName>
-        <tagName>code_map</tagName>
-        <description>Placeholder for acoustic tags</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Ping Code</displayName>
-        <tagName>ping_code</tagName>
-        <description>Placeholder for acoustic tags</description>
-        <metadataType>device</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>End Details</displayName>
-        <tagName>end_details</tagName>
-        <isRequired>true</isRequired>
-        <description>TODO</description>
-        <metadataType>end_of_mission</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Datetime End</displayName>
-        <tagName>datetime_end</tagName>
-        <isRequired>true</isRequired>
-        <description>End date time (yyyy-mm-dd hh:mm:ss) or date range (BETWEEN yyyy-mm-dd AND yyyy-mm-dd) if estimated/
-            guessed.
-        </description>
-        <metadataType>end_of_mission</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Datetime Death</displayName>
-        <tagName>datetime_death</tagName>
-        <description>If mortality occurs before end datetime, specify date time (yyyy-mm-dd hh:mm:ss)</description>
-        <metadataType>end_of_mission</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Lon End</displayName>
-        <tagName>lon_end</tagName>
-        <isRequired>true</isRequired>
-        <description>End longitude</description>
-        <metadataType>end_of_mission</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Lat End</displayName>
-        <tagName>lat_end</tagName>
-        <isRequired>true</isRequired>
-        <description>End latitude</description>
-        <metadataType>end_of_mission</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Locationclass End</displayName>
-        <tagName>locationclass_end</tagName>
-        <description>Argos location class for popup location or satellite transmission</description>
-        <metadataType>end_of_mission</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>End Type</displayName>
-        <tagName>end_type</tagName>
-        <isRequired>true</isRequired>
-        <description>Description of how the end point is derived for the device.</description>
-        <metadataType>end_of_mission</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Programming Software</displayName>
-        <tagName>programming_software</tagName>
-        <isRequired>true</isRequired>
-        <description>Programming software with version number</description>
-        <metadataType>programming</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Programming Report</displayName>
-        <tagName>programming_report</tagName>
-        <isRequired>true</isRequired>
-        <description>File/ URL to a report listing the details of programming</description>
-        <metadataType>programming</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Date Programming</displayName>
-        <tagName>date_programming</tagName>
-        <description>Date (yyyy-mm-dd) of programming</description>
-        <metadataType>programming</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Person Programmer</displayName>
-        <tagName>person_programmer</tagName>
-        <description>Person responsible for the programming</description>
-        <metadataType>programming</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Seconds Sampling</displayName>
-        <tagName>seconds_sampling</tagName>
-        <description>Sampling rate (seconds) for sensor sampling</description>
-        <metadataType>programming</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Seconds Sampling Highfreq</displayName>
-        <tagName>seconds_sampling_highfreq</tagName>
-        <description>Sampling rate (seconds) for sensor sampling at a higher frequency</description>
-        <metadataType>programming</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Seconds Writingdata</displayName>
-        <tagName>seconds_writingdata</tagName>
-        <description>Time interval in seconds when sampled data are written to onboard storage memory</description>
-        <metadataType>programming</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Minutes Summary</displayName>
-        <tagName>minutes_summary</tagName>
-        <description>Interval in minutes during when data are summarized for that period</description>
-        <metadataType>programming</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Days Mission</displayName>
-        <tagName>days_mission</tagName>
-        <description>Programmed mission length in days</description>
-        <metadataType>programming</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Days Constantdepth</displayName>
-        <tagName>days_constantdepth</tagName>
-        <description>Days at a constant depth before release is initiated</description>
-        <metadataType>programming</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Found Problem</displayName>
-        <tagName>found_problem</tagName>
-        <isRequired>true</isRequired>
-        <description>Is there any problem found in this dataset? One of 3 responses: yes, no, unexamined.</description>
-        <metadataType>quality</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Person Qc</displayName>
-        <tagName>person_qc</tagName>
-        <isRequired>true</isRequired>
-        <description>Person responsible for quality control</description>
-        <metadataType>quality</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Problem Affecteddates</displayName>
-        <tagName>problem_affecteddates</tagName>
-        <description>Date range (BETWEEN yyyy-mm-dd AND yyyy-mm-dd) in which data quality is in doubt</description>
-        <metadataType>quality</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Problem Numof</displayName>
-        <tagName>problem_numof</tagName>
-        <description>Number of problems found</description>
-        <metadataType>quality</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Problem Summary</displayName>
-        <tagName>problem_summary</tagName>
-        <description>List short description(s) for the problem(s)</description>
-        <metadataType>quality</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Problem Details</displayName>
-        <tagName>problem_details</tagName>
-        <description>Provide details for the problem(s)</description>
-        <metadataType>quality</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Calibration File</displayName>
-        <tagName>calibration_file</tagName>
-        <description>Files/ URLs used for calibration of sensors</description>
-        <metadataType>quality</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Location Recapture</displayName>
-        <tagName>location_recapture</tagName>
-        <description>Name or standard identifer of location</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Method Recapture</displayName>
-        <tagName>method_recapture</tagName>
-        <description>Type of gear used to catch the animal</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>School Recapture</displayName>
-        <tagName>school_recapture</tagName>
-        <description>Type of school in which the animal was caught</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Vessel Recapture</displayName>
-        <tagName>vessel_recapture</tagName>
-        <description>Name or standard identifer of vessel</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Flag Capture</displayName>
-        <tagName>flag_capture</tagName>
-        <description>The vessel’s country of registration</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Cruise Recapture</displayName>
-        <tagName>cruise_recapture</tagName>
-        <description>Name or standard identifer of cruise</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Station Recapture</displayName>
-        <tagName>station_recapture</tagName>
-        <description>Name or standard identifer of station</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Set Float Recapture</displayName>
-        <tagName>set_float_recapture</tagName>
-        <description>If caught on longline, include set number and float number</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Depth M Recapture</displayName>
-        <tagName>depth_m_recapture</tagName>
-        <description>Depth (meters) at which the animal was caught</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Hook Recapture</displayName>
-        <tagName>hook_recapture</tagName>
-        <description>Type of hook used</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Baitlure Recapture</displayName>
-        <tagName>baitlure_recapture</tagName>
-        <description>Bait, chum, lure or decoy used</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Temp Degc Recapture</displayName>
-        <tagName>temp_degC_recapture</tagName>
-        <description>Air or sea surface temperature (Celcius) when the animal was caught</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Wind Knots Recapture</displayName>
-        <tagName>wind_knots_recapture</tagName>
-        <description>Wind speed (knots) when the animal was caught</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Seastate Recapture</displayName>
-        <tagName>seastate_recapture</tagName>
-        <description>World Meteorological Organization sea state code (0-9)</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Person Recapture</displayName>
-        <tagName>person_recapture</tagName>
-        <description>Person responsible for the recapture</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Person Tagger Recapture</displayName>
-        <tagName>person_tagger_recapture</tagName>
-        <description>Person responsible for tag-and-release</description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Retagged Recapture</displayName>
-        <tagName>retagged_recapture</tagName>
-        <description>List tag IDs for conventional, acoustic, PIT, band or satellite tags for multi-tagged situation,
-            photoID, photo/video footage file names
-        </description>
-        <metadataType>recovery</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Waypoints Source</displayName>
-        <tagName>waypoints_source</tagName>
-        <isRequired>true</isRequired>
-        <description>State the source for waypoints</description>
-        <metadataType>waypoints</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Waypoints Method</displayName>
-        <tagName>waypoints_method</tagName>
-        <description>If "waypoints_source" = "modeled", specify the method used to estimate the positions. Include
-            citation/ reference/ url if available
-        </description>
-        <metadataType>waypoints</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Waypoints Software</displayName>
-        <tagName>waypoints_software</tagName>
-        <description>Software packages used with version number</description>
-        <metadataType>waypoints</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Geolocation Parameters</displayName>
-        <tagName>geolocation_parameters</tagName>
-        <description>List of Geocorrection Parameters and associated values implemented. Comma seperated list in format
-            'parameter1:value', 'parameter2:value',..
-        </description>
-        <metadataType>waypoints</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Geolocation Output</displayName>
-        <tagName>geolocation_output</tagName>
-        <description>URL/URI to any relevant geocorrection output file(s) produced</description>
-        <metadataType>waypoints</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Interpolation Method</displayName>
-        <tagName>interpolation_method</tagName>
-        <description>None if no interpolation. Otherwise, specify method/ software used.</description>
-        <metadataType>waypoints</metadataType>
-    </etagGlobalMetadataItem>
-    <etagGlobalMetadataItem>
-        <displayName>Interpolation Time</displayName>
-        <tagName>interpolation_time</tagName>
-        <description>Specify the time interval for interpolation</description>
-        <metadataType>waypoints</metadataType>
-    </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Ancillary Position Source</displayName>
+    <tagName>ancillary_position_source</tagName>
+    <description>List available source(s) for other known position(s)</description>
+    <metadataType>ancillary_positions</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Ancillary Position Deviceid</displayName>
+    <tagName>ancillary_position_deviceid</tagName>
+    <description>List chronologically the devices collecting the ancillary position(s)</description>
+    <metadataType>ancillary_positions</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Ancillary Position Datetime</displayName>
+    <tagName>ancillary_position_datetime</tagName>
+    <description>List chronologically the datetime (yyyy-mm-dd hh:mm:ss) for ancillary position(s)
+    </description>
+    <metadataType>ancillary_positions</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Ancillary Position Lon</displayName>
+    <tagName>ancillary_position_lon</tagName>
+    <description>List chronologically the longitude for ancillary position(s)</description>
+    <metadataType>ancillary_positions</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Ancillary Position Lat</displayName>
+    <tagName>ancillary_position_lat</tagName>
+    <description>List chronologically the latitude for ancillary position(s)</description>
+    <metadataType>ancillary_positions</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Ancillary Position Quality</displayName>
+    <tagName>ancillary_position_quality</tagName>
+    <description>List chronologically the quality (location class/ accuracy/ range etc.) for
+      ancillary position(s).
+      Can be qualitative.
+    </description>
+    <metadataType>ancillary_positions</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Species Capture</displayName>
+    <tagName>species_capture</tagName>
+    <isRequired>true</isRequired>
+    <description>Common name(s) or FAO code for species name</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Speciestsn Capture</displayName>
+    <tagName>speciesTSN_capture</tagName>
+    <isRequired>true</isRequired>
+    <description>Taxononomic Serial Number (TSN) from ITIS (www.itis.gov)</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Lifestage Capture</displayName>
+    <tagName>lifestage_capture</tagName>
+    <description>Life stage of the animal</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Sex</displayName>
+    <tagName>sex</tagName>
+    <description>Sex of the animal</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Length Capture</displayName>
+    <tagName>length_capture</tagName>
+    <description>Length of the animal</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Length Unit Capture</displayName>
+    <tagName>length_unit_capture</tagName>
+    <description>Unit of length measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Length Type Capture</displayName>
+    <tagName>length_type_capture</tagName>
+    <isRequired>true</isRequired>
+    <description>Type of length measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Length Method Capture</displayName>
+    <tagName>length_method_capture</tagName>
+    <isRequired>true</isRequired>
+    <description>Method used to obtain the measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Weight Capture</displayName>
+    <tagName>weight_capture</tagName>
+    <description>Weight of the animal</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Weight Unit Capture</displayName>
+    <tagName>weight_unit_capture</tagName>
+    <description>Unit of weight measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Weight Type Capture</displayName>
+    <tagName>weight_type_capture</tagName>
+    <description>Type of weight measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Weight Method Capture</displayName>
+    <tagName>weight_method_capture</tagName>
+    <description>Method used to obtain the measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Condition Capture</displayName>
+    <tagName>condition_capture</tagName>
+    <isRequired>true</isRequired>
+    <description>Description of condition/ injury. Or specify scoring system and a score.
+    </description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Hours Soaktime Capture</displayName>
+    <tagName>hours_soaktime_capture</tagName>
+    <description>If caught on longline, specify soak time In hours</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Minutes Fighttime Capture</displayName>
+    <tagName>minutes_fighttime_capture</tagName>
+    <description>If caught on rod and wheel or handline, specify fight time</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Minutes Operation</displayName>
+    <tagName>minutes_operation</tagName>
+    <description>Time used (minutes) in carrying out the attachment or surgical procedure.
+    </description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Minutes Revival</displayName>
+    <tagName>minutes_revival</tagName>
+    <description>If the animal is revived, specify revival time in minutes</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Tag Placement</displayName>
+    <tagName>tag_placement</tagName>
+    <description>Description of where the tag was placed.</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Mount Numbolts</displayName>
+    <tagName>mount_numbolts</tagName>
+    <description>Number of bolts used for mounting</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Implant Numsuture</displayName>
+    <tagName>implant_numsuture</tagName>
+    <description>Number of suture used to close the wound</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Tissue Sample Capture</displayName>
+    <tagName>tissue_sample_capture</tagName>
+    <description>List other sample types and sample IDs if collected</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Fate Recapture</displayName>
+    <tagName>fate_recapture</tagName>
+    <description>Fate of the animal upon recapture</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Lifestage Recapture</displayName>
+    <tagName>lifestage_recapture</tagName>
+    <description>Life stage of the animal</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Length Recapture</displayName>
+    <tagName>length_recapture</tagName>
+    <isRequired>true</isRequired>
+    <description>Length of the animal</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Length Unit Recapture</displayName>
+    <tagName>length_unit_recapture</tagName>
+    <isRequired>true</isRequired>
+    <description>Unit of length measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Length Type Recapture</displayName>
+    <tagName>length_type_recapture</tagName>
+    <isRequired>true</isRequired>
+    <description>Type of length measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Length Method Recapture</displayName>
+    <tagName>length_method_recapture</tagName>
+    <isRequired>true</isRequired>
+    <description>Method used to obtain the measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Weight Recapture</displayName>
+    <tagName>weight_recapture</tagName>
+    <description>Weight of the animal</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Weight Unit Recapture</displayName>
+    <tagName>weight_unit_recapture</tagName>
+    <description>Unit of weight measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Weight Type Recapture</displayName>
+    <tagName>weight_type_recapture</tagName>
+    <description>Type of weight measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Weight Method Recapture</displayName>
+    <tagName>weight_method_recapture</tagName>
+    <description>Method used to obtain the measurement</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Condition Recapture</displayName>
+    <tagName>condition_recapture</tagName>
+    <description>Description of condition/ injury. Or specify scoring system and a score.
+    </description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Hours Soaktime Recapture</displayName>
+    <tagName>hours_soaktime_recapture</tagName>
+    <description>If caught on longline, specify soak time In hours</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Minutes Fighttime Recapture</displayName>
+    <tagName>minutes_fighttime_recapture</tagName>
+    <description>If caught on rod and wheel or handline, specify fight time</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Tissue Sample Recapture</displayName>
+    <tagName>tissue_sample_recapture</tagName>
+    <description>List other sample types and sample IDs if collected</description>
+    <metadataType>animal</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Attachment Method</displayName>
+    <tagName>attachment_method</tagName>
+    <isRequired>true</isRequired>
+    <description>Method used to put the tag on/ in the animal</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Attachment Product</displayName>
+    <tagName>attachment_product</tagName>
+    <description>Brand name and/ product for attachment materials used</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Antifouling Product</displayName>
+    <tagName>antifouling_product</tagName>
+    <description>Brand name and/ product of antifoluling paint or coating applied</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Antiseptic Product</displayName>
+    <tagName>antiseptic_product</tagName>
+    <description>Brand name and/ product of antiseptic or sterilizing agent used during the
+      attachment
+    </description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Anesthesic Product</displayName>
+    <tagName>anesthesic_product</tagName>
+    <description>Brand name and/ product of anesthesia used during the attachment</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Anchor Type</displayName>
+    <tagName>anchor_type</tagName>
+    <description>Type of anchor</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Anchor Material</displayName>
+    <tagName>anchor_material</tagName>
+    <description>Material of anchor</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Anchor Dimensions Mm</displayName>
+    <tagName>anchor_dimensions_mm</tagName>
+    <description>Dimensions (millimeter) as length, width, thichkness or diameter.</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Anchor Depth Cm</displayName>
+    <tagName>anchor_depth_cm</tagName>
+    <description>How deep (centimeter) should the anchor be in the animal?</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Tether Material</displayName>
+    <tagName>tether_material</tagName>
+    <description>Tether material for a towed tag</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Tether Assembly</displayName>
+    <tagName>tether_assembly</tagName>
+    <description>Materials and methods in constructing a tether</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Tether Length Cm</displayName>
+    <tagName>tether_length_cm</tagName>
+    <description>End to end length (centimeter) of a tether</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Float Additional</displayName>
+    <tagName>float_additional</tagName>
+    <description>Specify any additional floation used</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Mount Type</displayName>
+    <tagName>mount_type</tagName>
+    <description>Type of mount</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Release Method</displayName>
+    <tagName>release_method</tagName>
+    <description>Method to get a tag detached from the animal/ anchor</description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Release Forced</displayName>
+    <tagName>release_forced</tagName>
+    <description>If a mechanical release is engaged at depth (too avoid crushing the tag), specify
+      the mechanism and
+      depth at which the release is engaged.
+    </description>
+    <metadataType>attachment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Lon Release</displayName>
+    <tagName>lon_release</tagName>
+    <isRequired>true</isRequired>
+    <description>Longitude (decimal degree) of deployment</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Lat Release</displayName>
+    <tagName>lat_release</tagName>
+    <isRequired>true</isRequired>
+    <description>Latitude (decimal degree) of deployment</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Location Capture</displayName>
+    <tagName>location_capture</tagName>
+    <description>Name or standard identifer of location</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Method Capture</displayName>
+    <tagName>method_capture</tagName>
+    <description>Type of gear used to catch the animal</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Method Landed</displayName>
+    <tagName>Method_landed</tagName>
+    <description>how was animal put aboard the vessel</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>School Capture</displayName>
+    <tagName>school_capture</tagName>
+    <description>Type of school in which the animal was caught</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Vessel Capture</displayName>
+    <tagName>vessel_capture</tagName>
+    <description>Name or standard identifer of vessel</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Flag Capture</displayName>
+    <tagName>flag_capture</tagName>
+    <description>The vessel’s country of registration</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Cruise Capture</displayName>
+    <tagName>cruise_capture</tagName>
+    <description>Name or standard identifer of cruise</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Station Capture</displayName>
+    <tagName>station_capture</tagName>
+    <description>Name or standard identifer of station</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Set Float Capture</displayName>
+    <tagName>set_float_capture</tagName>
+    <description>If caught on longline, include set number and float number</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Depth M Capture</displayName>
+    <tagName>depth_m_capture</tagName>
+    <description>Depth (meters) at which the animal was caught</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Hook Capture</displayName>
+    <tagName>hook_capture</tagName>
+    <description>Type of hook used</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Baitlure Capture</displayName>
+    <tagName>baitlure_capture</tagName>
+    <description>Bait, chum, lure or decoy used</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Temp Degc Capture</displayName>
+    <tagName>temp_degC_capture</tagName>
+    <description>Air or sea surface temperature (Celcius) when the animal was caught</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Wind Knots Capture</displayName>
+    <tagName>wind_knots_capture</tagName>
+    <description>Wind speed (knots) when the animal was caught</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Seastate Capture</displayName>
+    <tagName>seastate_capture</tagName>
+    <description>World Meteorological Organization sea state code (0-9)</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Person Angler Capture</displayName>
+    <tagName>person_angler_capture</tagName>
+    <description>Person responsible for angling</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Person Tagger Capture</displayName>
+    <tagName>person_tagger_capture</tagName>
+    <isRequired>true</isRequired>
+    <description>Person responsible for tagging or surgery</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Othertags Capture</displayName>
+    <tagName>othertags_capture</tagName>
+    <description>List tag IDs for conventional, acoustic, PIT, band or satellite tags for
+      multi-tagged situation,
+      photoID, photo/video footage file names
+    </description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Datetime Release</displayName>
+    <tagName>datetime_release</tagName>
+    <isRequired>true</isRequired>
+    <description>Local date time (yyyy-mm-dd hh:mm:ss) of deployment</description>
+    <metadataType>deployment</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Device Type</displayName>
+    <tagName>device_type</tagName>
+    <isRequired>true</isRequired>
+    <description>Type of device</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Manufacturer</displayName>
+    <tagName>manufacturer</tagName>
+    <isRequired>true</isRequired>
+    <description>Name of manufacturer</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Model</displayName>
+    <tagName>model</tagName>
+    <isRequired>true</isRequired>
+    <description>Model name</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Serial Number</displayName>
+    <tagName>serial_number</tagName>
+    <isRequired>true</isRequired>
+    <description>Serial number</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Device Name</displayName>
+    <tagName>device_name</tagName>
+    <isRequired>true</isRequired>
+    <description>Append an identifer that is unique within your organization. This is essential if a
+      device is
+      recycled.
+    </description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Person Owner</displayName>
+    <tagName>person_owner</tagName>
+    <isRequired>true</isRequired>
+    <description>Researcher/ organization owning the device</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Owner Contact</displayName>
+    <tagName>owner_contact</tagName>
+    <isRequired>true</isRequired>
+    <description>Contact email/ telephone/ address</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Project</displayName>
+    <tagName>project</tagName>
+    <description>Name or identifer for project/ grant number</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Firmware</displayName>
+    <tagName>firmware</tagName>
+    <isRequired>true</isRequired>
+    <description>Version number of the firmware used to build the device</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Specs</displayName>
+    <tagName>specs</tagName>
+    <description>Specification document name/ URL/ file (e.g., in xml)</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Date Shipment</displayName>
+    <tagName>date_shipment</tagName>
+    <description>Date (yyyy-mm-dd) of receiving the device from manufacturer</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Ptt</displayName>
+    <tagName>ptt</tagName>
+    <description>Platform Transmitting Terminal (PTT) number for Argos transmission.</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Ptt Hex</displayName>
+    <tagName>ptt_hex</tagName>
+    <description>PTT in hexadecimal</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Code Map</displayName>
+    <tagName>code_map</tagName>
+    <description>Placeholder for acoustic tags</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Ping Code</displayName>
+    <tagName>ping_code</tagName>
+    <description>Placeholder for acoustic tags</description>
+    <metadataType>device</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>End Details</displayName>
+    <tagName>end_details</tagName>
+    <isRequired>true</isRequired>
+    <description>TODO</description>
+    <metadataType>end_of_mission</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Datetime End</displayName>
+    <tagName>datetime_end</tagName>
+    <isRequired>true</isRequired>
+    <description>End date time (yyyy-mm-dd hh:mm:ss) or date range (BETWEEN yyyy-mm-dd AND
+      yyyy-mm-dd) if estimated/
+      guessed.
+    </description>
+    <metadataType>end_of_mission</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Datetime Death</displayName>
+    <tagName>datetime_death</tagName>
+    <description>If mortality occurs before end datetime, specify date time (yyyy-mm-dd hh:mm:ss)
+    </description>
+    <metadataType>end_of_mission</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Lon End</displayName>
+    <tagName>lon_end</tagName>
+    <isRequired>true</isRequired>
+    <description>End longitude</description>
+    <metadataType>end_of_mission</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Lat End</displayName>
+    <tagName>lat_end</tagName>
+    <isRequired>true</isRequired>
+    <description>End latitude</description>
+    <metadataType>end_of_mission</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Locationclass End</displayName>
+    <tagName>locationclass_end</tagName>
+    <description>Argos location class for popup location or satellite transmission</description>
+    <metadataType>end_of_mission</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>End Type</displayName>
+    <tagName>end_type</tagName>
+    <isRequired>true</isRequired>
+    <description>Description of how the end point is derived for the device.</description>
+    <metadataType>end_of_mission</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Programming Software</displayName>
+    <tagName>programming_software</tagName>
+    <isRequired>true</isRequired>
+    <description>Programming software with version number</description>
+    <metadataType>programming</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Programming Report</displayName>
+    <tagName>programming_report</tagName>
+    <isRequired>true</isRequired>
+    <description>File/ URL to a report listing the details of programming</description>
+    <metadataType>programming</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Date Programming</displayName>
+    <tagName>date_programming</tagName>
+    <description>Date (yyyy-mm-dd) of programming</description>
+    <metadataType>programming</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Person Programmer</displayName>
+    <tagName>person_programmer</tagName>
+    <description>Person responsible for the programming</description>
+    <metadataType>programming</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Seconds Sampling</displayName>
+    <tagName>seconds_sampling</tagName>
+    <description>Sampling rate (seconds) for sensor sampling</description>
+    <metadataType>programming</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Seconds Sampling Highfreq</displayName>
+    <tagName>seconds_sampling_highfreq</tagName>
+    <description>Sampling rate (seconds) for sensor sampling at a higher frequency</description>
+    <metadataType>programming</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Seconds Writingdata</displayName>
+    <tagName>seconds_writingdata</tagName>
+    <description>Time interval in seconds when sampled data are written to onboard storage memory
+    </description>
+    <metadataType>programming</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Minutes Summary</displayName>
+    <tagName>minutes_summary</tagName>
+    <description>Interval in minutes during when data are summarized for that period</description>
+    <metadataType>programming</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Days Mission</displayName>
+    <tagName>days_mission</tagName>
+    <description>Programmed mission length in days</description>
+    <metadataType>programming</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Days Constantdepth</displayName>
+    <tagName>days_constantdepth</tagName>
+    <description>Days at a constant depth before release is initiated</description>
+    <metadataType>programming</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Found Problem</displayName>
+    <tagName>found_problem</tagName>
+    <isRequired>true</isRequired>
+    <description>Is there any problem found in this dataset? One of 3 responses: yes, no,
+      unexamined.
+    </description>
+    <metadataType>quality</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Person Qc</displayName>
+    <tagName>person_qc</tagName>
+    <isRequired>true</isRequired>
+    <description>Person responsible for quality control</description>
+    <metadataType>quality</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Problem Affecteddates</displayName>
+    <tagName>problem_affecteddates</tagName>
+    <description>Date range (BETWEEN yyyy-mm-dd AND yyyy-mm-dd) in which data quality is in doubt
+    </description>
+    <metadataType>quality</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Problem Numof</displayName>
+    <tagName>problem_numof</tagName>
+    <description>Number of problems found</description>
+    <metadataType>quality</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Problem Summary</displayName>
+    <tagName>problem_summary</tagName>
+    <description>List short description(s) for the problem(s)</description>
+    <metadataType>quality</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Problem Details</displayName>
+    <tagName>problem_details</tagName>
+    <description>Provide details for the problem(s)</description>
+    <metadataType>quality</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Calibration File</displayName>
+    <tagName>calibration_file</tagName>
+    <description>Files/ URLs used for calibration of sensors</description>
+    <metadataType>quality</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Location Recapture</displayName>
+    <tagName>location_recapture</tagName>
+    <description>Name or standard identifer of location</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Method Recapture</displayName>
+    <tagName>method_recapture</tagName>
+    <description>Type of gear used to catch the animal</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>School Recapture</displayName>
+    <tagName>school_recapture</tagName>
+    <description>Type of school in which the animal was caught</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Vessel Recapture</displayName>
+    <tagName>vessel_recapture</tagName>
+    <description>Name or standard identifer of vessel</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Flag Capture</displayName>
+    <tagName>flag_capture</tagName>
+    <description>The vessel’s country of registration</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Cruise Recapture</displayName>
+    <tagName>cruise_recapture</tagName>
+    <description>Name or standard identifer of cruise</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Station Recapture</displayName>
+    <tagName>station_recapture</tagName>
+    <description>Name or standard identifer of station</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Set Float Recapture</displayName>
+    <tagName>set_float_recapture</tagName>
+    <description>If caught on longline, include set number and float number</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Depth M Recapture</displayName>
+    <tagName>depth_m_recapture</tagName>
+    <description>Depth (meters) at which the animal was caught</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Hook Recapture</displayName>
+    <tagName>hook_recapture</tagName>
+    <description>Type of hook used</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Baitlure Recapture</displayName>
+    <tagName>baitlure_recapture</tagName>
+    <description>Bait, chum, lure or decoy used</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Temp Degc Recapture</displayName>
+    <tagName>temp_degC_recapture</tagName>
+    <description>Air or sea surface temperature (Celcius) when the animal was caught</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Wind Knots Recapture</displayName>
+    <tagName>wind_knots_recapture</tagName>
+    <description>Wind speed (knots) when the animal was caught</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Seastate Recapture</displayName>
+    <tagName>seastate_recapture</tagName>
+    <description>World Meteorological Organization sea state code (0-9)</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Person Recapture</displayName>
+    <tagName>person_recapture</tagName>
+    <description>Person responsible for the recapture</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Person Tagger Recapture</displayName>
+    <tagName>person_tagger_recapture</tagName>
+    <description>Person responsible for tag-and-release</description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Retagged Recapture</displayName>
+    <tagName>retagged_recapture</tagName>
+    <description>List tag IDs for conventional, acoustic, PIT, band or satellite tags for
+      multi-tagged situation,
+      photoID, photo/video footage file names
+    </description>
+    <metadataType>recovery</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Waypoints Source</displayName>
+    <tagName>waypoints_source</tagName>
+    <isRequired>true</isRequired>
+    <description>State the source for waypoints</description>
+    <metadataType>waypoints</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Waypoints Method</displayName>
+    <tagName>waypoints_method</tagName>
+    <description>If "waypoints_source" = "modeled", specify the method used to estimate the
+      positions. Include
+      citation/ reference/ url if available
+    </description>
+    <metadataType>waypoints</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Waypoints Software</displayName>
+    <tagName>waypoints_software</tagName>
+    <description>Software packages used with version number</description>
+    <metadataType>waypoints</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Geolocation Parameters</displayName>
+    <tagName>geolocation_parameters</tagName>
+    <description>List of Geocorrection Parameters and associated values implemented. Comma seperated
+      list in format
+      'parameter1:value', 'parameter2:value',..
+    </description>
+    <metadataType>waypoints</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Geolocation Output</displayName>
+    <tagName>geolocation_output</tagName>
+    <description>URL/URI to any relevant geocorrection output file(s) produced</description>
+    <metadataType>waypoints</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Interpolation Method</displayName>
+    <tagName>interpolation_method</tagName>
+    <description>None if no interpolation. Otherwise, specify method/ software used.</description>
+    <metadataType>waypoints</metadataType>
+  </etagGlobalMetadataItem>
+  <etagGlobalMetadataItem>
+    <displayName>Interpolation Time</displayName>
+    <tagName>interpolation_time</tagName>
+    <description>Specify the time interval for interpolation</description>
+    <metadataType>waypoints</metadataType>
+  </etagGlobalMetadataItem>
 </etagGlobalMetadataItems>

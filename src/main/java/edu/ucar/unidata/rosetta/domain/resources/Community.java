@@ -1,9 +1,8 @@
 package edu.ucar.unidata.rosetta.domain.resources;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Community extends RosettaResource {
 
@@ -31,16 +30,16 @@ public class Community extends RosettaResource {
     return fileType;
   }
 
+  public void setFileType(List<String> fileType) {
+    this.fileType = fileType;
+  }
+
   public void setFileType(String fileType) {
     this.fileType.add(fileType);
   }
 
   public void addToFileType(String fileType) {
     this.fileType.add(fileType);
-  }
-
-  public void setFileType(List<String> fileType) {
-    this.fileType = fileType;
   }
 
   public List<Platform> getPlatforms() {

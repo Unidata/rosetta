@@ -1,11 +1,16 @@
 package edu.ucar.unidata.rosetta.util;
 
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.Locale;
-
 import jxl.Cell;
 import jxl.CellType;
 import jxl.DateCell;
@@ -13,7 +18,6 @@ import jxl.Sheet;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 

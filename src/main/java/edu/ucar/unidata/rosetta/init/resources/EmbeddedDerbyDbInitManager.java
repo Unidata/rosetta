@@ -1,10 +1,13 @@
 package edu.ucar.unidata.rosetta.init.resources;
 
-import edu.ucar.unidata.rosetta.domain.resources.*;
+import edu.ucar.unidata.rosetta.domain.resources.CfType;
+import edu.ucar.unidata.rosetta.domain.resources.Community;
+import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
+import edu.ucar.unidata.rosetta.domain.resources.FileType;
+import edu.ucar.unidata.rosetta.domain.resources.Platform;
+import edu.ucar.unidata.rosetta.domain.resources.RosettaResource;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-
 import java.io.File;
-
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -12,13 +15,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-
-import java.util.*;
-
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 /**
@@ -125,12 +129,23 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
       // Populate properties table.
       populatePropertiesTable(props);
 
+      String createCfTypeDataTable = "CREATE TABLE cfTypeData " +
+          "(" +
+          "id VARCHAR(255) primary key not null, " +
+          "cfType VARCHAR(50), " +
+          "community VARCHAR(100), " +
+          "metadataProfile VARCHAR(10), " +
+          "platform VARCHAR(100)" +
+          ")";
+      createTable(createCfTypeDataTable, props);
+
       String createDataTable = "CREATE TABLE data " +
           "(" +
           "id VARCHAR(255) primary key not null, " +
-          "platform VARCHAR(255), " +
-          "community VARCHAR(255), " +
-          "cfType VARCHAR(255), " +
+          "cfType VARCHAR(50), " +
+          "community VARCHAR(100), " +
+          "metadataProfile VARCHAR(10), " +
+          "platform VARCHAR(100), " +
           "dataFileName VARCHAR(255), " +
           "dataFileType VARCHAR(255), " +
           "positionalFileName VARCHAR(255), " +

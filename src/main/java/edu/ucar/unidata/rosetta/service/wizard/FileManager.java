@@ -2,10 +2,8 @@ package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-
 import java.io.File;
 import java.util.List;
-
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 
