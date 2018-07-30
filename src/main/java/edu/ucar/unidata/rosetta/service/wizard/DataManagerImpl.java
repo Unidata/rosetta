@@ -39,16 +39,10 @@ public class DataManagerImpl implements DataManager {
 
   private static final Logger logger = Logger.getLogger(DataManagerImpl.class);
 
-  private CfTypeDao cfTypeDao;
-  private CommunityDao communityDao;
   private DataDao dataDao;
-  private DelimiterDao delimiterDao;
-  private FileTypeDao fileTypeDao;
-  private PlatformDao platformDao;
   private PropertiesDao propertiesDao;
 
   // The other managers we make use of in this file.
-
   @Resource(name = "daoManager")
   private DaoManager daoManager;
 
@@ -57,6 +51,9 @@ public class DataManagerImpl implements DataManager {
 
   @Resource(name = "metadataManager")
   private MetadataManager metadataManager;
+
+  @Resource(name = "resourceManager")
+  private ResourceManager resourceManager;
 
   /**
    * Converts the uploaded data file(s) to netCDF and writes a template for to aid in future
@@ -94,7 +91,7 @@ public class DataManagerImpl implements DataManager {
       List<List<String>> parseFileData = fileManager
           .parseByDelimiter(FilenameUtils.concat(filePathUploadDir, data.getDataFileName()),
               Arrays.asList(data.getHeaderLineNumbers().split(",")),
-              getDelimiterSymbol(data.getDelimiter()));
+              resourceManager.getDelimiterSymbol(data.getDelimiter()));
       for (List<String> stringList : parseFileData) {
         for (String s : stringList) {
           logger.info(s);
@@ -150,27 +147,6 @@ public class DataManagerImpl implements DataManager {
   }
 
   /**
-   * Retrieves a list of all the persisted Delimiter objects.
-   *
-   * @return The Delimiter objects.
-   */
-  @Override
-  public List<Delimiter> getDelimiters() {
-    return delimiterDao.getDelimiters();
-  }
-
-  /**
-   * Returns the symbol corresponding to the given delimiter string.
-   *
-   * @param delimiter The delimiter string.
-   * @return The symbol corresponding to the given string.
-   */
-  @Override
-  public String getDelimiterSymbol(String delimiter) {
-    return delimiterDao.lookupDelimiterByName(delimiter).getCharacterSymbol();
-  }
-
-  /**
    * Retrieves the name of the directory used for storing files for downloading.
    *
    * @return The name of the directory used for storing files for downloading.
@@ -178,68 +154,6 @@ public class DataManagerImpl implements DataManager {
   @Override
   public String getDownloadDir() {
     return propertiesDao.lookupDownloadDirectory();
-  }
-
-  /**
-   * Retrieves the CF Types associated with the given platform.
-   *
-   * @param platform The platform.
-   * @return The CF Types associated with the given platform.
-   */
-  @Override
-  public String getCFTypeFromPlatform(String platform) {
-    Platform persistedPlatform = platformDao.lookupPlatformByName(platform);
-    return persistedPlatform.getCfType();
-  }
-
-  /**
-   * Retrieves a list of all the persisted CfType objects.
-   *
-   * @return A list of CfType objects.
-   */
-  @Override
-  public List<CfType> getCfTypes() {
-    return cfTypeDao.getCfTypes();
-  }
-
-  /**
-   * Retrieves a list of all the persisted communities.
-   *
-   * @return A list of Community objects.
-   */
-  @Override
-  public List<Community> getCommunities() {
-    List<Community> communities = communityDao.getCommunities();
-    for (Community community : communities) {
-      // Get the associated platforms and add them to the Community object.
-      List<Platform> platforms = platformDao.lookupPlatformsByCommunity(community.getName());
-      community.setPlatforms(platforms);
-      communities.set(communities.indexOf(community), community);
-    }
-    return communities;
-  }
-
-
-  /**
-   * Retrieves the community associated with the given platform.
-   *
-   * @param platform The platform.
-   * @return The community associated with the given platform.
-   */
-  @Override
-  public String getCommunityFromPlatform(String platform) {
-    Platform persistedPlatform = platformDao.lookupPlatformByName(platform.replaceAll("_", " "));
-    return persistedPlatform.getCommunity();
-  }
-
-  /**
-   * Retrieves a list of all the persisted FileType objects.
-   *
-   * @return A list of FileType objects.
-   */
-  @Override
-  public List<FileType> getFileTypes() {
-    return fileTypeDao.getFileTypes();
   }
 
   /**
@@ -290,15 +204,6 @@ public class DataManagerImpl implements DataManager {
     return metadataManager.getMetadataStringForClient(id, type);
   }
 
-  /**
-   * Retrieves a list of all the persisted Platform objects.
-   *
-   * @return A list of Platform objects.
-   */
-  @Override
-  public List<Platform> getPlatforms() {
-    return platformDao.getPlatforms();
-  }
 
   /**
    * Retrieves the name of the directory used for storing uploaded files.
@@ -346,7 +251,7 @@ public class DataManagerImpl implements DataManager {
 
     // Get the community associated with the selected platform.
     if (data.getPlatform() != null) {
-      Platform platform = platformDao.lookupPlatformByName(data.getPlatform().replaceAll("_", " "));
+      Platform platform = resourceManager.getPlatform(data.getPlatform().replaceAll("_", " "));
       data.setCommunity(platform.getCommunity());
     }
     dataDao.persistData(data);
@@ -375,7 +280,7 @@ public class DataManagerImpl implements DataManager {
 
       // Update community if needed.
       if (cfTypeData.getPlatform() != null) {
-        persistedData.setCommunity(getCommunityFromPlatform(cfTypeData.getPlatform()));
+        persistedData.setCommunity(resourceManager.getCommunityFromPlatform(cfTypeData.getPlatform()));
       } else {
         persistedData.setCommunity(null);
       }
@@ -387,7 +292,7 @@ public class DataManagerImpl implements DataManager {
       daoManager.updatePersistedCfTypeData(persistedData);
 
     } else {
-      // No cookie, so persist new CF type data.
+      // No ID yet.  First time persisting CF type data.
       cfTypeData.setId(createUniqueDataId(request)); // Create a unique ID for this object.
       daoManager.persistCfTypeData(cfTypeData);
     }
@@ -598,25 +503,7 @@ public class DataManagerImpl implements DataManager {
         .persistMetadata(metadataManager.parseVariableMetadata(data.getVariableMetadata(), id));
   }
 
-  /**
-   * Sets the data access object (DAO) for the CFType object which will acquire and persist the data
-   * passed to it via the methods of this DataManager.
-   *
-   * @param cfTypeDao The service DAO representing a CfType object.
-   */
-  public void setCfTypeDao(CfTypeDao cfTypeDao) {
-    this.cfTypeDao = cfTypeDao;
-  }
 
-  /**
-   * Sets the data access object (DAO) for the Community object which will acquire and persist the
-   * data passed to it via the methods of this DataManager.
-   *
-   * @param communityDao The service DAO representing a Community object.
-   */
-  public void setCommunityDao(CommunityDao communityDao) {
-    this.communityDao = communityDao;
-  }
 
   /**
    * Sets the data access object (DAO) for the Data object which will acquire and persist the data
@@ -628,35 +515,7 @@ public class DataManagerImpl implements DataManager {
     this.dataDao = dataDao;
   }
 
-  /**
-   * Sets the data access object (DAO) for the Delimiter object which will acquire and persist the
-   * data passed to it via the methods of this DataManager.
-   *
-   * @param delimiterDao The service DAO representing a Delimiter object.
-   */
-  public void setDelimiterDao(DelimiterDao delimiterDao) {
-    this.delimiterDao = delimiterDao;
-  }
 
-  /**
-   * Sets the data access object (DAO) for the FileType object which will acquire and persist the
-   * data passed to it via the methods of this DataManager.
-   *
-   * @param fileTypeDao The service DAO representing a FileType object.
-   */
-  public void setFileTypeDao(FileTypeDao fileTypeDao) {
-    this.fileTypeDao = fileTypeDao;
-  }
-
-  /**
-   * Sets the data access object (DAO) for the Platform object which will acquire and persist the
-   * data passed to it via the methods of this DataManager.
-   *
-   * @param platformDao The service DAO representing a Platform object.
-   */
-  public void setPlatformDao(PlatformDao platformDao) {
-    this.platformDao = platformDao;
-  }
 
   /**
    * Sets the data access object (DAO) for the RosettaProperties object which will acquire and
@@ -707,8 +566,35 @@ public class DataManagerImpl implements DataManager {
   }
 
 
+  //-------------------------//
+
   public CfTypeData lookupPersistedCfTypeDataById(String id) {
     return daoManager.lookupPersistedCfTypeDataById(id);
   }
+
+  private String assessMetadataProfile(CfTypeData cfTypeData) throws RosettaDataException {
+    String metadataProfile = cfTypeData.getMetadataProfile();
+
+    if(metadataProfile == null) {
+      // Use the provided community/platform to figure out metadata profile.
+      String userSelectedCommuntity = cfTypeData.getCommunity();
+      if(userSelectedCommuntity != null) {
+        for (Community community: getCommunities()) {
+          if(community.getName().equals(userSelectedCommuntity)) {
+            metadataProfile = "";
+            for (String profile : community.getMetadataProfile()) {
+              metadataProfile = metadataProfile + profile + ",";
+            }
+            metadataProfile = metadataProfile.substring(0, metadataProfile.length() - 1);
+          }
+        }
+      } else {
+        throw new RosettaDataException("Neither metadata profile or community values present: " + cfTypeData.toString());
+      }
+    }
+    return metadataProfile;
+  }
+
+
 
 }

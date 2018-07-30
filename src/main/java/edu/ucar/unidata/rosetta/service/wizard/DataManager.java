@@ -40,63 +40,11 @@ public interface DataManager {
   public void deletePersistedData(String id);
 
   /**
-   * Retrieves the CF Types associated with the given platform.
-   *
-   * @param platform The platform.
-   * @return The CF Types associated with the given platform.
-   */
-  public String getCFTypeFromPlatform(String platform);
-
-  /**
-   * Retrieves a list of all the persisted CfType objects.
-   *
-   * @return A list of CfType objects.
-   */
-  public List<CfType> getCfTypes();
-
-  /**
-   * Retrieves a list of all the persisted communities.
-   *
-   * @return A list of Community objects.
-   */
-  public List<Community> getCommunities();
-
-  /**
-   * Retrieves the community associated with the given platform.
-   *
-   * @param platform The platform.
-   * @return The community associated with the given platform.
-   */
-  public String getCommunityFromPlatform(String platform);
-
-  /**
-   * Retrieves a list of all the persisted Delimiter objects.
-   *
-   * @return The Delimiter objects.
-   */
-  public List<Delimiter> getDelimiters();
-
-  /**
-   * Returns the symbol corresponding to the given delimiter string.
-   *
-   * @param delimiter The delimiter string.
-   * @return The symbol corresponding to the given string.
-   */
-  public String getDelimiterSymbol(String delimiter);
-
-  /**
    * Retrieves the name of the directory used for storing files for downloading.
    *
    * @return The name of the directory used for storing files for downloading.
    */
   public String getDownloadDir();
-
-  /**
-   * Retrieves a list of all the persisted FileType objects.
-   *
-   * @return A list of FileType objects.
-   */
-  public List<FileType> getFileTypes();
 
   /**
    * Pulls the general metadata from a data known file and populates the provided GeneralMetadata
@@ -121,13 +69,6 @@ public interface DataManager {
    * @return The string version of the metadata used by client side.
    */
   public String getMetadataStringForClient(String id, String type);
-
-  /**
-   * Retrieves a list of all the persisted Platform objects.
-   *
-   * @return A list of Platform objects.
-   */
-  public List<Platform> getPlatforms();
 
   /**
    * Retrieves the name of the directory used for storing uploaded files.
