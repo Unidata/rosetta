@@ -160,8 +160,7 @@
     id="cfTypeValidator"/>
   <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.FileValidator"
     id="fileValidator"/>
-  <bean class="edu.ucar.unidata.rosetta.service.ServerInfoBean" id="serverInfo"
-    init-method="init"/>
+  <bean class="edu.ucar.unidata.rosetta.service.ServerInfoBean" id="serverInfo" init-method="init"/>
   <bean class="edu.ucar.unidata.rosetta.init.resources.EmbeddedDerbyDbInitManager"
     id="dbInitManager"/>
 
@@ -174,13 +173,16 @@
 
 
   <bean class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl" id="dataManager">
+    <property name="dataDao" ref="dataDao"/>
+    <property name="propertiesDao" ref="propertiesDao"/>
+  </bean>
+
+  <bean class="edu.ucar.unidata.rosetta.service.wizard.ResourceManagerImpl" id="resourceManager">
     <property name="cfTypeDao" ref="cfTypeDao"/>
     <property name="communityDao" ref="communityDao"/>
-    <property name="dataDao" ref="dataDao"/>
     <property name="delimiterDao" ref="delimiterDao"/>
     <property name="fileTypeDao" ref="fileTypeDao"/>
     <property name="platformDao" ref="platformDao"/>
-    <property name="propertiesDao" ref="propertiesDao"/>
   </bean>
 
   <bean class="edu.ucar.unidata.rosetta.service.wizard.MetadataManagerImpl" id="metadataManager">
