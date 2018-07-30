@@ -31,13 +31,13 @@ import org.xml.sax.SAXException;
  *
  * @author oxelson@ucar.edu
  */
-public class ResourceManager {
+public class  ResourceManager {
 
   private static final Logger logger = Logger.getLogger(ResourceManager.class);
 
   /**
-   * Accesses the resources index file on disk and loads the resources into a Map<String, Object>
-   * for access.
+   * Accesses the resources index file on disk and loads
+   * the resources into a Map<String, Object> for access.
    *
    * @return A Map<String, Object> containing the resources to be added to the model.
    * @throws RosettaDataException If unable to retrieve resources.

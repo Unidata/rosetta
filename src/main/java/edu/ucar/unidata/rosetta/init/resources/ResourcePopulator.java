@@ -10,11 +10,11 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 /**
+ * A generic class to to populate a model object that extends
+ * RosettaResources with resource data held in the resource XML files.
+ *
  * @param <T> A class that extends RosettaResources
  * @author oxelson@ucar.edu
- *
- * A generic class to to populate a model object that extends RosettaResources with resource data
- * held in the resource XML files.
  */
 public class ResourcePopulator<T extends RosettaResource> {
 
