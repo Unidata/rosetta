@@ -15,15 +15,15 @@ If a resource depends upon or references another, the dependency resource MUST b
     <type>fileType</type>
   </resource>
   <resource>
-    <fileName>metadataProfiles.xml</fileName>
-    <type>metadataProfile</type>
-  </resource>
-  <resource>
     <fileName>communities.xml</fileName>
     <type>community</type>
   </resource>
   <resource>
     <fileName>platforms.xml</fileName>
     <type>platform</type>
+  </resource>
+  <resource>
+    <fileName>metadataProfiles.xml</fileName>
+    <type>metadataProfile</type>
   </resource>
 </resources>

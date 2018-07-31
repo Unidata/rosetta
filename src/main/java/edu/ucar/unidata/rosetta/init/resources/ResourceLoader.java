@@ -52,6 +52,7 @@ public class  ResourceManager {
       String type = "";
       // Load 'menu' of available resources.
       List<Map<String, String>> availableResources = fetchAvailableResources(file);
+
       // Get the resource items
       for (Map<String, String> resourcesMap : availableResources) {
         // Get the resource file names and the main element from the map.
@@ -64,7 +65,7 @@ public class  ResourceManager {
           } else {
             type = pair.getValue();
           }
-          it.remove(); // Avoids a ConcurrentModificationException
+          it.remove(); // Avoids a ConcurrentModificationException.
         }
         // Get the resource data.
         r = new ClassPathResource("resources/" + fileName);
@@ -80,9 +81,8 @@ public class  ResourceManager {
                   + type.substring(1);
           Object rosettaResource = Class.forName(classToInstantiate).getDeclaredConstructor()
               .newInstance();
-
           // Populate the RosettaResource object using generics.
-          ResourcePopulator<RosettaResource> populator = new ResourcePopulator<RosettaResource>();
+          ResourcePopulator<RosettaResource> populator = new ResourcePopulator<>();
           populator.setRosettaResource((RosettaResource) rosettaResource);
           resources.addAll(populator.populate(resourceMap));
         }
@@ -164,6 +164,12 @@ public class  ResourceManager {
     return resources;
   }
 
+  /**
+   * Parses the resource XML file and returns the resources.
+   *
+   * @param file  The file from which to fetch the resources.
+   * @return  The resources loaded from the file.
+   */
   private List<Map<String, String>> fetchAvailableResources(File file) {
     List<Map<String, String>> resources = new ArrayList<>();
     try {
@@ -207,10 +213,4 @@ public class  ResourceManager {
     }
     return resources;
   }
-
-
-  public String getCommunity(String platform) {
-    return "foo";
-  }
-
 }
