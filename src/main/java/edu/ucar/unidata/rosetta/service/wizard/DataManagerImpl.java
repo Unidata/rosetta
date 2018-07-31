@@ -3,22 +3,14 @@ package edu.ucar.unidata.rosetta.service.wizard;
 import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.domain.resources.CfType;
 import edu.ucar.unidata.rosetta.domain.resources.Community;
-import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
-import edu.ucar.unidata.rosetta.domain.resources.FileType;
+import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
 import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
-import edu.ucar.unidata.rosetta.repository.resources.CfTypeDao;
-import edu.ucar.unidata.rosetta.repository.resources.CommunityDao;
-import edu.ucar.unidata.rosetta.repository.resources.DelimiterDao;
-import edu.ucar.unidata.rosetta.repository.resources.FileTypeDao;
-import edu.ucar.unidata.rosetta.repository.resources.PlatformDao;
 import edu.ucar.unidata.rosetta.repository.wizard.DataDao;
-import edu.ucar.unidata.rosetta.service.wizard.repository.DaoManager;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -43,8 +35,8 @@ public class DataManagerImpl implements DataManager {
   private PropertiesDao propertiesDao;
 
   // The other managers we make use of in this file.
-  @Resource(name = "daoManager")
-  private DaoManager daoManager;
+  @Resource(name = "cfTypeDataManager")
+  private CfTypeDataManager cfTypeDataManager;
 
   @Resource(name = "fileParserManager")
   private FileManager fileManager;
@@ -265,15 +257,16 @@ public class DataManagerImpl implements DataManager {
    * @param id The unique ID corresponding to already persisted data (may be null).
    * @param cfTypeData The CfTypeData object containing user-submitted CF type information.
    * @param request HttpServletRequest used to make unique IDs for new data.
+   * @throws RosettaDataException If unable to lookup the metadata profile.
    */
   @Override
-  public void processCfType(String id, CfTypeData cfTypeData, HttpServletRequest request) {
+  public void processCfType(String id, CfTypeData cfTypeData, HttpServletRequest request) throws RosettaDataException {
 
     // If the ID is present, then there is a cookie.  Combine new with previous persisted data.
     if (id != null) {
 
       // Get the persisted CF type data corresponding to this ID.
-      CfTypeData persistedData = daoManager.lookupPersistedCfTypeDataById(id);
+      CfTypeData persistedData = cfTypeDataManager.lookupPersistedCfTypeDataById(id);
 
       // Update platform value.
       persistedData.setPlatform(persistedData.getPlatform());
@@ -289,12 +282,13 @@ public class DataManagerImpl implements DataManager {
       persistedData.setCfType(cfTypeData.getCfType());
 
       // Update persisted CF type data.
-      daoManager.updatePersistedCfTypeData(persistedData);
+      cfTypeDataManager.updatePersistedCfTypeData(persistedData);
 
     } else {
       // No ID yet.  First time persisting CF type data.
       cfTypeData.setId(createUniqueDataId(request)); // Create a unique ID for this object.
-      daoManager.persistCfTypeData(cfTypeData);
+      String metadataProfile = assessMetadataProfile(cfTypeData); // Set metadata profile.
+      cfTypeDataManager.persistCfTypeData(cfTypeData);
     }
   }
 
@@ -424,12 +418,6 @@ public class DataManagerImpl implements DataManager {
   public void processGeneralMetadata(String id, GeneralMetadata metadata)
       throws RosettaDataException {
 
-    // The placeholder for what we are going to return.
-    String previousStep;
-
-    // Get the persisted data.
-    Data persistedData = lookupPersistedDataById(id);
-
     // Persist the global metadata.
     metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(metadata, id));
   }
@@ -461,8 +449,8 @@ public class DataManagerImpl implements DataManager {
   }
 
   /**
-   * Determines the previous step in the wizard based the user specified data file type. This method
-   * is called when there is a divergence of possible routes through the wizard.
+   * Determines the previous step in the wizard based the user specified data file type.
+   * This method is called when there is a divergence of possible routes through the wizard.
    *
    * @param id The unique ID corresponding to already persisted data.
    * @return The previous step to redirect the user to in the wizard.
@@ -476,7 +464,8 @@ public class DataManagerImpl implements DataManager {
     // Get the persisted data.
     Data persistedData = lookupPersistedDataById(id);
 
-    // The previous step (if the user chooses to go there) depends on what the user specified for the data file type.
+    // The previous step (if the user chooses to go there) depends
+    // on what the user specified for the data file type.
     if (persistedData.getDataFileType().equals("Custom_File_Type")) {
       previousStep = "/variableMetadata";
     } else {
@@ -494,16 +483,10 @@ public class DataManagerImpl implements DataManager {
    */
   @Override
   public void processVariableMetadata(String id, Data data) {
-
-    // Get the persisted data.
-    Data persistedData = lookupPersistedDataById(id);
-
     // Persist the variable metadata.
     metadataManager
         .persistMetadata(metadataManager.parseVariableMetadata(data.getVariableMetadata(), id));
   }
-
-
 
   /**
    * Sets the data access object (DAO) for the Data object which will acquire and persist the data
@@ -514,8 +497,6 @@ public class DataManagerImpl implements DataManager {
   public void setDataDao(DataDao dataDao) {
     this.dataDao = dataDao;
   }
-
-
 
   /**
    * Sets the data access object (DAO) for the RosettaProperties object which will acquire and
@@ -569,27 +550,36 @@ public class DataManagerImpl implements DataManager {
   //-------------------------//
 
   public CfTypeData lookupPersistedCfTypeDataById(String id) {
-    return daoManager.lookupPersistedCfTypeDataById(id);
+    return cfTypeDataManager.lookupPersistedCfTypeDataById(id);
   }
 
+
   private String assessMetadataProfile(CfTypeData cfTypeData) throws RosettaDataException {
+    // Assign metadata profile to value specified in CfTypeData object.
     String metadataProfile = cfTypeData.getMetadataProfile();
 
+    // If metadata profile value isn't null we can return (below).
     if(metadataProfile == null) {
+
       // Use the provided community/platform to figure out metadata profile.
       String userSelectedCommuntity = cfTypeData.getCommunity();
+
       if(userSelectedCommuntity != null) {
-        for (Community community: getCommunities()) {
-          if(community.getName().equals(userSelectedCommuntity)) {
-            metadataProfile = "";
-            for (String profile : community.getMetadataProfile()) {
-              metadataProfile = metadataProfile + profile + ",";
-            }
+
+        for (MetadataProfile metadataProfileResource: resourceManager.getMetadataProfiles()) {
+          List<Community> communities = metadataProfileResource.getCommunities();
+          metadataProfile = "";
+          if(communities.contains(userSelectedCommuntity)) {
+            metadataProfile = metadataProfile + metadataProfileResource.getName() + ",";
             metadataProfile = metadataProfile.substring(0, metadataProfile.length() - 1);
           }
         }
+
       } else {
-        throw new RosettaDataException("Neither metadata profile or community values present: " + cfTypeData.toString());
+        // This shouldn't happen!
+        // Either the platform/community or the the CF type/metadata profile must exist.
+        throw new RosettaDataException("Neither metadata profile or community values present: "
+            + cfTypeData.toString());
       }
     }
     return metadataProfile;

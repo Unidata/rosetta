@@ -110,8 +110,9 @@ public interface DataManager {
    * @param id The unique ID corresponding to already persisted data (may be null).
    * @param cfTypeData The CfTypeData object containing user-submitted CF type information.
    * @param request HttpServletRequest used to make unique IDs for new data.
+   * @throws RosettaDataException If unable to lookup the metadata profile.
    */
-  public void processCfType(String id, CfTypeData cfTypeData, HttpServletRequest request);
+  public void processCfType(String id, CfTypeData cfTypeData, HttpServletRequest request) throws RosettaDataException ;
 
   /**
    * Processes the data submitted by the user containing custom data file information.
