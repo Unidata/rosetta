@@ -17,7 +17,7 @@ public abstract class RosettaResource implements Comparable<RosettaResource> {
    * @return The name.
    */
   public String getName() {
-    return getName();
+    return name;
   }
 
 
@@ -27,7 +27,7 @@ public abstract class RosettaResource implements Comparable<RosettaResource> {
    * @param name  The name.
    */
   public void setName(String name) {
-    setName(name);
+    this.name = name;
   }
 
   /**

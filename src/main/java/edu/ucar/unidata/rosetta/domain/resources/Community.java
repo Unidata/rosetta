@@ -63,6 +63,16 @@ public class Community extends RosettaResource {
   }
 
   /**
+   * Adds a file type to the list of file types.
+   * (This method is used during resource persistence during start up).
+   *
+   * @param fileType  The file type to add.
+   */
+  public void setFileType(String fileType) {
+    this.fileType.add(fileType);
+  }
+
+  /**
    * Sets the persistence-layer ID associated with this resource.
    *
    * @param id The ID.
