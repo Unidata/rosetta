@@ -3,6 +3,7 @@ package edu.ucar.unidata.rosetta.controller.wizard;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
+import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -40,6 +41,9 @@ public class CustomFileTypeAttributesController implements HandlerExceptionResol
   @Resource(name = "dataManager")
   private DataManager dataManager;
 
+  @Resource(name = "resourceManager")
+  private ResourceManager resourceManager;
+
   @Autowired
   public CustomFileTypeAttributesController(ServletContext servletContext) {
     this.servletContext = servletContext;
@@ -75,7 +79,7 @@ public class CustomFileTypeAttributesController implements HandlerExceptionResol
     // Add current step to the Model.
     model.addAttribute("currentStep", "customFileTypeAttributes");
     // Add delimiters to Model.
-    model.addAttribute("delimiters", dataManager.getDelimiters());
+    model.addAttribute("delimiters", resourceManager.getDelimiters());
     // Add parsed file data in JSON string format (to sho win the SlickGrid).
     model.addAttribute("parsedData",
         dataManager.parseDataFileByLine(data.getId(), data.getDataFileName()));

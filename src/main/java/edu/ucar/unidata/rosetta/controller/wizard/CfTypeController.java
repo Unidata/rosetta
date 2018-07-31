@@ -1,7 +1,9 @@
 package edu.ucar.unidata.rosetta.controller.wizard;
 
 import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
+import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -39,6 +41,9 @@ public class CfTypeController implements HandlerExceptionResolver {
   @Resource(name = "dataManager")
   private DataManager dataManager;
 
+  @Resource(name = "resourceManager")
+  private ResourceManager resourceManager;
+
   @Autowired
   public CfTypeController(ServletContext servletContext) {
     this.servletContext = servletContext;
@@ -71,9 +76,9 @@ public class CfTypeController implements HandlerExceptionResolver {
     // Add current step to the Model (used by view to keep track of where we are in the wizard).
     model.addAttribute("currentStep", "cfType");
     // Add communities data to Model (for platform display).
-    model.addAttribute("communities", dataManager.getCommunities());
+    model.addAttribute("communities", resourceManager.getCommunities());
     // Add CF types data to Model (for direct display).
-    model.addAttribute("cfTypes", dataManager.getCfTypes());
+    model.addAttribute("cfTypes", resourceManager.getCfTypes());
 
     // The currentStep variable will determine which jsp frag to load in the wizard.
     return new ModelAndView("wizard");
@@ -87,13 +92,14 @@ public class CfTypeController implements HandlerExceptionResolver {
    * @param cfTypeData The form-backing object.
    * @param result The BindingResult for error handling.
    * @param model The Model object to be populated.
-   * @param request HttpServletRequest needed to pass to the dataManager to get client IP.
+   * @param request HttpServletRequest needed to pass to the resourceManager to get client IP.
    * @param response HttpServletResponse needed for setting cookie.
    * @return Redirect to next step.
+   * @throws RosettaDataException If unable to process the CF type data.
    */
   @RequestMapping(value = "/cfType", method = RequestMethod.POST)
   public ModelAndView processCFType(CfTypeData cfTypeData, BindingResult result, Model model,
-      HttpServletRequest request, HttpServletResponse response) {
+      HttpServletRequest request, HttpServletResponse response) throws RosettaDataException {
 
     // Have we visited this page before during this session?
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");

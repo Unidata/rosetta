@@ -3,6 +3,7 @@ package edu.ucar.unidata.rosetta.controller.wizard;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
+import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -39,6 +40,9 @@ public class VariableMetadataController implements HandlerExceptionResolver {
 
   @Resource(name = "dataManager")
   private DataManager dataManager;
+
+  @Resource(name = "resourceManager")
+  private ResourceManager resourceManager;
 
   @Autowired
   public VariableMetadataController(ServletContext servletContext) {
@@ -81,7 +85,7 @@ public class VariableMetadataController implements HandlerExceptionResolver {
     model.addAttribute("parsedData",
         dataManager.parseDataFileByLine(data.getId(), data.getDataFileName()));
     // Add delimiter to do additional client-side parsing for SlickGrid.
-    model.addAttribute("delimiterSymbol", dataManager.getDelimiterSymbol(data.getDelimiter()));
+    model.addAttribute("delimiterSymbol", resourceManager.getDelimiterSymbol(data.getDelimiter()));
 
     // The currentStep variable will determine which jsp frag to load in the wizard.
     return new ModelAndView("wizard");

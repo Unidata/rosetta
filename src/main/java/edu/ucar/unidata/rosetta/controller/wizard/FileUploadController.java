@@ -3,6 +3,7 @@ package edu.ucar.unidata.rosetta.controller.wizard;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
+import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -40,6 +41,9 @@ public class FileUploadController implements HandlerExceptionResolver {
   @Resource(name = "dataManager")
   private DataManager dataManager;
 
+  @Resource(name = "resourceManager")
+  private ResourceManager resourceManager;
+
   @Autowired
   public FileUploadController(ServletContext servletContext) {
     this.servletContext = servletContext;
@@ -74,9 +78,9 @@ public class FileUploadController implements HandlerExceptionResolver {
     // Add current step to the Model.
     model.addAttribute("currentStep", "fileUpload");
     // Add community data to Model (for file upload display based on community type).
-    model.addAttribute("communities", dataManager.getCommunities());
+    model.addAttribute("communities", resourceManager.getCommunities());
     // Add file type data to Model (for file type selection if cfType was directly specified).
-    model.addAttribute("fileTypes", dataManager.getFileTypes());
+    model.addAttribute("fileTypes", resourceManager.getFileTypes());
 
     // The currentStep variable will determine which jsp frag to load in the wizard.
     return new ModelAndView("wizard");
