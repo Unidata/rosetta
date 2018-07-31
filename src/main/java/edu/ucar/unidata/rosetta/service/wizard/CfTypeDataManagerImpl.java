@@ -1,4 +1,4 @@
-package edu.ucar.unidata.rosetta.service.wizard.repository;
+package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
 import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
