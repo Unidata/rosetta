@@ -154,7 +154,6 @@
 
   <!-- Declaration for resource use -->
 
-  <bean class="edu.ucar.unidata.rosetta.service.wizard.repository.DaoManagerImpl" id="daoManager"/>
   <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileParserManager"/>
   <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.CFTypeValidator"
     id="cfTypeValidator"/>
@@ -165,7 +164,7 @@
     id="dbInitManager"/>
 
   <!-- DAO injection -->
-  <bean class="edu.ucar.unidata.rosetta.service.wizard.repository.CfTypeDataManagerImpl"
+  <bean class="edu.ucar.unidata.rosetta.service.wizard.CfTypeDataManagerImpl"
     id="cfTypeDataManager">
     <property name="cfTypeDataDao" ref="cfTypeDataDao"/>
     <property name="platformDao" ref="platformDao"/>
@@ -220,6 +219,10 @@
   </bean>
 
   <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcFileTypeDao" id="fileTypeDao">
+    <property name="dataSource" ref="dbDataSource"/>
+  </bean>
+
+  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcMetadataProfileDao" id="metadataProfileDao">
     <property name="dataSource" ref="dbDataSource"/>
   </bean>
 
