@@ -348,7 +348,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
     String platformStatement = "INSERT INTO platforms (name, imgPath, cfType, community) VALUES (?, ?, ?, ?)";
     String communityStatement = "INSERT INTO communities (name, fileType) VALUES (?, ?)";
 
-    ResourceManager resourceManager = new ResourceManager();
+    ResourceLoader resourceManager = new ResourceLoader();
     List<RosettaResource> resources = resourceManager.loadResources();
     for (RosettaResource resource : resources) {
       // Set the resources depending on the type.

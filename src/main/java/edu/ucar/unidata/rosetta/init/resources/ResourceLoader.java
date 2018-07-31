@@ -31,9 +31,9 @@ import org.xml.sax.SAXException;
  *
  * @author oxelson@ucar.edu
  */
-public class  ResourceManager {
+public class ResourceLoader {
 
-  private static final Logger logger = Logger.getLogger(ResourceManager.class);
+  private static final Logger logger = Logger.getLogger(ResourceLoader.class);
 
   /**
    * Accesses the resources index file on disk and loads
