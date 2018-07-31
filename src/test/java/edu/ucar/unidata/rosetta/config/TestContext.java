@@ -1,6 +1,6 @@
 package edu.ucar.unidata.rosetta.config;
 
-import edu.ucar.unidata.rosetta.init.resources.ResourceManager;
+import edu.ucar.unidata.rosetta.init.resources.ResourceLoader;
 import edu.ucar.unidata.rosetta.service.user.UserManager;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import edu.ucar.unidata.rosetta.service.wizard.FileManager;
@@ -32,8 +32,8 @@ public class TestContext {
   }
 
   @Bean
-  public ResourceManager resourceManager() {
-    return Mockito.mock(ResourceManager.class);
+  public ResourceLoader resourceManager() {
+    return Mockito.mock(ResourceLoader.class);
   }
 
   @Bean

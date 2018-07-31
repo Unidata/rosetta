@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import edu.ucar.unidata.rosetta.domain.resources.RosettaResource;
-import edu.ucar.unidata.rosetta.init.resources.ResourceManager;
+import edu.ucar.unidata.rosetta.init.resources.ResourceLoader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class ResourceManagerTest {
 
-  private ResourceManager resourceManager;
+  private ResourceLoader resourceManager;
   private HttpServletRequest request;
   private File file;
 
@@ -25,7 +25,7 @@ public class ResourceManagerTest {
   @Before
   public void setup() throws Exception {
     // The ResourceManager to test.
-    resourceManager = mock(ResourceManager.class);
+    resourceManager = mock(ResourceLoader.class);
     request = mock(HttpServletRequest.class);
     file = mock(File.class);
 
