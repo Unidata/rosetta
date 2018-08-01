@@ -68,7 +68,7 @@ public class JdbcCfTypeDataDao extends JdbcDaoSupport implements CfTypeDataDao {
         "cfType = ?, " +
         "community = ?, " +
         "metadataProfile = ?," +
-        "platform = ?, " +
+        "platform = ? " +
         "WHERE id = ?";
     int rowsAffected = getJdbcTemplate().update(sql, new Object[]{
         // order matters here
