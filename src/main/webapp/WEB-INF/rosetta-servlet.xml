@@ -170,9 +170,11 @@
     <property name="platformDao" ref="platformDao"/>
   </bean>
 
-
   <bean class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl" id="dataManager">
     <property name="dataDao" ref="dataDao"/>
+  </bean>
+
+  <bean class="edu.ucar.unidata.rosetta.util.PropertyUtils" id="propertyUtils">
     <property name="propertiesDao" ref="propertiesDao"/>
   </bean>
 
@@ -181,6 +183,7 @@
     <property name="communityDao" ref="communityDao"/>
     <property name="delimiterDao" ref="delimiterDao"/>
     <property name="fileTypeDao" ref="fileTypeDao"/>
+    <property name="metadataProfileDao" ref="metadataProfileDao"/>
     <property name="platformDao" ref="platformDao"/>
   </bean>
 

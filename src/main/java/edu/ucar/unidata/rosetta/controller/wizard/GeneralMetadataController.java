@@ -4,6 +4,7 @@ import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
+import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -79,7 +80,7 @@ public class GeneralMetadataController implements HandlerExceptionResolver {
 
     // Mine the data file for any included metadata.
     metadata = dataManager.getMetadataFromKnownFile(FilenameUtils
-        .concat(FilenameUtils.concat(dataManager.getUploadDir(), data.getId()),
+        .concat(FilenameUtils.concat(PropertyUtils.getUploadDir(), data.getId()),
             data.getDataFileName()), data.getDataFileType(), metadata);
 
     model.addAttribute("generalMetadata", metadata);

@@ -40,13 +40,6 @@ public interface DataManager {
   public void deletePersistedData(String id);
 
   /**
-   * Retrieves the name of the directory used for storing files for downloading.
-   *
-   * @return The name of the directory used for storing files for downloading.
-   */
-  public String getDownloadDir();
-
-  /**
    * Pulls the general metadata from a data known file and populates the provided GeneralMetadata
    * object. If the data file type is a custom file (not a known type) then an empty, non-populated
    * GeneralMetadata object is returned.
@@ -69,13 +62,6 @@ public interface DataManager {
    * @return The string version of the metadata used by client side.
    */
   public String getMetadataStringForClient(String id, String type);
-
-  /**
-   * Retrieves the name of the directory used for storing uploaded files.
-   *
-   * @return The name of the directory used for storing uploaded files.
-   */
-  public String getUploadDir();
 
   /**
    * Looks up and retrieves a Data object using the given id.
@@ -101,18 +87,6 @@ public interface DataManager {
    * @param data The Data object to persist.
    */
   public void persistData(Data data, HttpServletRequest request);
-
-  /**
-   * Processes the data submitted by the user containing CF type information. If an ID already
-   * exists, the persisted data corresponding to that ID is collected and updated with the newly
-   * submitted data.  If no ID exists (is null), the data is persisted for the first time.
-   *
-   * @param id The unique ID corresponding to already persisted data (may be null).
-   * @param cfTypeData The CfTypeData object containing user-submitted CF type information.
-   * @param request HttpServletRequest used to make unique IDs for new data.
-   * @throws RosettaDataException If unable to lookup the metadata profile.
-   */
-  public void processCfType(String id, CfTypeData cfTypeData, HttpServletRequest request) throws RosettaDataException ;
 
   /**
    * Processes the data submitted by the user containing custom data file information.
@@ -181,6 +155,6 @@ public interface DataManager {
   public void updatePersistedData(Data data);
 
 
-  public CfTypeData lookupPersistedCfTypeDataById(String id);
+
 
 }

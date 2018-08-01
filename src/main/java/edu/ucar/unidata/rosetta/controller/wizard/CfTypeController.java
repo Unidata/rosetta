@@ -2,7 +2,7 @@ package edu.ucar.unidata.rosetta.controller.wizard;
 
 import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-import edu.ucar.unidata.rosetta.service.wizard.DataManager;
+import edu.ucar.unidata.rosetta.service.wizard.CfTypeDataManager;
 import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -38,8 +38,8 @@ public class CfTypeController implements HandlerExceptionResolver {
 
   private final ServletContext servletContext;
 
-  @Resource(name = "dataManager")
-  private DataManager dataManager;
+  @Resource(name = "cfTypeDataManager")
+  private CfTypeDataManager cfTypeDataManager;
 
   @Resource(name = "resourceManager")
   private ResourceManager resourceManager;
@@ -66,7 +66,7 @@ public class CfTypeController implements HandlerExceptionResolver {
     CfTypeData cfTypeData;
     if (rosettaCookie != null) {
       // User-provided CF type data already exists.  Populate CfTypeData object.
-      cfTypeData = dataManager.lookupPersistedCfTypeDataById(rosettaCookie.getValue());
+      cfTypeData = cfTypeDataManager.lookupPersistedCfTypeDataById(rosettaCookie.getValue());
     } else {
       cfTypeData = new CfTypeData();
     }
@@ -79,6 +79,8 @@ public class CfTypeController implements HandlerExceptionResolver {
     model.addAttribute("communities", resourceManager.getCommunities());
     // Add CF types data to Model (for direct display).
     model.addAttribute("cfTypes", resourceManager.getCfTypes());
+    // Add metadata profile data to Model (for direct display).
+    model.addAttribute("metadataProfiles", resourceManager.getMetadataProfiles());
 
     // The currentStep variable will determine which jsp frag to load in the wizard.
     return new ModelAndView("wizard");
@@ -105,10 +107,10 @@ public class CfTypeController implements HandlerExceptionResolver {
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
     if (rosettaCookie != null) {
       // We've been here before, combine new with previous persisted CF type data.
-      dataManager.processCfType(rosettaCookie.getValue(), cfTypeData, null);
+      cfTypeDataManager.processCfType(rosettaCookie.getValue(), cfTypeData, null);
     } else {
       // Haven't been before, so proceed with persisting the CF type data.
-      dataManager.processCfType(null, cfTypeData, request);
+      cfTypeDataManager.processCfType(null, cfTypeData, request);
       // First time posting to this page in this session; create the cookie.
       response.addCookie(new Cookie("rosetta", cfTypeData.getId()));
     }

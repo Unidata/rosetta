@@ -11,6 +11,8 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
 import edu.ucar.unidata.rosetta.repository.wizard.DataDao;
+import edu.ucar.unidata.rosetta.util.PropertyUtils;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +34,7 @@ public class DataManagerImpl implements DataManager {
   private static final Logger logger = Logger.getLogger(DataManagerImpl.class);
 
   private DataDao dataDao;
-  private PropertiesDao propertiesDao;
+
 
   // The other managers we make use of in this file.
   @Resource(name = "cfTypeDataManager")
@@ -59,10 +61,10 @@ public class DataManagerImpl implements DataManager {
   public Data convertToNetCDF(Data data) throws InvalidRangeException, RosettaFileException {
 
     // Create full file path to upload sub directory where uploaded data is stored.
-    String filePathUploadDir = FilenameUtils.concat(getUploadDir(), data.getId());
+    String filePathUploadDir = FilenameUtils.concat(PropertyUtils.getUploadDir(), data.getId());
     // Create full file path to download sub directory into which the converted .nc files & template will be written.
     String filePathDownloadDir = fileManager
-        .createDownloadSubDirectory(getDownloadDir(), data.getId());
+        .createDownloadSubDirectory(PropertyUtils.getDownloadDir(), data.getId());
 
     // Create the new name of the datafile with the .nc extension (netCDF version of the file).
     String netcdfFileName = FilenameUtils.removeExtension(data.getDataFileName()) + ".nc";
@@ -110,23 +112,6 @@ public class DataManagerImpl implements DataManager {
     return data;
   }
 
-  /**
-   * Creates a unique id for the file name from the clients IP address and the date.
-   *
-   * @param request The HttpServletRequest used to get the IP address.
-   * @return The unique id.
-   */
-  private String createUniqueDataId(HttpServletRequest request) {
-    String id = String.valueOf(new Date().hashCode());
-    id = StringUtils.replaceChars(id, "-", "");
-    String ipAddress = getIpAddress(request);
-    if (ipAddress != null) {
-      id = ipAddress + id;
-    } else {
-      id = String.valueOf(new Random().nextInt() + id);
-    }
-    return id.replaceAll(":", "");
-  }
 
   /**
    * Deletes the persisted data object information.
@@ -138,33 +123,6 @@ public class DataManagerImpl implements DataManager {
     dataDao.deletePersistedData(id);
   }
 
-  /**
-   * Retrieves the name of the directory used for storing files for downloading.
-   *
-   * @return The name of the directory used for storing files for downloading.
-   */
-  @Override
-  public String getDownloadDir() {
-    return propertiesDao.lookupDownloadDirectory();
-  }
-
-  /**
-   * Attempts to get the client IP address from the request.
-   *
-   * @param request The HttpServletRequest.
-   * @return The client's IP address.
-   */
-  private String getIpAddress(HttpServletRequest request) {
-    String ipAddress = null;
-    if (request.getRemoteAddr() != null) {
-      ipAddress = request.getRemoteAddr();
-      ipAddress = StringUtils.deleteWhitespace(ipAddress);
-      ipAddress = StringUtils.trimToNull(ipAddress);
-      ipAddress = StringUtils.lowerCase(ipAddress);
-      ipAddress = StringUtils.replaceChars(ipAddress, ".", "");
-    }
-    return ipAddress;
-  }
 
   /**
    * Pulls the general metadata from a data known file and populates the provided GeneralMetadata
@@ -197,15 +155,7 @@ public class DataManagerImpl implements DataManager {
   }
 
 
-  /**
-   * Retrieves the name of the directory used for storing uploaded files.
-   *
-   * @return The name of the directory used for storing uploaded files.
-   */
-  @Override
-  public String getUploadDir() {
-    return propertiesDao.lookupUploadDirectory();
-  }
+
 
   /**
    * Looks up and retrieves a Data object using the given id.
@@ -228,7 +178,7 @@ public class DataManagerImpl implements DataManager {
    */
   @Override
   public String parseDataFileByLine(String id, String dataFileName) throws RosettaFileException {
-    String filePath = FilenameUtils.concat(FilenameUtils.concat(getUploadDir(), id), dataFileName);
+    String filePath = FilenameUtils.concat(FilenameUtils.concat(PropertyUtils.getUploadDir(), id), dataFileName);
     return fileManager.parseByLine(filePath);
   }
 
@@ -239,7 +189,7 @@ public class DataManagerImpl implements DataManager {
    */
   @Override
   public void persistData(Data data, HttpServletRequest request) {
-    data.setId(createUniqueDataId(request)); // Create a unique ID for this object.
+    data.setId(PropertyUtils.createUniqueDataId(request)); // Create a unique ID for this object.
 
     // Get the community associated with the selected platform.
     if (data.getPlatform() != null) {
@@ -249,48 +199,7 @@ public class DataManagerImpl implements DataManager {
     dataDao.persistData(data);
   }
 
-  /**
-   * Processes the data submitted by the user containing CF type information. If an ID already
-   * exists, the persisted data corresponding to that ID is collected and updated with the newly
-   * submitted data.  If no ID exists (is null), the data is persisted for the first time.
-   *
-   * @param id The unique ID corresponding to already persisted data (may be null).
-   * @param cfTypeData The CfTypeData object containing user-submitted CF type information.
-   * @param request HttpServletRequest used to make unique IDs for new data.
-   * @throws RosettaDataException If unable to lookup the metadata profile.
-   */
-  @Override
-  public void processCfType(String id, CfTypeData cfTypeData, HttpServletRequest request) throws RosettaDataException {
 
-    // If the ID is present, then there is a cookie.  Combine new with previous persisted data.
-    if (id != null) {
-
-      // Get the persisted CF type data corresponding to this ID.
-      CfTypeData persistedData = cfTypeDataManager.lookupPersistedCfTypeDataById(id);
-
-      // Update platform value.
-      persistedData.setPlatform(persistedData.getPlatform());
-
-      // Update community if needed.
-      if (cfTypeData.getPlatform() != null) {
-        persistedData.setCommunity(resourceManager.getCommunityFromPlatform(cfTypeData.getPlatform()));
-      } else {
-        persistedData.setCommunity(null);
-      }
-
-      // Update CF type.
-      persistedData.setCfType(cfTypeData.getCfType());
-
-      // Update persisted CF type data.
-      cfTypeDataManager.updatePersistedCfTypeData(persistedData);
-
-    } else {
-      // No ID yet.  First time persisting CF type data.
-      cfTypeData.setId(createUniqueDataId(request)); // Create a unique ID for this object.
-      String metadataProfile = assessMetadataProfile(cfTypeData); // Set metadata profile.
-      cfTypeDataManager.persistCfTypeData(cfTypeData);
-    }
-  }
 
   /**
    * Processes the data submitted by the user containing custom data file information.
@@ -349,7 +258,7 @@ public class DataManagerImpl implements DataManager {
 
       // Write data file to disk.
       dataFileName = fileManager
-          .writeUploadedFileToDisk(getUploadDir(), persistedData.getId(), dataFileName,
+          .writeUploadedFileToDisk(PropertyUtils.getUploadDir(), persistedData.getId(), dataFileName,
               data.getDataFile());
 
       // May need to uncompress the uploaded data file(s) and handle them.
@@ -373,7 +282,7 @@ public class DataManagerImpl implements DataManager {
       String positionalFileName = data.getPositionalFileName();
       // Write file to disk.
       positionalFileName = fileManager
-          .writeUploadedFileToDisk(getUploadDir(), persistedData.getId(), positionalFileName,
+          .writeUploadedFileToDisk(PropertyUtils.getUploadDir(), persistedData.getId(), positionalFileName,
               data.getPositionalFile());
       // Set the positional file name.
       persistedData.setPositionalFileName(positionalFileName);
@@ -389,7 +298,7 @@ public class DataManagerImpl implements DataManager {
       String templateFileName = data.getTemplateFileName();
       // Write file to disk.
       templateFileName = fileManager
-          .writeUploadedFileToDisk(getUploadDir(), persistedData.getId(), templateFileName,
+          .writeUploadedFileToDisk(PropertyUtils.getUploadDir(), persistedData.getId(), templateFileName,
               data.getTemplateFile());
       // Set the template file name.
       persistedData.setTemplateFileName(templateFileName);
@@ -498,15 +407,7 @@ public class DataManagerImpl implements DataManager {
     this.dataDao = dataDao;
   }
 
-  /**
-   * Sets the data access object (DAO) for the RosettaProperties object which will acquire and
-   * persist the data passed to it via the methods of this DataManager.
-   *
-   * @param propertiesDao The service DAO representing a Data object.
-   */
-  public void setPropertiesDao(PropertiesDao propertiesDao) {
-    this.propertiesDao = propertiesDao;
-  }
+
 
   /**
    * Uncompresses a compressed file, looks at the inventory of that file and updates the persisted
@@ -518,10 +419,10 @@ public class DataManagerImpl implements DataManager {
    */
   private void uncompress(Data data, String dataFileName) throws RosettaFileException {
     // Unzip.
-    fileManager.uncompress(getUploadDir(), data.getId(), dataFileName);
+    fileManager.uncompress(PropertyUtils.getUploadDir(), data.getId(), dataFileName);
     // Get the zip file contents inventory
     List<String> inventory = fileManager
-        .getInventoryData(FilenameUtils.concat(getUploadDir(), data.getId()));
+        .getInventoryData(FilenameUtils.concat(PropertyUtils.getUploadDir(), data.getId()));
     // Looks at the inventory contents and assign to the data object accordingly.
     for (String entry : inventory) {
       if (entry.contains("rosetta.template"))
@@ -545,46 +446,4 @@ public class DataManagerImpl implements DataManager {
   public void updatePersistedData(Data data) {
     dataDao.updatePersistedData(data);
   }
-
-
-  //-------------------------//
-
-  public CfTypeData lookupPersistedCfTypeDataById(String id) {
-    return cfTypeDataManager.lookupPersistedCfTypeDataById(id);
-  }
-
-
-  private String assessMetadataProfile(CfTypeData cfTypeData) throws RosettaDataException {
-    // Assign metadata profile to value specified in CfTypeData object.
-    String metadataProfile = cfTypeData.getMetadataProfile();
-
-    // If metadata profile value isn't null we can return (below).
-    if(metadataProfile == null) {
-
-      // Use the provided community/platform to figure out metadata profile.
-      String userSelectedCommuntity = cfTypeData.getCommunity();
-
-      if(userSelectedCommuntity != null) {
-
-        for (MetadataProfile metadataProfileResource: resourceManager.getMetadataProfiles()) {
-          List<Community> communities = metadataProfileResource.getCommunities();
-          metadataProfile = "";
-          if(communities.contains(userSelectedCommuntity)) {
-            metadataProfile = metadataProfile + metadataProfileResource.getName() + ",";
-            metadataProfile = metadataProfile.substring(0, metadataProfile.length() - 1);
-          }
-        }
-
-      } else {
-        // This shouldn't happen!
-        // Either the platform/community or the the CF type/metadata profile must exist.
-        throw new RosettaDataException("Neither metadata profile or community values present: "
-            + cfTypeData.toString());
-      }
-    }
-    return metadataProfile;
-  }
-
-
-
 }
