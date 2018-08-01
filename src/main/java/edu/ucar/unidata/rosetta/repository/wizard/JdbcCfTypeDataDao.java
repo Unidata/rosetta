@@ -20,7 +20,7 @@ public class JdbcCfTypeDataDao extends JdbcDaoSupport implements CfTypeDataDao {
 
   @Override
   public CfTypeData lookupCfDataById(String id) throws DataRetrievalFailureException {
-    String sql = "SELECT cfType, community, metadataProfile, platform FROM cfTypeData WHERE id = ?";
+    String sql = "SELECT * FROM cfTypeData WHERE id = ?";
     List<CfTypeData> cfTypeData = getJdbcTemplate().query(sql, new CfTypeDataMapper(), id);
     if (cfTypeData.isEmpty()) {
       String message = "Unable to find persisted CF type data corresponding to id " + id;
@@ -29,6 +29,7 @@ public class JdbcCfTypeDataDao extends JdbcDaoSupport implements CfTypeDataDao {
     }
     return cfTypeData.get(0);
   }
+
 
   @Override
   public void persistCfTypeData(CfTypeData cfTypeData) throws DataRetrievalFailureException {
@@ -103,7 +104,7 @@ public class JdbcCfTypeDataDao extends JdbcDaoSupport implements CfTypeDataDao {
       cfTypeData.setId(rs.getString("id"));
       cfTypeData.setCfType(rs.getString("cfType"));
       cfTypeData.setCommunity(rs.getString("community"));
-      cfTypeData.setPlatform(rs.getString("metadataProfile"));
+      cfTypeData.setMetadataProfile(rs.getString("metadataProfile"));
       cfTypeData.setPlatform(rs.getString("platform"));
       return cfTypeData;
     }
