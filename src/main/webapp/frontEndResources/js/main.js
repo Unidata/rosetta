@@ -26,13 +26,23 @@ $(document).ready(function ($) {
     $(".platforms li input").prop("checked", false);
     // make sure all other platform li are not highlighted (workaround for jQuery quirk).
     $(".platforms li").removeClass("ui-selected");
+
     // unselect any selected cfTypes in the dropdown menu.
     $("#cfTypeSpecified select option:selected").prop("selected", false);
+    // uncheck any selected metadata profiles (except CF).
+    $.each($("#metadataProfile li input"), function(index, checkbox) {
+        if($(checkbox).val() !== "CF") {
+            $(checkbox).prop("checked", false);
+        }
+    });
+    // Hide metadata profile section
+    $("#metadataProfile").addClass("hideMe");
 
     // check the selected radio button.
     $(selectedInput).prop("checked", true);
     // highlight the selected li
     $(selectedLi).addClass("ui-selected");
+
     // remove disabled status for submit button.
     $("input[type=submit]").removeAttr("disabled");
     // remove disabled class for submit button.

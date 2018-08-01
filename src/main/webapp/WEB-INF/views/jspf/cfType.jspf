@@ -55,7 +55,7 @@
 
                             <input type="radio" name="platform"
                                    value="${fn:replace(platform.name, ' ', '_')}"
-                                <%-- Mark as selected if platform has already been chosen. --%>
+                                    <%-- Mark as checked if platform has already been chosen. --%>
                                     <c:if test="${not empty data.platform && data.platform == fn:replace(platform.name, ' ', '_')}">
                                         checked
                                     </c:if>
@@ -68,52 +68,54 @@
             <!--/#${community.name} -->
         </c:forEach>
 
-        <%-- Need the communities to load platforms by community. --%>
+        <%-- Need the cf types to load. --%>
         <c:if test="${fn:length(cfTypes) gt 0}">
 
-
             <div id="cfTypeSpecified">
-            <p>I know what I'm doing and I want to directly select a CF Type:</p>
-            <select name="cfType">
+                <p>I know what I'm doing and I want to directly select a CF Type:</p>
+                <select name="cfType">
                 <option value="">Select a CF Type</option>
                     <%-- Populate the cfType field if the data exists & it matches --%>
-                <c:forEach items="${cfTypes}" var="cfType">
-                    <option
+                    <c:forEach items="${cfTypes}" var="cfType">
+                        <option
                             <c:if test="${not empty data.cfType && data.cfType == fn:replace(cfType.name, ' ', '_')}">
                                 selected
                             </c:if>
                             value="${fn:replace(cfType.name, ' ', '_')}">
                             ${cfType.name}
-                    </option>
-                </c:forEach>
-            </select>
+                        </option>
+                    </c:forEach>
+                </select>
 
-            <div id="metadataProfile"
-                 class="<c:if test="${empty data.metadataProfile}">hideMe</c:if>">
-                Select applicable metadata profiles:
-                <ul>
-                    <li>
-                        <label>CF
-                            <input type="checkbox" name="metadataProfile" value="CF" checked
-                                   disabled/>
-                        </label>
-                    </li>
-                    <li>
-                        <label>NCEI
-                            <input type="checkbox" name="metadataProfile" value="NCEI"/>
-                        </label>
-                    </li>
-                    <li>
-                        <label>eTUFF
-                            <input type="checkbox" name="metadataProfile" value="eTUFF"/>
-                        </label>
-                    </li>
-                </ul>
-            </div>
-            <!-- /#metadataProfile
 
-            </div> <!-- /#cfType -->
-        </c:if>
+                <%-- Need the metadata profiles to load. --%>
+                <c:if test="${fn:length(metadataProfiles) gt 0}">
+
+                <div id="metadataProfile"
+                    class="<c:if test="${empty data.cfType}">hideMe</c:if>">
+                    Select all applicable metadata profiles:
+                    <ul>
+                        <c:forEach items="${metadataProfiles}" var="metadataProfile">
+                            <li>
+                                <label>
+                                    <input type="checkbox" name="metadataProfile"
+                                           value="${metadataProfile.name}"
+                                        <%-- Everyone gets the CF profile. --%>
+                                        <c:if test="${metadataProfile.name == 'CF'}">
+                                            checked disabled
+                                        </c:if>
+                                        <c:if test="${not empty data.metadataProfile && fn:contains(data.metadataProfile, metadataProfile.name)}">
+                                            checked
+                                        </c:if>
+                                    /> ${metadataProfile.name}
+                                </label>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div><!-- /#metadataProfile -->
+            </c:if> <%-- /${fn:length(metadataProfiles) gt 0} --%>
+            </div> <!-- /#cfTypeSpecified -->
+        </c:if> <%-- /${fn:length(cfTypes) gt 0} --%>
         </div> <!-- /#tabs -->
 
         <c:if test="${not empty error}">
