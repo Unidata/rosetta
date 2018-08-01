@@ -136,7 +136,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
           "id VARCHAR(255) primary key not null, " +
           "cfType VARCHAR(50), " +
           "community VARCHAR(100), " +
-          "metadataProfile VARCHAR(10), " +
+          "metadataProfile VARCHAR(20), " +
           "platform VARCHAR(100)" +
           ")";
       createTable(createCfTypeDataTable, props);
