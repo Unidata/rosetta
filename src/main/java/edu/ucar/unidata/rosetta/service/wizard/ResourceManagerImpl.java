@@ -144,8 +144,7 @@ public class ResourceManagerImpl implements ResourceManager {
   }
 
   /**
-   * Sets the data access object (DAO) for the CFType object which will acquire and persist the data
-   * passed to it via the methods of this DataManager.
+   * Sets the data access object (DAO) for the CFType object.
    *
    * @param cfTypeDao The service DAO representing a CfType object.
    */
@@ -154,8 +153,7 @@ public class ResourceManagerImpl implements ResourceManager {
   }
 
   /**
-   * Sets the data access object (DAO) for the Community object which will acquire and persist the
-   * data passed to it via the methods of this DataManager.
+   * Sets the data access object (DAO) for the Community object.
    *
    * @param communityDao The service DAO representing a Community object.
    */
@@ -164,8 +162,7 @@ public class ResourceManagerImpl implements ResourceManager {
   }
 
   /**
-   * Sets the data access object (DAO) for the Delimiter object which will acquire and persist the
-   * data passed to it via the methods of this DataManager.
+   * Sets the data access object (DAO) for the Delimiter object.
    *
    * @param delimiterDao The service DAO representing a Delimiter object.
    */
@@ -174,8 +171,16 @@ public class ResourceManagerImpl implements ResourceManager {
   }
 
   /**
-   * Sets the data access object (DAO) for the FileType object which will acquire and persist the
-   * data passed to it via the methods of this DataManager.
+   * Sets the data access object (DAO) for the MetadataProfile object.
+   *
+   * @param metadataProfileDao The service DAO representing a MetadataProfile object.
+   */
+  public void setMetadataProfileDao(MetadataProfileDao metadataProfileDao) {
+    this.metadataProfileDao = metadataProfileDao;
+  }
+
+  /**
+   * Sets the data access object (DAO) for the FileType object.
    *
    * @param fileTypeDao The service DAO representing a FileType object.
    */
@@ -184,8 +189,7 @@ public class ResourceManagerImpl implements ResourceManager {
   }
 
   /**
-   * Sets the data access object (DAO) for the Platform object which will acquire and persist the
-   * data passed to it via the methods of this DataManager.
+   * Sets the data access object (DAO) for the Platform object.
    *
    * @param platformDao The service DAO representing a Platform object.
    */
