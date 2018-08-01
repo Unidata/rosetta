@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author oxelson@ucar.edu
  */
 public class CfTypeData extends WizardData {
-
+  
   private String cfType;
   private String community;
   private String metadataProfile;
