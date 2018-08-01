@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author oxelson@ucar.edu
  */
 public class CfTypeData extends WizardData {
-  
+
   private String cfType;
   private String community;
   private String metadataProfile;
@@ -66,7 +66,10 @@ public class CfTypeData extends WizardData {
    */
   public void setMetadataProfile(String metadataProfile) {
     if (!metadataProfile.contains("CF")) {
-      this.metadataProfile = metadataProfile + ",CF";
+      this.metadataProfile = "CF," + metadataProfile;
+      if (this.metadataProfile.substring(this.metadataProfile.length() - 1).equals(",")) {
+        this.metadataProfile = this.metadataProfile.substring(0, this.metadataProfile.length() - 1);
+      }
     } else {
       this.metadataProfile = metadataProfile;
     }
