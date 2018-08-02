@@ -292,6 +292,11 @@ ul li label img {
   margin: 10px 10px 20px 10px;
 }
 
+.fileType {
+  display:inline !important;
+  text-transform: capitalize;
+}
+
 /**
  * Custom file attributes step of wizard.
  */

@@ -80,16 +80,21 @@ $(document).ready(function ($) {
   $("select#dataFileType").change(function (event, ui) {
     var fileType = $(this).find(":selected").text();
     if (fileType == "--") {
+      // user de-selected the file type.
       if (!$("#upload").hasClass("hideMe")) {
         // add hideMe class for file upload section.
         $("#upload").addClass("hideMe");
       }
     } else if (fileType === "Custom File Type") {
+      // user selected custom file type.
+
       // remove hideMe class for file upload section.
       $("#upload").removeClass("hideMe");
       // remove hideMe class for external positional file upload.
       $("#upload #custom").removeClass("hideMe");
     } else {
+      // user selected known file type.
+
       // remove hideMe class for file upload section.
       $("#upload").removeClass("hideMe");
       // add hideMe class for external positional file upload.
@@ -123,7 +128,7 @@ $(document).ready(function ($) {
    * STEP 2: File upload step.
    * dataFile to upload selected, so show next button.
    */
-  $("input:file#dataFile").change(function () {
+  $("input:file#data").change(function () {
     // remove disabled status for submit button.
     $("input[type=submit]#Next").removeAttr("disabled");
     // remove disabled class for submit button.
