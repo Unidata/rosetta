@@ -141,6 +141,26 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
           ")";
       createTable(createCfTypeDataTable, props);
 
+      // Table containing uploaded file data.
+      String createUploadedFileTable = "CREATE TABLE uploadedFiles " +
+              "(" +
+              "id VARCHAR(255) primary key not null, " +
+              "fileName VARCHAR(255), " +
+              "fileType VARCHAR(50)" +
+              ")";
+      createTable(createUploadedFileTable, props);
+
+      // Table containing data file information.
+      String createDataFileTable = "CREATE TABLE dataFiles " +
+              "(" +
+              "id VARCHAR(255) primary key not null, " +
+              "dataFileType VARCHAR(255), " +
+              "delimiter VARCHAR(255)," +
+              "headerLineNumbers VARCHAR(255)" +
+              ")";
+      createTable(createDataFileTable, props);
+
+
       String createDataTable = "CREATE TABLE data " +
           "(" +
           "id VARCHAR(255) primary key not null, " +
