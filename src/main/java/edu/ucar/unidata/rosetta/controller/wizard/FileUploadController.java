@@ -1,7 +1,10 @@
 package edu.ucar.unidata.rosetta.controller.wizard;
 
 import edu.ucar.unidata.rosetta.domain.Data;
+import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
+import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
+import edu.ucar.unidata.rosetta.service.wizard.CfTypeDataManager;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
 import java.io.PrintWriter;
@@ -38,6 +41,9 @@ public class FileUploadController implements HandlerExceptionResolver {
 
   private final ServletContext servletContext;
 
+  @Resource(name = "cfTypeDataManager")
+  private CfTypeDataManager cfTypeDataManager;
+
   @Resource(name = "dataManager")
   private DataManager dataManager;
 
@@ -63,23 +69,24 @@ public class FileUploadController implements HandlerExceptionResolver {
     // Have we visited this page before during this session?
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-    if (rosettaCookie == null)
-    // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-    {
+    if (rosettaCookie == null) {
+      // Something has gone wrong.  We shouldn't be at this step without having persisted data.
       throw new IllegalStateException(
           "No persisted data available for file upload step.  Check the database & the cookie.");
     }
 
-    // Create a Data form-backing object.
-    Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
+    // Look up CF type data entered in prior wizard step & add to model.
+    CfTypeData cfTypeData = cfTypeDataManager.lookupPersistedCfTypeDataById(rosettaCookie.getValue());
+    model.addAttribute("community", cfTypeData.getCommunity());
+    model.addAttribute("cfType", cfTypeData.getCfType());
 
-    // Add data object to Model.
-    model.addAttribute("data", data);
+    // Create a Data form-backing object.
+    model.addAttribute("data", new UploadedFileCmd());
     // Add current step to the Model.
     model.addAttribute("currentStep", "fileUpload");
     // Add community data to Model (for file upload display based on community type).
     model.addAttribute("communities", resourceManager.getCommunities());
-    // Add file type data to Model (for file type selection if cfType was directly specified).
+    // Add file type data to Model (for file type selection if CF type was directly specified).
     model.addAttribute("fileTypes", resourceManager.getFileTypes());
 
     // The currentStep variable will determine which jsp frag to load in the wizard.
@@ -91,7 +98,7 @@ public class FileUploadController implements HandlerExceptionResolver {
    * persists it to the database.  Redirects user to next step or previous step depending on
    * submitted form button (Next or Previous).
    *
-   * @param data The form-backing object.
+   * @param uploadedFileCmd The form-backing object.
    * @param result The BindingResult for error handling.
    * @param model The Model object to be populated by file upload data in the next step.
    * @param request HttpServletRequest needed to get the cookie.
@@ -101,13 +108,14 @@ public class FileUploadController implements HandlerExceptionResolver {
    * occurred.
    */
   @RequestMapping(value = "/fileUpload", method = RequestMethod.POST)
-  public ModelAndView processFileUpload(Data data, BindingResult result, Model model,
-      HttpServletRequest request) throws RosettaFileException {
-
+  public ModelAndView processFileUpload(UploadedFileCmd uploadedFileCmd, BindingResult result,
+      Model model, HttpServletRequest request) throws RosettaFileException {
+/*
     // Take user back to the CF type selection step (and don't save any data to this step).
     if (data.getSubmit().equals("Previous")) {
       return new ModelAndView(new RedirectView("/cfType", true));
     }
+    */
 
     // Get the cookie so we can get the persisted data.
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
@@ -119,7 +127,7 @@ public class FileUploadController implements HandlerExceptionResolver {
     }
 
     // Persist the file upload data.
-    dataManager.processFileUpload(rosettaCookie.getValue(), data);
+    dataManager.processFileUpload(rosettaCookie.getValue(), uploadedFileCmd);
 
     // Depending on what the user entered for the data file, we may need to
     // add an extra step to collect data associated with that custom file type.
