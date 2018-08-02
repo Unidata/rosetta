@@ -96,17 +96,7 @@ public interface DataManager {
    */
   public void processCustomFileTypeAttributes(String id, Data data);
 
-  /**
-   * Processes the data submitted by the user containing uploaded file information. Writes the
-   * uploaded files to disk. Updates the persisted data corresponding to the provided unique ID with
-   * the uploaded file information.
-   *
-   * @param id The unique ID corresponding to already persisted data.
-   * @param data The Data object submitted by the user containing the uploaded file information.
-   * @throws RosettaFileException If unable to write file(s) to disk or a file conversion exception
-   * occurred.
-   */
-  public void processFileUpload(String id, Data data) throws RosettaFileException;
+
 
   /**
    * Processes the data submitted by the user containing general metadata information.  Since this
