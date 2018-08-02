@@ -1,6 +1,9 @@
 package edu.ucar.unidata.rosetta.domain.wizard;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
+
+import edu.ucar.unidata.rosetta.controller.wizard.CfTypeController;
 
 /**
  * Form-backing object for the wizard to collect CF type and associated data.
@@ -9,10 +12,16 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 public class CfTypeData extends WizardData {
 
+  private static final Logger logger = Logger.getLogger(CfTypeData.class);
+
   private String cfType;
   private String community;
   private String metadataProfile;
   private String platform;
+
+  public CfTypeData() {
+    setMetadataProfile("CF");
+  }
 
   /**
    * Returns the CF Type selected by the user.
@@ -65,14 +74,7 @@ public class CfTypeData extends WizardData {
    * @param metadataProfile The metadata profile.
    */
   public void setMetadataProfile(String metadataProfile) {
-    if (!metadataProfile.contains("CF")) {
-      this.metadataProfile = "CF," + metadataProfile;
-      if (this.metadataProfile.substring(this.metadataProfile.length() - 1).equals(",")) {
-        this.metadataProfile = this.metadataProfile.substring(0, this.metadataProfile.length() - 1);
-      }
-    } else {
       this.metadataProfile = metadataProfile;
-    }
   }
 
   /**
