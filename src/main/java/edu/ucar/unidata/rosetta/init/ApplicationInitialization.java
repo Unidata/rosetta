@@ -265,18 +265,18 @@ public class ApplicationInitialization implements ServletContextListener {
     // Load configuration file properties.
     logger.info("Reading default application.properties configuration file...");
 
-    // Load the default configuration data, filtering out the unwanted lines.
-    try (Stream<String> stream = Files
-        .lines(Paths.get(classLoader.getResource(CONFIG_FILE).getFile()))) {
-      stream.filter(StringUtils::isNotBlank)  // Filter out blank lines.
-          .filter(line -> !StringUtils.startsWith(line, "#")) // Filter out comment lines
-          .filter(line -> !StringUtils.startsWith(line, "jdbc")) // Filter out database configs
-          .map(line -> line.split("=")) // Tokenize the line.
-          .forEach(tokenizedLineData -> props.setProperty(tokenizedLineData[0],
-              tokenizedLineData[1])); // Add tokenized line data to props.
+        // Load the default configuration data, filtering out the unwanted lines.
+        File configFile = new File(classLoader.getResource(CONFIG_FILE).getFile());
+
+        try (Stream<String> stream = Files.lines(Paths.get(configFile.getAbsolutePath()))) {
+            stream.filter(StringUtils::isNotBlank)  // Filter out blank lines.
+                  .filter(line -> !StringUtils.startsWith(line, "#")) // Filter out comment lines
+                  .filter(line -> !StringUtils.startsWith(line, "jdbc")) // Filter out database configs
+                  .map(line -> line.split("=")) // Tokenize the line.
+                  .forEach(tokenizedLineData -> props.setProperty(tokenizedLineData[0], tokenizedLineData[1])); // Add tokenized line data to props.
+        }
+        return props;
     }
-    return props;
-  }
 
   /**
    * Loads and returns all the properties listed in the application.properties configuration file.
