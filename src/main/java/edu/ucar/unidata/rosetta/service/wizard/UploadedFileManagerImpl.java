@@ -1,15 +1,14 @@
 package edu.ucar.unidata.rosetta.service.wizard;
 
-import org.apache.commons.io.FilenameUtils;
-
 import javax.annotation.Resource;
 
-import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.wizard.UploadedFileDao;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
+
 
 public class UploadedFileManagerImpl implements UploadedFileManager {
 
@@ -17,6 +16,17 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
 
   @Resource(name = "fileManager")
   private FileManager fileManager;
+
+  /**
+   * Looks up and retrieves a uploaded file data using the given id.
+   *
+   * @param id  The ID corresponding to the data to retrieve.
+   * @return  The persisted uploaded file data.
+   */
+  @Override
+  public UploadedFileCmd lookupPersistedDataById(String id) {
+    return uploadedFileDao.lookupById(id);
+  }
 
   /**
    * Processes the data submitted by the user containing uploaded file information. Writes the
@@ -46,10 +56,13 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
       uploadedFileDao.persistData(id, uploadedFileCmd);
     }
 
+    // Save files to disk.
     for (UploadedFile uploadedFile : uploadedFileCmd.getUploadedFiles()) {
-      // Write data file to disk.
-      fileManager.writeUploadedFileToDisk(PropertyUtils.getUploadDir(),
-              id, uploadedFile.getFileName(), uploadedFile.getFile());
+      if(StringUtils.trimToNull(uploadedFile.getFileName()) != null) {
+        // Write data file to disk.
+        fileManager.writeUploadedFileToDisk(PropertyUtils.getUploadDir(),
+            id, uploadedFile.getFileName(), uploadedFile.getFile());
+      }
     }
   }
 

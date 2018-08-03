@@ -72,6 +72,14 @@ public interface DataManager {
   public Data lookupPersistedDataById(String id);
 
   /**
+   * Persists the information in the given data object.
+   *
+   * @param data The Data object to persist.
+   */
+  public void persistData(Data data, HttpServletRequest request);
+
+
+  /**
    * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
    *
    * @param id The unique id associated with the file (a subdir in the uploads directory).
@@ -80,22 +88,6 @@ public interface DataManager {
    * @throws RosettaFileException For any file I/O or JSON conversions problems.
    */
   public String parseDataFileByLine(String id, String dataFileName) throws RosettaFileException;
-
-  /**
-   * Persists the information in the given data object.
-   *
-   * @param data The Data object to persist.
-   */
-  public void persistData(Data data, HttpServletRequest request);
-
-  /**
-   * Processes the data submitted by the user containing custom data file information.
-   *
-   * @param id The unique ID corresponding to already persisted data.
-   * @param data The Data object submitted by the user containing the custom data file information.
-   */
-  public void processCustomFileTypeAttributes(String id, Data data);
-
 
 
   /**

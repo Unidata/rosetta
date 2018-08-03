@@ -7,6 +7,7 @@ import edu.ucar.unidata.rosetta.domain.resources.Community;
 import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
 import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
+import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.PropertiesDao;
@@ -39,6 +40,9 @@ public class DataManagerImpl implements DataManager {
   // The other managers we make use of in this file.
   @Resource(name = "cfTypeDataManager")
   private CfTypeDataManager cfTypeDataManager;
+
+  @Resource(name = "uploadedFileManager")
+  private UploadedFileManager uploadedFileManager;
 
   @Resource(name = "fileParserManager")
   private FileManager fileManager;
@@ -169,20 +173,6 @@ public class DataManagerImpl implements DataManager {
   }
 
   /**
-   * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
-   *
-   * @param id The unique id associated with the file (a subdir in the uploads directory).
-   * @param dataFileName The file to parse.
-   * @return A JSON String of the file data parsed by line.
-   * @throws RosettaFileException For any file I/O or JSON conversions problems.
-   */
-  @Override
-  public String parseDataFileByLine(String id, String dataFileName) throws RosettaFileException {
-    String filePath = FilenameUtils.concat(FilenameUtils.concat(PropertyUtils.getUploadDir(), id), dataFileName);
-    return fileManager.parseByLine(filePath);
-  }
-
-  /**
    * Persists the information in the given data object.
    *
    * @param data The Data object to persist.
@@ -199,37 +189,21 @@ public class DataManagerImpl implements DataManager {
     dataDao.persistData(data);
   }
 
-
-
   /**
-   * Processes the data submitted by the user containing custom data file information.
+   * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
    *
-   * @param id The unique ID corresponding to already persisted data.
-   * @param data The Data object submitted by the user containing the custom data file information.
+   * @param id The unique id associated with the file (a subdir in the uploads directory).
+   * @param dataFileName The file to parse.
+   * @return A JSON String of the file data parsed by line.
+   * @throws RosettaFileException For any file I/O or JSON conversions problems.
    */
   @Override
-  public void processCustomFileTypeAttributes(String id, Data data) {
-
-    // Get the persisted data.
-    Data persistedData = lookupPersistedDataById(id);
-
-    // Handle boolean values of the Data object for header lines.
-    if (data.getNoHeaderLines()) {
-      // set no header lines.
-      persistedData.setNoHeaderLines(true);
-      // Remove any previously persisted headerlines.
-      persistedData.setHeaderLineNumbers(null);
-    } else {
-      // Set header lines.
-      persistedData.setNoHeaderLines(false);
-      persistedData.setHeaderLineNumbers(data.getHeaderLineNumbers());
-    }
-    // Set delimiter.
-    persistedData.setDelimiter(data.getDelimiter());
-
-    // Update persisted data.
-    updatePersistedData(persistedData);
+  public String parseDataFileByLine(String id, String dataFileName) throws RosettaFileException {
+    String filePath = FilenameUtils.concat(FilenameUtils.concat(PropertyUtils.getUploadDir(), id), dataFileName);
+    return fileManager.parseByLine(filePath);
   }
+
+
 
 
 
@@ -265,10 +239,10 @@ public class DataManagerImpl implements DataManager {
     String nextStep;
 
     // Get the persisted data.
-    Data persistedData = lookupPersistedDataById(id);
+    UploadedFileCmd uploadedFileCmd = uploadedFileManager.lookupPersistedDataById(id);
 
     // The next step depends on what the user specified for the data file type.
-    if (persistedData.getDataFileType().equals("Custom_File_Type")) {
+    if (uploadedFileCmd.getDataFileType().equals("Custom_File_Type")) {
       nextStep = "/customFileTypeAttributes";
     } else {
       nextStep = "/generalMetadata";
@@ -291,11 +265,11 @@ public class DataManagerImpl implements DataManager {
     String previousStep;
 
     // Get the persisted data.
-    Data persistedData = lookupPersistedDataById(id);
+    UploadedFileCmd uploadedFileCmd = uploadedFileManager.lookupPersistedDataById(id);
 
     // The previous step (if the user chooses to go there) depends
     // on what the user specified for the data file type.
-    if (persistedData.getDataFileType().equals("Custom_File_Type")) {
+    if (uploadedFileCmd.getDataFileType().equals("Custom_File_Type")) {
       previousStep = "/variableMetadata";
     } else {
       previousStep = "/fileUpload";

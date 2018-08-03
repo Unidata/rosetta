@@ -6,6 +6,14 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 public interface UploadedFileManager {
 
   /**
+   * Looks up and retrieves a uploaded file data using the given id.
+   *
+   * @param id  The ID corresponding to the data to retrieve.
+   * @return  The persisted uploaded file data.
+   */
+  public UploadedFileCmd lookupPersistedDataById(String id);
+
+  /**
    * Processes the data submitted by the user containing uploaded file information. Writes the
    * uploaded files to disk. Updates the persisted data corresponding to the provided unique ID
    * with the uploaded file information.
