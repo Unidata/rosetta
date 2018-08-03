@@ -3,7 +3,6 @@ package edu.ucar.unidata.rosetta.domain.wizard;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.log4j.Logger;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
@@ -12,8 +11,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
  * @author oxelson@ucar.edu
  */
 public class UploadedFile extends WizardData implements Serializable {
-
-  private static final Logger logger = Logger.getLogger(UploadedFile.class);
 
   private String description;
   private CommonsMultipartFile file = null;
