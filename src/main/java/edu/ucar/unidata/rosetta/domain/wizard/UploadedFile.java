@@ -3,6 +3,7 @@ package edu.ucar.unidata.rosetta.domain.wizard;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
@@ -11,6 +12,8 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
  * @author oxelson@ucar.edu
  */
 public class UploadedFile extends WizardData implements Serializable {
+
+  private static final Logger logger = Logger.getLogger(UploadedFile.class);
 
   private String description;
   private CommonsMultipartFile file = null;
@@ -22,6 +25,14 @@ public class UploadedFile extends WizardData implements Serializable {
     DATA,
     POSITIONAL,
     TEMPLATE
+  }
+
+  public UploadedFile() {}
+
+  public UploadedFile(CommonsMultipartFile file, String fileName, FileType fileType ) {
+    setFile(file);
+    setFileName(fileName);
+    setFileType(fileType);
   }
 
   /**
@@ -86,7 +97,6 @@ public class UploadedFile extends WizardData implements Serializable {
    * @param file The CommonsMultipartFile file.
    */
   public void setFile(CommonsMultipartFile file) {
-    setFileName(file.getOriginalFilename());
     this.file = file;
   }
 

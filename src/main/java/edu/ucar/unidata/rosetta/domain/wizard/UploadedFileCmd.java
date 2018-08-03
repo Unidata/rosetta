@@ -1,7 +1,5 @@
 package edu.ucar.unidata.rosetta.domain.wizard;
 
-import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile.FileType;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
@@ -15,32 +13,12 @@ import java.util.List;
 public class UploadedFileCmd extends WizardData {
 
   private String dataFileType;
-  private List<UploadedFile> uploadedFiles;
+  private List<UploadedFile> uploadedFiles = new ArrayList<>();
 
-  /**
-   * Initializing this object with three uploaded files.
-   */
-  public UploadedFileCmd() {
+  public UploadedFileCmd() {}
 
-    uploadedFiles = new ArrayList<>(3);
-
-    // Instantiate the three types of files.
-    UploadedFile dataFile = new UploadedFile();
-    dataFile.setFileType(FileType.DATA);
-    dataFile.setDescription("The file containing the ASCII data you wish to convert.");
-    dataFile.setRequired(true);
-    uploadedFiles.add(dataFile);
-
-    UploadedFile positionalFile = new UploadedFile();
-    positionalFile.setFileType(FileType.POSITIONAL);
-    positionalFile.setDescription("An optional file containing positional data "
-            + "corresponding to the data contained in the data file.");
-    uploadedFiles.add(positionalFile);
-
-    UploadedFile templateFile = new UploadedFile();
-    templateFile.setFileType(FileType.TEMPLATE);
-    templateFile.setDescription("A Rosetta template file used for converting the data file.");
-    uploadedFiles.add(templateFile);
+  public UploadedFileCmd(List<UploadedFile> uploadedFiles) {
+    setUploadedFiles(uploadedFiles);
   }
 
   /**
