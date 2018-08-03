@@ -6,6 +6,7 @@ import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.RowMapper;
@@ -48,6 +49,25 @@ public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileD
 
 
   /**
+   * Looks up and retrieves persisted data file information using the given id.
+   *
+   * @param id The unique ID corresponding to already persisted data.
+   * @return The UploadedFile object for the data file.
+   */
+  @Override
+  public UploadedFile lookupDataFileById(String id){
+    // Get the uploaded file data.
+    String sql = "SELECT * FROM uploadedFiles WHERE id = ? AND fileType = 'DATA'";
+    List<UploadedFile> uploadedFiles = getJdbcTemplate().query(sql, new JdbcUploadedFileDao.UploadedFileMapper(), id);
+    if (uploadedFiles.isEmpty()) {
+      throw new DataRetrievalFailureException(
+          "No persisted data file information found corresponding to id " + id);
+    }
+    return uploadedFiles.get(0);
+  }
+
+
+  /**
    * Persists, for the first time, the uploaded file data.
    *
    * @param id The unique ID corresponding to the data.
@@ -65,18 +85,20 @@ public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileD
       throw new DataRetrievalFailureException(
                 "Uploaded file data corresponding to id " + id + " already exists.");
     } else {
-      // Persist the CF type data object.
+      // Persist the uploaded file data.
       for (UploadedFile uploadedFile :  uploadedFileCmd.getUploadedFiles()) {
-        uploadedFile.setId(id);
-        this.insertActor = new SimpleJdbcInsert(getDataSource()).withTableName("uploadedFiles");
-        SqlParameterSource parameters = new BeanPropertySqlParameterSource(uploadedFile);
-        int rowsAffected = insertActor.execute(parameters);
-        if (rowsAffected <= 0) {
-          String message = "Unable to persist uploaded file data corresponding to id " + id;
-          logger.error(message);
-          throw new DataRetrievalFailureException(message);
-        } else {
-          logger.info("Uploaded file data corresponding to id " + id + " persisted.");
+        if(StringUtils.trimToNull(uploadedFile.getFileName()) != null) {
+          uploadedFile.setId(id);
+          this.insertActor = new SimpleJdbcInsert(getDataSource()).withTableName("uploadedFiles");
+          SqlParameterSource parameters = new BeanPropertySqlParameterSource(uploadedFile);
+          int rowsAffected = insertActor.execute(parameters);
+          if (rowsAffected <= 0) {
+            String message = "Unable to persist uploaded file data corresponding to id " + id;
+            logger.error(message);
+            throw new DataRetrievalFailureException(message);
+          } else {
+            logger.info("Uploaded file data corresponding to id " + id + " persisted.");
+          }
         }
       }
     }

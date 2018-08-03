@@ -1,5 +1,6 @@
 package edu.ucar.unidata.rosetta.repository.wizard;
 
+import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
 import org.springframework.dao.DataRetrievalFailureException;
 
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
@@ -13,6 +14,14 @@ public interface UploadedFileDao {
    * @return The UploadedFileCmd object corresponding to the given id.
    */
   public UploadedFileCmd lookupById(String id);
+
+  /**
+   * Looks up and retrieves persisted data file information using the given id.
+   *
+   * @param id The unique ID corresponding to already persisted data.
+   * @return The UploadedFile object for the data file.
+   */
+  public UploadedFile lookupDataFileById(String id);
 
   /**
    * Persists the uploaded file data.

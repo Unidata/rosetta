@@ -171,6 +171,12 @@
     <property name="platformDao" ref="platformDao"/>
   </bean>
 
+  <bean class="edu.ucar.unidata.rosetta.service.wizard.CustomFileAttributesManagerImpl"
+    id="customFileAttributesManager">
+    <property name="customFileAttributesDao" ref="customFileAttributesDao"/>
+    <property name="uploadedFileDao" ref="uploadedFileDao"/>
+  </bean>
+
   <bean class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl" id="dataManager">
     <property name="dataDao" ref="dataDao"/>
   </bean>
@@ -215,6 +221,10 @@
   </bean>
 
   <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcCommunityDao" id="communityDao">
+    <property name="dataSource" ref="dbDataSource"/>
+  </bean>
+
+  <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcCustomFileAttributesDao" id="customFileAttributesDao">
     <property name="dataSource" ref="dbDataSource"/>
   </bean>
 
