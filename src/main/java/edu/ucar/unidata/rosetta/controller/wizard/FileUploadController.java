@@ -165,7 +165,7 @@ public class FileUploadController implements HandlerExceptionResolver {
     // add an extra step to collect data associated with that custom file type.
     String nextStep = dataManager.processNextStep(rosettaCookie.getValue());
 
-    // Send user to the next view.  (See dataManager.processFileUpload).
+    // Send user to the next view.
     return new ModelAndView(new RedirectView(nextStep, true));
   }
 
