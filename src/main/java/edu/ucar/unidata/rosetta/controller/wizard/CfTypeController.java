@@ -71,7 +71,9 @@ public class CfTypeController implements HandlerExceptionResolver {
       cfTypeData = new CfTypeData();
     }
 
-    // Add CfType object to Model.
+    // Add command object to Model.
+    model.addAttribute("command", "CfTypeData");
+    // Add form-backing object.
     model.addAttribute("data", cfTypeData);
     // Add current step to the Model (used by view to keep track of where we are in the wizard).
     model.addAttribute("currentStep", "cfType");
