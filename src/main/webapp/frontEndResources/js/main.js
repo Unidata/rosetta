@@ -126,6 +126,25 @@ $(document).ready(function ($) {
 
   /**
    * STEP 2: File upload step.
+   * if a file is uploaded show the clear file upload button.
+   */
+  $("input:file").change(function () {
+    // Get uploaded file name.
+    var id = $(this).attr('id');
+    var fileName = document.getElementById(id).files[0].name;
+    // find clear file upload button and show it
+    var button = $(this).prev(".clearFileUpload");
+    $(button).removeClass("hideMe");
+    // add file name to <i></i>
+    $(button).prev().text(fileName);
+    $(this).next().attr("value", fileName);
+    // hide the input button
+    $(this).addClass("hideMe");
+  });
+
+  
+/**
+   * STEP 2: File upload step.
    * dataFile to upload selected, so show next button.
    */
   $("input:file#data").change(function () {

@@ -1,6 +1,6 @@
 <h3>Upload Data File</h3>
 <%-- Find and set the data file name. Logic below requires this value.--%>
-<c:forEach items="${data.uploadedFiles}" var="file">
+<c:forEach items="${uploadedFileCmd.uploadedFiles}" var="file">
     <c:if test="${file.fileType eq 'DATA' && not empty file.fileName}">
         <c:set var="fileName" value="${file.fileName}" />
     </c:if>
@@ -23,7 +23,7 @@
                   <c:forEach items="${comm.fileType}" var="fileType">
                     <option value="${fn:replace(fileType, ' ', '_')}"
                       <%-- Mark as selected if dataFileType has already been chosen. --%>
-                        <c:if test="${not empty data.dataFileType && data.dataFileType eq fn:replace(fileType, ' ', '_')}">
+                        <c:if test="${not empty uploadedFileCmd.dataFileType && uploadedFileCmd.dataFileType eq fn:replace(fileType, ' ', '_')}">
                           selected
                         </c:if>
                     >${fileType}</option>
@@ -36,7 +36,7 @@
               <c:forEach items="${fileTypes}" var="fileType">
                 <option value="${fn:replace(fileType.name, ' ', '_')}"
                   <%-- Mark as selected if dataFileType has already been chosen. --%>
-                    <c:if test="${not empty data.dataFileType && data.dataFileType eq fn:replace(fileType.name, ' ', '_')}">
+                    <c:if test="${not empty uploadedFileCmd.dataFileType && uploadedFileCmd.dataFileType eq fn:replace(fileType.name, ' ', '_')}">
                       selected
                     </c:if>
                 >${fileType.name}</option>
@@ -64,13 +64,13 @@
 <!-- File upload section. -->
 <div id="upload" class="<c:if test="${empty fileName}">hideMe</c:if>">
   Upload your data file:
-  <c:forEach items="${data.uploadedFiles}" var="file">
+  <c:forEach items="${uploadedFileCmd.uploadedFiles}" var="uploadedFile" varStatus="i" begin="0">
 
     <div class="files
       <%-- Only show the positional file upload option if data file type is custom --%>
       <c:choose>
-        <c:when test="${not empty file.fileType && file.fileType eq 'POSITIONAL'}">
-          <c:if test="${empty data.dataFileType ||  data.dataFileType ne 'Custom_File_Type'}">
+        <c:when test="${not empty uploadedFile.fileType && uploadedFile.fileType eq 'POSITIONAL'}">
+          <c:if test="${empty uploadedFileCmd.dataFileType ||  uploadedFileCmd.dataFileType ne 'Custom_File_Type'}">
             hideMe"
           </c:if>
           id="custom"
@@ -82,28 +82,36 @@
       >
 
       <%-- Show file type. --%>
-      <div class="fileType">${fn:toLowerCase(file.fileType)}</div> File
-      <img src="resources/img/help.png" alt="${file.description}"/>
+      <div class="fileType">${fn:toLowerCase(uploadedFile.fileType)}</div> File
+      <img src="resources/img/help.png" alt="${uploadedFile.description}"/>
 
       <%-- Show if file is required. --%>
       <small>(
         <c:choose>
-          <c:when test="${file.required}">
+          <c:when test="${uploadedFile.required}">
             Required
           </c:when>
           <c:otherwise>
             Optional
           </c:otherwise>
         </c:choose>
-      )</small>
+      )</small> &nbsp;
 
-      <label for="${fn:toLowerCase(file.fileType)}" class="error"></label>
-      <c:if test="${not empty file.fileName}">
-        <i>${file.fileName}</i> <button type="button" id="clearDataFileUpload" class="clearFileUpload">Clear file upload</button>
-      </c:if>
-      <input id="${fn:toLowerCase(file.fileType)}" name="file" type="file" class="<c:if test="${not empty file.fileName}">hideMe</c:if>" value=""/>
-      <input name="fileName" type="hidden" value="${file.fileName}"/>
-      <input name="fileType" type="hidden" value="${file.fileType}"/>
+      <label for="${fn:toLowerCase(uploadedFile.fileType)}" class="error"></label>
+      <i>${uploadedFile.fileName}</i> 
+      <button type="button" id="clearDataFileUpload" class="clearFileUpload <c:if test="${empty fn:trim(uploadedFile.fileName)}">hideMe</c:if>">
+        Clear file upload
+      </button>
+      <c:choose>
+        <c:when test="${not empty uploadedFile.fileName}">
+          <form:input path="uploadedFiles[${i.index}].file" type="file" id="${fn:toLowerCase(uploadedFile.fileType)}" class="hideMe"/>
+        </c:when>
+        <c:otherwise>
+          <form:input path="uploadedFiles[${i.index}].file" type="file" id="${fn:toLowerCase(uploadedFile.fileType)}"/>
+        </c:otherwise>
+      </c:choose>
+      <form:input path="uploadedFiles[${i.index}].fileName" type="hidden"/>
+      <form:input path="uploadedFiles[${i.index}].fileType" type="hidden"/>
 
     </div> <!-- /.files -->
   </c:forEach>
@@ -115,7 +123,7 @@
   <input type="submit" name="submit" value="Previous" class="button"/>
   <%-- Show the next button. --%>
   <input type="submit" name="submit" id="Next" value="Next"
-    <c:if test="${empty data.dataFileType && empty fileName}">
+    <c:if test="${empty uploadedFileCmd.dataFileType && empty fileName}">
        disabled
     </c:if>
        class="button
