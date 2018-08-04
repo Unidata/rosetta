@@ -141,9 +141,9 @@ test {
         events "passed", "skipped", "failed", "standardOut", "standardError"
     }
 
-    //useJUnit {
-    //    excludeCategories 'edu.ucar.unidata.rosetta.util.test.category.NeedsLocalServer'
-    //}
+    useJUnit {
+        excludeCategories 'edu.ucar.unidata.rosetta.util.test.category.NeedsLocalServer'
+    }
 }
 
 /////////////
@@ -222,28 +222,6 @@ task integrationTest(type: Test) {
     outputs.upToDateWhen { false }
 }
 
-task testsNeedLocalServer(type: Test) {
-    failFast =  false
-
-    //testClassesDirs = sourceSets.localServerTests.output.classesDirs
-    //classpath = sourceSets.localServerTests.runtimeClasspath
-    outputs.upToDateWhen { false }
-
-    useJUnit {
-        includeCategories 'edu.ucar.unidata.rosetta.util.test.category.NeedsLocalServer'
-    }
-
-    testLogging {
-        showStandardStreams = true
-    }
-
-    doLast {
-        print "Cleaning up"
-        File folder = new File("$rootDir/src/test/rosetta_home")
-        FileUtils.cleanDirectory(folder)
-    }
-}
-
 gretty {
     servletContainer = 'tomcat8'
     httpPort = 8888
@@ -262,6 +240,13 @@ gretty {
         grettyRunnerTomcat8 {
             exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
         }
+    }
+
+    onStop {
+        // cleans up ROSETTA_HOME, which is populated during the integration test process
+        print "Cleaning up test ROSETTA_HOME"
+        File folder = new File("$rootDir/src/test/rosetta_home")
+        FileUtils.cleanDirectory(folder)
     }
 }
 
