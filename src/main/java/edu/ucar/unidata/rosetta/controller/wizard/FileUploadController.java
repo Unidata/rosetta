@@ -12,6 +12,7 @@ import edu.ucar.unidata.rosetta.service.wizard.UploadedFileManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,32 +86,21 @@ public class FileUploadController implements HandlerExceptionResolver {
     }
 
     // Look up CF type data entered in prior wizard step & add to model.
+    // (Needed for display logic in wizard step).
     CfTypeData cfTypeData = cfTypeDataManager.lookupPersistedCfTypeDataById(rosettaCookie.getValue());
     model.addAttribute("community", cfTypeData.getCommunity());
     model.addAttribute("cfType", cfTypeData.getCfType());
 
-    List<UploadedFile> uploadedFiles = new ArrayList<>();
-    // Instantiate the three types of files.
-    UploadedFile dataFile = new UploadedFile();
-    dataFile.setFileType(FileType.DATA);
-    dataFile.setDescription("The file containing the ASCII data you wish to convert.");
-    dataFile.setRequired(true);
-    uploadedFiles.add(dataFile);
-
-    UploadedFile positionalFile = new UploadedFile();
-    positionalFile.setFileType(FileType.POSITIONAL);
-    positionalFile.setDescription("An optional file containing positional data "
-        + "corresponding to the data contained in the data file.");
-    uploadedFiles.add(positionalFile);
-
-    UploadedFile templateFile = new UploadedFile();
-    templateFile.setFileType(FileType.TEMPLATE);
-    templateFile.setDescription("A Rosetta template file used for converting the data file.");
-    uploadedFiles.add(templateFile);
-
-    UploadedFileCmd uploadedFileCmd = new UploadedFileCmd();
-    uploadedFileCmd.setUploadedFiles(uploadedFiles);
-
+    // Create the form backing object.
+    UploadedFileCmd uploadedFileCmd;
+    // Have we been here before?  Do we have any data persisted?
+    UploadedFileCmd persisted = uploadedFileManager.lookupPersistedDataById(rosettaCookie.getValue());
+    if (!persisted.getUploadedFiles().isEmpty()) {
+      uploadedFileCmd = persisted;
+    } else {
+      // No persisted data.
+      uploadedFileCmd = new UploadedFileCmd();
+    }
     // Add command object to Model.
     model.addAttribute("command", "uploadedFileCmd");
     // Add form-backing object.
