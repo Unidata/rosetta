@@ -31,7 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {WebAppContext.class})
-public class CustomFileTypeAttributesControllerTest {
+public class CustomFileAttributesControllerTest {
 
   private MockMvc mockMvc;
 

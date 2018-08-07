@@ -34,9 +34,9 @@ import org.springframework.web.util.WebUtils;
  * @author oxelson@ucar.edu
  */
 @Controller
-public class CustomFileTypeAttributesController implements HandlerExceptionResolver {
+public class CustomFileAttributesController implements HandlerExceptionResolver {
 
-  private static final Logger logger = Logger.getLogger(CustomFileTypeAttributesController.class);
+  private static final Logger logger = Logger.getLogger(CustomFileAttributesController.class);
 
   private final ServletContext servletContext;
 
@@ -50,7 +50,7 @@ public class CustomFileTypeAttributesController implements HandlerExceptionResol
   private ResourceManager resourceManager;
 
   @Autowired
-  public CustomFileTypeAttributesController(ServletContext servletContext) {
+  public CustomFileAttributesController(ServletContext servletContext) {
     this.servletContext = servletContext;
   }
 
@@ -148,7 +148,7 @@ public class CustomFileTypeAttributesController implements HandlerExceptionResol
   @Override
   public ModelAndView resolveException(HttpServletRequest request,
       HttpServletResponse response,
-      java.lang.Object handler,
+      Object handler,
       Exception exception) {
     String message;
     if (exception instanceof MaxUploadSizeExceededException) {
