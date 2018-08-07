@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileDao {
 
-  protected static Logger logger = Logger.getLogger(JdbcUploadedFileDao.class);
+  private static Logger logger = Logger.getLogger(JdbcUploadedFileDao.class);
 
   private SimpleJdbcInsert insertActor;
 
@@ -29,13 +29,11 @@ public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileD
    */
   @Override
   public UploadedFileCmd lookupById(String id){
-    UploadedFileCmd uploadedFileCmd = new UploadedFileCmd();
-
     // Get the uploaded file data.
     String sql = "SELECT * FROM uploadedFiles WHERE id = ?";
     List<UploadedFile> uploadedFiles = getJdbcTemplate().query(sql, new JdbcUploadedFileDao.UploadedFileMapper(), id);
-    // Add uploaded file to object.
-    uploadedFileCmd.setUploadedFiles(uploadedFiles);
+    logger.info("PULLED FROM DB: " + uploadedFiles.toString());
+    UploadedFileCmd uploadedFileCmd = new UploadedFileCmd(uploadedFiles);
 
     // Get the data file type
     sql = "SELECT * FROM dataFiles WHERE id = ?";
@@ -46,7 +44,6 @@ public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileD
     }
     return uploadedFileCmd;
   }
-
 
   /**
    * Looks up and retrieves persisted data file information using the given id.
@@ -65,7 +62,6 @@ public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileD
     }
     return uploadedFiles.get(0);
   }
-
 
   /**
    * Persists, for the first time, the uploaded file data.
@@ -87,7 +83,7 @@ public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileD
     } else {
       // Persist the uploaded file data.
       for (UploadedFile uploadedFile :  uploadedFileCmd.getUploadedFiles()) {
-        if(StringUtils.trimToNull(uploadedFile.getFileName()) != null) {
+        if (StringUtils.trimToNull(uploadedFile.getFileName()) != null) {
           uploadedFile.setId(id);
           this.insertActor = new SimpleJdbcInsert(getDataSource()).withTableName("uploadedFiles");
           SqlParameterSource parameters = new BeanPropertySqlParameterSource(uploadedFile);
@@ -133,24 +129,26 @@ public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileD
    */
   public void updatePersistedData(String id, UploadedFileCmd uploadedFileCmd) throws DataRetrievalFailureException {
     for (UploadedFile uploadedFile :  uploadedFileCmd.getUploadedFiles()) {
-      uploadedFile.setId(id);
-      String sql = "UPDATE uploadedFiles SET " +
-              "fileName = ?, " +
-              "fileType = ? " +
-              "WHERE id = ?";
-      int rowsAffected = getJdbcTemplate().update(sql, new Object[]{
-              // order matters here
-              uploadedFile.getFileName(),
-              uploadedFile.getFileType(),
-              uploadedFile.getId()
-      });
-      if (rowsAffected <= 0) {
-        String message =
-                "Unable to update persisted uploaded file corresponding to id " + id;
-        logger.error(message);
-        throw new DataRetrievalFailureException(message);
-      } else {
-        logger.info("Updated persisted uploaded file data corresponding to id " + id);
+      if (StringUtils.trimToNull(uploadedFile.getFileName()) != null) {
+        uploadedFile.setId(id);
+        String sql = "UPDATE uploadedFiles SET " +
+                "fileName = ?, " +
+                "fileType = ? " +
+                "WHERE id = ?";
+        int rowsAffected = getJdbcTemplate().update(sql, new Object[]{
+                // order matters here
+                uploadedFile.getFileName(),
+                uploadedFile.getFileType().toString(),
+                uploadedFile.getId()
+        });
+        if (rowsAffected <= 0) {
+          String message =
+                  "Unable to update persisted uploaded file corresponding to id " + id;
+          logger.error(message);
+          throw new DataRetrievalFailureException(message);
+        } else {
+          logger.info("Updated persisted uploaded file data corresponding to id " + id);
+        }
       }
     }
     uploadedFileCmd.setId(id);
