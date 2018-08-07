@@ -115,6 +115,7 @@
 
     </div> <!-- /.files -->
   </c:forEach>
+ <p><b>NOTE</b>: Files ending in .xls or .xlsx will be coverted to .csv format.</p>
 </div>  <!-- /#upload -->
 
 <!-- Button navigation. -->
