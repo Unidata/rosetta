@@ -213,6 +213,10 @@ configurations {
 
 task integrationTests(type: Test) {
 
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+
     useJUnit {
         includeCategories 'edu.ucar.unidata.rosetta.util.test.category.NeedsLocalServer'
     }
