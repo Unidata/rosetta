@@ -37,7 +37,6 @@ public class BatchFileManagerImpl implements BatchFileManager {
 
     /* temp - will replace with Jen's refactored service classes */
     private static final String ROSETTA_HOME = System.getProperty("rosetta.content.root.path");  // set in $JAVA_OPTS
-    private static final String DOWNLOAD_DIR = "downloads";
     private static final String UPLOAD_DIR = "uploads";
 
     private static final Logger logger = Logger.getLogger(BatchFileManagerImpl.class);
@@ -202,20 +201,19 @@ public class BatchFileManagerImpl implements BatchFileManager {
 
         // load template
         JSONParser parser = new JSONParser();
-        String convertFrom = "";
+        String format = "";
         try {
             FileReader templateFileReader = new FileReader(template);
             Object obj = parser.parse(templateFileReader);
             templateFileReader.close();
             JSONObject jsonObject = (JSONObject) obj;
-            convertFrom = (String) jsonObject.get("convertFrom");
-            System.out.println(convertFrom);
+            format = (String) jsonObject.get("format");
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         // process data files based on convertTo type
-        if (convertFrom.equals("tuff")) {
+        if (format.equals("eTuff")) {
             for (String inventoryFile : inventory) {
                 if (!inventoryFile.endsWith("template") && !inventoryFile.endsWith("metadata")) {
                     TagUniversalFileFormat tuff = new TagUniversalFileFormat();
@@ -238,7 +236,8 @@ public class BatchFileManagerImpl implements BatchFileManager {
         String zipFileName = FilenameUtils.concat(filePath, "converted_files.zip");
         addAllToZip(zipFileName, "converted_files", convertedFiles);
 
-        return "hi";
+
+        return zipFileName;
     }
 
 }
