@@ -196,7 +196,7 @@ task jekyllServe(type: JRubyExec, group: 'Jekyll', description: 'Serve your site
 }
 
 sourceSets {
-    integrationTest {
+    integrationTests {
         java {
             compileClasspath += main.output + test.output
             runtimeClasspath += main.output + test.output
@@ -207,18 +207,18 @@ sourceSets {
 }
 
 configurations {
-    integrationTestCompile.extendsFrom testCompile
-    integrationTestRuntime.extendsFrom testRuntime
+    integrationTestsCompile.extendsFrom testCompile
+    integrationTestsRuntime.extendsFrom testRuntime
 }
 
-task integrationTest(type: Test) {
+task integrationTests(type: Test) {
 
     useJUnit {
         includeCategories 'edu.ucar.unidata.rosetta.util.test.category.NeedsLocalServer'
     }
 
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
+    testClassesDirs = sourceSets.integrationTests.output.classesDirs
+    classpath = sourceSets.integrationTests.runtimeClasspath
     outputs.upToDateWhen { false }
 }
 
@@ -234,7 +234,7 @@ gretty {
     jvmArgs = ["-Drosetta.content.root.path=$rootDir/src/test/rosetta_home",
                "-Dlog4j.configuration=$rootDir/src/main/webapp/WEB-INF/classes/log4j.xml"]
 
-    integrationTestTask = 'integrationTest'
+    integrationTestTask = 'integrationTests'
 
     configurations {
         grettyRunnerTomcat8 {
@@ -261,5 +261,5 @@ project.tasks["sonarqube"].dependsOn jacocoTestReport
 // need to run test task before jacocoTestReport
 jacocoTestReport.dependsOn test
 
-check.dependsOn integrationTest
-integrationTest.mustRunAfter test
+check.dependsOn integrationTests
+integrationTests.mustRunAfter test
