@@ -13,12 +13,46 @@ import java.util.List;
 public class UploadedFileCmd extends WizardData {
 
   private String dataFileType;
-  private List<UploadedFile> uploadedFiles = new ArrayList<>();
+  private List<UploadedFile> uploadedFiles = new ArrayList<>(3);
 
-  public UploadedFileCmd() {}
+  public UploadedFileCmd() {
+    // Data file.
+    UploadedFile dataFile = new UploadedFile();
+    dataFile.setFileType(UploadedFile.FileType.DATA);
+    dataFile.setDescription("The file containing the ASCII data you wish to convert.");
+    dataFile.setRequired(true);
+    addToUploadedFiles(dataFile);
+
+    // Positional file.
+    UploadedFile positionalFile = new UploadedFile();
+    positionalFile.setFileType(UploadedFile.FileType.POSITIONAL);
+    positionalFile.setDescription("An optional file containing positional data "
+            + "corresponding to the data contained in the data file.");
+    positionalFile.setRequired(false);
+    addToUploadedFiles(positionalFile);
+
+    // Template file.
+    UploadedFile templateFile = new UploadedFile();
+    templateFile.setFileType(UploadedFile.FileType.TEMPLATE);
+    templateFile.setDescription("A Rosetta template file used for converting the data file.");
+    templateFile.setRequired(false);
+    addToUploadedFiles(templateFile);
+  }
 
   public UploadedFileCmd(List<UploadedFile> uploadedFiles) {
-    setUploadedFiles(uploadedFiles);
+    this();
+    for (UploadedFile uploadedFile: uploadedFiles) {
+      replaceUploadedFile(uploadedFile);
+    }
+  }
+
+  /**
+   * Adds an uploaded file to the list.
+   *
+   * @param uploadedFile  The uploaded file to add.
+   */
+  public void addToUploadedFiles(UploadedFile uploadedFile) {
+    this.uploadedFiles.add(uploadedFile);
   }
 
   /**
@@ -56,8 +90,22 @@ public class UploadedFileCmd extends WizardData {
    * @param uploadedFiles The uploaded files.
    */
   public void setUploadedFiles(List<UploadedFile> uploadedFiles) {
-    this.uploadedFiles.clear();
+    //this.uploadedFiles.clear();
     this.uploadedFiles = uploadedFiles;
+  }
+
+  /**
+   * Updates one of the existing files in the uploaded files.
+   *
+   * @param replacementFile The file to replace.
+   */
+  public void replaceUploadedFile(UploadedFile replacementFile) {
+    for (UploadedFile uploadedFile: this.uploadedFiles) {
+      if (replacementFile.getFileType().equals(uploadedFile.getFileType())) {
+        int index = uploadedFiles.indexOf(uploadedFile);
+        this.uploadedFiles.set(index, replacementFile);
+      }
+    }
   }
 
   /**
