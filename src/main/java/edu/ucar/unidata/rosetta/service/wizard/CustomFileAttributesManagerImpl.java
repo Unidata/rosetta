@@ -9,7 +9,6 @@ import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import javax.annotation.Resource;
 import org.apache.commons.io.FilenameUtils;
 
-
 public class CustomFileAttributesManagerImpl implements CustomFileAttributesManager {
 
   private CustomFileAttributesDao customFileAttributesDao;
@@ -57,14 +56,13 @@ public class CustomFileAttributesManagerImpl implements CustomFileAttributesMana
    */
   @Override
   public void processCustomFileTypeAttributes(String id, CustomFileAttributes customFileAttributes) {
-
     // Handle the no header lines value.
     if (customFileAttributes.isNoHeaderLines()) {
       customFileAttributes.setHeaderLineNumbers(null);
     }
 
-    // Technically, the database entry for this data already exists.
-    // We just need to add/update the values.
+    // Technically, the database entry for this data already exists from file upload step.
+    // We just need to add/update the header line number and delimiter values.
     customFileAttributesDao.updatePersistedData(id, customFileAttributes);
   }
 
