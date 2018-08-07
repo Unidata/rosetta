@@ -31,6 +31,7 @@ public class JdbcCustomFileAttributesDao extends JdbcDaoSupport implements
   
   @Override
   public void updatePersistedData(String id, CustomFileAttributes customFileAttributes) throws DataRetrievalFailureException {
+    customFileAttributes.setId(id);
     String sql = "UPDATE dataFiles SET " +
         "headerLineNumbers = ?, " +
         "delimiter = ? " +
@@ -42,11 +43,11 @@ public class JdbcCustomFileAttributesDao extends JdbcDaoSupport implements
         customFileAttributes.getId()
     });
     if (rowsAffected <= 0) {
-      String message = "Unable to update persisted Data object corresponding to id " + id;
+      String message = "Unable to update persisted custom data file attributes corresponding to id " + id;
       logger.error(message);
       throw new DataRetrievalFailureException(message);
     } else {
-      logger.info("Updated persisted Data object corresponding to id " + id);
+      logger.info("Updated persisted custom data file attributes corresponding to id " + id);
     }
   }
 
