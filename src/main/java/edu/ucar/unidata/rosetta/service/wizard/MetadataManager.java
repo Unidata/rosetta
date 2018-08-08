@@ -13,6 +13,8 @@ import java.util.Map;
  */
 public interface MetadataManager {
 
+  public void getMetadataProfileData();
+
   /**
    * Deletes the persisted metadata information using the given id.
    *

@@ -5,6 +5,8 @@ import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 public interface MetadataProfileDao {
 
 
-  //public MetadataProfile getMetadataProfileByType(String type);
+  public void getMetadataProfileByType(String type);
+
+
 
 }
