@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
 package edu.ucar.unidata.rosetta.repository.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.Community;
@@ -16,7 +21,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * @author oxelson@ucar.edu
  */
-public class JdbcMetadataProfileDao extends JdbcDaoSupport implements MetadataProfileDao {
+public class JdbcMetadataProfileResourceDao extends JdbcDaoSupport implements MetadataProfileResourceDao {
 
   /**
    * Looks up and retrieves a list of persisted MetadataProfile objects.

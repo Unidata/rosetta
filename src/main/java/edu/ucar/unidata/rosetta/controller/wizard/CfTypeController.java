@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
 package edu.ucar.unidata.rosetta.controller.wizard;
 
 import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.service.wizard.CfTypeDataManager;
+import edu.ucar.unidata.rosetta.service.wizard.MetadataManager;
 import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -41,6 +47,10 @@ public class CfTypeController implements HandlerExceptionResolver {
   @Resource(name = "cfTypeDataManager")
   private CfTypeDataManager cfTypeDataManager;
 
+
+  @Resource(name = "metadataManager")
+  private MetadataManager metadataManager;
+
   @Resource(name = "resourceManager")
   private ResourceManager resourceManager;
 
@@ -48,6 +58,7 @@ public class CfTypeController implements HandlerExceptionResolver {
   public CfTypeController(ServletContext servletContext) {
     this.servletContext = servletContext;
   }
+
 
   /**
    * Accepts a GET request for access to CF type selection step of the wizard.
@@ -58,6 +69,8 @@ public class CfTypeController implements HandlerExceptionResolver {
    */
   @RequestMapping(value = "/cfType", method = RequestMethod.GET)
   public ModelAndView displayCFTypeSelectionForm(Model model, HttpServletRequest request) {
+
+    metadataManager.getMetadataProfileData();
 
     // Have we visited this page before during this session?
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");

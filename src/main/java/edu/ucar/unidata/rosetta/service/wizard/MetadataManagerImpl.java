@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
 package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
@@ -6,6 +11,8 @@ import edu.ucar.unidata.rosetta.domain.Metadata;
 import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.repository.wizard.MetadataDao;
+import edu.ucar.unidata.rosetta.repository.wizard.MetadataProfileDao;
+
 import java.beans.Statement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -26,6 +33,13 @@ public class MetadataManagerImpl implements MetadataManager {
   protected static final Logger logger = Logger.getLogger(MetadataManagerImpl.class);
 
   private MetadataDao metadataDao;
+  private MetadataProfileDao metadataProfileDao;
+
+
+  public void getMetadataProfileData() {
+    metadataProfileDao.getMetadataProfileByType("CF");
+  }
+
 
   /**
    * Deletes the persisted metadata information using the given id.
@@ -268,7 +282,7 @@ public class MetadataManagerImpl implements MetadataManager {
           if (value != null) {
             if (value instanceof String) {
 
-              if (!"".equals((String) value)) {
+              if (!"".equals(value)) {
                 Metadata m = new Metadata();
                 m.setId(id);
                 m.setType("general");
@@ -340,8 +354,16 @@ public class MetadataManagerImpl implements MetadataManager {
   }
 
   /**
-   * Sets the data access object (DAO) for the Metadata object which will acquire and persist the
-   * data passed to it via the methods of this MetadataManager.
+   * Sets the data access object (DAO) for the MetadataProfile object.
+   *
+   * @param metadataProfileDao The service DAO representing a MetadataProfile object.
+   */
+  public void setMetadataProfileDao(MetadataProfileDao metadataProfileDao) {
+    this.metadataProfileDao = metadataProfileDao;
+  }
+
+  /**
+   * Sets the data access object (DAO) for the Metadata object.
    *
    * @param dataDao The service DAO representing a Metadata object.
    */

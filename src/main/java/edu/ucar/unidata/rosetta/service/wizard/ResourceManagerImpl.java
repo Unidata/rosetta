@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
 package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.resources.CfType;
@@ -6,12 +11,13 @@ import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
 import edu.ucar.unidata.rosetta.domain.resources.FileType;
 import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
-import edu.ucar.unidata.rosetta.repository.resources.CfTypeDao;
-import edu.ucar.unidata.rosetta.repository.resources.CommunityDao;
-import edu.ucar.unidata.rosetta.repository.resources.DelimiterDao;
-import edu.ucar.unidata.rosetta.repository.resources.FileTypeDao;
-import edu.ucar.unidata.rosetta.repository.resources.MetadataProfileDao;
-import edu.ucar.unidata.rosetta.repository.resources.PlatformDao;
+import edu.ucar.unidata.rosetta.repository.resources.CfTypeResourceDao;
+import edu.ucar.unidata.rosetta.repository.resources.CommunityResourceDao;
+import edu.ucar.unidata.rosetta.repository.resources.DelimiterResourceDao;
+import edu.ucar.unidata.rosetta.repository.resources.FileTypeResourceDao;
+import edu.ucar.unidata.rosetta.repository.resources.MetadataProfileResourceDao;
+import edu.ucar.unidata.rosetta.repository.resources.PlatformResourceDao;
+
 import java.util.List;
 
 /**
@@ -22,12 +28,12 @@ import java.util.List;
 public class ResourceManagerImpl implements ResourceManager {
 
   // Resource DAOS.
-  private CfTypeDao cfTypeDao;
-  private CommunityDao communityDao;
-  private DelimiterDao delimiterDao;
-  private FileTypeDao fileTypeDao;
-  private MetadataProfileDao metadataProfileDao;
-  private PlatformDao platformDao;
+  private CfTypeResourceDao cfTypeResourceDao;
+  private CommunityResourceDao communityResourceDao;
+  private DelimiterResourceDao delimiterResourceDao;
+  private FileTypeResourceDao fileTypeResourceDao;
+  private MetadataProfileResourceDao metadataProfileResourceDao;
+  private PlatformResourceDao platformResourceDao;
 
   /**
    * Retrieves a list of all the persisted Delimiter objects.
@@ -36,7 +42,7 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public List<Delimiter> getDelimiters() {
-    return delimiterDao.getDelimiters();
+    return delimiterResourceDao.getDelimiters();
   }
 
   /**
@@ -47,7 +53,7 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public String getDelimiterSymbol(String delimiter) {
-    return delimiterDao.lookupDelimiterByName(delimiter).getCharacterSymbol();
+    return delimiterResourceDao.lookupDelimiterByName(delimiter).getCharacterSymbol();
   }
 
 
@@ -59,7 +65,7 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public String getCFTypeFromPlatform(String platform) {
-    Platform persistedPlatform = platformDao.lookupPlatformByName(platform);
+    Platform persistedPlatform = platformResourceDao.lookupPlatformByName(platform);
     return persistedPlatform.getCfType();
   }
 
@@ -70,7 +76,7 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public List<CfType> getCfTypes() {
-    return cfTypeDao.getCfTypes();
+    return cfTypeResourceDao.getCfTypes();
   }
 
   /**
@@ -80,10 +86,10 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public List<Community> getCommunities() {
-    List<Community> communities = communityDao.getCommunities();
+    List<Community> communities = communityResourceDao.getCommunities();
     for (Community community : communities) {
       // Get the associated platforms and add them to the Community object.
-      List<Platform> platforms = platformDao.lookupPlatformsByCommunity(community.getName());
+      List<Platform> platforms = platformResourceDao.lookupPlatformsByCommunity(community.getName());
       community.setPlatforms(platforms);
       communities.set(communities.indexOf(community), community);
     }
@@ -98,7 +104,7 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public String getCommunityFromPlatform(String platform) {
-    Platform persistedPlatform = platformDao.lookupPlatformByName(platform.replaceAll("_", " "));
+    Platform persistedPlatform = platformResourceDao.lookupPlatformByName(platform.replaceAll("_", " "));
     return persistedPlatform.getCommunity();
   }
 
@@ -109,7 +115,7 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public List<FileType> getFileTypes() {
-    return fileTypeDao.getFileTypes();
+    return fileTypeResourceDao.getFileTypes();
   }
 
   /**
@@ -119,7 +125,7 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public List<MetadataProfile> getMetadataProfiles() {
-    return metadataProfileDao.getMetadataProfiles();
+    return metadataProfileResourceDao.getMetadataProfiles();
   }
 
   /**
@@ -130,7 +136,7 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public Platform getPlatform(String name) {
-    return platformDao.lookupPlatformByName(name);
+    return platformResourceDao.lookupPlatformByName(name);
   }
 
   /**
@@ -140,61 +146,61 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public List<Platform> getPlatforms() {
-    return platformDao.getPlatforms();
+    return platformResourceDao.getPlatforms();
   }
 
   /**
    * Sets the data access object (DAO) for the CFType object.
    *
-   * @param cfTypeDao The service DAO representing a CfType object.
+   * @param cfTypeResourceDao The service DAO representing a CfType object.
    */
-  public void setCfTypeDao(CfTypeDao cfTypeDao) {
-    this.cfTypeDao = cfTypeDao;
+  public void setCfTypeResourceDao(CfTypeResourceDao cfTypeResourceDao) {
+    this.cfTypeResourceDao = cfTypeResourceDao;
   }
 
   /**
    * Sets the data access object (DAO) for the Community object.
    *
-   * @param communityDao The service DAO representing a Community object.
+   * @param communityResourceDao The service DAO representing a Community object.
    */
-  public void setCommunityDao(CommunityDao communityDao) {
-    this.communityDao = communityDao;
+  public void setCommunityResourceDao(CommunityResourceDao communityResourceDao) {
+    this.communityResourceDao = communityResourceDao;
   }
 
   /**
    * Sets the data access object (DAO) for the Delimiter object.
    *
-   * @param delimiterDao The service DAO representing a Delimiter object.
+   * @param delimiterResourceDao The service DAO representing a Delimiter object.
    */
-  public void setDelimiterDao(DelimiterDao delimiterDao) {
-    this.delimiterDao = delimiterDao;
+  public void setDelimiterResourceDao(DelimiterResourceDao delimiterResourceDao) {
+    this.delimiterResourceDao = delimiterResourceDao;
   }
 
   /**
    * Sets the data access object (DAO) for the MetadataProfile object.
    *
-   * @param metadataProfileDao The service DAO representing a MetadataProfile object.
+   * @param metadataProfileResourceDao The service DAO representing a MetadataProfile object.
    */
-  public void setMetadataProfileDao(MetadataProfileDao metadataProfileDao) {
-    this.metadataProfileDao = metadataProfileDao;
+  public void setMetadataProfileResourceDao(MetadataProfileResourceDao metadataProfileResourceDao) {
+    this.metadataProfileResourceDao = metadataProfileResourceDao;
   }
 
   /**
    * Sets the data access object (DAO) for the FileType object.
    *
-   * @param fileTypeDao The service DAO representing a FileType object.
+   * @param fileTypeResourceDao The service DAO representing a FileType object.
    */
-  public void setFileTypeDao(FileTypeDao fileTypeDao) {
-    this.fileTypeDao = fileTypeDao;
+  public void setFileTypeResourceDao(FileTypeResourceDao fileTypeResourceDao) {
+    this.fileTypeResourceDao = fileTypeResourceDao;
   }
 
   /**
    * Sets the data access object (DAO) for the Platform object.
    *
-   * @param platformDao The service DAO representing a Platform object.
+   * @param platformResourceDao The service DAO representing a Platform object.
    */
-  public void setPlatformDao(PlatformDao platformDao) {
-    this.platformDao = platformDao;
+  public void setPlatformResourceDao(PlatformResourceDao platformResourceDao) {
+    this.platformResourceDao = platformResourceDao;
   }
 
 }

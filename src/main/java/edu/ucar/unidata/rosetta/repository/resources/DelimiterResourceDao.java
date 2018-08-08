@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
 package edu.ucar.unidata.rosetta.repository.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
@@ -9,7 +14,7 @@ import org.springframework.dao.DataRetrievalFailureException;
  *
  * @author oxelson@ucar.edu
  */
-public interface DelimiterDao {
+public interface DelimiterResourceDao {
 
   /**
    * Looks up and retrieves a list of persisted Delimiters objects.

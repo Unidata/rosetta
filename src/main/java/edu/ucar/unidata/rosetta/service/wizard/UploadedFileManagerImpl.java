@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
 package edu.ucar.unidata.rosetta.service.wizard;
 
 import javax.annotation.Resource;
@@ -10,11 +15,9 @@ import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 public class UploadedFileManagerImpl implements UploadedFileManager {
 
-  private static Logger logger = Logger.getLogger(UploadedFileManagerImpl.class);
   private UploadedFileDao uploadedFileDao;
 
   @Resource(name = "fileManager")
@@ -81,7 +84,6 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
       uploadedFileDao.updatePersistedData(id, uploadedFileCmd);
 
     } else {
-
       // No persisted uploaded file data.  Add it.
       uploadedFileDao.persistData(id, uploadedFileCmd);
     }

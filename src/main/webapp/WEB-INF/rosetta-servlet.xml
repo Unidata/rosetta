@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:mvc="http://www.springframework.org/schema/mvc"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://www.springframework.org/schema/beans"
-  xsi:schemaLocation="http://www.springframework.org/schema/mvc
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc
          http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
 	       http://www.springframework.org/schema/beans 
          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	       http://www.springframework.org/schema/context 
          http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-  <!-- Activates various annotations to be detected in bean classes -->
-  <context:annotation-config/>
+    <!-- Activates various annotations to be detected in bean classes -->
+    <context:annotation-config/>
 
-  <!-- Scans the classpath of this application for @Components to deploy as beans -->
-  <context:component-scan base-package="edu.ucar.unidata.rosetta"/>
+    <!-- Scans the classpath of this application for @Components to deploy as beans -->
+    <context:component-scan base-package="edu.ucar.unidata.rosetta"/>
 
-  <!-- Configures the @Controller programming model -->
-  <mvc:annotation-driven/>
+    <!-- Configures the @Controller programming model -->
+    <mvc:annotation-driven/>
 
-  <!-- RosettaProperties injection -->
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-    id="applicationProperties">
-    <property name="locations">
-      <list>
-        <value>classpath:application.properties</value>
-      </list>
-    </property>
-  </bean>
+    <!-- RosettaProperties injection -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+          id="applicationProperties">
+        <property name="locations">
+            <list>
+                <value>classpath:application.properties</value>
+            </list>
+        </property>
+    </bean>
 
     <!-- Static resources since we are handling all requests.
          These are front end resources (css, etc.) and xml files -->
@@ -39,246 +39,268 @@
     <mvc:resources location="/batch/"
                    mapping="/batch/**"/>
 
+    <!-- Configure Spring-Security  -->
+    <!--
+    <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true"/>
+    <security:http pattern="/resources/**" security="none"/>
+    <security:http auto-config="true" use-expressions="true">
 
-  <!-- Configure Spring-Security  -->
-  <!--
-  <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true"/>
-  <security:http pattern="/resources/**" security="none"/>
-  <security:http auto-config="true" use-expressions="true">
+        <security:access-denied-handler error-page="/denied" />
 
-      <security:access-denied-handler error-page="/denied" />
+        <security:form-login
+                login-processing-url="/j_spring_security_check"
+                login-page="/login"
+                username-parameter="userName"
+                password-parameter="password"
+                authentication-success-handler-ref="customAuthenticationSuccessHandler"
+                authentication-failure-handler-ref="authenticationFailureHandler"/>
 
-      <security:form-login
-              login-processing-url="/j_spring_security_check"
-              login-page="/login"
-              username-parameter="userName"
-              password-parameter="password"
-              authentication-success-handler-ref="customAuthenticationSuccessHandler"
-              authentication-failure-handler-ref="authenticationFailureHandler"/>
-
-      <security:logout
-              invalidate-session="true"
-              logout-success-url="/login"
-              logout-url="/j_spring_security_logout"/>
+        <security:logout
+                invalidate-session="true"
+                logout-success-url="/login"
+                logout-url="/j_spring_security_logout"/>
 
 
-      <security:intercept-url pattern="/index.jsp" access="permitAll" />
-      <security:intercept-url pattern="/register" access="permitAll" />
-      <security:intercept-url pattern="/login/**" access="permitAll" />
-      <security:intercept-url pattern="/denied" access="permitAll" />
-      <security:intercept-url pattern="/error" access="permitAll" />
-      <security:intercept-url pattern="/cfType" access="permitAll" method="GET"/>
-      <security:intercept-url pattern="/cfType" access="permitAll" method="POST"/>
-      <security:intercept-url pattern="/convertAndDownload/**" access="permitAll" />
-      <security:intercept-url pattern="/customFileTypeAttributes/**" access="permitAll" />
-      <security:intercept-url pattern="/fileUpload/**" access="permitAll" />
-      <security:intercept-url pattern="/generalMetadata/**" access="permitAll" />
-      <security:intercept-url pattern="/variableMetadata/**" access="permitAll" />
-      <security:intercept-url pattern="/**" access="isAuthenticated()" />
--->
-  <!-- enable csrf protection -->
-  <!--
-      <security:csrf/>
-  </security:http>
+        <security:intercept-url pattern="/index.jsp" access="permitAll" />
+        <security:intercept-url pattern="/register" access="permitAll" />
+        <security:intercept-url pattern="/login/**" access="permitAll" />
+        <security:intercept-url pattern="/denied" access="permitAll" />
+        <security:intercept-url pattern="/error" access="permitAll" />
+        <security:intercept-url pattern="/cfType" access="permitAll" method="GET"/>
+        <security:intercept-url pattern="/cfType" access="permitAll" method="POST"/>
+        <security:intercept-url pattern="/convertAndDownload/**" access="permitAll" />
+        <security:intercept-url pattern="/customFileTypeAttributes/**" access="permitAll" />
+        <security:intercept-url pattern="/fileUpload/**" access="permitAll" />
+        <security:intercept-url pattern="/generalMetadata/**" access="permitAll" />
+        <security:intercept-url pattern="/variableMetadata/**" access="permitAll" />
+        <security:intercept-url pattern="/**" access="isAuthenticated()" />
+  -->
+    <!-- enable csrf protection -->
+    <!--
+        <security:csrf/>
+    </security:http>
+    -->
+
+    <!-- Declare an authentication-manager to use a custom userDetailsService -->
+    <!--
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="userDetailsService">
+            <security:password-encoder ref="passwordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
   -->
 
-  <!-- Declare an authentication-manager to use a custom userDetailsService -->
-  <!--
-  <security:authentication-manager>
-      <security:authentication-provider user-service-ref="userDetailsService">
-          <security:password-encoder ref="passwordEncoder"/>
-      </security:authentication-provider>
-  </security:authentication-manager>
--->
+    <!-- Use a password encoder since the user's passwords are stored encrypted in the database -->
+    <!--
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
-  <!-- Use a password encoder since the user's passwords are stored encrypted in the database -->
-  <!--
-  <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+    <bean id="customAuthenticationSuccessHandler" class="edu.ucar.unidata.rosetta.service.CustomAuthenticationSuccessHandler"/>
 
-  <bean id="customAuthenticationSuccessHandler" class="edu.ucar.unidata.rosetta.service.CustomAuthenticationSuccessHandler"/>
-
-  <bean id="authenticationFailureHandler"
-        class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
-      <property name="exceptionMappings">
-          <props>
-              <prop key="org.springframework.security.authentication.BadCredentialsException">/login/badCredentials</prop>
-              <prop key="org.springframework.security.authentication.LockedException">/login/accountLocked</prop>
-              <prop key="org.springframework.security.authentication.DisabledException">/login/accountDisabled</prop>
-          </props>
-      </property>
-  </bean>
--->
-  <!-- Taming the pesky derby.log file -->
-  <!--
-  <bean id="setDerbyLog" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-      <property name="targetClass"><value>java.lang.System</value></property>
-      <property name="targetMethod"><value>setProperty</value></property>
-      <property name="arguments">
-          <list>
-              <value>derby.stream.error.file</value>
-              <value>${catalina.home}/logs/derby.log</value>
-          </list>
-      </property>
-  </bean>
--->
-
-  <!-- File upload multipart resolver -->
-  <bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
-    id="multipartResolver">
-    <property name="maxUploadSize" value="${rosetta.maxUpload}"/>
-  </bean>
-
-  <!-- Map exceptions to the proper views -->
-  <!--
-  <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-      <property name="exceptionMappings">
-          <props>
-              <prop key="org.springframework.dao.DataRetrievalFailureException">
-                  fatalError
-              </prop>
-          </props>
-      </property>
-      <property name="defaultErrorView" value="fatalError"/>
-  </bean>
+    <bean id="authenticationFailureHandler"
+          class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.springframework.security.authentication.BadCredentialsException">/login/badCredentials</prop>
+                <prop key="org.springframework.security.authentication.LockedException">/login/accountLocked</prop>
+                <prop key="org.springframework.security.authentication.DisabledException">/login/accountDisabled</prop>
+            </props>
+        </property>
+    </bean>
+  -->
+    <!-- Taming the pesky derby.log file -->
+    <!--
+    <bean id="setDerbyLog" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"><value>java.lang.System</value></property>
+        <property name="targetMethod"><value>setProperty</value></property>
+        <property name="arguments">
+            <list>
+                <value>derby.stream.error.file</value>
+                <value>${catalina.home}/logs/derby.log</value>
+            </list>
+        </property>
+    </bean>
   -->
 
-  <!-- Message source resolver to use messages.properties file in the 'war/WEB-INF/classes' directory -->
-  <bean class="org.springframework.context.support.ResourceBundleMessageSource"
-    id="messageSource">
-    <property name="basename" value="messages"/>
-  </bean>
+    <!-- File upload multipart resolver -->
+    <bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+          id="multipartResolver">
+        <property name="maxUploadSize" value="${rosetta.maxUpload}"/>
+    </bean>
 
-  <!-- Resolves view names to decouple view from controller: ModelAndView("WEB-INF/views/XXXX.jsp"); -->
-  <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver" id="viewResolver">
-    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
-    <property name="prefix" value="/WEB-INF/views/"></property>
-    <property name="suffix" value=".jsp"></property>
-  </bean>
+    <!-- Map exceptions to the proper views -->
+    <!--
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.springframework.dao.DataRetrievalFailureException">
+                    fatalError
+                </prop>
+            </props>
+        </property>
+        <property name="defaultErrorView" value="fatalError"/>
+    </bean>
+    -->
 
-  <!-- Declaration for resource use -->
+    <!-- Message source resolver to use messages.properties file in the 'war/WEB-INF/classes' directory -->
+    <bean class="org.springframework.context.support.ResourceBundleMessageSource"
+          id="messageSource">
+        <property name="basename" value="messages"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileManager"/>
-  <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileParserManager"/>
-  <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.CFTypeValidator"
-    id="cfTypeValidator"/>
-  <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.FileValidator"
-    id="fileValidator"/>
-  <bean class="edu.ucar.unidata.rosetta.service.ServerInfoBean" id="serverInfo" init-method="init"/>
-  <bean class="edu.ucar.unidata.rosetta.init.resources.EmbeddedDerbyDbInitManager"
-    id="dbInitManager"/>
+    <!-- Resolves view names to decouple view from controller: ModelAndView("WEB-INF/views/XXXX.jsp"); -->
+    <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver" id="viewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+        <property name="prefix" value="/WEB-INF/views/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
 
-  <!-- DAO injection -->
-  <bean class="edu.ucar.unidata.rosetta.service.wizard.CfTypeDataManagerImpl"
-    id="cfTypeDataManager">
-    <property name="cfTypeDataDao" ref="cfTypeDataDao"/>
-    <property name="platformDao" ref="platformDao"/>
-  </bean>
+    <!-- Declaration for resource use -->
 
-  <bean class="edu.ucar.unidata.rosetta.service.wizard.CustomFileAttributesManagerImpl"
-    id="customFileAttributesManager">
-    <property name="customFileAttributesDao" ref="customFileAttributesDao"/>
-    <property name="uploadedFileDao" ref="uploadedFileDao"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileManager"/>
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileParserManager"/>
+    <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.CFTypeValidator"
+          id="cfTypeValidator"/>
+    <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.FileValidator"
+          id="fileValidator"/>
+    <bean class="edu.ucar.unidata.rosetta.service.ServerInfoBean" id="serverInfo"
+          init-method="init"/>
+    <bean class="edu.ucar.unidata.rosetta.init.resources.EmbeddedDerbyDbInitManager"
+          id="dbInitManager"/>
 
-  <bean class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl" id="dataManager">
-    <property name="dataDao" ref="dataDao"/>
-  </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.util.PropertyUtils" id="propertyUtils">
-    <property name="propertiesDao" ref="propertiesDao"/>
-  </bean>
+    <!-- Data Access Object (DAO) injection into service-layer classes. -->
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.CfTypeDataManagerImpl"
+          id="cfTypeDataManager">
+        <property name="cfTypeDataDao" ref="cfTypeDataDao"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.service.wizard.ResourceManagerImpl" id="resourceManager">
-    <property name="cfTypeDao" ref="cfTypeDao"/>
-    <property name="communityDao" ref="communityDao"/>
-    <property name="delimiterDao" ref="delimiterDao"/>
-    <property name="fileTypeDao" ref="fileTypeDao"/>
-    <property name="metadataProfileDao" ref="metadataProfileDao"/>
-    <property name="platformDao" ref="platformDao"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.CustomFileAttributesManagerImpl"
+          id="customFileAttributesManager">
+        <property name="customFileAttributesDao" ref="customFileAttributesDao"/>
+        <property name="uploadedFileDao" ref="uploadedFileDao"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.service.wizard.MetadataManagerImpl" id="metadataManager">
-    <property name="metadataDao" ref="metadataDao"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl" id="dataManager">
+        <property name="dataDao" ref="dataDao"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.service.wizard.UploadedFileManagerImpl" id="uploadedFileManager">
-    <property name="uploadedFileDao" ref="uploadedFileDao"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.MetadataManagerImpl" id="metadataManager">
+        <property name="metadataProfileDao" ref="metadataProfileDao"/>
 
-  <bean class="edu.ucar.unidata.rosetta.service.user.UserDetailsServiceImpl"
-    id="userDetailsService">
-    <property name="userDao" ref="userDao"/>
-  </bean>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.service.user.UserManagerImpl" id="userManager">
-    <property name="userDao" ref="userDao"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.ResourceManagerImpl" id="resourceManager">
+        <property name="cfTypeResourceDao" ref="cfTypeResourceDao"/>
+        <property name="communityResourceDao" ref="communityResourceDao"/>
+        <property name="delimiterResourceDao" ref="delimiterResourceDao"/>
+        <property name="fileTypeResourceDao" ref="fileTypeResourceDao"/>
+        <property name="metadataProfileResourceDao" ref="metadataProfileResourceDao"/>
+        <property name="platformResourceDao" ref="platformResourceDao"/>
+    </bean>
 
-  <!-- Datasource injection -->
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcCfTypeDao" id="cfTypeDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.UploadedFileManagerImpl"
+          id="uploadedFileManager">
+        <property name="uploadedFileDao" ref="uploadedFileDao"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcCfTypeDataDao" id="cfTypeDataDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.service.user.UserDetailsServiceImpl"
+          id="userDetailsService">
+        <property name="userDao" ref="userDao"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcCommunityDao" id="communityDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.service.user.UserManagerImpl" id="userManager">
+        <property name="userDao" ref="userDao"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcCustomFileAttributesDao" id="customFileAttributesDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <!-- Data Access Object (DAO) injection into utility-layer classes. -->
 
-  <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcDataDao" id="dataDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.util.PropertyUtils" id="propertyUtils">
+        <property name="propertiesDao" ref="propertiesDao"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcDelimiterDao" id="delimiterDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <!-- Properties datasource injection. (Property data is provided from the application.properties
+    file during startup and persisted in the database for quick access/use.) -->
+    <bean class="edu.ucar.unidata.rosetta.repository.JdbcPropertiesDao" id="propertiesDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcFileTypeDao" id="fileTypeDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <!-- Resource datasource injection. (Resources are data taken from WEB-INF/classes/resources/*.xml
+    files and added to the database for quick access.  The resource data is access frequently in the
+    Rosetta app and therefore it is more efficient to make a database call than to crack open and
+    parse an XML file every time we need to access this data.) -->
+    <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcCfTypeResourceDao"
+          id="cfTypeResourceDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcMetadataProfileDao" id="metadataProfileDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcCommunityResourceDao"
+          id="communityResourceDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcMetadataDao" id="metadataDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcDelimiterResourceDao"
+          id="delimiterResourceDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcPlatformDao" id="platformDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcFileTypeResourceDao"
+          id="fileTypeResourceDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.JdbcPropertiesDao" id="propertiesDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcMetadataProfileResourceDao"
+          id="metadataProfileResourceDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcUploadedFileDao" id="uploadedFileDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcPlatformResourceDao"
+          id="platformResourceDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.user.JdbcUserDao" id="userDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
+    <!-- Wizard datasource injection.   Wizard-related classes need to access to persisted data. -->
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcCfTypeDataDao" id="cfTypeDataDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
 
-  <!-- Declare a datasource that has pooling capabilities-->
-  <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dbDataSource">
-    <property name="driverClassName" value="${jdbc.driverClassName}"/>
-    <property name="url"
-      value="${jdbc.url}#{systemProperties['rosetta.content.root.path']}/${jdbc.dbName}"/>
-    <property name="username" value="${jdbc.username}"/>
-    <property name="password" value="${jdbc.password}"/>
-    <property name="initialSize" value="10"/>
-    <property name="maxActive" value="20"/>
-    <property name="maxIdle" value="-1"/>
-    <property name="maxWait" value="-1"/>
-    <property name="validationQuery" value="${jdbc.validationQuery}"/>
-  </bean>
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcCustomFileAttributesDao"
+          id="customFileAttributesDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcDataDao" id="dataDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcMetadataDao" id="metadataDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.XmlMetadataProfileDao"
+          id="metadataProfileDao"/>
+
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcUploadedFileDao"
+          id="uploadedFileDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <!-- User datasource injection. User-related classes need to access to the persisted data. -->
+    <bean class="edu.ucar.unidata.rosetta.repository.user.JdbcUserDao" id="userDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
+    <!-- Using a database for persistence.  Declare a datasource that has pooling capabilities-->
+    <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dbDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url"
+                  value="${jdbc.url}#{systemProperties['rosetta.content.root.path']}/${jdbc.dbName}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="initialSize" value="10"/>
+        <property name="maxActive" value="20"/>
+        <property name="maxIdle" value="-1"/>
+        <property name="maxWait" value="-1"/>
+        <property name="validationQuery" value="${jdbc.validationQuery}"/>
+    </bean>
 
 </beans>

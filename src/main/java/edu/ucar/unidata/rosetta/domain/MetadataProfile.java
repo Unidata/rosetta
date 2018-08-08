@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
 package edu.ucar.unidata.rosetta.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -7,18 +12,18 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 public class MetadataProfile {
 
-  private String attributeName;
-  private ComplianceLevel complianceLevel;
+  private String attributeName; // required
+  private String complianceLevel = "additional";
   private String description;
   private String displayName;
-  private String examples;
+  private String exampleValues;
   private String id;
-  private String metadataGroup;
-  private String metadataProfileName;
-  private String metadataProfileVersion;
-  private MetadataType metadataType = MetadataType.GLOBAL;
-  private MetadataTypeStructure metadataTypeStructure = MetadataTypeStructure.GLOBAL_ATTRIBUTES;
-  private MetadataValueType metadataValueType = MetadataValueType.STRING;
+  private String metadataGroup = "root";
+  private String metadataProfileName; // required
+  private String metadataProfileVersion; // required
+  private String metadataType = "Global";
+  private String metadataTypeStructure = "Global Attributes";
+  private String metadataValueType = "String";
 
   /**
    * Returns the name of the metadata attribute.
@@ -43,7 +48,7 @@ public class MetadataProfile {
    *
    * @return The compliance level.
    */
-  public ComplianceLevel getComplianceLevel() {
+  public String getComplianceLevel() {
     return complianceLevel;
   }
 
@@ -52,7 +57,7 @@ public class MetadataProfile {
    *
    * @param complianceLevel The compliance level.
    */
-  public void setComplianceLevel(ComplianceLevel complianceLevel) {
+  public void setComplianceLevel(String complianceLevel) {
     this.complianceLevel = complianceLevel;
   }
 
@@ -97,17 +102,17 @@ public class MetadataProfile {
    *
    * @return The examples.
    */
-  public String getExamples() {
-    return examples;
+  public String getExampleValues() {
+    return exampleValues;
   }
 
   /**
    * Sets a string of examples of that illustrate this metadata.
    *
-   * @param examples The examples.
+   * @param exampleValues The examples.
    */
-  public void setExamples(String examples) {
-    this.examples = examples;
+  public void setExampleValues(String exampleValues) {
+    this.exampleValues = exampleValues;
   }
 
   /**
@@ -187,16 +192,16 @@ public class MetadataProfile {
    *
    * @return The metadata type.
    */
-  public MetadataType getMetadataType() {
+  public String getMetadataType() {
     return metadataType;
   }
 
   /**
-   * sets the designated metadata type.
+   * Sets the designated metadata type.
    *
    * @param metadataType The metadata type.
    */
-  public void setMetadataType(MetadataType metadataType) {
+  public void setMetadataType(String metadataType) {
     this.metadataType = metadataType;
   }
 
@@ -205,7 +210,7 @@ public class MetadataProfile {
    *
    * @return The metadata type structure.
    */
-  public MetadataTypeStructure getMetadataTypeStructure() {
+  public String getMetadataTypeStructure() {
     return metadataTypeStructure;
   }
 
@@ -214,7 +219,7 @@ public class MetadataProfile {
    *
    * @param metadataTypeStructure The metadata type structure.
    */
-  public void setMetadataTypeStructure(MetadataTypeStructure metadataTypeStructure) {
+  public void setMetadataTypeStructure(String metadataTypeStructure) {
     this.metadataTypeStructure = metadataTypeStructure;
   }
 
@@ -223,7 +228,7 @@ public class MetadataProfile {
    *
    * @return The metadata type value.
    */
-  public MetadataValueType getMetadataValueType() {
+  public String getMetadataValueType() {
     return metadataValueType;
   }
 
@@ -232,63 +237,17 @@ public class MetadataProfile {
    *
    * @param metadataValueType The metadata type value.
    */
-  public void setMetadataValueType(MetadataValueType metadataValueType) {
+  public void setMetadataValueType(String metadataValueType) {
     this.metadataValueType = metadataValueType;
   }
 
   /**
-   * String representation of this object.
+   * String representation of this Data object.
    *
    * @return The string representation.
    */
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);
-  }
-
-  public enum ComplianceLevel {
-    REQUIRED,
-    RECOMMENDED,
-    ADDITIONAL;
-  }
-
-  public enum MetadataType {
-    GLOBAL,
-    COORDINATE_VARIABLE,
-    DATA_VARIABLE,
-    MASK_VARIABLE,
-    COUNT_VARIABLE,
-    INDEX_VARIABLE;
-  }
-
-  public enum MetadataTypeStructure {
-    GLOBAL_ATTRIBUTES,
-    LAT,
-    LON,
-    DEPTH,
-    TIME,
-    CRS,
-    BOUNDS,
-    DATA,
-    MASK,
-    COUNT,
-    INDEX;
-  }
-
-  public enum MetadataValueType {
-    BOOLEAN,
-    BYTE,
-    CHAR,
-    DOUBLE,
-    FLOAT,
-    INT,
-    LONG,
-    SHORT,
-    STRING,
-    UBYTE,
-    UINT,
-    ULONG,
-    USHORT,
-    SAME
   }
 }

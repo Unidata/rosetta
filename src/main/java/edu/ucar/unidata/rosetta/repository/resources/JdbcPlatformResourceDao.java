@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
 package edu.ucar.unidata.rosetta.repository.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
@@ -14,9 +19,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * @author oxelson@ucar.edu
  */
-public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
+public class JdbcPlatformResourceDao extends JdbcDaoSupport implements PlatformResourceDao {
 
-  protected static Logger logger = Logger.getLogger(JdbcPlatformDao.class);
+  protected static Logger logger = Logger.getLogger(JdbcPlatformResourceDao.class);
 
   private SimpleJdbcInsert insertActor;
 

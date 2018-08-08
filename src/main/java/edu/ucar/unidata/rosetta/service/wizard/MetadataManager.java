@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
 package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
@@ -12,6 +17,8 @@ import java.util.Map;
  * @author oxelson@ucar.edu
  */
 public interface MetadataManager {
+
+  public void getMetadataProfileData();
 
   /**
    * Deletes the persisted metadata information using the given id.
