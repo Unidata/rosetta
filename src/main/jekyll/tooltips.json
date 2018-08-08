@@ -10,7 +10,7 @@ search: exclude
 {
 "id"    : "{{ page.id }}",
 "body": "{{ page.content | strip_newlines | replace: '\', '\\\\' | replace: '"', '\\"' }}"
-} {% unless forloop.last %}, {% endunless %}
+} {% unless forloop.last %},{% endunless %}
 {% endfor %}
 ]
 }
