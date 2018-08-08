@@ -213,6 +213,8 @@ configurations {
 
 task integrationTests(type: Test) {
 
+    description 'Runs tests that require a rosetta server running at localhost:8888.'
+
     testLogging {
         events "passed", "skipped", "failed", "standardOut", "standardError"
     }
