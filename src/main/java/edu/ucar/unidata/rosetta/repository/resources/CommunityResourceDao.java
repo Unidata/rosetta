@@ -10,7 +10,7 @@ import org.springframework.dao.DataRetrievalFailureException;
  *
  * @author oxelson@ucar.edu
  */
-public interface CommunityDao {
+public interface CommunityResourceDao {
 
   /**
    * Looks up and retrieves a list of persisted Community objects.

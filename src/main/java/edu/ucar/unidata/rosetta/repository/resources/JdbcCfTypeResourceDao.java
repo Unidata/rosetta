@@ -14,9 +14,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * @author oxelson@ucar.edu
  */
-public class JdbcCfTypeDao extends JdbcDaoSupport implements CfTypeDao {
+public class JdbcCfTypeResourceDao extends JdbcDaoSupport implements CfTypeResourceDao {
 
-  private static final Logger logger = Logger.getLogger(JdbcCfTypeDao.class);
+  private static final Logger logger = Logger.getLogger(JdbcCfTypeResourceDao.class);
 
   /**
    * Looks up and retrieves a list of persisted CfType objects.
@@ -26,7 +26,7 @@ public class JdbcCfTypeDao extends JdbcDaoSupport implements CfTypeDao {
    */
   public List<CfType> getCfTypes() throws DataRetrievalFailureException {
     String sql = "SELECT * FROM cfTypes";
-    List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper());
+    List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeResourceDao.CfTypeMapper());
     if (cfTypes.isEmpty()) {
       String message = "Unable to find persisted CfType objects.";
       logger.error(message);
@@ -44,7 +44,7 @@ public class JdbcCfTypeDao extends JdbcDaoSupport implements CfTypeDao {
    */
   public CfType lookupCfTypeById(int id) throws DataRetrievalFailureException {
     String sql = "SELECT * FROM cfTypes WHERE id = ?";
-    List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper(), id);
+    List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeResourceDao.CfTypeMapper(), id);
     if (cfTypes.isEmpty()) {
       String message = "Unable to find persisted CfType object corresponding to id " + id;
       logger.error(message);
@@ -62,7 +62,7 @@ public class JdbcCfTypeDao extends JdbcDaoSupport implements CfTypeDao {
    */
   public CfType lookupCfTypeByName(String name) throws DataRetrievalFailureException {
     String sql = "SELECT * FROM cfTypes WHERE name = ?";
-    List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeDao.CfTypeMapper(), name);
+    List<CfType> cfTypes = getJdbcTemplate().query(sql, new JdbcCfTypeResourceDao.CfTypeMapper(), name);
     if (cfTypes.isEmpty()) {
       String message = "Unable to find persisted CfType object corresponding to name " + name;
       logger.error(message);
@@ -72,7 +72,7 @@ public class JdbcCfTypeDao extends JdbcDaoSupport implements CfTypeDao {
   }
 
   /**
-   * This CfTypeMapper only used by JdbcCfTypeDao.
+   * This CfTypeMapper only used by JdbcCfTypeResourceDao.
    */
   private static class CfTypeMapper implements RowMapper<CfType> {
 

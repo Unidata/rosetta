@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * @author oxelson@ucar.edu
  */
-public class JdbcCommunityDao extends JdbcDaoSupport implements CommunityDao {
+public class JdbcCommunityResourceDao extends JdbcDaoSupport implements CommunityResourceDao {
 
   /**
    * Looks up and retrieves a list of persisted Community objects.

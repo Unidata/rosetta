@@ -9,7 +9,7 @@ import org.springframework.dao.DataRetrievalFailureException;
  *
  * @author oxelson@ucar.edu
  */
-public interface DelimiterDao {
+public interface DelimiterResourceDao {
 
   /**
    * Looks up and retrieves a list of persisted Delimiters objects.

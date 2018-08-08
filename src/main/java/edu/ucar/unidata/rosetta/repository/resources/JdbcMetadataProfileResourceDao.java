@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * @author oxelson@ucar.edu
  */
-public class JdbcMetadataProfileDao extends JdbcDaoSupport implements MetadataProfileDao {
+public class JdbcMetadataProfileResourceDao extends JdbcDaoSupport implements MetadataProfileResourceDao {
 
   /**
    * Looks up and retrieves a list of persisted MetadataProfile objects.

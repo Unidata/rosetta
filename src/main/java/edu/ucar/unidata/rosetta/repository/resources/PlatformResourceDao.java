@@ -9,7 +9,7 @@ import org.springframework.dao.DataAccessException;
  *
  * @author oxelson@ucar.edu
  */
-public interface PlatformDao {
+public interface PlatformResourceDao {
 
   /**
    * Looks up and retrieves a list of all persisted Platform objects.

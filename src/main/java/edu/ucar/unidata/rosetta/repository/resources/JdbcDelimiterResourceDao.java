@@ -14,9 +14,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * @author oxelson@ucar.edu
  */
-public class JdbcDelimiterDao extends JdbcDaoSupport implements DelimiterDao {
+public class JdbcDelimiterResourceDao extends JdbcDaoSupport implements DelimiterResourceDao {
 
-  private static final Logger logger = Logger.getLogger(JdbcDelimiterDao.class);
+  private static final Logger logger = Logger.getLogger(JdbcDelimiterResourceDao.class);
 
   /**
    * Looks up and retrieves a list of persisted Delimiters objects.
@@ -27,7 +27,7 @@ public class JdbcDelimiterDao extends JdbcDaoSupport implements DelimiterDao {
   public List<Delimiter> getDelimiters() throws DataRetrievalFailureException {
     String sql = "SELECT * FROM delimiters ORDER BY name";
     List<Delimiter> delimiters = getJdbcTemplate()
-        .query(sql, new JdbcDelimiterDao.DelimiterMapper());
+        .query(sql, new JdbcDelimiterResourceDao.DelimiterMapper());
     if (delimiters.isEmpty()) {
       String message = "Unable to find persisted Delimiter objects.";
       logger.error(message);
@@ -46,7 +46,7 @@ public class JdbcDelimiterDao extends JdbcDaoSupport implements DelimiterDao {
   public Delimiter lookupDelimiterByName(String name) throws DataRetrievalFailureException {
     String sql = "SELECT * FROM delimiters WHERE name = ?";
     List<Delimiter> delimiters = getJdbcTemplate()
-        .query(sql, new JdbcDelimiterDao.DelimiterMapper(), name);
+        .query(sql, new JdbcDelimiterResourceDao.DelimiterMapper(), name);
     if (delimiters.isEmpty()) {
       String message = "Unable to find persisted Delimiter object corresponding to name " + name;
       logger.error(message);
@@ -56,7 +56,7 @@ public class JdbcDelimiterDao extends JdbcDaoSupport implements DelimiterDao {
   }
 
   /**
-   * This DelimiterMapper only used by JdbcDelimiterDao.
+   * This DelimiterMapper only used by JdbcDelimiterResourceDao.
    */
   private static class DelimiterMapper implements RowMapper<Delimiter> {
 

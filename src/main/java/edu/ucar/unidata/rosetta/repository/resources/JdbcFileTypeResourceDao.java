@@ -14,9 +14,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * @author oxelson@ucar.edu
  */
-public class JdbcFileTypeDao extends JdbcDaoSupport implements FileTypeDao {
+public class JdbcFileTypeResourceDao extends JdbcDaoSupport implements FileTypeResourceDao {
 
-  private static final Logger logger = Logger.getLogger(JdbcFileTypeDao.class);
+  private static final Logger logger = Logger.getLogger(JdbcFileTypeResourceDao.class);
 
   /**
    * Looks up and retrieves a list of persisted FileType objects.
@@ -26,7 +26,7 @@ public class JdbcFileTypeDao extends JdbcDaoSupport implements FileTypeDao {
    */
   public List<FileType> getFileTypes() throws DataRetrievalFailureException {
     String sql = "SELECT * FROM fileTypes";
-    List<FileType> fileTypes = getJdbcTemplate().query(sql, new JdbcFileTypeDao.FileTypeMapper());
+    List<FileType> fileTypes = getJdbcTemplate().query(sql, new JdbcFileTypeResourceDao.FileTypeMapper());
     if (fileTypes.isEmpty()) {
       String message = "Unable to find persisted FileType objects.";
       logger.error(message);
@@ -45,7 +45,7 @@ public class JdbcFileTypeDao extends JdbcDaoSupport implements FileTypeDao {
   public FileType lookupFileTypeById(int id) throws DataRetrievalFailureException {
     String sql = "SELECT * FROM fileTypes WHERE id = ?";
     List<FileType> fileTypes = getJdbcTemplate()
-        .query(sql, new JdbcFileTypeDao.FileTypeMapper(), id);
+        .query(sql, new JdbcFileTypeResourceDao.FileTypeMapper(), id);
     if (fileTypes.isEmpty()) {
       String message = "Unable to find persisted FileType object corresponding to id " + id;
       logger.error(message);
@@ -64,7 +64,7 @@ public class JdbcFileTypeDao extends JdbcDaoSupport implements FileTypeDao {
   public FileType lookupFileTypeByName(String name) throws DataRetrievalFailureException {
     String sql = "SELECT * FROM fileTypes WHERE name = ?";
     List<FileType> fileTypes = getJdbcTemplate()
-        .query(sql, new JdbcFileTypeDao.FileTypeMapper(), name);
+        .query(sql, new JdbcFileTypeResourceDao.FileTypeMapper(), name);
     if (fileTypes.isEmpty()) {
       String message = "Unable to find persisted FileType object corresponding to name " + name;
       logger.error(message);
@@ -74,7 +74,7 @@ public class JdbcFileTypeDao extends JdbcDaoSupport implements FileTypeDao {
   }
 
   /**
-   * This FileTypeMapper only used by JdbcFileTypeDao.
+   * This FileTypeMapper only used by JdbcFileTypeResourceDao.
    */
   private static class FileTypeMapper implements RowMapper<FileType> {
 

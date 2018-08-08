@@ -14,9 +14,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  *
  * @author oxelson@ucar.edu
  */
-public class JdbcPlatformDao extends JdbcDaoSupport implements PlatformDao {
+public class JdbcPlatformResourceDao extends JdbcDaoSupport implements PlatformResourceDao {
 
-  protected static Logger logger = Logger.getLogger(JdbcPlatformDao.class);
+  protected static Logger logger = Logger.getLogger(JdbcPlatformResourceDao.class);
 
   private SimpleJdbcInsert insertActor;
 

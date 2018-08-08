@@ -10,7 +10,7 @@ import org.springframework.dao.DataRetrievalFailureException;
  *
  * @author oxelson@ucar.edu
  */
-public interface MetadataProfileDao {
+public interface MetadataProfileResourceDao {
 
   /**
    * Looks up and retrieves a list of persisted MetadataProfile objects.
