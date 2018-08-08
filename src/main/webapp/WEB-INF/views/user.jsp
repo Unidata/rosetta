@@ -30,8 +30,9 @@
             </c:otherwise>
         </c:choose>
     </title>
-    <link rel="shortcut icon" href="<c:out value="${baseUrl}" />/resources/img/logo/favicon.ico" type="image/x-icon" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" href="<c:out value="${baseUrl}" />/resources/img/logo/favicon.ico"
+          type="image/x-icon"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <%@ include file="/WEB-INF/views/jspf/resources.jspf" %>
 </head>
 <body>
@@ -67,7 +68,8 @@
             </c:choose>
         </c:when>
         <c:otherwise>
-            <p class="error">Unable to view user account information.  <spring:message code="fatal.error.message"/></p>
+            <p class="error">Unable to view user account information. <spring:message
+                    code="fatal.error.message"/></p>
         </c:otherwise>
     </c:choose>
 </section>

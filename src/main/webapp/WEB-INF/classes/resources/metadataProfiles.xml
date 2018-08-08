@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Make sure a corresponding file is in the MpsProfilesRosetta directory.  E.g.: ACDD.xml -->
+<metadataProfiles>
+    <metadataProfile>
+        <name>CF</name>
+        <community>Atmospheric Sciences</community>
+        <community>Physical Ocean Sciences</community>
+        <community>Bio-Logging</community>
+    </metadataProfile>
+    <metadataProfile>
+        <name>ACDD</name>
+    </metadataProfile>
+    <metadataProfile>
+        <name>eTuff</name>
+        <community>Bio-Logging</community>
+    </metadataProfile>
+    <metadataProfile>
+        <name>NCEI</name>
+        <community>Physical Ocean Sciences</community>
+        <community>Bio-Logging</community>
+    </metadataProfile>
+</metadataProfiles>

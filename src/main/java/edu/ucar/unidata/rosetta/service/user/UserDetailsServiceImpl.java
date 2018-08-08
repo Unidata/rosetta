@@ -2,7 +2,6 @@ package edu.ucar.unidata.rosetta.service.user;
 
 import edu.ucar.unidata.rosetta.domain.user.User;
 import edu.ucar.unidata.rosetta.repository.user.UserDao;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

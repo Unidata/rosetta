@@ -1,11 +1,9 @@
 package edu.ucar.unidata.rosetta.converters.custom.dsg;
 
-import org.apache.log4j.Logger;
-
+import edu.ucar.unidata.rosetta.domain.AsciiFile;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import edu.ucar.unidata.rosetta.domain.AsciiFile;
+import org.apache.log4j.Logger;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayScalar;
 import ucar.ma2.DataType;

@@ -1,28 +1,35 @@
 package edu.ucar.unidata.rosetta.controller.wizard;
 
-import edu.ucar.unidata.rosetta.domain.Data;
-import edu.ucar.unidata.rosetta.exceptions.*;
-
+import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
+import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
+import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile.FileType;
+import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
+import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
+import edu.ucar.unidata.rosetta.service.wizard.CfTypeDataManager;
+import edu.ucar.unidata.rosetta.service.wizard.DataManager;
+import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
+import edu.ucar.unidata.rosetta.service.wizard.UploadedFileManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,8 +48,17 @@ public class FileUploadController implements HandlerExceptionResolver {
 
   private final ServletContext servletContext;
 
+  @Resource(name = "cfTypeDataManager")
+  private CfTypeDataManager cfTypeDataManager;
+
   @Resource(name = "dataManager")
   private DataManager dataManager;
+
+  @Resource(name = "uploadedFileManager")
+  private UploadedFileManager uploadedFileManager;
+
+  @Resource(name = "resourceManager")
+  private ResourceManager resourceManager;
 
   @Autowired
   public FileUploadController(ServletContext servletContext) {
@@ -63,24 +79,38 @@ public class FileUploadController implements HandlerExceptionResolver {
     // Have we visited this page before during this session?
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-    if (rosettaCookie == null)
-    // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-    {
+    if (rosettaCookie == null) {
+      // Something has gone wrong.  We shouldn't be at this step without having persisted data.
       throw new IllegalStateException(
           "No persisted data available for file upload step.  Check the database & the cookie.");
     }
 
-    // Create a Data form-backing object.
-    Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
+    // Look up CF type data entered in prior wizard step & add to model.
+    // (Needed for display logic in wizard step).
+    CfTypeData cfTypeData = cfTypeDataManager.lookupPersistedCfTypeDataById(rosettaCookie.getValue());
+    model.addAttribute("community", cfTypeData.getCommunity());
+    model.addAttribute("cfType", cfTypeData.getCfType());
 
-    // Add data object to Model.
-    model.addAttribute("data", data);
+    // Create the form backing object.
+    UploadedFileCmd uploadedFileCmd;
+    // Have we been here before?  Do we have any data persisted?
+    UploadedFileCmd persisted = uploadedFileManager.lookupPersistedDataById(rosettaCookie.getValue());
+    if (!persisted.getUploadedFiles().isEmpty()) {
+      uploadedFileCmd = persisted;
+    } else {
+      // No persisted data.
+      uploadedFileCmd = new UploadedFileCmd();
+    }
+    // Add command object to Model.
+    model.addAttribute("command", "uploadedFileCmd");
+    // Add form-backing object.
+    model.addAttribute("uploadedFileCmd", uploadedFileCmd);
     // Add current step to the Model.
     model.addAttribute("currentStep", "fileUpload");
     // Add community data to Model (for file upload display based on community type).
-    model.addAttribute("communities", dataManager.getCommunities());
-    // Add file type data to Model (for file type selection if cfType was directly specified).
-    model.addAttribute("fileTypes", dataManager.getFileTypes());
+    model.addAttribute("communities", resourceManager.getCommunities());
+    // Add file type data to Model (for file type selection if CF type was directly specified).
+    model.addAttribute("fileTypes", resourceManager.getFileTypes());
 
     // The currentStep variable will determine which jsp frag to load in the wizard.
     return new ModelAndView("wizard");
@@ -91,7 +121,8 @@ public class FileUploadController implements HandlerExceptionResolver {
    * persists it to the database.  Redirects user to next step or previous step depending on
    * submitted form button (Next or Previous).
    *
-   * @param data The form-backing object.
+   * @param uploadedFileCmd The form-backing object.
+   * @param submit  The value sent via the submit button.
    * @param result The BindingResult for error handling.
    * @param model The Model object to be populated by file upload data in the next step.
    * @param request HttpServletRequest needed to get the cookie.
@@ -101,31 +132,30 @@ public class FileUploadController implements HandlerExceptionResolver {
    * occurred.
    */
   @RequestMapping(value = "/fileUpload", method = RequestMethod.POST)
-  public ModelAndView processFileUpload(Data data, BindingResult result, Model model,
-      HttpServletRequest request) throws RosettaFileException {
+  public ModelAndView processFileUpload(@ModelAttribute("uploadedFileCmd") UploadedFileCmd uploadedFileCmd,
+      @RequestParam("submit") String submit, BindingResult result, Model model, HttpServletRequest request) throws RosettaFileException {
 
     // Take user back to the CF type selection step (and don't save any data to this step).
-    if (data.getSubmit().equals("Previous")) {
+    if (submit != null && submit.equals("Previous")) {
       return new ModelAndView(new RedirectView("/cfType", true));
     }
 
     // Get the cookie so we can get the persisted data.
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-    if (rosettaCookie == null)
-    // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-    {
+    if (rosettaCookie == null) {
+      // Something has gone wrong.  We shouldn't be at this step without having persisted data.
       throw new IllegalStateException(
           "No persisted data available for file upload step.  Check the database & the cookie.");
     }
 
     // Persist the file upload data.
-    dataManager.processFileUpload(rosettaCookie.getValue(), data);
+    uploadedFileManager.processFileUpload(rosettaCookie.getValue(), uploadedFileCmd);
 
     // Depending on what the user entered for the data file, we may need to
     // add an extra step to collect data associated with that custom file type.
     String nextStep = dataManager.processNextStep(rosettaCookie.getValue());
 
-    // Send user to the next view.  (See dataManager.processFileUpload).
+    // Send user to the next view.
     return new ModelAndView(new RedirectView(nextStep, true));
   }
 

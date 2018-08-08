@@ -1,8 +1,7 @@
 package edu.ucar.unidata.rosetta.repository.resources;
 
-import java.util.List;
-
 import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
+import java.util.List;
 import org.springframework.dao.DataRetrievalFailureException;
 
 /**

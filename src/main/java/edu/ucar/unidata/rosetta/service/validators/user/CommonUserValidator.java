@@ -2,14 +2,11 @@ package edu.ucar.unidata.rosetta.service.validators.user;
 
 import edu.ucar.unidata.rosetta.service.user.UserManager;
 import edu.ucar.unidata.rosetta.service.validators.CommonValidator;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.springframework.validation.Errors;
 
 /**
@@ -19,12 +16,10 @@ import org.springframework.validation.Errors;
  */
 public class CommonUserValidator extends CommonValidator {
 
-  protected static Logger logger = Logger.getLogger(CommonUserValidator.class);
-
   protected static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
       + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
   protected static final String USER_NAME_PATTERN = "^[a-zA-Z0-9_-]{2,}$";
-
+  protected static Logger logger = Logger.getLogger(CommonUserValidator.class);
   private Pattern pattern;
   private Matcher matcher;
 

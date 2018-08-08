@@ -1,9 +1,7 @@
 package edu.ucar.unidata.rosetta.repository.user;
 
 import edu.ucar.unidata.rosetta.domain.user.User;
-
 import java.util.List;
-
 import org.springframework.dao.DataAccessException;
 
 /**

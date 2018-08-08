@@ -2,14 +2,11 @@ package edu.ucar.unidata.rosetta.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-
 import org.apache.commons.io.FilenameUtils;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -22,6 +19,17 @@ import org.json.simple.parser.ParseException;
  */
 public class JsonUtil {
 
+  private String name;
+
+
+  public JsonUtil(String jsonFile) {
+    this.setName(jsonFile);
+    File jsonDir = new File(FilenameUtils.getFullPath(jsonFile));
+    if (!jsonDir.exists()) {
+      jsonDir.mkdirs();
+    }
+  }
+
   /**
    * Maps a Java Object to a JSON String.
    *
@@ -33,17 +41,6 @@ public class JsonUtil {
 
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(obj);
-  }
-
-
-  private String name;
-
-  public JsonUtil(String jsonFile) {
-    this.setName(jsonFile);
-    File jsonDir = new File(FilenameUtils.getFullPath(jsonFile));
-    if (!jsonDir.exists()) {
-      jsonDir.mkdirs();
-    }
   }
 
   public String getName() {

@@ -3,20 +3,20 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@ page import="edu.ucar.unidata.rosetta.service.ServerInfoBean" %>
-<c:set var="baseUrl" value="${pageContext.request.contextPath}" />
+<c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 
-<sec:authorize var="loggedIn" access="isAuthenticated()" />
+<sec:authorize var="loggedIn" access="isAuthenticated()"/>
 <c:choose>
     <c:when test="${loggedIn}">
         <c:set var="authUserName">
-            <sec:authentication property="principal.username" />
+            <sec:authentication property="principal.username"/>
         </c:set>
         <c:set var="authFullName">
-            <sec:authentication property="principal.fullName" />
+            <sec:authentication property="principal.fullName"/>
         </c:set>
     </c:when>
 </c:choose>

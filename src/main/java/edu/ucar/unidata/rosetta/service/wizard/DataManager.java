@@ -2,14 +2,16 @@ package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.domain.resources.*;
+import edu.ucar.unidata.rosetta.domain.resources.CfType;
+import edu.ucar.unidata.rosetta.domain.resources.Community;
+import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
+import edu.ucar.unidata.rosetta.domain.resources.FileType;
+import edu.ucar.unidata.rosetta.domain.resources.Platform;
+import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import ucar.ma2.InvalidRangeException;
 
 /**
@@ -38,65 +40,6 @@ public interface DataManager {
   public void deletePersistedData(String id);
 
   /**
-   * Retrieves the CF Types associated with the given platform.
-   *
-   * @param platform The platform.
-   * @return The CF Types associated with the given platform.
-   */
-  public String getCFTypeFromPlatform(String platform);
-
-  /**
-   * Retrieves a list of all the persisted CfType objects.
-   *
-   * @return A list of CfType objects.
-   */
-  public List<CfType> getCfTypes();
-
-  /**
-   * Retrieves a list of all the persisted communities.
-   *
-   * @return A list of Community objects.
-   */
-  public List<Community> getCommunities();
-
-  /**
-   * Retrieves the community associated with the given platform.
-   *
-   * @param platform The platform.
-   * @return The community associated with the given platform.
-   */
-  public String getCommunityFromPlatform(String platform);
-
-  /**
-   * Retrieves a list of all the persisted Delimiter objects.
-   *
-   * @return The Delimiter objects.
-   */
-  public List<Delimiter> getDelimiters();
-
-  /**
-   * Returns the symbol corresponding to the given delimiter string.
-   *
-   * @param delimiter The delimiter string.
-   * @return The symbol corresponding to the given string.
-   */
-  public String getDelimiterSymbol(String delimiter);
-
-  /**
-   * Retrieves the name of the directory used for storing files for downloading.
-   *
-   * @return The name of the directory used for storing files for downloading.
-   */
-  public String getDownloadDir();
-
-  /**
-   * Retrieves a list of all the persisted FileType objects.
-   *
-   * @return A list of FileType objects.
-   */
-  public List<FileType> getFileTypes();
-
-  /**
    * Pulls the general metadata from a data known file and populates the provided GeneralMetadata
    * object. If the data file type is a custom file (not a known type) then an empty, non-populated
    * GeneralMetadata object is returned.
@@ -121,26 +64,20 @@ public interface DataManager {
   public String getMetadataStringForClient(String id, String type);
 
   /**
-   * Retrieves a list of all the persisted Platform objects.
-   *
-   * @return A list of Platform objects.
-   */
-  public List<Platform> getPlatforms();
-
-  /**
-   * Retrieves the name of the directory used for storing uploaded files.
-   *
-   * @return The name of the directory used for storing uploaded files.
-   */
-  public String getUploadDir();
-
-  /**
    * Looks up and retrieves a Data object using the given id.
    *
    * @param id The id of the Data object.
    * @return The Data object corresponding to the given id.
    */
   public Data lookupPersistedDataById(String id);
+
+  /**
+   * Persists the information in the given data object.
+   *
+   * @param data The Data object to persist.
+   */
+  public void persistData(Data data, HttpServletRequest request);
+
 
   /**
    * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
@@ -152,44 +89,6 @@ public interface DataManager {
    */
   public String parseDataFileByLine(String id, String dataFileName) throws RosettaFileException;
 
-  /**
-   * Persists the information in the given data object.
-   *
-   * @param data The Data object to persist.
-   */
-  public void persistData(Data data, HttpServletRequest request);
-
-  /**
-   * Processes the data submitted by the user containing CF type information. If an ID already
-   * exists, the persisted data corresponding to that ID is collected and updated with the newly
-   * submitted data.  If no ID exists (is null), the data is persisted for the first time.
-   *
-   * @param id The unique ID corresponding to already persisted data (may be null).
-   * @param data The Data object submitted by the user containing the CF type information.
-   * @param request The HttpServletRequest used to get the IP address to make unique IDs for new
-   * data.
-   */
-  public void processCfType(String id, Data data, HttpServletRequest request);
-
-  /**
-   * Processes the data submitted by the user containing custom data file information.
-   *
-   * @param id The unique ID corresponding to already persisted data.
-   * @param data The Data object submitted by the user containing the custom data file information.
-   */
-  public void processCustomFileTypeAttributes(String id, Data data);
-
-  /**
-   * Processes the data submitted by the user containing uploaded file information. Writes the
-   * uploaded files to disk. Updates the persisted data corresponding to the provided unique ID with
-   * the uploaded file information.
-   *
-   * @param id The unique ID corresponding to already persisted data.
-   * @param data The Data object submitted by the user containing the uploaded file information.
-   * @throws RosettaFileException If unable to write file(s) to disk or a file conversion exception
-   * occurred.
-   */
-  public void processFileUpload(String id, Data data) throws RosettaFileException;
 
   /**
    * Processes the data submitted by the user containing general metadata information.  Since this
@@ -236,4 +135,8 @@ public interface DataManager {
    * @param data The data object to update.
    */
   public void updatePersistedData(Data data);
+
+
+
+
 }

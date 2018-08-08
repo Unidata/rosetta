@@ -1,28 +1,27 @@
 package edu.ucar.unidata.rosetta.controller.wizard;
 
-import edu.ucar.unidata.rosetta.domain.Data;
-import edu.ucar.unidata.rosetta.exceptions.*;
-
+import edu.ucar.unidata.rosetta.domain.wizard.CustomFileAttributes;
+import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
+import edu.ucar.unidata.rosetta.service.wizard.CustomFileAttributesManager;
+import edu.ucar.unidata.rosetta.service.wizard.DataManager;
+import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,17 +34,23 @@ import org.springframework.web.util.WebUtils;
  * @author oxelson@ucar.edu
  */
 @Controller
-public class CustomFileTypeAttributesController implements HandlerExceptionResolver {
+public class CustomFileAttributesController implements HandlerExceptionResolver {
 
-  private static final Logger logger = Logger.getLogger(CustomFileTypeAttributesController.class);
+  private static final Logger logger = Logger.getLogger(CustomFileAttributesController.class);
 
   private final ServletContext servletContext;
+
+  @Resource(name = "customFileAttributesManager")
+  private CustomFileAttributesManager customFileAttributesManager;
 
   @Resource(name = "dataManager")
   private DataManager dataManager;
 
+  @Resource(name = "resourceManager")
+  private ResourceManager resourceManager;
+
   @Autowired
-  public CustomFileTypeAttributesController(ServletContext servletContext) {
+  public CustomFileAttributesController(ServletContext servletContext) {
     this.servletContext = servletContext;
   }
 
@@ -64,25 +69,25 @@ public class CustomFileTypeAttributesController implements HandlerExceptionResol
     // Have we visited this page before during this session?
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-    if (rosettaCookie == null)
-    // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-    {
+    if (rosettaCookie == null) {
+      // Something has gone wrong.  We shouldn't be at this step without having persisted data.
       throw new IllegalStateException(
-          "No persisted data available for file upload step.  Check the database & the cookie.");
+          "No persisted data available for custom file attributes step.  Check the database & the cookie.");
     }
 
-    // Create a Data form-backing object.
-    Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
+    CustomFileAttributes customFileAttributes = customFileAttributesManager.lookupPersistedDataById(rosettaCookie.getValue());
 
-    // Add data object to Model.
-    model.addAttribute("data", data);
+    // Add command object to Model.
+    model.addAttribute("command", "CustomFileAttributes");
+    // Add form-backing object.
+    model.addAttribute("data", customFileAttributes);
     // Add current step to the Model.
     model.addAttribute("currentStep", "customFileTypeAttributes");
     // Add delimiters to Model.
-    model.addAttribute("delimiters", dataManager.getDelimiters());
+    model.addAttribute("delimiters", resourceManager.getDelimiters());
     // Add parsed file data in JSON string format (to sho win the SlickGrid).
     model.addAttribute("parsedData",
-        dataManager.parseDataFileByLine(data.getId(), data.getDataFileName()));
+        customFileAttributesManager.parseDataFileByLine(rosettaCookie.getValue()));
 
     // The currentStep variable will determine which jsp frag to load in the wizard.
     return new ModelAndView("wizard");
@@ -98,7 +103,8 @@ public class CustomFileTypeAttributesController implements HandlerExceptionResol
    * during prior step).  Otherwise, if they upload a known data type, they are taken directly to
    * general metadata collection step.
    *
-   * @param data The form-backing object.
+   * @param customFileAttributes The form-backing object.
+   * @param submit  The value sent via the submit button.
    * @param result The BindingResult for error handling.
    * @param model The Model object to be populated by file upload data in the next step.
    * @param request HttpServletRequest needed to get the cookie.
@@ -106,25 +112,24 @@ public class CustomFileTypeAttributesController implements HandlerExceptionResol
    * @throws IllegalStateException If cookie is null.
    */
   @RequestMapping(value = "/customFileTypeAttributes", method = RequestMethod.POST)
-  public ModelAndView processCustomFileTypeAttributes(Data data, BindingResult result, Model model,
+  public ModelAndView processCustomFileTypeAttributes(CustomFileAttributes customFileAttributes, @RequestParam("submit") String submit, BindingResult result, Model model,
       HttpServletRequest request) {
 
     // Take user back to file upload step (and don't save any data to this step).
-    if (data.getSubmit().equals("Previous")) {
+    if (submit != null && submit.equals("Previous")) {
       return new ModelAndView(new RedirectView("/fileUpload", true));
     }
 
     // Get the cookie so we can get the persisted data.
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-    if (rosettaCookie == null)
-    // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-    {
+    if (rosettaCookie == null) {
+      // Something has gone wrong.  We shouldn't be at this step without having persisted data.
       throw new IllegalStateException(
-          "No persisted data available for file upload step.  Check the database & the cookie.");
+          "No persisted data available for custom file attributes step. Check the database & the cookie.");
     }
 
     // Persist the custom data file information.
-    dataManager.processCustomFileTypeAttributes(rosettaCookie.getValue(), data);
+    customFileAttributesManager.processCustomFileTypeAttributes(rosettaCookie.getValue(), customFileAttributes);
 
     // Send user to next step to collect variable metadata.
     return new ModelAndView(new RedirectView("/variableMetadata", true));
@@ -143,7 +148,7 @@ public class CustomFileTypeAttributesController implements HandlerExceptionResol
   @Override
   public ModelAndView resolveException(HttpServletRequest request,
       HttpServletResponse response,
-      java.lang.Object handler,
+      Object handler,
       Exception exception) {
     String message;
     if (exception instanceof MaxUploadSizeExceededException) {

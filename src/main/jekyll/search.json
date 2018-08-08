@@ -14,8 +14,10 @@ search: exclude
 "url": "{{ page.url | remove: "/"}}",
 "summary": "{{page.summary | strip }}"
 }
-{% unless forloop.last %},{% endunless %}
-{% endunless %}
-{% endfor %}
-
+{% unless forloop.last %}, {% endunless %}
+{
+% endunless %
+}
+{
+% endfor %}
 ]

@@ -3,7 +3,6 @@ package edu.ucar.unidata.rosetta.service.wizard;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-
 import java.util.List;
 import java.util.Map;
 

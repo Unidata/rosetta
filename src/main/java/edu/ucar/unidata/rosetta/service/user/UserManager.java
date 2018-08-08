@@ -2,7 +2,6 @@ package edu.ucar.unidata.rosetta.service.user;
 
 import edu.ucar.unidata.rosetta.domain.user.User;
 import edu.ucar.unidata.rosetta.exceptions.RosettaUserException;
-
 import java.util.List;
 
 /**

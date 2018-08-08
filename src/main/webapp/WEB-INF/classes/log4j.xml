@@ -3,72 +3,72 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
 
-    <appender name="rosettaLogger" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="${catalina.home}/logs/rosetta.log"/>
-        <param name="Threshold" value="INFO"/>
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern"
-                   value="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
-        </layout>
-    </appender>
+  <appender class="org.apache.log4j.DailyRollingFileAppender" name="rosettaLogger">
+    <param name="File" value="${catalina.home}/logs/rosetta.log"/>
+    <param name="Threshold" value="INFO"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+        value="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
+    </layout>
+  </appender>
 
-    <appender name="converterLogger" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="${catalina.home}/logs/converter.log"/>
-        <param name="Threshold" value="INFO"/>
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern"
-                   value="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
-        </layout>
-    </appender>
+  <appender class="org.apache.log4j.DailyRollingFileAppender" name="converterLogger">
+    <param name="File" value="${catalina.home}/logs/converter.log"/>
+    <param name="Threshold" value="INFO"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+        value="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
+    </layout>
+  </appender>
 
-    <!-- rosetta loggers -->
+  <!-- rosetta loggers -->
 
-    <logger name="edu.ucar.unidata.rosetta" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="rosettaLogger"/>
-    </logger>
+  <logger additivity="false" name="edu.ucar.unidata.rosetta">
+    <level value="INFO"/>
+    <appender-ref ref="rosettaLogger"/>
+  </logger>
 
-    <logger name="edu.ucar.unidata.rosetta.converters.EolSoundingComp">
-        <level value="INFO"/>
-        <appender-ref ref="converterLogger"/>
-    </logger>
+  <logger name="edu.ucar.unidata.rosetta.converters.EolSoundingComp">
+    <level value="INFO"/>
+    <appender-ref ref="converterLogger"/>
+  </logger>
 
-    <logger name="edu.ucar.unidata.rosetta.converters.TagBaseArchivalTag">
-        <level value="INFO"/>
-        <appender-ref ref="converterLogger"/>
-    </logger>
+  <logger name="edu.ucar.unidata.rosetta.converters.TagBaseArchivalTag">
+    <level value="INFO"/>
+    <appender-ref ref="converterLogger"/>
+  </logger>
 
-    <!-- spring loggers -->
+  <!-- spring loggers -->
 
-    <logger name="org.springframework.web" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="rosettaLogger"/>
-    </logger>
+  <logger additivity="false" name="org.springframework.web">
+    <level value="INFO"/>
+    <appender-ref ref="rosettaLogger"/>
+  </logger>
 
-    <logger name="org.springframework.core" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="rosettaLogger"/>
-    </logger>
+  <logger additivity="false" name="org.springframework.core">
+    <level value="INFO"/>
+    <appender-ref ref="rosettaLogger"/>
+  </logger>
 
-    <logger name="org.springframework.beans" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="rosettaLogger"/>
-    </logger>
+  <logger additivity="false" name="org.springframework.beans">
+    <level value="INFO"/>
+    <appender-ref ref="rosettaLogger"/>
+  </logger>
 
-    <logger name="org.springframework.context" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="rosettaLogger"/>
-    </logger>
+  <logger additivity="false" name="org.springframework.context">
+    <level value="INFO"/>
+    <appender-ref ref="rosettaLogger"/>
+  </logger>
 
-    <logger name="org.springframework.http" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="rosettaLogger"/>
-    </logger>
+  <logger additivity="false" name="org.springframework.http">
+    <level value="INFO"/>
+    <appender-ref ref="rosettaLogger"/>
+  </logger>
 
 
-    <root>
-        <level value="ERROR, file, stdout"/>
-        <appender-ref ref="rosettaLogger"/>
-    </root>
+  <root>
+    <level value="ERROR, file, stdout"/>
+    <appender-ref ref="rosettaLogger"/>
+  </root>
 
 </log4j:configuration>

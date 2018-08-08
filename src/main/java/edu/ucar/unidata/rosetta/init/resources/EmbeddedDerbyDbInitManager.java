@@ -1,10 +1,14 @@
 package edu.ucar.unidata.rosetta.init.resources;
 
-import edu.ucar.unidata.rosetta.domain.resources.*;
+import edu.ucar.unidata.rosetta.domain.resources.CfType;
+import edu.ucar.unidata.rosetta.domain.resources.Community;
+import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
+import edu.ucar.unidata.rosetta.domain.resources.FileType;
+import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
+import edu.ucar.unidata.rosetta.domain.resources.Platform;
+import edu.ucar.unidata.rosetta.domain.resources.RosettaResource;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-
 import java.io.File;
-
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -12,13 +16,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-
-import java.util.*;
-
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 /**
@@ -125,12 +130,44 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
       // Populate properties table.
       populatePropertiesTable(props);
 
+      // Table containing CF type related data.
+      String createCfTypeDataTable = "CREATE TABLE cfTypeData " +
+          "(" +
+          "id VARCHAR(255) primary key not null, " +
+          "cfType VARCHAR(50), " +
+          "community VARCHAR(100), " +
+          "metadataProfile VARCHAR(20), " +
+          "platform VARCHAR(100)" +
+          ")";
+      createTable(createCfTypeDataTable, props);
+
+      // Table containing uploaded file data.
+      String createUploadedFileTable = "CREATE TABLE uploadedFiles " +
+              "(" +
+              "id VARCHAR(255) not null, " +
+              "fileName VARCHAR(255) not null, " +
+              "fileType VARCHAR(50) not null" +
+              ")";
+      createTable(createUploadedFileTable, props);
+
+      // Table containing data file information.
+      String createDataFileTable = "CREATE TABLE dataFiles " +
+              "(" +
+              "id VARCHAR(255) primary key not null, " +
+              "dataFileType VARCHAR(255), " +
+              "delimiter VARCHAR(255)," +
+              "headerLineNumbers VARCHAR(255)" +
+              ")";
+      createTable(createDataFileTable, props);
+
+
       String createDataTable = "CREATE TABLE data " +
           "(" +
           "id VARCHAR(255) primary key not null, " +
-          "platform VARCHAR(255), " +
-          "community VARCHAR(255), " +
-          "cfType VARCHAR(255), " +
+          "cfType VARCHAR(50), " +
+          "community VARCHAR(100), " +
+          "metadataProfile VARCHAR(10), " +
+          "platform VARCHAR(100), " +
           "dataFileName VARCHAR(255), " +
           "dataFileType VARCHAR(255), " +
           "positionalFileName VARCHAR(255), " +
@@ -180,12 +217,19 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
           ")";
       createTable(createCfTypeTable, props);
 
+      String createMetadataProfileTable = "CREATE TABLE metadataProfiles " +
+          "(" + "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+          + "name VARCHAR(10), " +
+            "community INTEGER"
+          + ")";
+      createTable(createMetadataProfileTable, props);
+
       String createCommunityTable = "CREATE TABLE communities " +
           "(" +
           "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
           +
           "name VARCHAR(255), " +
-          "fileType INTEGER" +
+          "fileType INTEGER " +
           ")";
       createTable(createCommunityTable, props);
 
@@ -289,7 +333,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
    * Inserts the rosetta-specific resources glean from xml files into the database.
    *
    * @param props RosettaProperties from which the database username and password are glean.
-   * @throws NonTransientDataAccessResourceException If unable to create instance of the database
+   * @throws NonTransientDataAccessResourceException If unable to create instance of database
    * driver.
    * @throws SQLException If an SQL exceptions occurs during insert transaction.
    * @throws RosettaDataException If unable to access the resource to persist.
@@ -320,28 +364,29 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
     String delimiterStatement = "INSERT INTO delimiters (name, characterSymbol) VALUES (?, ?)";
     String cfTypeStatement = "INSERT INTO cfTypes (name) VALUES (?)";
     String fileTypeStatement = "INSERT INTO fileTypes (name) VALUES (?)";
+    String metadataProfileStatement = "INSERT INTO metadataProfiles (name, community) VALUES (?, ?)";
     String platformStatement = "INSERT INTO platforms (name, imgPath, cfType, community) VALUES (?, ?, ?, ?)";
     String communityStatement = "INSERT INTO communities (name, fileType) VALUES (?, ?)";
 
-    ResourceManager resourceManager = new ResourceManager();
+    ResourceLoader resourceManager = new ResourceLoader();
     List<RosettaResource> resources = resourceManager.loadResources();
     for (RosettaResource resource : resources) {
       // Set the resources depending on the type.
       if (resource instanceof CfType) {
-        // File Type resource.
+        // CF type resource.
         preparedStatement = connection.prepareStatement(cfTypeStatement);
         preparedStatement.setString(1, resource.getName());
         preparedStatement.executeUpdate();
 
       } else if (resource instanceof Delimiter) {
-        // File Type resource.
+        // Delimiter resource.
         preparedStatement = connection.prepareStatement(delimiterStatement);
         preparedStatement.setString(1, resource.getName());
         preparedStatement.setString(2, ((Delimiter) resource).getCharacterSymbol());
         preparedStatement.executeUpdate();
 
       } else if (resource instanceof FileType) {
-        // File Type resource.
+        // File type resource.
         preparedStatement = connection.prepareStatement(fileTypeStatement);
         preparedStatement.setString(1, resource.getName());
         preparedStatement.executeUpdate();
@@ -376,7 +421,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         preparedStatement.setInt(3, cfTypeMap.get(((Platform) resource).getCfType()));
         preparedStatement.setInt(4, communityMap.get(((Platform) resource).getCommunity()));
         preparedStatement.executeUpdate();
-      } else {
+      } else if (resource instanceof Community) {
         // Community resource.
 
         // Get the primary key values for the file types and stash them in a map for quick access.
@@ -389,12 +434,36 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
           String name = rs.getString("name");
           fileTypeMap.put(name, id);
         }
+
         // Create an entry in the communities table for all of the file types.
         List<String> fileTypes = ((Community) resource).getFileType();
         for (String fileType : fileTypes) {
           preparedStatement = connection.prepareStatement(communityStatement);
           preparedStatement.setString(1, resource.getName());
           preparedStatement.setInt(2, fileTypeMap.get(fileType));
+          preparedStatement.executeUpdate();
+        }
+
+      } else {
+        // Metadata profile resource.
+
+        // Get the primary key values for the communities and stash them in a map for quick access.
+        Map<String, Integer> communityMap = new HashMap<>();
+        String getCommunityStatement = "SELECT DISTINCT id, name FROM communities";
+        preparedStatement = connection.prepareStatement(getCommunityStatement);
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+          int id = rs.getInt("id");
+          String name = rs.getString("name");
+          communityMap.put(name, id);
+        }
+
+        // Create an entry in the metadata profiles table for all of the communities.
+        List<Community> communities = ((MetadataProfile) resource).getCommunities();
+        for (Community community: communities) {
+          preparedStatement = connection.prepareStatement(metadataProfileStatement);
+          preparedStatement.setString(1, resource.getName());
+          preparedStatement.setInt(2, communityMap.get(community.getName()));
           preparedStatement.executeUpdate();
         }
       }

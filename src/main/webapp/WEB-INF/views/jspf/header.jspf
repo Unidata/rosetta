@@ -1,45 +1,50 @@
-        <header>
-            <a href="${baseUrl}/">
-                <img src="${baseUrl}/<spring:message code="global.logo.path"/>" alt="<spring:message code="global.logo.alt"/>"/>
-                <h1><spring:message code="global.title"/></h1>
-            </a>
-            <%-- future login & account links will go here --%>
-            <ul class="nav"> 
-         		<c:choose>
-		        	<c:when test="${loggedIn}">
-                        <sec:authorize access="hasRole('ROLE_ADMIN')">
-                            <li><a href="${baseUrl}/user">Manage Rosetta Users</a></li>
-                        </sec:authorize>
-        		   		<li>
-		            		<b>${authFullName} (${authUserName})</b>
-        		    		<c:url var="logoutUrl" value="/j_spring_security_logout" />
-		            		<ul>
-        		     			<li><a href="${baseUrl}/user/view/${authUserName}">View Account Details</a></li>
-		             			<li><a href="${baseUrl}/user/password/${authUserName}">Reset Password</a></li>
-        		     			<li>
-		              				<form action="${logoutUrl}" method="POST">
-        		       					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-		               					<input type="submit" value="Logout" />
-    		          				</form>
-		             			</li>
-        		    		</ul>
-		           		</li>
-        			</c:when>
-		        	<c:otherwise>
-        		   		<li><a href="${baseUrl}/register">Register</a></li>
-		           		<li><a href="${baseUrl}/login">Login</a></li>
-        		  	</c:otherwise>
-		        </c:choose>  
-        		<li class="help">
-		            <b>&nbsp;</b>
-		            <ul>
-        		        <li><a href="https://www.unidata.ucar.edu/software/rosetta/">About Rosetta</a></li>
-		             	<li><a href="https://www.unidata.ucar.edu/about/index.html#contact">Contact Information</a></li>
-        		    </ul>
-		        </li>  
-		    </ul>
+<header>
+    <a href="${baseUrl}/">
+        <img src="${baseUrl}/<spring:message code="global.logo.path"/>"
+             alt="<spring:message code="global.logo.alt"/>"/>
+        <h1><spring:message code="global.title"/></h1>
+    </a>
+    <%-- future login & account links will go here --%>
+    <ul class="nav">
+        <c:choose>
+            <c:when test="${loggedIn}">
+                <sec:authorize access="hasRole('ROLE_ADMIN')">
+                    <li><a href="${baseUrl}/user">Manage Rosetta Users</a></li>
+                </sec:authorize>
+                <li>
+                    <b>${authFullName} (${authUserName})</b>
+                    <c:url var="logoutUrl" value="/j_spring_security_logout"/>
+                    <ul>
+                        <li><a href="${baseUrl}/user/view/${authUserName}">View Account Details</a>
+                        </li>
+                        <li><a href="${baseUrl}/user/password/${authUserName}">Reset Password</a>
+                        </li>
+                        <li>
+                            <form action="${logoutUrl}" method="POST">
+                                <input type="hidden" name="${_csrf.parameterName}"
+                                       value="${_csrf.token}"/>
+                                <input type="submit" value="Logout"/>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </c:when>
+            <c:otherwise>
+                <li><a href="${baseUrl}/register">Register</a></li>
+                <li><a href="${baseUrl}/login">Login</a></li>
+            </c:otherwise>
+        </c:choose>
+        <li class="help">
+            <b>&nbsp;</b>
+            <ul>
+                <li><a href="https://www.unidata.ucar.edu/software/rosetta/">About Rosetta</a></li>
+                <li><a href="https://www.unidata.ucar.edu/about/index.html#contact">Contact
+                    Information</a></li>
+            </ul>
+        </li>
+    </ul>
 
-      
-        </header>
-        <main>
-            <div id="center-wrapper" class="clearfix">
+
+</header>
+<main>
+    <div id="center-wrapper" class="clearfix">

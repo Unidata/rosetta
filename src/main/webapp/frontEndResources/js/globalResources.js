@@ -17,74 +17,74 @@ var platform = null;
  * Populates the cfStandards array with data from the cf-standard-name-table.xml file.
  */
 function loadCFStandards() {
-    $.get("resources/cf-standard-name-table.xml",
-          function (data) {
-              var s = [];
-              $(data).find("entry").each(function () {
-                  s.push($(this).attr("id"));
-              });
-              cfStandards = s;
-          },
-          "xml");
+  $.get("resources/cf-standard-name-table.xml",
+      function (data) {
+        var s = [];
+        $(data).find("entry").each(function () {
+          s.push($(this).attr("id"));
+        });
+        cfStandards = s;
+      },
+      "xml");
 }
 
 /**
  * Populates the cfStandardsUnits object with data from the cf-standard-name-table.xml file.
  */
 function loadCFStandardUnits() {
-    $.get("resources/cf-standard-name-table.xml",
-          function (data) {
-              var u = {};
-              $(data).find("entry").each(function () {
-                  u[$(this).attr("id")] = $(this).find("canonical_units").text();
-              });
-              cfStandardUnits = u;
-          },
-          "xml");
+  $.get("resources/cf-standard-name-table.xml",
+      function (data) {
+        var u = {};
+        $(data).find("entry").each(function () {
+          u[$(this).attr("id")] = $(this).find("canonical_units").text();
+        });
+        cfStandardUnits = u;
+      },
+      "xml");
 }
 
 /**
  * Populates the metadata array with data from the metadata.xml file.
  */
 function loadMetadata() {
-    $.get("resources/metadata.xml",
-          function (data) {
-              var m = [];
-              $(data).find("entry").each(function () {
-                  var e = {};
-                  e["entry"] = $(this).attr("id");
-                  e["displayName"] = $(this).attr("displayName");
-                  e["type"] = $(this).find("type").text();
-                  e["necessity"] = $(this).find("necessity").text();
-                  e["helptip"] = $(this).find("helptip").text();
-                  m.push(e);
-              });
-              metadata = m;
-          },
-          "xml");
+  $.get("resources/metadata.xml",
+      function (data) {
+        var m = [];
+        $(data).find("entry").each(function () {
+          var e = {};
+          e["entry"] = $(this).attr("id");
+          e["displayName"] = $(this).attr("displayName");
+          e["type"] = $(this).find("type").text();
+          e["necessity"] = $(this).find("necessity").text();
+          e["helptip"] = $(this).find("helptip").text();
+          m.push(e);
+        });
+        metadata = m;
+      },
+      "xml");
 }
 
 /**
  * Populates the unitBuilderData array with data from the unitBuilderData.xml file.
  */
 function loadUnitBuilderData() {
-    $.get("resources/unitBuilderData.xml",
-          function (data) {
-              var d = [];
-              $(data).find("entry").each(function () {
-                  var e = {};
-                  var u = [];
-                  e["entry"] = $(this).attr("id");
-                  e["use_prefix"] = $(this).find("use_prefix").text();
-                  $(this).find("unit").each(function () {
-                      u.push($(this).text());
-                  });
-                  e["unit"] = u;
-                  d.push(e);
-              });
-              unitBuilderData = d;
-          },
-          "xml");
+  $.get("resources/unitBuilderData.xml",
+      function (data) {
+        var d = [];
+        $(data).find("entry").each(function () {
+          var e = {};
+          var u = [];
+          e["entry"] = $(this).attr("id");
+          e["use_prefix"] = $(this).find("use_prefix").text();
+          $(this).find("unit").each(function () {
+            u.push($(this).text());
+          });
+          e["unit"] = u;
+          d.push(e);
+        });
+        unitBuilderData = d;
+      },
+      "xml");
 }
 
 /**
@@ -96,17 +96,17 @@ function loadUnitBuilderData() {
  * @param metadataId  The metadata item entry or id as it appears in the reference XML file.
  */
 function getMetadataDisplayName(metadataId) {
-    var displayName = metadataId;
-    // loop through known metadata 
-    for (var i = 0; i < metadata.length; i++) {
-        var metadataItem = metadata[i];
-        if (metadataItem.entry == metadataId) {
-            if (metadataItem.displayName != undefined) {
-                displayName = metadataItem.displayName;
-            }
-        }
+  var displayName = metadataId;
+  // loop through known metadata 
+  for (var i = 0; i < metadata.length; i++) {
+    var metadataItem = metadata[i];
+    if (metadataItem.entry == metadataId) {
+      if (metadataItem.displayName != undefined) {
+        displayName = metadataItem.displayName;
+      }
     }
-    return displayName;
+  }
+  return displayName;
 }
 
 /**
@@ -115,29 +115,29 @@ function getMetadataDisplayName(metadataId) {
  * @param variableType  The variable "type" (coordinate variable or not).
  */
 function getKnownRequiredMetadataList(variableType) {
-    var requiredMetadata = [];
+  var requiredMetadata = [];
 
-    // loop through known metadata 
-    for (var i = 0; i < metadata.length; i++) {
-        var metadataItem = metadata[i];
+  // loop through known metadata 
+  for (var i = 0; i < metadata.length; i++) {
+    var metadataItem = metadata[i];
 
-        // Grab the metadata entries that correspond to the variable type (coordinate or
-        // non-coordinate),  grab the required metadata entries 
-        if (metadataItem.type == variableType) {
-            if (metadataItem.necessity == "required") {
-                requiredMetadata.push(metadataItem.entry);
-            }
-        }
-
-        // Grab the required metadata entries that correspond to the both coordinate or
-        // non-coordinate variables
-        if (metadataItem.type == "both") {
-            if (metadataItem.necessity == "required") {
-                requiredMetadata.push(metadataItem.entry);
-            }
-        }
+    // Grab the metadata entries that correspond to the variable type (coordinate or
+    // non-coordinate),  grab the required metadata entries 
+    if (metadataItem.type == variableType) {
+      if (metadataItem.necessity == "required") {
+        requiredMetadata.push(metadataItem.entry);
+      }
     }
-    return requiredMetadata;
+
+    // Grab the required metadata entries that correspond to the both coordinate or
+    // non-coordinate variables
+    if (metadataItem.type == "both") {
+      if (metadataItem.necessity == "required") {
+        requiredMetadata.push(metadataItem.entry);
+      }
+    }
+  }
+  return requiredMetadata;
 }
 
 /**
@@ -146,29 +146,29 @@ function getKnownRequiredMetadataList(variableType) {
  * @param variableType  The variable "type" (coordinate variable or not).
  */
 function getKnownRecommendedMetadataList(variableType) {
-    var recommendedMetadata = [];
+  var recommendedMetadata = [];
 
-    // loop through known metadata 
-    for (var i = 0; i < metadata.length; i++) {
-        var metadataItem = metadata[i];
+  // loop through known metadata 
+  for (var i = 0; i < metadata.length; i++) {
+    var metadataItem = metadata[i];
 
-        // Grab the metadata entries that correspond to the variable type (coordinate or
-        // non-coordinate),  grab the recommended metadata entries 
-        if (metadataItem.type == variableType) {
-            if (metadataItem.necessity == "recommended") {
-                recommendedMetadata.push(metadataItem.entry);
-            }
-        }
-
-        // Grab the recommended metadata entries that correspond to the both coordinate or
-        // non-coordinate variables
-        if (metadataItem.type == "both") {
-            if (metadataItem.necessity == "recommended") {
-                recommendedMetadata.push(metadataItem.entry);
-            }
-        }
+    // Grab the metadata entries that correspond to the variable type (coordinate or
+    // non-coordinate),  grab the recommended metadata entries 
+    if (metadataItem.type == variableType) {
+      if (metadataItem.necessity == "recommended") {
+        recommendedMetadata.push(metadataItem.entry);
+      }
     }
-    return recommendedMetadata;
+
+    // Grab the recommended metadata entries that correspond to the both coordinate or
+    // non-coordinate variables
+    if (metadataItem.type == "both") {
+      if (metadataItem.necessity == "recommended") {
+        recommendedMetadata.push(metadataItem.entry);
+      }
+    }
+  }
+  return recommendedMetadata;
 }
 
 /**
@@ -177,29 +177,29 @@ function getKnownRecommendedMetadataList(variableType) {
  * @param variableType  The variable "type" (coordinate variable or not).
  */
 function getKnownAdditionalMetadataList(variableType) {
-    var additionalMetadata = [];
+  var additionalMetadata = [];
 
-    // loop through known metadata 
-    for (var i = 0; i < metadata.length; i++) {
-        var metadataItem = metadata[i];
+  // loop through known metadata 
+  for (var i = 0; i < metadata.length; i++) {
+    var metadataItem = metadata[i];
 
-        // Grab the metadata entries that correspond to the variable type (coordinate or
-        // non-coordinate),  grab the additional metadata entries 
-        if (metadataItem.type == variableType) {
-            if (metadataItem.necessity == "additional") {
-                additionalMetadata.push(metadataItem.entry);
-            }
-        }
-
-        // Grab the additional metadata entries that correspond to the both coordinate or
-        // non-coordinate variables
-        if (metadataItem.type == "both") {
-            if (metadataItem.necessity == "additional") {
-                additionalMetadata.push(metadataItem.entry);
-            }
-        }
+    // Grab the metadata entries that correspond to the variable type (coordinate or
+    // non-coordinate),  grab the additional metadata entries 
+    if (metadataItem.type == variableType) {
+      if (metadataItem.necessity == "additional") {
+        additionalMetadata.push(metadataItem.entry);
+      }
     }
-    return additionalMetadata;
+
+    // Grab the additional metadata entries that correspond to the both coordinate or
+    // non-coordinate variables
+    if (metadataItem.type == "both") {
+      if (metadataItem.necessity == "additional") {
+        additionalMetadata.push(metadataItem.entry);
+      }
+    }
+  }
+  return additionalMetadata;
 }
 
 /**
@@ -211,12 +211,12 @@ function getKnownAdditionalMetadataList(variableType) {
  * @param metadataItemToTest  The metadata values entered by the user and stored in the session
  */
 function isRequiredMetadata(variableType, metadataItemToTest) {
-    var requiredMetadata = getKnownRequiredMetadataList(variableType);
-    if (requiredMetadata.indexOf(metadataItemToTest) >= 0) {
-        return true;
-    } else {
-        return false;
-    }
+  var requiredMetadata = getKnownRequiredMetadataList(variableType);
+  if (requiredMetadata.indexOf(metadataItemToTest) >= 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -228,12 +228,12 @@ function isRequiredMetadata(variableType, metadataItemToTest) {
  * @param metadataItemToTest  The metadata values entered by the user and stored in the session
  */
 function isRecommendedMetadata(variableType, metadataItemToTest) {
-    var recommendedMetadata = getKnownRecommendedMetadataList(variableType);
-    if (recommendedMetadata.indexOf(metadataItemToTest) >= 0) {
-        return true;
-    } else {
-        return false;
-    }
+  var recommendedMetadata = getKnownRecommendedMetadataList(variableType);
+  if (recommendedMetadata.indexOf(metadataItemToTest) >= 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -245,12 +245,12 @@ function isRecommendedMetadata(variableType, metadataItemToTest) {
  * @param metadataItemToTest  The metadata values entered by the user and stored in the session
  */
 function isAdditionalMetadata(variableType, metadataItemToTest) {
-    var additionalMetadata = getKnownAdditionalMetadataList(variableType);
-    if (additionalMetadata.indexOf(metadataItemToTest) >= 0) {
-        return true;
-    } else {
-        return false;
-    }
+  var additionalMetadata = getKnownAdditionalMetadataList(variableType);
+  if (additionalMetadata.indexOf(metadataItemToTest) >= 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -260,15 +260,15 @@ function isAdditionalMetadata(variableType, metadataItemToTest) {
  * @param variableName  The name of the variable we are testing to see if it is a standard_name.
  */
 function isCFStandardName(variableName) {
-    for (var i = 0; i < cfStandards.length; i++) {
-        if (variableName == cfStandards[i]) {
-            return true;
-        } else {
-            if (i == (cfStandards.length - 1)) {
-                return false;
-            }
-        }
+  for (var i = 0; i < cfStandards.length; i++) {
+    if (variableName == cfStandards[i]) {
+      return true;
+    } else {
+      if (i == (cfStandards.length - 1)) {
+        return false;
+      }
     }
+  }
 }
 
 /**
@@ -279,19 +279,19 @@ function isCFStandardName(variableName) {
  * TODO: implement an automatic check for platform based on coordinate variables specified
  * instead of having the user input it in step0
  */
-function findPlatformType(){
-    return getFromSession("cfType");
+function findPlatformType() {
+  return getFromSession("cfType");
 }
 
 /**
- * Returns an array with objects that describe the metadata for the platform 
+ * Returns an array with objects that describe the metadata for the platform
  */
-function getPlatformMetadataList(){
-    var metadataList = platformMetedataItems["default"];
-    if (platform){
-        if (platform in platformMetedataItems) {
-            metadataList = platformMetedataItems[platform];
-        }
+function getPlatformMetadataList() {
+  var metadataList = platformMetedataItems["default"];
+  if (platform) {
+    if (platform in platformMetedataItems) {
+      metadataList = platformMetedataItems[platform];
     }
-    return metadataList;
+  }
+  return metadataList;
 }

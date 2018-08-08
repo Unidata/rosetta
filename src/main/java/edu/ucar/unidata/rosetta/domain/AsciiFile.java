@@ -1,8 +1,6 @@
 package edu.ucar.unidata.rosetta.domain;
 
 
-import org.apache.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Pattern;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -234,6 +232,19 @@ public class AsciiFile {
     this.headerLineList = Arrays.asList(headerLineNumbers.split(","));
   }
 
+  public String getParseHeaderForMetadata() {
+    return parseHeaderForMetadata;
+  }
+
+  public void setParseHeaderForMetadata(String parseHeaderForMetadata) {
+    this.parseHeaderForMetadata = parseHeaderForMetadata;
+    //setParseHeaderForMetadataList(parseHeaderForMetadata);
+  }
+
+  public List<String> getParseHeaderForMetadataList() {
+    return parseHeaderForMetadataList;
+  }
+
   /*
   public void setParseHeaderForMetadataList(String parseHeaderForMetadata){
       String[] headers = parseHeaderForMetadata.split(",");
@@ -246,19 +257,6 @@ public class AsciiFile {
   */
   public void setParseHeaderForMetadataList(List<String> parseHeaderForMetadataList) {
     this.parseHeaderForMetadataList = parseHeaderForMetadataList;
-  }
-
-  public void setParseHeaderForMetadata(String parseHeaderForMetadata) {
-    this.parseHeaderForMetadata = parseHeaderForMetadata;
-    //setParseHeaderForMetadataList(parseHeaderForMetadata);
-  }
-
-  public String getParseHeaderForMetadata() {
-    return parseHeaderForMetadata;
-  }
-
-  public List<String> getParseHeaderForMetadataList() {
-    return parseHeaderForMetadataList;
   }
 
   /**

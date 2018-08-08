@@ -1,10 +1,9 @@
 package edu.ucar.unidata.rosetta.repository.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.Community;
+import java.util.List;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
-
-import java.util.List;
 
 /**
  * The data access object representing a community.

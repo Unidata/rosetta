@@ -1,9 +1,8 @@
 package edu.ucar.unidata.rosetta.repository.wizard;
 
 import edu.ucar.unidata.rosetta.domain.Metadata;
-import org.springframework.dao.DataRetrievalFailureException;
-
 import java.util.List;
+import org.springframework.dao.DataRetrievalFailureException;
 
 /**
  * The data access object representing metadata.

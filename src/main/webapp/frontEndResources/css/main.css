@@ -15,436 +15,439 @@
 
 /* document body */
 body {
-    font-size: 10pt;
-    font-family: 'Source Sans Pro', sans-serif;
+  font-size: 10pt;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 h3 {
-    margin:8px 0 10px 0;
+  margin: 8px 0 10px 0;
 }
 
 h4 {
-    margin: 0 0 10px 0;
-    padding: 0;
-    color:#666666;
+  margin: 0 0 10px 0;
+  padding: 0;
+  color: #666666;
 }
 
 /* link decoration */
 a[href$='.nc'] {
-    padding-left: 18px;
-    line-height: 18px;
-    background: transparent url('../img/icon/netcdf.png') center left no-repeat;
+  padding-left: 18px;
+  line-height: 18px;
+  background: transparent url('../img/icon/netcdf.png') center left no-repeat;
 }
 
 a[href$='.template'] {
-    padding-left: 18px;
-    line-height: 18px;
-    background: transparent url('../img/icon/rosetta-12x12.png') center left no-repeat;
+  padding-left: 18px;
+  line-height: 18px;
+  background: transparent url('../img/icon/rosetta-12x12.png') center left no-repeat;
 }
 
 main {
-    width:100%;
-    float:left;
-    clear:left;
-    margin:10px 0;
+  width: 100%;
+  float: left;
+  clear: left;
+  margin: 10px 0;
 }
 
-
 section {
-    padding-left:10px;
-    float:left;
-    width:75%;
-    border-left:1px solid #CFCFCF;
+  padding-left: 10px;
+  float: left;
+  width: 75%;
+  border-left: 1px solid #CFCFCF;
 }
 
 section.user {
-    width:95%;
-    border:none;
+  width: 95%;
+  border: none;
 }
-
 
 /* some divs to format a page into left & right */
 .left, .right {
-    padding: 10px;
-    margin: 10px 0;
-    width: 45%; /*56%; */
-    float: left;
-    top: 0;
-    height: 100%;
-    border: none !important;
-    background: none !important;
-    border-radius:0px;
+  padding: 10px;
+  margin: 10px 0;
+  width: 45%; /*56%; */
+  float: left;
+  top: 0;
+  height: 100%;
+  border: none !important;
+  background: none !important;
+  border-radius: 0px;
 }
 
 .right {
-    width: 43%;
-    float: right;
-    clear: right;
+  width: 43%;
+  float: right;
+  clear: right;
 }
-
 
 /* form */
 fieldset {
-    margin: 10px 0;
-    padding-left:10px;
-    border: none;
-    border-left:1px solid #CFCFCF;
-    min-height:200px;
+  margin: 10px 0;
+  padding-left: 10px;
+  border: none;
+  border-left: 1px solid #CFCFCF;
+  min-height: 200px;
 }
 
 fieldset legend {
-    position: relative;
-    top:5px;
-    padding:0;
-    font-size: 1.5em;
+  position: relative;
+  top: 5px;
+  padding: 0;
+  font-size: 1.5em;
 }
 
 button,
 .button {
-    background: #f2f6f8; /* Old browsers */
-    background: -moz-linear-gradient(top, #f2f6f8 0%, #d8e1e7 49%, #d8e1e7 49%, #b5c6d0 100%, #e0eff9 100%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top, #f2f6f8 0%,#d8e1e7 49%,#d8e1e7 49%,#b5c6d0 100%,#e0eff9 100%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom, #f2f6f8 0%,#d8e1e7 49%,#d8e1e7 49%,#b5c6d0 100%,#e0eff9 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f6f8', endColorstr='#e0eff9',GradientType=0 ); /* IE6-9 */
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    -khtml-border-radius: 4px;
-    border-radius: 4px;
-    border: 1px solid #D3D3D3;
-    font-size:9pt;
-    padding:6px;
-    margin-left:0;
+  background: #f2f6f8; /* Old browsers */
+  background: -moz-linear-gradient(top, #f2f6f8 0%, #d8e1e7 49%, #d8e1e7 49%, #b5c6d0 100%, #e0eff9 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, #f2f6f8 0%, #d8e1e7 49%, #d8e1e7 49%, #b5c6d0 100%, #e0eff9 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, #f2f6f8 0%, #d8e1e7 49%, #d8e1e7 49%, #b5c6d0 100%, #e0eff9 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f6f8', endColorstr='#e0eff9', GradientType=0); /* IE6-9 */
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+  border: 1px solid #D3D3D3;
+  font-size: 9pt;
+  padding: 6px;
+  margin-left: 0;
 }
 
 button.clearFileUpload {
-    background:none;
-    padding:3px 5px !important;
-    margin-left:20px;
-    border-radius:0 !important;
-    font-size:8pt;
+  background: none;
+  padding: 3px 5px !important;
+  margin-left: 20px;
+  border-radius: 0 !important;
+  font-size: 8pt;
 }
 
 input[type="submit"] {
-    margin: 1em 0 1em 10px;
+  margin: 1em 0 1em 10px;
 }
 
 input[type="submit"].noformat {
-    margin: 1em 0;
+  margin: 1em 0;
 }
 
 label,
 .profileKey {
-    vertical-align:middle;
-    width:100%;
-    line-height:25px;
-    float:left;
-    margin-top:10px;
+  vertical-align: middle;
+  width: 100%;
+  line-height: 25px;
+  float: left;
+  margin-top: 10px;
 }
 
 .profileValue {
-    font-size:9pt;
-    width:200px;
-    color:#696969;
-    line-height:25px;
-    padding:0;
-    float:left;
+  font-size: 9pt;
+  width: 200px;
+  color: #696969;
+  line-height: 25px;
+  padding: 0;
+  float: left;
 }
 
-
 .disabled {
-    color:#CFCFCF;
-    background: #F8F8F8; /* Old browsers */
-    background: -moz-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top, #F8F8F8 -1%,#F9F9F9 0%,#F6F6F6 0%,#F6F6F6 0%,#F8F8F8 2%,#F8F8F8 4%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom, #F8F8F8 -1%,#F9F9F9 0%,#F6F6F6 0%,#F6F6F6 0%,#F8F8F8 2%,#F8F8F8 4%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F8F8F8', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
-    border: 1px solid #F8F8F8;
+  color: #CFCFCF;
+  background: #F8F8F8; /* Old browsers */
+  background: -moz-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8F8F8', endColorstr='#ffffff', GradientType=0); /* IE6-9 */
+  border: 1px solid #F8F8F8;
 }
 
 label.format {
-    display:block;
+  display: block;
 }
-
 
 /* commonly used class used to hide elements */
 .hideMe {
-    display: none !important;
+  display: none !important;
 }
 
 /* formats script-generated notices that are not errors */
 .notice {
-    color: #0000FF !important;
+  color: #0000FF !important;
 }
 
 /* general format for error messages */
 .error {
-    display: block;
-    margin: 10px 0;
-    padding: 0;
-    color: #FF0000;
+  display: block;
+  margin: 10px 0;
+  padding: 0;
+  color: #FF0000;
 }
 
 label.noHeaderLines {
-    margin-bottom: 10px;
-    width: 100%;
-    float: left;
-    clear: left;
-    font-family: "Courier New", Courier, monospace;
+  margin-bottom: 10px;
+  width: 100%;
+  float: left;
+  clear: left;
+  font-family: "Courier New", Courier, monospace;
 }
 
 /* list of radio buttons  for template selection */
 ul.template {
-    list-style: none;
-    margin: 0 0 15px 0;
-    padding: 0;
-    float: left;
-    width:100%;
+  list-style: none;
+  margin: 0 0 15px 0;
+  padding: 0;
+  float: left;
+  width: 100%;
 }
 
 /* general image format (help icon)*/
 ul li label img {
-    width: 10px;
-    height: 10px;
-    margin: 0;
-    padding: 0;
+  width: 10px;
+  height: 10px;
+  margin: 0;
+  padding: 0;
 }
-
 
 /**
  * CF type step of wizard.
  */
 #cfType {
-    width:100%;
+  width: 100%;
 }
 
 /* tabs */
 #cfType ul {
-    width:100%;
-    list-style: none;
-    margin: 0 0 10px 0;
-    padding: 0;
-    float: left;
+  width: 100%;
+  list-style: none;
+  margin: 0 0 10px 0;
+  padding: 0;
+  float: left;
 }
 
 #cfType ul li {
-    display: inline;
-    margin: 0 5px 0 0;
-    padding: 0;
-    float: left;
-    position: relative;
-    bottom: 0;
+  display: inline;
+  margin: 0 5px 0 0;
+  padding: 0;
+  float: left;
+  position: relative;
+  bottom: 0;
 }
+
 #cfType ul li.cfTypeSpecified {
-    margin: 0;
-    float: right;
+  margin: 0;
+  float: right;
 }
 
 #cfType ul li.cfTypeSpecified small {
-    font-size:7pt;
+  font-size: 7pt;
 }
-
 
 /* platform display */
 #cfType ul.platforms {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 #cfType ul.platforms li {
-    display: inline;
-    margin: 0 10px 10px 0;
-    padding: 0;
-    float: left;
-    font-size:9pt;
-    text-align:center;
-    background:#FFFFFF;
+  display: inline;
+  margin: 0 10px 10px 0;
+  padding: 0;
+  float: left;
+  font-size: 9pt;
+  text-align: center;
+  background: #FFFFFF;
 }
 
-#cfType ul.platforms li.ui-selected{
-    background-color: #F39814;
+#cfType ul.platforms li.ui-selected {
+  background-color: #F39814;
 }
 
 #cfType ul.platforms li img {
-    width: 75px;
-    height: 75px;
-    margin: 0 0 10px 0px;
-    padding: 10px;
-    display: block;
+  width: 75px;
+  height: 75px;
+  margin: 0 0 10px 0px;
+  padding: 10px;
+  display: block;
 }
 
 #cfType ul.platforms li small {
-    display:block;
-    margin: 0 0 5px 0;
+  display: block;
+  margin: 0 0 5px 0;
 }
 
 #cfType ul.platforms li input {
-    display: none;
+  display: none;
+}
+
+/* metadata profile selection */
+#cfType #metadataProfile {
+  margin-top: 20px;
 }
 
 /**
  * File upload step of wizard.
  */
 #fileUpload #upload {
-    margin:10px 0;
-    padding:0;
+  margin: 10px 0;
+  padding: 0;
 }
 
 #fileUpload #upload .files {
-    margin:10px 10px 20px 10px;
+  margin: 10px 10px 20px 10px;
 }
 
+.fileType {
+  display:inline !important;
+  text-transform: capitalize;
+}
 
 /**
  * Custom file attributes step of wizard.
  */
 #customFileTypeAttributes #delimiters {
-    display:block;
-    float:left;
-    width:100%;
+  display: block;
+  float: left;
+  width: 100%;
 }
 
 /* The delimiter list needs this to have decimal separator selection placed properly */
 ul#delimiterList {
-    width: 100%;
-    list-style: none;
-    position: relative;
-    margin-bottom:10px;
+  width: 100%;
+  list-style: none;
+  position: relative;
+  margin-bottom: 10px;
 }
 
 ul#delimiterList li {
-    width: 20%;
-    display: inline;
-    margin: 0 15px 10px 0;
-    padding: 0;
-    float: left;
-    position: relative;
-    bottom: 0;
+  width: 20%;
+  display: inline;
+  margin: 0 15px 10px 0;
+  padding: 0;
+  float: left;
+  position: relative;
+  bottom: 0;
 }
+
 #customFileTypeAttributes .buttonNav {
-    display:block;
-    float:left;
-    width:100%;
+  display: block;
+  float: left;
+  width: 100%;
 }
 
-
-/** 
+/**
  * Variable metadata collection step of the wizard.
- */ 
+ */
 /*variable dialog box  */
 .ui-dialog #dialog {
-    font-size: 9pt;
-    margin: 5px;
-    padding: 10px;
-    border: 1px solid #AAAAAA;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    -khtml-border-radius: 4px;
-    border-radius: 4px;
+  font-size: 9pt;
+  margin: 5px;
+  padding: 10px;
+  border: 1px solid #AAAAAA;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
 }
 
 /* dialog box section titles */
 #dialog h3 {
-    min-width: 450px;
-    font-size: 10pt;
-    padding: 0;
-    margin: 0;
-    border-bottom: 1px dotted #000000;
+  min-width: 450px;
+  font-size: 10pt;
+  padding: 0;
+  margin: 0;
+  border-bottom: 1px dotted #000000;
 }
 
 /* dialog box form labels */
 #dialog label {
-    font-size: 8pt;
-    margin: 0;
-    padding: 0 10px 0 0;
+  font-size: 8pt;
+  margin: 0;
+  padding: 0 10px 0 0;
 }
 
 /* dialog box image formatting */
 #dialog img {
-    margin: 0 10px 0 0;
-    padding: 0;
+  margin: 0 10px 0 0;
+  padding: 0;
 }
 
 /* dialog box error formatting */
 #dialog .error {
-    display: block;
-    margin: 0 0 8px 0;
-    padding: 0;
+  display: block;
+  margin: 0 0 8px 0;
+  padding: 0;
 }
 
 /* hiding inactive elements in the dialog box */
 #dialog .inactive {
-    display: none;
+  display: none;
 }
 
 /* dialog box section formatting */
 #dialog #variableNameTypeAssignment,
 #dialog #variableAttributes {
-    width: 100%;
-    float: left;
-    clear: left;
+  width: 100%;
+  float: left;
+  clear: left;
 }
 
 #dialog #variableNameSelected {
-    height: 16px;
+  height: 16px;
 }
 
 #dialog #requiredMetadataAssignment,
 #dialog #additionalMetadataAssignment,
 #dialog #recommendedMetadataAssignment {
-    width: 80%;
+  width: 80%;
 }
 
 #dialog #variableAttributes div {
-    float: left;
-    clear: left;
-    padding: 0;
-    margin: 0 0 10px 0;
+  float: left;
+  clear: left;
+  padding: 0;
+  margin: 0 0 10px 0;
 }
 
 /* dialog box section input tag formatting */
 #dialog #variableNameAssignment input {
-    padding: 0;
-    margin: 5px 0 10px 25px;
-    height: 16px;
+  padding: 0;
+  margin: 5px 0 10px 25px;
+  height: 16px;
 }
 
 #dialog #requiredMetadataAssignment input,
 #dialog #additionalMetadataAssignment input,
 #dialog #recommendedMetadataAssignment input {
-    float: right;
-    clear: right;
-    padding: 0;
-    margin: 0 0 10px 0;
+  float: right;
+  clear: right;
+  padding: 0;
+  margin: 0 0 10px 0;
 }
 
 /* dialog box unit builder formatting */
 #dialog #unitBuilder,
 #dialog #existingMetadataImporter {
-    width: 100%;
-    padding: 5px !important;
-    margin: 0;
-    border: 1px solid #AAAAAA;
-    background-color: #EFEFEF;
+  width: 100%;
+  padding: 5px !important;
+  margin: 0;
+  border: 1px solid #AAAAAA;
+  background-color: #EFEFEF;
 }
 
 /* dialog box unit builder label formatting (general) */
 #dialog #unitBuilder label,
 #dialog #existingMetadataImporter label {
-    padding: 0;
-    margin: 5px;
+  padding: 0;
+  margin: 5px;
 }
 
 /* dialog box unit builder label formatting for show unit builder section */
 #dialog label.unitBuilder,
 #dialog label.existingMetadataImporter {
-    margin: 10px 0;
-    display: block;
+  margin: 10px 0;
+  display: block;
 }
 
 /* dialog box unit builder label formatting for data type section */
 #dialog #unitBuilder label.whole,
 #dialog label.existingMetadataImporter label.whole {
-    display: block;
+  display: block;
 }
 
 /* dialog box unit builder input tag formatting */
@@ -452,108 +455,108 @@ ul#delimiterList li {
 #dialog label.existingMetadataImporter input,
 #dialog #unitBuilder input
 #dialog #existingMetadataImporter input {
-    float: left !important;
-    clear: left !important;
-    padding: 0 !important;
-    margin: 0 10px 0 0 !important;
+  float: left !important;
+  clear: left !important;
+  padding: 0 !important;
+  margin: 0 10px 0 0 !important;
 }
 
 /* unordered lists are used to display/format form items in the dialog box */
 #dialog ul {
-    width: 100%;
-    list-style: none;
-    margin: 0 0 10px 0;
-    padding: 0;
-    float: left;
-    position: relative;
+  width: 100%;
+  list-style: none;
+  margin: 0 0 10px 0;
+  padding: 0;
+  float: left;
+  position: relative;
 }
 
 /* li has width of 100% */
 #dialog ul li {
-    width: 100%;
-    display: inline;
-    margin: 2px 0 0 0;
-    padding: 0;
-    float: left;
+  width: 100%;
+  display: inline;
+  margin: 2px 0 0 0;
+  padding: 0;
+  float: left;
 }
 
 /* li has half width */
 #dialog ul.half li {
-    width: 45%;
+  width: 45%;
 }
 
 /* li has third width */
 #dialog ul.third li {
-    width: 33%;
+  width: 33%;
 }
 
 /* li has quarter width */
 #dialog ul.quarter li {
-    width: 25%;
+  width: 25%;
 }
 
 /**
  * General metadata collection step of the wizard.
  */
 
-#generalMetadata h5.toggle{
-    height: 25px !important;
-     margin:10px 0 0 0;
-    padding: 0 0 0 20px;
-    text-align: left;
-    font-size:10pt;
-    width:100%;
-    border-bottom: 1px solid #CFCFCF;
+#generalMetadata h5.toggle {
+  height: 25px !important;
+  margin: 10px 0 0 0;
+  padding: 0 0 0 20px;
+  text-align: left;
+  font-size: 10pt;
+  width: 100%;
+  border-bottom: 1px solid #CFCFCF;
 }
 
 #generalMetadata ul {
-    width: 100%;
-    list-style: none;
-    margin: 0 0 10px 0;
-    padding: 10px;
-    float: left;
-    background: #F8F8F8; /* Old browsers */
-    background: -moz-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top, #F8F8F8 -1%,#F9F9F9 0%,#F6F6F6 0%,#F6F6F6 0%,#F8F8F8 2%,#F8F8F8 4%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom, #F8F8F8 -1%,#F9F9F9 0%,#F6F6F6 0%,#F6F6F6 0%,#F8F8F8 2%,#F8F8F8 4%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F8F8F8', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+  width: 100%;
+  list-style: none;
+  margin: 0 0 10px 0;
+  padding: 10px;
+  float: left;
+  background: #F8F8F8; /* Old browsers */
+  background: -moz-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8F8F8', endColorstr='#ffffff', GradientType=0); /* IE6-9 */
 }
 
 #generalMetadata ul li {
-    width: 30%;
-    display: inline;
-    margin: 0 15px 10px 0;
-    padding: 0;
-    float: left;
-    position: relative;
-    bottom: 0;
+  width: 30%;
+  display: inline;
+  margin: 0 15px 10px 0;
+  padding: 0;
+  float: left;
+  position: relative;
+  bottom: 0;
 }
 
 #generalMetadata ul li label {
-    margin: 0;
-    padding: 0;
-    text-align: left;
+  margin: 0;
+  padding: 0;
+  text-align: left;
 }
 
 /**
  * Download step
  */
 ul#download {
-    width: 100%;
-    list-style: none;
-    margin: 0 0 10px 0;
-    padding: 0;
-    float: left;
-    position: relative;
+  width: 100%;
+  list-style: none;
+  margin: 0 0 10px 0;
+  padding: 0;
+  float: left;
+  position: relative;
 }
 
 /* li has width of 100% */
 ul#download li {
-    width: 100%;
-    display: inline;
-    margin: 10px 0 0 10px;
-    padding: 0;
-    float: left;
+  width: 100%;
+  display: inline;
+  margin: 10px 0 0 10px;
+  padding: 0;
+  float: left;
 }
 
 

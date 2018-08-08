@@ -2,11 +2,8 @@ package edu.ucar.unidata.rosetta.service.validators.user;
 
 import edu.ucar.unidata.rosetta.domain.user.User;
 import edu.ucar.unidata.rosetta.service.user.UserManager;
-
 import javax.annotation.Resource;
-
 import org.apache.log4j.Logger;
-
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

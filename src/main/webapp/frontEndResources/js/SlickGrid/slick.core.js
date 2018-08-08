@@ -42,7 +42,7 @@
         UP: 38,
         A: 65
       },
-      "preClickClassName" : "slick-edit-preclick"
+      "preClickClassName": "slick-edit-preclick"
     }
   });
 
@@ -141,7 +141,8 @@
       scope = scope || this;
 
       var returnValue;
-      for (var i = 0; i < handlers.length && !(e.isPropagationStopped() || e.isImmediatePropagationStopped()); i++) {
+      for (var i = 0; i < handlers.length && !(e.isPropagationStopped()
+          || e.isImmediatePropagationStopped()); i++) {
         returnValue = handlers[i].call(scope, e, args);
       }
 
@@ -266,11 +267,11 @@
         return "(" + this.fromRow + ":" + this.fromCell + ")";
       }
       else {
-        return "(" + this.fromRow + ":" + this.fromCell + " - " + this.toRow + ":" + this.toCell + ")";
+        return "(" + this.fromRow + ":" + this.fromCell + " - " + this.toRow
+            + ":" + this.toCell + ")";
       }
     }
   }
-
 
   /***
    * A base class that all special / non-data rows (like Group and GroupTotals) derive from.
@@ -280,7 +281,6 @@
   function NonDataItem() {
     this.__nonDataRow = true;
   }
-
 
   /***
    * Information about a group of rows.
@@ -427,7 +427,8 @@
      * @return {Boolean}
      */
     this.isActive = function (editController) {
-      return (editController ? activeEditController === editController : activeEditController !== null);
+      return (editController ? activeEditController === editController
+          : activeEditController !== null);
     };
 
     /***
@@ -441,13 +442,16 @@
         return;
       }
       if (activeEditController !== null) {
-        throw new Error("SlickGrid.EditorLock.activate: an editController is still active, can't activate another editController");
+        throw new Error(
+            "SlickGrid.EditorLock.activate: an editController is still active, can't activate another editController");
       }
       if (!editController.commitCurrentEdit) {
-        throw new Error("SlickGrid.EditorLock.activate: editController must implement .commitCurrentEdit()");
+        throw new Error(
+            "SlickGrid.EditorLock.activate: editController must implement .commitCurrentEdit()");
       }
       if (!editController.cancelCurrentEdit) {
-        throw new Error("SlickGrid.EditorLock.activate: editController must implement .cancelCurrentEdit()");
+        throw new Error(
+            "SlickGrid.EditorLock.activate: editController must implement .cancelCurrentEdit()");
       }
       activeEditController = editController;
     };
@@ -460,7 +464,8 @@
      */
     this.deactivate = function (editController) {
       if (activeEditController !== editController) {
-        throw new Error("SlickGrid.EditorLock.deactivate: specified editController is not the currently active one");
+        throw new Error(
+            "SlickGrid.EditorLock.deactivate: specified editController is not the currently active one");
       }
       activeEditController = null;
     };
@@ -474,7 +479,8 @@
      * @return {Boolean}
      */
     this.commitCurrentEdit = function () {
-      return (activeEditController ? activeEditController.commitCurrentEdit() : true);
+      return (activeEditController ? activeEditController.commitCurrentEdit()
+          : true);
     };
 
     /***
@@ -485,7 +491,8 @@
      * @return {Boolean}
      */
     this.cancelCurrentEdit = function cancelCurrentEdit() {
-      return (activeEditController ? activeEditController.cancelCurrentEdit() : true);
+      return (activeEditController ? activeEditController.cancelCurrentEdit()
+          : true);
     };
   }
 })(jQuery);

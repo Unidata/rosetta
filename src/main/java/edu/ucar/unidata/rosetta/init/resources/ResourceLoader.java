@@ -1,11 +1,9 @@
 package edu.ucar.unidata.rosetta.init.resources;
 
-import edu.ucar.unidata.rosetta.domain.resources.*;
+import edu.ucar.unidata.rosetta.domain.resources.RosettaResource;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -14,21 +12,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.log4j.Logger;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.xml.sax.SAXException;
 
 /**
@@ -38,13 +31,13 @@ import org.xml.sax.SAXException;
  *
  * @author oxelson@ucar.edu
  */
-public class ResourceManager {
+public class ResourceLoader {
 
-  private static final Logger logger = Logger.getLogger(ResourceManager.class);
+  private static final Logger logger = Logger.getLogger(ResourceLoader.class);
 
   /**
-   * Accesses the resources index file on disk and loads the resources into a Map<String, Object>
-   * for access.
+   * Accesses the resources index file on disk and loads
+   * the resources into a Map<String, Object> for access.
    *
    * @return A Map<String, Object> containing the resources to be added to the model.
    * @throws RosettaDataException If unable to retrieve resources.
@@ -59,6 +52,7 @@ public class ResourceManager {
       String type = "";
       // Load 'menu' of available resources.
       List<Map<String, String>> availableResources = fetchAvailableResources(file);
+
       // Get the resource items
       for (Map<String, String> resourcesMap : availableResources) {
         // Get the resource file names and the main element from the map.
@@ -71,7 +65,7 @@ public class ResourceManager {
           } else {
             type = pair.getValue();
           }
-          it.remove(); // Avoids a ConcurrentModificationException
+          it.remove(); // Avoids a ConcurrentModificationException.
         }
         // Get the resource data.
         r = new ClassPathResource("resources/" + fileName);
@@ -87,9 +81,8 @@ public class ResourceManager {
                   + type.substring(1);
           Object rosettaResource = Class.forName(classToInstantiate).getDeclaredConstructor()
               .newInstance();
-
           // Populate the RosettaResource object using generics.
-          ResourcePopulator<RosettaResource> populator = new ResourcePopulator<RosettaResource>();
+          ResourcePopulator<RosettaResource> populator = new ResourcePopulator<>();
           populator.setRosettaResource((RosettaResource) rosettaResource);
           resources.addAll(populator.populate(resourceMap));
         }
@@ -171,6 +164,12 @@ public class ResourceManager {
     return resources;
   }
 
+  /**
+   * Parses the resource XML file and returns the resources.
+   *
+   * @param file  The file from which to fetch the resources.
+   * @return  The resources loaded from the file.
+   */
   private List<Map<String, String>> fetchAvailableResources(File file) {
     List<Map<String, String>> resources = new ArrayList<>();
     try {
@@ -214,10 +213,4 @@ public class ResourceManager {
     }
     return resources;
   }
-
-
-  public String getCommunity(String platform) {
-    return "foo";
-  }
-
 }

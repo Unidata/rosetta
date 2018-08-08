@@ -1,10 +1,9 @@
 package edu.ucar.unidata.rosetta.domain;
 
+import java.io.Serializable;
+import java.util.Locale;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * A POJO to hold the data collected from the user in the Rosetta application (acts as a

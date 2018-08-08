@@ -9,6 +9,7 @@ public abstract class Metadata implements Comparable<Metadata> {
   private String category;
   private boolean required;
 
+
   public String getDisplayName() {
     return displayName;
   }
@@ -33,7 +34,7 @@ public abstract class Metadata implements Comparable<Metadata> {
     this.description = description;
   }
 
-  public String getCetagory() {
+  public String getCategory() {
     return category;
   }
 
@@ -66,7 +67,6 @@ public abstract class Metadata implements Comparable<Metadata> {
     } else if (this.getRequired() && !comparisonObject.getRequired()) {
       // This object is required and the specified object isn't required.
       return 1;
-
 
     } else if (this.getRequired() && comparisonObject.getRequired()) {
       // Both objects are required. Determine order lexicographically.

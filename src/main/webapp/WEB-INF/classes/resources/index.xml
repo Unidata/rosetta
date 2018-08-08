@@ -2,24 +2,28 @@
 <!-- Order matters here!  These resources will be loaded into the database in the following order.
 If a resource depends upon or references another, the dependency resource MUST be loaded first. -->
 <resources>
-    <resource>
-        <fileName>delimiters.xml</fileName>
-        <type>delimiter</type>
-    </resource>
-    <resource>
-        <fileName>cfTypes.xml</fileName>
-        <type>cfType</type>
-    </resource>
-    <resource>
-        <fileName>fileTypes.xml</fileName>
-        <type>fileType</type>
-    </resource>
-    <resource>
-        <fileName>communities.xml</fileName>
-        <type>community</type>
-    </resource>
-    <resource>
-        <fileName>platforms.xml</fileName>
-        <type>platform</type>
-    </resource>
+  <resource>
+    <fileName>delimiters.xml</fileName>
+    <type>delimiter</type>
+  </resource>
+  <resource>
+    <fileName>cfTypes.xml</fileName>
+    <type>cfType</type>
+  </resource>
+  <resource>
+    <fileName>fileTypes.xml</fileName>
+    <type>fileType</type>
+  </resource>
+  <resource>
+    <fileName>communities.xml</fileName>
+    <type>community</type>
+  </resource>
+  <resource>
+    <fileName>platforms.xml</fileName>
+    <type>platform</type>
+  </resource>
+  <resource>
+    <fileName>metadataProfiles.xml</fileName>
+    <type>metadataProfile</type>
+  </resource>
 </resources>

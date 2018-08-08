@@ -2,107 +2,132 @@
 
 <p>To determine the most appropriate CF type, please select your community:</p>
 <c:choose>
-    <%-- Need the communities to load platforms by community. --%>
-    <c:when test="${fn:length(communities) gt 0}">
-        <script>
-            $( function() {
-                var tabIndex = 0;
-                <c:choose>
-                    <%-- If platform or cfType selection exists, find the index number of the tab to activate it. --%>
-                    <c:when test="${not empty data.cfType}">
-                        tabIndex = ${fn:length(communities)};
-                    </c:when>
-                    <c:otherwise>
-                        <%-- Start at index 1 as 0 is already declared. --%>
-                        <c:forEach begin="1" end="${fn:length(communities) - 1 }" varStatus="loop">
-                            <c:forEach items="${communities[loop.index].platforms}" var="platform">
-                                <c:if test="${not empty data.platform && data.platform == fn:replace(platform.name, ' ', '_')}">
-                                    tabIndex = ${loop.index};
-                                </c:if>
-                            </c:forEach>
-                        </c:forEach>
-                    </c:otherwise>
-                </c:choose>
-                $( "#tabs" ).tabs({active:tabIndex});
-                $( ".platforms" ).selectable();
-            });
-        </script>
-        <div id="tabs">
-            <ul>
-                <c:forEach items="${communities}" var="community">
-                    <%-- Create tabs --%>
-                    <li><a href="#${fn:replace(community.name, ' ', '_')}">${community.name}</a></li>
-                </c:forEach>
-                <li class="cfTypeSpecified"><a href="#cfTypeSpecified"><small>advanced:</small> Input CF Type</a></li>
-            </ul>
-            <c:forEach items="${communities}" var="community">
-                <div id="${fn:replace(community.name, ' ', '_')}">
-                    <p>Select a platform:</p>
-                    <ul class="platforms">
-                    <c:forEach items="${community.platforms}" var="platform">
-                        <li class="ui-state-default
-                            <c:if test="${not empty data.platform && data.platform == fn:replace(platform.name, ' ', '_')}">
-                                ui-selected
-                            </c:if>
-                        ">
-                            <img src="${platform.imgPath}" alt="${platform.name}" />
-                            <small>
-                            ${platform.name}<br>
-                            (${platform.cfType})
-                            </small>
-
-                            <input type="radio" name="platform" value="${fn:replace(platform.name, ' ', '_')}"
-                                <%-- Mark as selected if platform has already been chosen. --%>
-                                <c:if test="${not empty data.platform && data.platform == fn:replace(platform.name, ' ', '_')}">
-                                    checked
-                                </c:if>
-                            />
-                        </li>
-                    </c:forEach>
-                    </ul>
-
-                </div> <!--/#${community.name} -->
+  <%-- Need the communities to load platforms by community. --%>
+  <c:when test="${fn:length(communities) gt 0}">
+    <script>
+      $(function () {
+        var tabIndex = 0;
+        <c:choose>
+          <%-- If platform or cfType selection exists, find the index number tab & activate it. --%>
+          <c:when test="${not empty data.cfType}">
+            tabIndex = ${fn:length(communities)};
+          </c:when>
+          <c:otherwise>
+            <%-- Start at index 1 as 0 is already declared. --%>
+            <c:forEach begin="1" end="${fn:length(communities) - 1 }" varStatus="loop">
+              <c:forEach items="${communities[loop.index].platforms}" var="platform">
+                <c:if test="${not empty data.platform && data.platform == fn:replace(platform.name, ' ', '_')}">
+                   tabIndex = ${loop.index};
+                </c:if>
+              </c:forEach>
             </c:forEach>
+          </c:otherwise>
+        </c:choose>
+        $("#tabs").tabs({active: tabIndex});
+        $(".platforms").selectable();
+      });
+    </script>
+    <div id="tabs">
+      <ul>
+        <c:forEach items="${communities}" var="community">
+          <%-- Create tabs --%>
+          <li>
+            <a href="#${fn:replace(community.name, ' ', '_')}">${community.name}</a>
+          </li>
+        </c:forEach>
+        <li class="cfTypeSpecified"><a href="#cfTypeSpecified">
+          <small>advanced:</small>
+          Input CF Type</a></li>
+      </ul>
+      <c:forEach items="${communities}" var="community">
+        <div id="${fn:replace(community.name, ' ', '_')}">
+          <p>Select a platform:</p>
+          <ul class="platforms">
+            <c:forEach items="${community.platforms}" var="platform">
+              <li class="ui-state-default
+                <c:if test="${not empty data.platform && data.platform == fn:replace(platform.name, ' ', '_')}">
+                  ui-selected
+                </c:if>
+              ">
+                <img src="${platform.imgPath}" alt="${platform.name}"/>
+                <small>
+                  ${platform.name}<br> (${platform.cfType})
+                </small>
+                <input type="radio" name="platform" value="${fn:replace(platform.name, ' ', '_')}"
+                  <%-- Mark as checked if platform has already been chosen. --%>
+                  <c:if test="${not empty data.platform && data.platform == fn:replace(platform.name, ' ', '_')}">
+                    checked
+                  </c:if>
+                />
+              </li>
+            </c:forEach>
+          </ul>
+        </div><!--/#${community.name} -->
+      </c:forEach>
 
-            <%-- Need the communities to load platforms by community. --%>
-            <c:if test="${fn:length(cfTypes) gt 0}">
-           
+      <%-- Load the CF type selection. --%>
+      <c:if test="${fn:length(cfTypes) gt 0}">
 
-                <div id="cfTypeSpecified">
-                    <p>I know what I'm doing and I want to directly select a CF Type:</p>
-                    <select name="cfType">
-                        <option value="">Select a CF Type</option>
-                        <%-- Populate the cfType field if the data exists & it matches --%>
-                        <c:forEach items="${cfTypes}" var="cfType">
-                            <option
-                                <c:if test="${not empty data.cfType && data.cfType == fn:replace(cfType.name, ' ', '_')}">
-                                    selected
-                                </c:if>
-                            value="${fn:replace(cfType.name, ' ', '_')}">
-                                ${cfType.name}
-                            </option>
-                        </c:forEach>
-                    </select>
-                </div> <!-- /#cfType -->
-            </c:if>
-        </div> <!-- /#tabs -->
+        <div id="cfTypeSpecified">
+          <p>I know what I'm doing and I want to directly select a CF Type:</p>
+          <select name="cfType">
+            <option value="">Select a CF Type</option>
+              <%-- Populate the cfType field if the data exists & it matches --%>
+            <c:forEach items="${cfTypes}" var="cfType">
+              <option
+                  <c:if test="${not empty data.cfType && data.cfType == fn:replace(cfType.name, ' ', '_')}">
+                    selected
+                  </c:if>
+                  value="${fn:replace(cfType.name, ' ', '_')}">
+                  ${cfType.name}
+              </option>
+            </c:forEach>
+          </select>
 
-        <c:if test="${not empty error}">
-           <p class="error">${error}</p>
-        </c:if>
+          <%-- Load the metadata profile selection. --%>
+          <c:if test="${fn:length(metadataProfiles) gt 0}">
+            <div id="metadataProfile" class="<c:if test="${empty data.cfType}">hideMe</c:if>">
+              Select all applicable metadata profiles:
+              <ul>
+                <c:forEach items="${metadataProfiles}" var="metadataProfile">
+                  <li>
+                    <label>
+                      <input type="checkbox" name="metadataProfile" value="${metadataProfile.name}"
+                        <%-- Everyone gets the CF profile. --%>
+                        <c:if test="${metadataProfile.name == 'CF'}">
+                          checked disabled
+                        </c:if>
+                        <c:if test="${not empty data.metadataProfile && fn:contains(data.metadataProfile, metadataProfile.name)}">
+                          checked
+                        </c:if>
+                      /> ${metadataProfile.name}
+                    </label>
+                  </li>
+                </c:forEach>
+              </ul>
+            </div><!-- /#metadataProfile -->
+          </c:if> <%-- /${fn:length(metadataProfiles) gt 0} --%>
+        </div><!-- /#cfTypeSpecified -->
+      </c:if> <%-- /${fn:length(cfTypes) gt 0} --%>
+    </div><!-- /#tabs -->
 
-        <%-- Show the next button. --%>
-        <input type="submit" name="submit" value="Next"
-            <c:if test="${empty data.platform && empty data.cfType }">
-                disabled
-            </c:if>
-            class="button
-            <c:if test="${empty data.platform && empty data.cfType }">
-                disabled
-            </c:if>
-        "/>
-    </c:when>
-    <c:otherwise>
-       <p class="error">Unable to load CF type selection.  <spring:message code="fatal.error.message"/></p>
-    </c:otherwise>
+    <c:if test="${not empty error}">
+      <p class="error">${error}</p>
+    </c:if>
+
+    <%-- Show the next button. --%>
+    <input type="submit" name="submit" value="Next"
+      <c:if test="${empty data.platform && empty data.cfType }">
+        disabled
+      </c:if>
+        class="button
+      <c:if test="${empty data.platform && empty data.cfType }">
+        disabled
+      </c:if>
+    "/>
+  </c:when>
+  <c:otherwise>
+    <p class="error">Unable to load CF type selection. <spring:message
+        code="fatal.error.message"/></p>
+  </c:otherwise>
 </c:choose>

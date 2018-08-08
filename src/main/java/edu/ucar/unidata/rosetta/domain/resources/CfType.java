@@ -3,26 +3,32 @@ package edu.ucar.unidata.rosetta.domain.resources;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * @author oxelson@ucar.edu
+ * Object representing a CF type resource (see WEB-INF/classes/resources/cfTypes.xml).
+ * Data from the resource XML file is used to populate this object which is then
+ * persisted in the database for quick retrieval.
+ *
+ * @author oxelson@bu.edu
  */
 public class CfType extends RosettaResource {
 
   private int id;
 
+  /**
+   * Returns the persistence-layer ID associated with this resource.
+   *
+   * @return The ID.
+   */
   public int getId() {
     return id;
   }
 
+  /**
+   * Sets the persistence-layer ID associated with this resource.
+   *
+   * @param id The ID.
+   */
   public void setId(int id) {
     this.id = id;
-  }
-
-  public String getName() {
-    return super.getName();
-  }
-
-  public void setName(String name) {
-    super.setName(name);
   }
 
   /**

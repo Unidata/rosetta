@@ -32,13 +32,13 @@
             <c:forEach items="${users}" var="user">
                 <tr>
                     <td class="main">
-                        <c:out value="${user.fullName}" />
+                        <c:out value="${user.fullName}"/>
                     </td>
                     <td class="main">
-                        <c:out value="${user.userName}" />
+                        <c:out value="${user.userName}"/>
                     </td>
                     <td>
-                        <c:out value="${user.emailAddress}" />
+                        <c:out value="${user.emailAddress}"/>
                     </td>
                     <td>
                         <c:choose>
@@ -60,24 +60,28 @@
                             </c:otherwise>
                         </c:choose>
                     </td>
-                
+
                     <td>
-                            <form action="${baseUrl}/user/view/<c:out value="${user.userName}" />" method="GET">
-                                <input type="submit" value="View User Details" />
-                            </form>
-                            <form action="${baseUrl}/user/edit/<c:out value="${user.userName}" />" method="GET">
-                                <input type="submit" value="Edit User" />
-                            </form>
-                            <form action="${baseUrl}/user/password/<c:out value="${user.userName}" />" method="GET">
-                                <input type="submit" value="Reset Password" />
-                            </form>
-                            <c:choose>
-                                <c:when test="${user.userName ne authUserName}">
-                                    <form action="${baseUrl}/user/delete/<c:out value="${user.userName}" />" method="GET">
-                                        <input type="submit" value="Delete User"/>
-                                    </form>
-                                </c:when>
-                            </c:choose>
+                        <form action="${baseUrl}/user/view/<c:out value="${user.userName}" />"
+                              method="GET">
+                            <input type="submit" value="View User Details"/>
+                        </form>
+                        <form action="${baseUrl}/user/edit/<c:out value="${user.userName}" />"
+                              method="GET">
+                            <input type="submit" value="Edit User"/>
+                        </form>
+                        <form action="${baseUrl}/user/password/<c:out value="${user.userName}" />"
+                              method="GET">
+                            <input type="submit" value="Reset Password"/>
+                        </form>
+                        <c:choose>
+                            <c:when test="${user.userName ne authUserName}">
+                                <form action="${baseUrl}/user/delete/<c:out value="${user.userName}" />"
+                                      method="GET">
+                                    <input type="submit" value="Delete User"/>
+                                </form>
+                            </c:when>
+                        </c:choose>
                     </td>
                 </tr>
             </c:forEach>

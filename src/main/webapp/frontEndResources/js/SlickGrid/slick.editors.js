@@ -29,10 +29,10 @@
     this.init = function () {
       var navOnLR = args.grid.getOptions().editorCellNavOnLRKeys;
       $input = $("<INPUT type=text class='editor-text' />")
-          .appendTo(args.container)
-          .on("keydown.nav", navOnLR ? handleKeydownLRNav : handleKeydownLRNoNav)
-          .focus()
-          .select();
+      .appendTo(args.container)
+      .on("keydown.nav", navOnLR ? handleKeydownLRNav : handleKeydownLRNoNav)
+      .focus()
+      .select();
     };
 
     this.destroy = function () {
@@ -67,7 +67,8 @@
     };
 
     this.isValueChanged = function () {
-      return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+      return (!($input.val() == "" && defaultValue == null)) && ($input.val()
+          != defaultValue);
     };
 
     this.validate = function () {
@@ -96,7 +97,7 @@
       var navOnLR = args.grid.getOptions().editorCellNavOnLRKeys;
       $input = $("<INPUT type=text class='editor-text' />")
       .appendTo(args.container)
-      .on("keydown.nav", navOnLR ? handleKeydownLRNav : handleKeydownLRNoNav)      
+      .on("keydown.nav", navOnLR ? handleKeydownLRNav : handleKeydownLRNoNav)
       .focus()
       .select();
     };
@@ -125,7 +126,8 @@
     };
 
     this.isValueChanged = function () {
-      return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+      return (!($input.val() == "" && defaultValue == null)) && ($input.val()
+          != defaultValue);
     };
 
     this.validate = function () {
@@ -161,7 +163,7 @@
       var navOnLR = args.grid.getOptions().editorCellNavOnLRKeys;
       $input = $("<INPUT type=text class='editor-text' />")
       .appendTo(args.container)
-      .on("keydown.nav", navOnLR ? handleKeydownLRNav : handleKeydownLRNoNav)      
+      .on("keydown.nav", navOnLR ? handleKeydownLRNav : handleKeydownLRNoNav)
       .focus()
       .select();
     };
@@ -175,12 +177,12 @@
     };
 
     function getDecimalPlaces() {
-        // returns the number of fixed decimal places or null
-        var rtn = args.column.editorFixedDecimalPlaces;
-        if (typeof rtn == 'undefined') {
-            rtn = FloatEditor.DefaultDecimalPlaces;
-        }
-        return (!rtn && rtn!==0 ? null : rtn);
+      // returns the number of fixed decimal places or null
+      var rtn = args.column.editorFixedDecimalPlaces;
+      if (typeof rtn == 'undefined') {
+        rtn = FloatEditor.DefaultDecimalPlaces;
+      }
+      return (!rtn && rtn !== 0 ? null : rtn);
     }
 
     this.loadValue = function (item) {
@@ -188,8 +190,8 @@
 
       var decPlaces = getDecimalPlaces();
       if (decPlaces !== null
-      && (defaultValue || defaultValue===0)
-      && defaultValue.toFixed) {
+          && (defaultValue || defaultValue === 0)
+          && defaultValue.toFixed) {
         defaultValue = defaultValue.toFixed(decPlaces);
       }
 
@@ -201,15 +203,17 @@
     this.serializeValue = function () {
       var rtn = parseFloat($input.val());
       if (FloatEditor.AllowEmptyValue) {
-        if (!rtn && rtn !==0) { rtn = ''; }
+        if (!rtn && rtn !== 0) {
+          rtn = '';
+        }
       } else {
         rtn = rtn || 0;
       }
 
       var decPlaces = getDecimalPlaces();
       if (decPlaces !== null
-      && (rtn || rtn===0)
-      && rtn.toFixed) {
+          && (rtn || rtn === 0)
+          && rtn.toFixed) {
         rtn = parseFloat(rtn.toFixed(decPlaces));
       }
 
@@ -221,7 +225,8 @@
     };
 
     this.isValueChanged = function () {
-      return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+      return (!($input.val() == "" && defaultValue == null)) && ($input.val()
+          != defaultValue);
     };
 
     this.validate = function () {
@@ -264,7 +269,7 @@
       $input.datepicker({
         showOn: "button",
         buttonImageOnly: true,
-         beforeShow: function () {
+        beforeShow: function () {
           calendarOpen = true
         },
         onClose: function () {
@@ -298,8 +303,8 @@
         return;
       }
       $.datepicker.dpDiv
-          .css("top", position.top + 30)
-          .css("left", position.left);
+      .css("top", position.top + 30)
+      .css("left", position.left);
     };
 
     this.focus = function () {
@@ -322,7 +327,8 @@
     };
 
     this.isValueChanged = function () {
-      return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+      return (!($input.val() == "" && defaultValue == null)) && ($input.val()
+          != defaultValue);
     };
 
     this.validate = function () {
@@ -348,7 +354,8 @@
     var scope = this;
 
     this.init = function () {
-      $select = $("<SELECT tabIndex='0' class='editor-yesno'><OPTION value='yes'>Yes</OPTION><OPTION value='no'>No</OPTION></SELECT>");
+      $select = $(
+          "<SELECT tabIndex='0' class='editor-yesno'><OPTION value='yes'>Yes</OPTION><OPTION value='no'>No</OPTION></SELECT>");
       $select.appendTo(args.container);
       $select.focus();
     };
@@ -394,7 +401,8 @@
     var scope = this;
 
     this.init = function () {
-      $select = $("<INPUT type=checkbox value='true' class='editor-checkbox' hideFocus>");
+      $select = $(
+          "<INPUT type=checkbox value='true' class='editor-checkbox' hideFocus>");
       $select.appendTo(args.container);
       $select.focus();
     };
@@ -417,7 +425,7 @@
     };
 
     this.preClick = function () {
-        $select.prop('checked', !$select.prop('checked'));
+      $select.prop('checked', !$select.prop('checked'));
     };
 
     this.serializeValue = function () {
@@ -452,10 +460,13 @@
       $input.width($(args.container).innerWidth() - 25);
       $input.appendTo(args.container);
 
-      $picker = $("<div class='editor-percentcomplete-picker' />").appendTo(args.container);
-      $picker.append("<div class='editor-percentcomplete-helper'><div class='editor-percentcomplete-wrapper'><div class='editor-percentcomplete-slider' /><div class='editor-percentcomplete-buttons' /></div></div>");
+      $picker = $("<div class='editor-percentcomplete-picker' />").appendTo(
+          args.container);
+      $picker.append(
+          "<div class='editor-percentcomplete-helper'><div class='editor-percentcomplete-wrapper'><div class='editor-percentcomplete-slider' /><div class='editor-percentcomplete-buttons' /></div></div>");
 
-      $picker.find(".editor-percentcomplete-buttons").append("<button val=0>Not started</button><br/><button val=50>In Progress</button><br/><button val=100>Complete</button>");
+      $picker.find(".editor-percentcomplete-buttons").append(
+          "<button val=0>Not started</button><br/><button val=50>In Progress</button><br/><button val=100>Complete</button>");
 
       $input.focus().select();
 
@@ -468,10 +479,12 @@
         }
       });
 
-      $picker.find(".editor-percentcomplete-buttons button").on("click", function (e) {
-        $input.val($(this).attr("val"));
-        $picker.find(".editor-percentcomplete-slider").slider("value", $(this).attr("val"));
-      })
+      $picker.find(".editor-percentcomplete-buttons button").on("click",
+          function (e) {
+            $input.val($(this).attr("val"));
+            $picker.find(".editor-percentcomplete-slider").slider("value",
+                $(this).attr("val"));
+          })
     };
 
     this.destroy = function () {
@@ -497,7 +510,8 @@
     };
 
     this.isValueChanged = function () {
-      return (!($input.val() == "" && defaultValue == null)) && ((parseInt($input.val(), 10) || 0) != defaultValue);
+      return (!($input.val() == "" && defaultValue == null)) && ((parseInt(
+          $input.val(), 10) || 0) != defaultValue);
     };
 
     this.validate = function () {
@@ -531,18 +545,20 @@
       var $container = $("body");
       var navOnLR = args.grid.getOptions().editorCellNavOnLRKeys;
 
-      $wrapper = $("<DIV style='z-index:10000;position:absolute;background:white;padding:5px;border:3px solid gray; -moz-border-radius:10px; border-radius:10px;'/>")
-          .appendTo($container);
+      $wrapper = $(
+          "<DIV style='z-index:10000;position:absolute;background:white;padding:5px;border:3px solid gray; -moz-border-radius:10px; border-radius:10px;'/>")
+      .appendTo($container);
 
-      $input = $("<TEXTAREA hidefocus rows=5 style='background:white;width:250px;height:80px;border:0;outline:0'>")
-          .appendTo($wrapper);
+      $input = $(
+          "<TEXTAREA hidefocus rows=5 style='background:white;width:250px;height:80px;border:0;outline:0'>")
+      .appendTo($wrapper);
 
       $("<DIV style='text-align:right'><BUTTON>Save</BUTTON><BUTTON>Cancel</BUTTON></DIV>")
-          .appendTo($wrapper);
+      .appendTo($wrapper);
 
       $wrapper.find("button:first").on("click", this.save);
       $wrapper.find("button:last").on("click", this.cancel);
-      $input.on("keydown", this.handleKeyDown); 
+      $input.on("keydown", this.handleKeyDown);
 
       scope.position(args.position);
       $input.focus().select();
@@ -560,14 +576,16 @@
       } else if (e.which == $.ui.keyCode.TAB) {
         e.preventDefault();
         args.grid.navigateNext();
-      } else if (e.which == $.ui.keyCode.LEFT || e.which == $.ui.keyCode.RIGHT) {
+      } else if (e.which == $.ui.keyCode.LEFT || e.which
+          == $.ui.keyCode.RIGHT) {
         if (args.grid.getOptions().editorCellNavOnLRKeys) {
           var cursorPosition = this.selectionStart;
           var textLength = this.value.length;
           if (e.keyCode === $.ui.keyCode.LEFT && cursorPosition === 0) {
             args.grid.navigatePrev();
           }
-          if (e.keyCode === $.ui.keyCode.RIGHT && cursorPosition >= textLength-1) {
+          if (e.keyCode === $.ui.keyCode.RIGHT && cursorPosition >= textLength
+              - 1) {
             args.grid.navigateNext();
           }
         }
@@ -593,8 +611,8 @@
 
     this.position = function (position) {
       $wrapper
-          .css("top", position.top - 5)
-          .css("left", position.left - 5)
+      .css("top", position.top - 5)
+      .css("left", position.left - 5)
     };
 
     this.destroy = function () {
@@ -619,7 +637,8 @@
     };
 
     this.isValueChanged = function () {
-      return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+      return (!($input.val() == "" && defaultValue == null)) && ($input.val()
+          != defaultValue);
     };
 
     this.validate = function () {
@@ -638,7 +657,7 @@
 
     this.init();
   }
-  
+
   /*
    * Depending on the value of Grid option 'editorCellNavOnLRKeys', us 
    * Navigate to the cell on the left if the cursor is at the beginning of the input string
@@ -648,15 +667,15 @@
     var cursorPosition = this.selectionStart;
     var textLength = this.value.length;
     if ((e.keyCode === $.ui.keyCode.LEFT && cursorPosition > 0) ||
-         e.keyCode === $.ui.keyCode.RIGHT && cursorPosition < textLength-1) {
+        e.keyCode === $.ui.keyCode.RIGHT && cursorPosition < textLength - 1) {
       e.stopImmediatePropagation();
     }
   }
 
   function handleKeydownLRNoNav(e) {
-    if (e.keyCode === $.ui.keyCode.LEFT || e.keyCode === $.ui.keyCode.RIGHT) {	
-      e.stopImmediatePropagation();	
-    }	
+    if (e.keyCode === $.ui.keyCode.LEFT || e.keyCode === $.ui.keyCode.RIGHT) {
+      e.stopImmediatePropagation();
+    }
   }
-  
+
 })(jQuery);

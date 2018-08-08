@@ -1,31 +1,31 @@
 <?xml version='1.0' encoding='utf-8'?>
 <delimiters>
-    <delimiter>
-        <name>Tab</name>
-        <characterSymbol>\t</characterSymbol>
-    </delimiter>
-    <delimiter>
-        <name>Comma</name>
-        <characterSymbol>,</characterSymbol>
-    </delimiter>
-    <delimiter>
-        <name>Whitespace</name>
-        <characterSymbol> </characterSymbol>
-    </delimiter>
-    <delimiter>
-        <name>Colon</name>
-        <characterSymbol>:</characterSymbol>
-    </delimiter>
-    <delimiter>
-        <name>Semicolon</name>
-        <characterSymbol>;</characterSymbol>
-    </delimiter>
-    <delimiter>
-        <name>Single Quote</name>
-        <characterSymbol>'</characterSymbol>
-    </delimiter>
-    <delimiter>
-        <name>Double Quote</name>
-        <characterSymbol>"</characterSymbol>
-    </delimiter>
+  <delimiter>
+    <name>Tab</name>
+    <characterSymbol>\t</characterSymbol>
+  </delimiter>
+  <delimiter>
+    <name>Comma</name>
+    <characterSymbol>,</characterSymbol>
+  </delimiter>
+  <delimiter>
+    <name>Whitespace</name>
+    <characterSymbol></characterSymbol>
+  </delimiter>
+  <delimiter>
+    <name>Colon</name>
+    <characterSymbol>:</characterSymbol>
+  </delimiter>
+  <delimiter>
+    <name>Semicolon</name>
+    <characterSymbol>;</characterSymbol>
+  </delimiter>
+  <delimiter>
+    <name>Single Quote</name>
+    <characterSymbol>'</characterSymbol>
+  </delimiter>
+  <delimiter>
+    <name>Double Quote</name>
+    <characterSymbol>"</characterSymbol>
+  </delimiter>
 </delimiters>

@@ -3,7 +3,6 @@ package edu.ucar.unidata.rosetta.controller.user;
 import edu.ucar.unidata.rosetta.domain.user.User;
 import edu.ucar.unidata.rosetta.exceptions.RosettaUserException;
 import edu.ucar.unidata.rosetta.service.user.UserManager;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -12,9 +11,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

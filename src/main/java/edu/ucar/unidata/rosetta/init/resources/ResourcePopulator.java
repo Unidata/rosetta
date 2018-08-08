@@ -1,7 +1,6 @@
 package edu.ucar.unidata.rosetta.init.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.RosettaResource;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -9,18 +8,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 /**
+ * A generic class to to populate a model object that extends
+ * RosettaResources with resource data held in the resource XML files.
+ *
  * @param <T> A class that extends RosettaResources
  * @author oxelson@ucar.edu
- *
- * A generic class to to populate a model object that extends RosettaResources with resource data
- * held in the resource XML files.
  */
 public class ResourcePopulator<T extends RosettaResource> {
-
-  private static final Logger logger = Logger.getLogger(ResourcePopulator.class);
 
   private T rosettaResource;
 
@@ -72,6 +67,7 @@ public class ResourcePopulator<T extends RosettaResource> {
 
       // Get the setter method.
       Method setter = (Method) rosettaResource.getClass().getMethod(setterMethodName, String.class);
+
       // The value(s) to assign to the setter method.
       List<String> valueList = keyValuePair.getValue();
 
@@ -79,8 +75,8 @@ public class ResourcePopulator<T extends RosettaResource> {
       if (valueList.size() > 1) {
         for (Object v : valueList) {
           String value = (String) v;
-          setter
-              .invoke(rosettaResource, value); // Use setter to add value to RosettaResource object.
+          // Use setter to add value to RosettaResource object.
+          setter.invoke(rosettaResource, value);
         }
       } else {
         setter.invoke(rosettaResource, (String) valueList.get(0)); // Use setter to add value.

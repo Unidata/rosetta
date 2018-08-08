@@ -1,20 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
 <units>
-    <unit>
-        <name>geoCoordinateSystemLatitude</name>
-        <value>degrees_north</value>
-        <value>degrees_south</value>
-    </unit>
+  <unit>
+    <name>geoCoordinateSystemLatitude</name>
+    <value>degrees_north</value>
+    <value>degrees_south</value>
+  </unit>
 
-    <unit>
-        <name>geoCoordinateSystemLongitude</name>
-        <value>degrees_east</value>
-        <value>degrees_west</value>
-    </unit>
+  <unit>
+    <name>geoCoordinateSystemLongitude</name>
+    <value>degrees_east</value>
+    <value>degrees_west</value>
+  </unit>
 
-    <unit>
-        <name>verticalDistance</name>
-        <value>meters</value>
-        <value>feet</value>
-    </unit>
+  <unit>
+    <name>verticalDistance</name>
+    <value>meters</value>
+    <value>feet</value>
+  </unit>
 </units>
