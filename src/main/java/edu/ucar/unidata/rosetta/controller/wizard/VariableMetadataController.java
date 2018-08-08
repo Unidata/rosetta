@@ -3,6 +3,7 @@ package edu.ucar.unidata.rosetta.controller.wizard;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
+import edu.ucar.unidata.rosetta.service.wizard.MetadataManager;
 import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -41,6 +42,9 @@ public class VariableMetadataController implements HandlerExceptionResolver {
   @Resource(name = "dataManager")
   private DataManager dataManager;
 
+  @Resource(name = "metadataManager")
+  private MetadataManager metadataManager;
+
   @Resource(name = "resourceManager")
   private ResourceManager resourceManager;
 
@@ -64,9 +68,8 @@ public class VariableMetadataController implements HandlerExceptionResolver {
     // Have we visited this page before during this session?
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-    if (rosettaCookie == null)
-    // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-    {
+    if (rosettaCookie == null) {
+      // Something has gone wrong.  We shouldn't be at this step without having persisted data.
       throw new IllegalStateException(
           "No persisted data available for file upload step.  Check the database & the cookie.");
     }
@@ -79,6 +82,8 @@ public class VariableMetadataController implements HandlerExceptionResolver {
 
     // Add data object to Model.
     model.addAttribute("data", data);
+    // Add command object to Model.
+    model.addAttribute("command", "variableMetadata");
     // Add current step to the Model.
     model.addAttribute("currentStep", "variableMetadata");
     // Add parsed file data in JSON string format (to show in the SlickGrid).
