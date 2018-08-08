@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<!-- Make sure a corresponding file is in the MpsProfilesRosetta directory.  E.g.: MpsProfileOutput_ACDD.xml -->
+<!-- Make sure a corresponding file is in the MpsProfilesRosetta directory.  E.g.: ACDD.xml -->
 <metadataProfiles>
     <metadataProfile>
         <name>CF</name>
