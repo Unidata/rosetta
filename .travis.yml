@@ -22,7 +22,7 @@ addons:
           - master
 
 script:
-  - ./gradlew clean test sonarqube jekyllBuild
+  - ./gradlew clean test integrationTests sonarqube jekyllBuild
 
 after_script:
   - touch build/_site/.nojekyll
