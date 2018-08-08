@@ -5,12 +5,11 @@
 
 package edu.ucar.unidata.rosetta.service.batch;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +29,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
+import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
 import ucar.ma2.InvalidRangeException;
 
@@ -192,25 +192,22 @@ public class BatchFileManagerImpl implements BatchFileManager {
 
         inventory = cleanupInventory(inventory);
 
-        String template = "";
+        String mainTemplateFile = "";
         for (String inventoryFile : inventory) {
-            if (inventoryFile.endsWith("template")) {
-                template = inventoryFile;
+            if (inventoryFile.endsWith(File.separator + "rosetta.template")) {
+                mainTemplateFile = inventoryFile;
             }
         }
 
         // load template
-        JSONParser parser = new JSONParser();
-        String format = "";
-        try {
-            FileReader templateFileReader = new FileReader(template);
-            Object obj = parser.parse(templateFileReader);
-            templateFileReader.close();
-            JSONObject jsonObject = (JSONObject) obj;
-            format = (String) jsonObject.get("format");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        ObjectMapper templateMapper = new ObjectMapper();
+
+        FileReader templateFileReader = new FileReader(mainTemplateFile);
+        Template template = templateMapper.readValue(templateFileReader, Template.class);
+        templateFileReader.close();
+        String format = template.getFormat();
+
+        // todo log errors and return that in the zip file, if errors occur
 
         // process data files based on convertTo type
         if (format.equals("eTuff")) {
