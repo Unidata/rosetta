@@ -276,7 +276,8 @@
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <bean class="edu.ucar.unidata.rosetta.repository.wizard.XmlMetadataProfileDao" id="metadataProfileDao"/>
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.XmlMetadataProfileDao"
+          id="metadataProfileDao"/>
 
     <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcUploadedFileDao"
           id="uploadedFileDao">
