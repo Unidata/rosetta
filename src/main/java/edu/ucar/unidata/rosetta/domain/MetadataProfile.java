@@ -7,15 +7,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 public class MetadataProfile {
 
-  private String attributeName;
+  private String attributeName; // required
   private ComplianceLevel complianceLevel;
   private String description;
   private String displayName;
-  private String examples;
+  private String exampleValues;
   private String id;
   private String metadataGroup;
-  private String metadataProfileName;
-  private String metadataProfileVersion;
+  private String metadataProfileName; // required
+  private String metadataProfileVersion; // required
   private MetadataType metadataType = MetadataType.GLOBAL;
   private MetadataTypeStructure metadataTypeStructure = MetadataTypeStructure.GLOBAL_ATTRIBUTES;
   private MetadataValueType metadataValueType = MetadataValueType.STRING;
@@ -97,17 +97,17 @@ public class MetadataProfile {
    *
    * @return The examples.
    */
-  public String getExamples() {
-    return examples;
+  public String getExampleValues() {
+    return exampleValues;
   }
 
   /**
    * Sets a string of examples of that illustrate this metadata.
    *
-   * @param examples The examples.
+   * @param exampleValues The examples.
    */
-  public void setExamples(String examples) {
-    this.examples = examples;
+  public void setExampleValues(String exampleValues) {
+    this.exampleValues = exampleValues;
   }
 
   /**
