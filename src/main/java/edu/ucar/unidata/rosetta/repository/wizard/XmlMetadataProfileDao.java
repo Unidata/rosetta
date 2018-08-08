@@ -1,7 +1,13 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
 package edu.ucar.unidata.rosetta.repository.wizard;
 
 import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -16,36 +22,30 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+/**
+ * Implementation for metadata profiles DAO.
+ */
 public class XmlMetadataProfileDao implements MetadataProfileDao {
 
   private static final Logger logger = Logger.getLogger(XmlMetadataProfileDao.class);
 
-  public void getMetadataProfileByType(String type) {
+  public List<MetadataProfile> getMetadataProfileByType(String metadataProfileType) {
+    List<MetadataProfile> metadataProfiles = new ArrayList<>();
     try {
-      logger.info("GETTING CF FILE");
-      // Get the index file to access a list of available resources.
-      Resource r = new ClassPathResource("resources/MpsProfilesRosetta/CF.xml");
-      File file = r.getFile();
-      fetchProfileData(file);
-    } catch (IOException e) {
-      logger.info("IO exception accessing metadata profile resource file: " + e);
-    }
-  }
 
-  private void fetchProfileData(File file) {
-    logger.info("FILE INFO: " + file.getAbsolutePath());
-    List<Map<String, List<String>>> resources = new ArrayList<>();
-    try {
+      // Get the metadat profile file.
+      Resource r = new ClassPathResource(FilenameUtils.concat("resources/MpsProfilesRosetta/", metadataProfileType + ".xml"));
+      File file = r.getFile();
+
       // Need a DocumentBuilder to work with XML files.
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -72,63 +72,32 @@ public class XmlMetadataProfileDao implements MetadataProfileDao {
           String attributeName = attribute.getNodeName();
 
           // Kludge until we can get this fixed!
-          if (attributeName.equals("attributename")) {
+          if (attributeName.equals("attibutename")) {
             attributeName = "attributeName";
           }
 
           // Create a setter method name from the attribute name.
           String setterMethodName = "set" + attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1);
-          logger.info(setterMethodName);
 
+          // Get attribute value.
           String attributeValue = attribute.getNodeValue();
-          logger.info(attributeValue);
 
           // Access the actual setter method using the setter method name.
-          Method setter = (Method) metadataProfile.getClass().getMethod(setterMethodName, String.class);
+          Method setter = metadataProfile.getClass().getMethod(setterMethodName, String.class);
 
-          //setter.invoke(metadataProfile, );
+          setter.invoke(metadataProfile, attributeValue);
 
         }
-/*
-        // Store the data pulled from the child elements in a map.
-        Map<String, List<String>> resource = new HashMap<>(resourceChildNodes.getLength());
-
-        // Process the child nodes.
-        for (int x = 0; x < resourceChildNodes.getLength(); x++) {
-          Node n = resourceChildNodes.item(x);
-
-          // The map value will be held in a list.
-          List<String> values = new ArrayList<>();
-
-          // Child is an element node.
-          if (n.getNodeType() == Node.ELEMENT_NODE) {
-
-            // We may want to have multiple values for one key.
-            if (resource.containsKey(n.getNodeName())) {
-
-              // Get the existing value and assign to a placeholder.
-              values = resource.get(n.getNodeName());
-              resource.remove(n.getNodeName());
-            }
-
-            // Add the newest value.
-            values.add(n.getTextContent());
-
-            // Add List to Map
-            resource.put(n.getNodeName(), values);
-          }
-        }
-        // Add our Map to our list.
-        resources.add(i, resource);
-        */
+        // Add our MetadataProfile object to the list.
+        metadataProfiles.add(i, metadataProfile);
       }
 
-    } catch (DOMException | ParserConfigurationException | SAXException | IOException | NoSuchMethodException e) {
+    } catch (DOMException | ParserConfigurationException | SAXException | IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
       StringWriter errors = new StringWriter();
       e.printStackTrace(new PrintWriter(errors));
       logger.error("Unable to load resources: " + errors);
     }
-
+    return metadataProfiles;
   }
 
 }
