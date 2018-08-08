@@ -1,11 +1,12 @@
-###############
+#################
 # Rosetta files #
-###############
+#################
 build.properties
 docs/javadoc
 docs/jsdoc
 docs/site
 docs/dox
+derby.log
 
 # Ignore maven stuff
 target/
@@ -23,6 +24,7 @@ build/
 .idea/
 ide/intellij/
 rosetta.iml
+out/
 #
 # Eclipse files
 #

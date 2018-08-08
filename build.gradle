@@ -111,7 +111,6 @@ dependencies {
     testCompile "org.mockito:mockito-all:1.10.19"
     testCompile "org.mockito:mockito-core:2.18.3"
 
-
     jrubyExec 'rubygems:jekyll:3.4.0'
     // Without this, we get: LoadError: no such file to load -- bundler
     jrubyExec 'rubygems:bundler:1.14.4'
@@ -140,6 +139,10 @@ ext {
 test {
     testLogging {
         events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+
+    useJUnit {
+        excludeCategories 'edu.ucar.unidata.rosetta.util.test.category.NeedsLocalServer'
     }
 }
 
@@ -192,33 +195,69 @@ task jekyllServe(type: JRubyExec, group: 'Jekyll', description: 'Serve your site
     scriptArgs commonFlags
 }
 
+sourceSets {
+    integrationTests {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/test/java')
+        }
+        resources.srcDir file('src/test/resources')
+    }
+}
+
+configurations {
+    integrationTestsCompile.extendsFrom testCompile
+    integrationTestsRuntime.extendsFrom testRuntime
+}
+
+task integrationTests(type: Test) {
+
+    description 'Runs tests that require a rosetta server running at localhost:8888.'
+
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+
+    useJUnit {
+        includeCategories 'edu.ucar.unidata.rosetta.util.test.category.NeedsLocalServer'
+    }
+
+    testClassesDirs = sourceSets.integrationTests.output.classesDirs
+    classpath = sourceSets.integrationTests.runtimeClasspath
+    outputs.upToDateWhen { false }
+}
+
 gretty {
     servletContainer = 'tomcat8'
     httpPort = 8888
 
+    // make sure to run as a war, otherwise WEB-INF/classes won't be picked up
+    inplace = false
+
     contextPath = '/rosetta'
 
     jvmArgs = ["-Drosetta.content.root.path=$rootDir/src/test/rosetta_home",
-               "-Drosetta.home=$rootDir/src/test/rosetta_home",
                "-Dlog4j.configuration=$rootDir/src/main/webapp/WEB-INF/classes/log4j.xml"]
 
-    //integrationTestTask = 'test'
+    integrationTestTask = 'integrationTests'
 
     configurations {
         grettyRunnerTomcat8 {
             exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
         }
     }
-}
 
-test.doLast {
-        print "Cleaning up"
+    onStop {
+        // cleans up ROSETTA_HOME, which is populated during the integration test process
+        print "Cleaning up test ROSETTA_HOME"
         File folder = new File("$rootDir/src/test/rosetta_home")
         FileUtils.cleanDirectory(folder)
+    }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.5.1'
+    gradleVersion = '4.9'
 }
 
 // run coverage with jacoco before sonarqube analysis so that coverabe report
@@ -227,3 +266,6 @@ project.tasks["sonarqube"].dependsOn jacocoTestReport
 
 // need to run test task before jacocoTestReport
 jacocoTestReport.dependsOn test
+
+check.dependsOn integrationTests
+integrationTests.mustRunAfter test

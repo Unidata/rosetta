@@ -4,30 +4,33 @@
 
 package edu.ucar.unidata.rosetta.converters;
 
-import static org.junit.Assert.assertTrue;
-
-import edu.ucar.unidata.rosetta.util.TestDir;
-import edu.ucar.unidata.rosetta.util.XlsToCsvUtil;
-import java.io.File;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.File;
+
+import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
+import edu.ucar.unidata.rosetta.util.TestDir;
+import edu.ucar.unidata.rosetta.util.XlsToCsvUtil;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by sarms on 3/11/17.
  */
 public class TestExcelToCsv {
 
-  @Test
-  @Ignore
-  public void testXlsConvert() {
-    String xlsFilePath = TestDir.rosettaLocalTestDataDir + "conversions/xls/test.xls";
-    assertTrue(XlsToCsvUtil.convert(xlsFilePath, null));
-  }
+    @Test
+    @Ignore
+    public void testXlsConvert() throws RosettaFileException {
+        String xlsFilePath = TestDir.rosettaLocalTestDataDir + "conversions/xls/test.xls";
+        assertTrue(XlsToCsvUtil.convert(xlsFilePath, null));
+    }
 
-  @After
-  public void cleanup() {
-    File csvFilePath = new File(TestDir.rosettaLocalTestDataDir + "conversions/xls/test.csv");
-    csvFilePath.delete();
-  }
+    @After
+    public void cleanup() {
+        File csvFilePath = new File(TestDir.rosettaLocalTestDataDir + "conversions/xls/test.csv");
+        csvFilePath.delete();
+    }
 }
