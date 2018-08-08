@@ -31,34 +31,13 @@ import java.util.zip.ZipOutputStream;
 import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
+import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import ucar.ma2.InvalidRangeException;
 
 public class BatchFileManagerImpl implements BatchFileManager {
 
-    /* temp - will replace with Jen's refactored service classes */
-    private static final String ROSETTA_HOME = System.getProperty("rosetta.content.root.path");  // set in $JAVA_OPTS
-    private static final String UPLOAD_DIR = "uploads";
-
     private static final Logger logger = Logger.getLogger(BatchFileManagerImpl.class);
 
-    /**
-     * Create directory where rosetta stashes files uploaded by users.
-     *
-     * @return The full path to the uploads directory.
-     * @throws IOException If unable to create the uploads directory.
-     */
-    private String createUploadDirectory() throws IOException {
-        File uploadDir = new File(FilenameUtils.concat(ROSETTA_HOME, UPLOAD_DIR));
-
-        // If this directory doesn't exist, create it.
-        if (!uploadDir.exists()) {
-            logger.info("Creating uploads directory at " + uploadDir.getPath());
-            if (!uploadDir.mkdirs()) {
-                throw new IOException("Unable to create uploads directory.");
-            }
-        }
-        return String.valueOf(uploadDir);
-    }
 
     private static ArrayList<String> unzipAndInventory(File inputZipFile, File uncompressed_dir) {
         // http://www.avajava.com/tutorials/lessons/how-do-i-unzip-the-contents-of-a-zip-file.html
@@ -157,7 +136,7 @@ public class BatchFileManagerImpl implements BatchFileManager {
 
     public String batchProcess(BatchProcessZip batchZipFile) throws IOException {
         String uniqueId = batchZipFile.getId();
-        String uploadDir = createUploadDirectory();
+        String uploadDir = PropertyUtils.getUploadDir();
 
         String filePath = FilenameUtils.concat(uploadDir, uniqueId);
         List<String> convertedFiles = new ArrayList<>();

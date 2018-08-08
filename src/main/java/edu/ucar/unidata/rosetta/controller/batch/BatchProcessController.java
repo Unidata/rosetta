@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
 import edu.ucar.unidata.rosetta.service.batch.BatchFileManagerImpl;
-import edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl;
+import edu.ucar.unidata.rosetta.util.PropertyUtils;
 
 /**
  * Main controller for the Rosetta batch processing feature.
@@ -40,7 +40,6 @@ public class BatchProcessController implements HandlerExceptionResolver {
 
     protected static Logger logger = Logger.getLogger(BatchProcessController.class);
 
-    private DataManagerImpl dataManager = new DataManagerImpl();
     private BatchFileManagerImpl batchFileManager = new BatchFileManagerImpl();
 
 
@@ -49,18 +48,17 @@ public class BatchProcessController implements HandlerExceptionResolver {
 
 
     /**
-     * Accepts a POST request for an uploaded zip file to be batch processed.
-     * Calls out to batch rocessing code
-     * Returns a zip file of the converted datasets.
+     * Accepts a POST request for an uploaded zip file to be batch processed. Calls out to batch
+     * rocessing code Returns a zip file of the converted datasets.
      *
      * @param batchZipFile The batchZipFile form backing object containing the file.
-     * @param request The HttpServletRequest with which to glean the client IP address.
+     * @param request      The HttpServletRequest with which to glean the client IP address.
      * @return A String of the local file name for the ASCII file (or null for an error).
      */
     @RequestMapping(value = "/batchProcess", method = RequestMethod.POST, produces = "application/zip")
     @ResponseBody
-    public Resource batchProcess(BatchProcessZip batchZipFile, HttpServletRequest request, HttpServletResponse response) throws IOException{
-        String id = dataManager.createUniqueDataId(request);
+    public Resource batchProcess(BatchProcessZip batchZipFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String id = PropertyUtils.createUniqueDataId(request);
         batchZipFile.setId(id);
         String processedZipFile;
 
@@ -73,8 +71,10 @@ public class BatchProcessController implements HandlerExceptionResolver {
         response.setHeader("Content-Length", String.valueOf(zipFile.length()));
         return new FileSystemResource(zipFile.getAbsolutePath());
     }
+
     /**
-     * This method gracefully handles any uncaught exception that are fatal in nature and unresolvable by the user.
+     * This method gracefully handles any uncaught exception that are fatal in nature and
+     * unresolvable by the user.
      *
      * @param request   The current HttpServletRequest request.
      * @param response  The current HttpServletRequest response.
