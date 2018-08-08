@@ -30,15 +30,12 @@
     </property>
   </bean>
 
-    <!-- Static resources since we are handling all requests.
-         These are front end resources (css, etc.) and xml files -->
-    <mvc:resources location="/frontEndResources/, /WEB-INF/classes/resources/"
-                   mapping="/resources/**"/>
-    <mvc:resources location="file:#{systemProperties['rosetta.content.root.path']}/downloads/"
-                   mapping="/download/**"/>
-    <mvc:resources location="/batch/"
-                   mapping="/batch/**"/>
-
+  <!-- Static resources since we are handling all requests.
+       These are front end resources (css, etc.) and xml files -->
+  <mvc:resources location="/frontEndResources/, /WEB-INF/classes/resources/"
+    mapping="/resources/**"/>
+  <mvc:resources location="file:#{systemProperties['rosetta.content.root.path']}/downloads/"
+    mapping="/download/**"/>
 
   <!-- Configure Spring-Security  -->
   <!--
@@ -171,7 +168,6 @@
   <bean class="edu.ucar.unidata.rosetta.service.wizard.CfTypeDataManagerImpl"
     id="cfTypeDataManager">
     <property name="cfTypeDataDao" ref="cfTypeDataDao"/>
-    <property name="platformDao" ref="platformDao"/>
   </bean>
 
   <bean class="edu.ucar.unidata.rosetta.service.wizard.CustomFileAttributesManagerImpl"
@@ -189,12 +185,12 @@
   </bean>
 
   <bean class="edu.ucar.unidata.rosetta.service.wizard.ResourceManagerImpl" id="resourceManager">
-    <property name="cfTypeDao" ref="cfTypeDao"/>
-    <property name="communityDao" ref="communityDao"/>
-    <property name="delimiterDao" ref="delimiterDao"/>
-    <property name="fileTypeDao" ref="fileTypeDao"/>
-    <property name="metadataProfileDao" ref="metadataProfileDao"/>
-    <property name="platformDao" ref="platformDao"/>
+    <property name="cfTypeResourceDao" ref="cfTypeResourceDao"/>
+    <property name="communityResourceDao" ref="communityResourceDao"/>
+    <property name="delimiterResourceDao" ref="delimiterResourceDao"/>
+    <property name="fileTypeResourceDao" ref="fileTypeResourceDao"/>
+    <property name="metadataProfileResourceDao" ref="metadataProfileResourceDao"/>
+    <property name="platformResourceDao" ref="platformResourceDao"/>
   </bean>
 
   <bean class="edu.ucar.unidata.rosetta.service.wizard.MetadataManagerImpl" id="metadataManager">
@@ -214,19 +210,45 @@
     <property name="userDao" ref="userDao"/>
   </bean>
 
-  <!-- Datasource injection -->
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcCfTypeDao" id="cfTypeDao">
+  <!-- Resource Data Source Injection -->
+  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcCfTypeResourceDao" id="cfTypeResourceDao">
     <property name="dataSource" ref="dbDataSource"/>
   </bean>
 
+  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcCommunityResourceDao" id="communityResourceDao">
+    <property name="dataSource" ref="dbDataSource"/>
+  </bean>
+
+  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcDelimiterResourceDao" id="delimiterResourceDao">
+    <property name="dataSource" ref="dbDataSource"/>
+  </bean>
+
+  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcFileTypeResourceDao" id="fileTypeResourceDao">
+    <property name="dataSource" ref="dbDataSource"/>
+  </bean>
+
+  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcMetadataProfileResourceDao" id="metadataProfileResourceDao">
+    <property name="dataSource" ref="dbDataSource"/>
+  </bean>
+
+  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcPlatformResourceDao" id="platformResourceDao">
+      <property name="dataSource" ref="dbDataSource"/>
+  </bean>
+
+  <!-- Properties Data Source Injection -->
+  <bean class="edu.ucar.unidata.rosetta.repository.JdbcPropertiesDao" id="propertiesDao">
+    <property name="dataSource" ref="dbDataSource"/>
+  </bean>
+
+  <!-- User Data Source Injection -->
+  <bean class="edu.ucar.unidata.rosetta.repository.user.JdbcUserDao" id="userDao">
+    <property name="dataSource" ref="dbDataSource"/>
+  </bean>
+
+  <!-- Wizard Data Source Injection -->
   <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcCfTypeDataDao" id="cfTypeDataDao">
     <property name="dataSource" ref="dbDataSource"/>
   </bean>
-
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcCommunityDao" id="communityDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
-
   <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcCustomFileAttributesDao" id="customFileAttributesDao">
     <property name="dataSource" ref="dbDataSource"/>
   </bean>
@@ -235,27 +257,7 @@
     <property name="dataSource" ref="dbDataSource"/>
   </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcDelimiterDao" id="delimiterDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
-
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcFileTypeDao" id="fileTypeDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
-
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcMetadataProfileDao" id="metadataProfileDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
-
   <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcMetadataDao" id="metadataDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
-
-  <bean class="edu.ucar.unidata.rosetta.repository.resources.JdbcPlatformDao" id="platformDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
-
-  <bean class="edu.ucar.unidata.rosetta.repository.JdbcPropertiesDao" id="propertiesDao">
     <property name="dataSource" ref="dbDataSource"/>
   </bean>
 
@@ -263,9 +265,6 @@
     <property name="dataSource" ref="dbDataSource"/>
   </bean>
 
-  <bean class="edu.ucar.unidata.rosetta.repository.user.JdbcUserDao" id="userDao">
-    <property name="dataSource" ref="dbDataSource"/>
-  </bean>
 
   <!-- Declare a datasource that has pooling capabilities-->
   <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dbDataSource">
