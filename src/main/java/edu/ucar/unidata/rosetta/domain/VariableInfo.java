@@ -6,6 +6,8 @@
 package edu.ucar.unidata.rosetta.domain;
 
 import java.util.List;
+import java.util.Objects;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import ucar.nc2.Attribute;
 
@@ -17,8 +19,8 @@ public class VariableInfo {
 
   private int columnId;
   private String name;
-  private List<Attribute> rosettaControlMetadata;
-  private List<Attribute> variableMetadata;
+  private List<RosettaAttribute> rosettaControlMetadata;
+  private List<RosettaAttribute> variableMetadata;
 
   /**
    * Returns ID of the column in the CSV file.
@@ -61,7 +63,7 @@ public class VariableInfo {
    *
    * @return The rosetta control metadata.
    */
-  public List<Attribute> getRosettaControlMetadata() {
+  public List<RosettaAttribute> getRosettaControlMetadata() {
     return rosettaControlMetadata;
   }
 
@@ -70,7 +72,7 @@ public class VariableInfo {
    *
    * @param rosettaControlMetadata The rosetta control metadata.
    */
-  public void setRosettaControlMetadata(List<Attribute> rosettaControlMetadata) {
+  public void setRosettaControlMetadata(List<RosettaAttribute> rosettaControlMetadata) {
     this.rosettaControlMetadata = rosettaControlMetadata;
   }
 
@@ -79,7 +81,7 @@ public class VariableInfo {
    *
    * @return The variable metadata.
    */
-  public List<Attribute> getVariableMetadata() {
+  public List<RosettaAttribute> getVariableMetadata() {
     return variableMetadata;
   }
 
@@ -88,7 +90,7 @@ public class VariableInfo {
    *
    * @param variableMetadata The variable metadata.
    */
-  public void setVariableMetadata(List<Attribute> variableMetadata) {
+  public void setVariableMetadata(List<RosettaAttribute> variableMetadata) {
     this.variableMetadata = variableMetadata;
   }
 
@@ -101,4 +103,28 @@ public class VariableInfo {
   public String toString() {
     return ToStringBuilder.reflectionToString(this);
   }
+
+  /** Override equals for VariableInfo. */
+  @Override
+  public boolean equals(Object obj) {
+
+    if (obj == this) return true;
+    if (!(obj instanceof VariableInfo)) {
+      return false;
+    }
+
+    VariableInfo vi = (VariableInfo) obj;
+
+    return columnId == vi.getColumnId() &&
+            Objects.equals(name, vi.getName()) &&
+            Objects.equals(rosettaControlMetadata, vi.getRosettaControlMetadata()) &&
+            Objects.equals(variableMetadata, vi.getVariableMetadata());
+  }
+
+  /** Override Object.hashCode() to implement equals. */
+  @Override
+  public int hashCode() {
+    return Objects.hash(columnId, name, rosettaControlMetadata, variableMetadata);
+  }
+
 }

@@ -6,8 +6,9 @@
 package edu.ucar.unidata.rosetta.domain;
 
 import java.util.List;
+import java.util.Objects;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import ucar.netcdf.Attribute;
 
 /**
  * An object representing a rosetta template. Used for both custom and known file types. As per:
@@ -23,7 +24,7 @@ public class Template {
   private String creationDate;
   private String delimiter;
   private String format;  // required
-  private List<Attribute> globalMetadata;
+  private List<RosettaAttribute> globalMetadata;
   private List<Integer> headerLineNumbers;
   private String platform;
   private String rosettaVersion;
@@ -128,7 +129,7 @@ public class Template {
    *
    * @return The global metadata.
    */
-  public List<Attribute> getGlobalMetadata() {
+  public List<RosettaAttribute> getGlobalMetadata() {
     return globalMetadata;
   }
 
@@ -137,7 +138,7 @@ public class Template {
    *
    * @param globalMetadata The global metadata.
    */
-  public void setGlobalMetadata(List<Attribute> globalMetadata) {
+  public void setGlobalMetadata(List<RosettaAttribute> globalMetadata) {
     this.globalMetadata = globalMetadata;
   }
 
@@ -259,4 +260,38 @@ public class Template {
   public String toString() {
     return ToStringBuilder.reflectionToString(this);
   }
+
+  /** Override equals() for Template. */
+  @Override
+  public boolean equals(Object obj) {
+
+    if (obj == this) return true;
+    if (!(obj instanceof Template)) {
+      return false;
+    }
+
+    Template t = (Template) obj;
+
+    return Objects.equals(cfType, t.getCfType()) &&
+            Objects.equals(community, t.getCommunity()) &&
+            Objects.equals(creationDate, t.getCreationDate()) &&
+            Objects.equals(delimiter, t.getDelimiter()) &&
+            Objects.equals(format, t.getFormat()) &&
+            Objects.equals(globalMetadata, t.getGlobalMetadata()) &&
+            Objects.equals(headerLineNumbers, t.getHeaderLineNumbers()) &&
+            Objects.equals(platform, t.getPlatform()) &&
+            Objects.equals(rosettaVersion, t.getRosettaVersion()) &&
+            Objects.equals(serverId, t.getServerId()) &&
+            Objects.equals(templateVersion, t.getTemplateVersion()) &&
+            Objects.equals(variableInfoList, t.getVariableInfoList());
+  }
+
+  /** Override Object.hashCode() to implement equals. */
+  @Override
+  public int hashCode() {
+    return Objects.hash(cfType, community, creationDate, delimiter,
+            format, globalMetadata, headerLineNumbers, platform, rosettaVersion,
+            serverId, templateVersion, variableInfoList);
+  }
+
 }
