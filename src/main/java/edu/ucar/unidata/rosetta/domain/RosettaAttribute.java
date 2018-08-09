@@ -88,7 +88,9 @@ public class RosettaAttribute {
         this.type = type;
     }
 
-    /** Override equals() for RosettaAttribute. */
+    /**
+     * Override equals() for RosettaAttribute.
+     */
     @Override
     public boolean equals(Object obj) {
 
@@ -104,7 +106,9 @@ public class RosettaAttribute {
                 Objects.equals(type, ra.getType());
     }
 
-    /** Override Object.hashCode() to implement equals. */
+    /**
+     * Override Object.hashCode() to implement equals.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(name, value, type);

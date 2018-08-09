@@ -55,15 +55,15 @@ public class TemplateTest {
         var0.setColumnId(0);
         var0.setName("variable0");
 
-        List<RosettaAttribute> var0Attrs =  new ArrayList<>();
+        List<RosettaAttribute> var0Attrs = new ArrayList<>();
         var0Attrs.add(new RosettaAttribute("units", "K", attrString));
         var0Attrs.add(new RosettaAttribute("name", "varname0", attrString));
         var0Attrs.add(new RosettaAttribute("long_name", "var0 long name", attrString));
 
         var0.setVariableMetadata(var0Attrs);
 
-        List<RosettaAttribute> rosettaControlMetadata0 =  new ArrayList<>();
-        rosettaControlMetadata0.add(new RosettaAttribute("type","int", attrString));
+        List<RosettaAttribute> rosettaControlMetadata0 = new ArrayList<>();
+        rosettaControlMetadata0.add(new RosettaAttribute("type", "int", attrString));
         rosettaControlMetadata0.add(new RosettaAttribute("coordinateVariable", "true", attrBool));
         rosettaControlMetadata0.add(new RosettaAttribute("coordinateVariableType", "lat", attrString));
         var0.setRosettaControlMetadata(rosettaControlMetadata0);
@@ -73,15 +73,15 @@ public class TemplateTest {
         var1.setColumnId(0);
         var1.setName("variable1");
 
-        List<RosettaAttribute> var1Attrs =  new ArrayList<>();
+        List<RosettaAttribute> var1Attrs = new ArrayList<>();
         var1Attrs.add(new RosettaAttribute("units", "K", attrString));
         var1Attrs.add(new RosettaAttribute("name", "varname0", attrString));
         var1Attrs.add(new RosettaAttribute("long_name", "var0 long name", attrString));
 
         var1.setVariableMetadata(var1Attrs);
 
-        List<RosettaAttribute> rosettaControlMetadata1 =  new ArrayList<>();
-        rosettaControlMetadata1.add(new RosettaAttribute("type","int", attrString));
+        List<RosettaAttribute> rosettaControlMetadata1 = new ArrayList<>();
+        rosettaControlMetadata1.add(new RosettaAttribute("type", "int", attrString));
         rosettaControlMetadata1.add(new RosettaAttribute("coordinateVariable", "true", attrBool));
         rosettaControlMetadata1.add(new RosettaAttribute("coordinateVariableType", "lat", attrString));
         var1.setRosettaControlMetadata(rosettaControlMetadata1);
@@ -99,6 +99,5 @@ public class TemplateTest {
         Assert.assertNotNull(json);
         Template template2 = mapper.readValue(json, Template.class);
         Assert.assertEquals(template, template2);
-
     }
 }
