@@ -10,43 +10,48 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
 
 
 public class TemplateTest {
 
-    Template template;
+    private List<Template> templates = new ArrayList<>();
+    private Template bogusTemplate;
+    private Template wavegliderTemplate;
 
-    String attrString = "STRING";
-    String attrInt = "INT";
-    String attrDouble = "DOUBLE";
-    String attrBool = "BOOLEAN";
+    private String attrString = "STRING";
+    private String attrBool = "BOOLEAN";
 
-    @Before
-    public void setupTemplate() {
-        template = new Template();
+    private void createBogusTemplate() {
+        bogusTemplate = new Template();
 
-        template.setCfType("cftype");
-        template.setCommunity("community");
-        template.setCreationDate("2018-08-09T130412.345");
-        template.setDelimiter(" ");
-        template.setFormat("custom");
-        template.setPlatform("platform");
-        template.setRosettaVersion("0.4");
-        template.setServerId("serverId");
-        template.setTemplateVersion("2.0");
+        bogusTemplate.setCfType("cftype");
+        bogusTemplate.setCommunity("community");
+        bogusTemplate.setCreationDate("2018-08-09T130412.345");
+        bogusTemplate.setDelimiter(" ");
+        bogusTemplate.setFormat("custom");
+        bogusTemplate.setPlatform("platform");
+        bogusTemplate.setRosettaVersion("0.4");
+        bogusTemplate.setServerId("serverId");
+        bogusTemplate.setTemplateVersion("2.0");
 
         List<RosettaAttribute> globalMetadata = new ArrayList<>();
         globalMetadata.add(new RosettaAttribute("gastr", "yo", attrString));
         globalMetadata.add(new RosettaAttribute("gaint", "1", attrString));
         globalMetadata.add(new RosettaAttribute("ga3float", "2.3", attrString));
-        template.setGlobalMetadata(globalMetadata);
+        bogusTemplate.setGlobalMetadata(globalMetadata);
 
         List<Integer> headerLineNumbers = new ArrayList<>();
         headerLineNumbers.add(0);
-        template.setHeaderLineNumbers(headerLineNumbers);
+        bogusTemplate.setHeaderLineNumbers(headerLineNumbers);
 
         List<VariableInfo> variableInfoList = new ArrayList<>();
 
@@ -88,16 +93,49 @@ public class TemplateTest {
 
         variableInfoList.add(var0);
         variableInfoList.add(var1);
-        template.setVariableInfoList(variableInfoList);
+        bogusTemplate.setVariableInfoList(variableInfoList);
+    }
+
+    private void readWavegliderTemplate() throws IOException {
+        File wavegliderTemplateFile = Paths.get(TestUtils.getTestDataDirStr(),
+                "singleTrajectory", "waveglider", "rosetta.template").toFile();
+
+        com.fasterxml.jackson.databind.ObjectMapper templateMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        FileReader templateFileReader = new FileReader(wavegliderTemplateFile);
+        wavegliderTemplate = templateMapper.readValue(templateFileReader, Template.class);
+        templateFileReader.close();
+    }
+
+    @Before
+    public void setupTemplates() throws IOException {
+        createBogusTemplate();
+        readWavegliderTemplate();
+
+        // any template added to templates will be round-trip tested
+        List<Template> templates = new ArrayList<>();
+        templates.add(bogusTemplate);
+        templates.add(wavegliderTemplate);
     }
 
     @Test
     public void roundTripJson() throws IOException {
-        // make sure we can read the templates we write
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(template);
-        Assert.assertNotNull(json);
-        Template template2 = mapper.readValue(json, Template.class);
-        Assert.assertEquals(template, template2);
+        for (Template template : templates) {
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(template);
+            Assert.assertNotNull(json);
+            Template template2 = mapper.readValue(json, Template.class);
+            Assert.assertEquals(template, template2);
+        }
+    }
+
+    @Test
+    public void testWavegliderTemplate() {
+        // check a few items to make sure things are there, as expected
+        Assert.assertEquals(wavegliderTemplate.getCfType(),"trajectoryProfile");
+        Assert.assertEquals(wavegliderTemplate.getHeaderLineNumbers().size(), 1);
+        int headerLine = wavegliderTemplate.getHeaderLineNumbers().get(0);
+        Assert.assertNotNull(headerLine);
+        Assert.assertEquals(headerLine, 0);
+        wavegliderTemplate.getGlobalMetadata().contains(new RosettaAttribute("sea_name", "Atlantic", "String"));
     }
 }
