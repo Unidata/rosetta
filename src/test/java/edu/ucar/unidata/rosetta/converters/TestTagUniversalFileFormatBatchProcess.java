@@ -20,8 +20,8 @@ import org.junit.experimental.categories.Category;
 import java.io.File;
 import java.io.IOException;
 
-import edu.ucar.unidata.rosetta.util.TestDir;
 import edu.ucar.unidata.rosetta.util.test.category.NeedsLocalServer;
+import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,10 +32,10 @@ import static org.junit.Assert.assertEquals;
 public class TestTagUniversalFileFormatBatchProcess {
 
     private static String etuffDir = String.join(File.separator, "conversions", "TagUniversalFileFormat");
-    private static String etuffFileTld = TestDir.rosettaLocalTestDataDir + etuffDir;
+    private static String etuffFileTld = TestUtils.getTestDataDirStr() + etuffDir;
     private static String uploadFile = String.join(File.separator, etuffFileTld, "test_simple_api.zip");
 
-    String postUrl = "http://localhost:8888/rosetta/batchProcess";
+    String batchProcessUrl = TestUtils.getTestServerUrl() + "/batchProcess";
 
     @Test
     public void testBatchProcessEtuff() {
@@ -44,7 +44,7 @@ public class TestTagUniversalFileFormatBatchProcess {
             File fileToUpload = new File(uploadFile);
             FileBody fileBody = new FileBody(fileToUpload);
 
-            HttpPost post = new HttpPost(postUrl);
+            HttpPost post = new HttpPost(batchProcessUrl);
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.addPart("batchZipFile", fileBody);
