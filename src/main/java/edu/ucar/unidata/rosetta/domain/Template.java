@@ -7,8 +7,12 @@ package edu.ucar.unidata.rosetta.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * An object representing a rosetta template. Used for both custom and known file types. As per:
@@ -259,6 +263,69 @@ public class Template {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    /**
+     * Update a template with new values found in a second template. Generally, only metadata
+     * are updated. Used for overriding global and variable metadata during batch processing.
+     *
+     * @param updatedTemplate template containing new metadata
+     */
+    public void update(Template updatedTemplate) {
+
+        List<Integer> headerLineNumbersUpdate = updatedTemplate.getHeaderLineNumbers();
+        if (headerLineNumbersUpdate != null) {
+            // simple to update - just replace old list with new list
+            this.headerLineNumbers = headerLineNumbersUpdate;
+        }
+
+        List<RosettaAttribute> globalMetadataUpdates = updatedTemplate.getGlobalMetadata();
+        if (globalMetadataUpdates != null) {
+            // a little more complex. We need to go through each new piece of global metadata,
+            // search for it by name in the existing list of global metadata, and remove it if it
+            // exits. Then, we can merge the new and existing lists of global metadata.
+            for (RosettaAttribute globalMetadataUpdate : globalMetadataUpdates) {
+                Predicate<RosettaAttribute> attributePredicate = attr -> attr.getName().equals(globalMetadataUpdate.getName());
+                this.globalMetadata.removeIf(attributePredicate);
+            }
+            this.globalMetadata.addAll(globalMetadataUpdates);
+        }
+
+        List<VariableInfo> variableInfoListUpdates = updatedTemplate.getVariableInfoList();
+        if (variableInfoListUpdates != null) {
+            // there are two cases to handle here.
+            // for each piece of new variableInfo, check if the name mathces the name of a VariableInfo
+            // object in the list. If so, update it using VariableInfo.update(). If the name of the new
+            // piece of variableInfo is not in the list, then it is new and can be added to the list.
+
+            // let's get all of the names of the variableInfo currently held in variableInfoList
+            List<String> names = new ArrayList<>();
+            for (VariableInfo variableInfo : variableInfoList) {
+                names.add(variableInfo.getName());
+            }
+
+            // now, let's figure out what to do with each new piece of variableInfo
+            for (VariableInfo variableInfoUpdate : variableInfoListUpdates) {
+                String updateName = variableInfoUpdate.getName();
+                // for each updated variableInfo entry, check if the name already appears in
+                // this object's variableInfoList
+                if (names.contains(updateName)) {
+                    // name already in list, so update it where it is found
+                    int updateIndex = names.indexOf(updateName);
+                    VariableInfo oldVarInfo = variableInfoList.get(updateIndex);
+                    // if updated template has colNum set to -1, that means remove the variable
+                    if (variableInfoUpdate.getColumnId() == -9) {
+                        variableInfoList.remove(updateIndex);
+                    } else {
+                        oldVarInfo.updateVariableInfo(variableInfoUpdate);
+                        variableInfoList.set(updateIndex, oldVarInfo);
+                    }
+                } else {
+                    // this is a new addition - go ahead and add it to the list
+                    variableInfoList.add(variableInfoUpdate);
+                }
+            }
+        }
     }
 
     /**

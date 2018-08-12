@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Object representing a variable-specific information as outlined in
@@ -16,7 +17,7 @@ import java.util.Objects;
  */
 public class VariableInfo {
 
-    private int columnId;
+    private int columnId = -1; // -1 does not make sense, so check for this value to see if it has not been set
     private String name;
     private List<RosettaAttribute> rosettaControlMetadata;
     private List<RosettaAttribute> variableMetadata;
@@ -102,6 +103,52 @@ public class VariableInfo {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    /**
+     * update this VariableInfo object with new values from another VariableInfo object.
+     *
+     * @param updatedVariableInfo
+     */
+    public void updateVariableInfo(VariableInfo updatedVariableInfo) {
+
+        if (updatedVariableInfo.getName() != null) {
+            this.name = updatedVariableInfo.getName();
+        }
+
+        if (updatedVariableInfo.getColumnId() != -1) {
+            this.columnId = updatedVariableInfo.getColumnId();
+        }
+
+        List<RosettaAttribute> variableMetadataUpdates = updatedVariableInfo.getVariableMetadata();
+        if (variableMetadataUpdates != null) {
+            // a little more complex. We need to go through each new piece of variable metadata,
+            // search for it by name in the existing list of variable metadata, and remove it if it
+            // exits. Then, we can merge the new and existing lists of variable metadata.
+            for (RosettaAttribute variableMetadataUpdate : variableMetadataUpdates) {
+                Predicate<RosettaAttribute> attributePredicate = attr -> attr.getName().equals(variableMetadataUpdate.getName());
+                this.variableMetadata.removeIf(attributePredicate);
+            }
+            this.variableMetadata.addAll(variableMetadataUpdates);
+            // remove any attributes with empty values
+            Predicate<RosettaAttribute> emptyValuePredicate = attr -> attr.getValue().equals("");
+            this.variableMetadata.removeIf(emptyValuePredicate);
+        }
+
+        List<RosettaAttribute> rosettaControlMetadataUpdates = updatedVariableInfo.getRosettaControlMetadata();
+        if (rosettaControlMetadataUpdates != null) {
+            // a little more complex. We need to go through each new piece of control metadata,
+            // search for it by name in the existing list of control metadata, and remove it if it
+            // exits. Then, we can merge the new and existing lists of control metadata.
+            for (RosettaAttribute rosettaControlMetadataUpdate : rosettaControlMetadataUpdates) {
+                Predicate<RosettaAttribute> attributePredicate = attr -> attr.getName().equals(rosettaControlMetadataUpdate.getName());
+                this.rosettaControlMetadata.removeIf(attributePredicate);
+            }
+            this.rosettaControlMetadata.addAll(rosettaControlMetadataUpdates);
+            // remove any attributes with empty values
+            Predicate<RosettaAttribute> emptyValuePredicate = attr -> attr.getValue().equals("");
+            this.rosettaControlMetadata.removeIf(emptyValuePredicate);
+        }
     }
 
     /**
