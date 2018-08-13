@@ -106,7 +106,7 @@ public class SingleStationTrajectory extends NetcdfFileManager {
 
     Variable theVar = ncFileWriter.findVariable(name.substring(0, 3));
 
-    ncFileWriter.write(theVar, new ArrayScalar(Float.parseFloat(coordVarVal)));
+    ncFileWriter.write(theVar, new ArrayScalar(Float.parseFloat(coordVarVal), false));
 
     return ncFileWriter;
   }

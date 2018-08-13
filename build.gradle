@@ -32,7 +32,7 @@ targetCompatibility = 1.8
 ext {
     springVersion = "4.3.13.RELEASE"
     springSecurityVersion = "4.2.3.RELEASE"
-    cdmVersion = "4.6.11"
+    cdmVersion = "5.0.0-beta3"
 
     source = file("src/main/jekyll/").absolutePath
     destination = file("build/_site").absolutePath
@@ -60,7 +60,8 @@ dependencies {
     testCompile "org.springframework.security:spring-security-test:$springSecurityVersion"
 
     // netCDF-Java/CDM deps
-    compile "edu.ucar:netcdfAll:$cdmVersion"
+    compile "edu.ucar:cdm:${cdmVersion}"
+    compile "edu.ucar:netcdf4:${cdmVersion}"
 
     // others
     compile "org.slf4j:slf4j-log4j12:1.7.25"
@@ -150,7 +151,7 @@ test {
 
 repositories {
     maven {
-        url "https://artifacts.unidata.ucar.edu/repository/unidata-releases/"
+        url "https://artifacts.unidata.ucar.edu/repository/unidata-all/"
     }
 }
 

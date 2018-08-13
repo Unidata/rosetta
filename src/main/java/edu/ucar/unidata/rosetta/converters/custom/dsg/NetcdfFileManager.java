@@ -720,7 +720,7 @@ public abstract class NetcdfFileManager {
             ncFileWriter.write(theVar, vals);
           } else if (dt.equals(DataType.INT)) {
             ArrayInt.D1 vals =
-                new ArrayInt.D1(outerList.size());
+                new ArrayInt.D1(outerList.size(), false);
             int i = 0;
             for (List<String> innerList : outerList) {
               int f = Integer.parseInt(

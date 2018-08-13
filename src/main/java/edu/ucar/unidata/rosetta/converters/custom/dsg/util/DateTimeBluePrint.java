@@ -178,7 +178,7 @@ public class DateTimeBluePrint {
       Variable dateTimeVar = ncFileWriter.findVariable(dateTimeVarName);
 
       ArrayLong.D1 longVals =
-          new ArrayLong.D1(numObs);
+          new ArrayLong.D1(numObs, false);
       i = 0;
       for (long dateTimeLong : dateTimeArray) {
         longVals.set(i, dateTimeLong);
