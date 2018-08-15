@@ -9,9 +9,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-import edu.ucar.unidata.rosetta.util.TestDir;
+import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
 import edu.ucar.unidata.rosetta.util.XlsToCsvUtil;
 
 import static org.junit.Assert.assertTrue;
@@ -24,13 +25,15 @@ public class TestExcelToCsv {
     @Test
     @Ignore
     public void testXlsConvert() throws RosettaFileException {
-        String xlsFilePath = TestDir.rosettaLocalTestDataDir + "conversions/xls/test.xls";
-        assertTrue(XlsToCsvUtil.convert(xlsFilePath, null));
+        File xlsFilePath = Paths.get(TestUtils.getTestDataDirStr(),
+                "conversions", "xls", "test.xls").toFile();
+        assertTrue(XlsToCsvUtil.convert(xlsFilePath.getAbsolutePath(), null));
     }
 
     @After
     public void cleanup() {
-        File csvFilePath = new File(TestDir.rosettaLocalTestDataDir + "conversions/xls/test.csv");
+        File csvFilePath = Paths.get(TestUtils.getTestDataDirStr(),
+                "conversions", "xls", "test.xls").toFile();
         csvFilePath.delete();
     }
 }

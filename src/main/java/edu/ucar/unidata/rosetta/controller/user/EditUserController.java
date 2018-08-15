@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,6 +45,7 @@ import org.springframework.web.servlet.view.RedirectView;
  *
  * @author oxelson@ucar.edu
  */
+@Ignore("enable once user managment is working")
 @Controller
 public class EditUserController implements HandlerExceptionResolver {
 
