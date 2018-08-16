@@ -13,6 +13,7 @@ import java.util.List;
  */
 public interface MetadataProfileDao {
 
+
   public List<MetadataProfile> getMetadataProfileByType(String metadataProfileType);
 
 }

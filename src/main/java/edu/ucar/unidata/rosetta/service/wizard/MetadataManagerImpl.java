@@ -22,6 +22,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 
+import javax.annotation.Resource;
+
 /**
  * Implements MetadataManager functionality.
  *
@@ -34,10 +36,30 @@ public class MetadataManagerImpl implements MetadataManager {
   private MetadataDao metadataDao;
   private MetadataProfileDao metadataProfileDao;
 
+  // The other managers we make use of in this file.
+  @Resource(name = "wizardManager")
+  private WizardManager wizardManager;
 
-  public void getMetadataProfileData() {
+
+  public List<MetadataProfile> getMetadataProfiles(String id) {
+    List<MetadataProfile> metadataProfiles = new ArrayList<>();
+    /*
+    CfTypeData cfTypeData = wizardManager.lookupPersistedCfTypeDataById(id);
+    for (String metadataProfile : cfTypeData.getMetadataProfile().split(",")) {
+      logger.info(metadataProfile);
+    }
     metadataProfileDao.getMetadataProfileByType("CF");
+    */
+    return metadataProfiles;
   }
+
+
+
+
+
+
+
+
 
 
   /**

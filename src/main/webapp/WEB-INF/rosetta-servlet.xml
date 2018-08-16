@@ -168,28 +168,8 @@
           id="dbInitManager"/>
 
 
-    <!-- Data Access Object (DAO) injection into service-layer classes. -->
-    <bean class="edu.ucar.unidata.rosetta.service.wizard.CfTypeDataManagerImpl"
-          id="cfTypeDataManager">
-        <property name="cfTypeDataDao" ref="cfTypeDataDao"/>
-    </bean>
-
-    <bean class="edu.ucar.unidata.rosetta.service.wizard.CustomFileAttributesManagerImpl"
-          id="customFileAttributesManager">
-        <property name="customFileAttributesDao" ref="customFileAttributesDao"/>
-        <property name="uploadedFileDao" ref="uploadedFileDao"/>
-    </bean>
-
-    <bean class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl" id="dataManager">
-        <property name="dataDao" ref="dataDao"/>
-    </bean>
-
-    <bean class="edu.ucar.unidata.rosetta.service.wizard.MetadataManagerImpl" id="metadataManager">
-        <property name="metadataProfileDao" ref="metadataProfileDao"/>
-
-    </bean>
-
-    <bean class="edu.ucar.unidata.rosetta.service.wizard.ResourceManagerImpl" id="resourceManager">
+    <!-- Data Access Object (DAO) injection into resource-related service-layer classes. -->
+    <bean class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl" id="resourceManager">
         <property name="cfTypeResourceDao" ref="cfTypeResourceDao"/>
         <property name="communityResourceDao" ref="communityResourceDao"/>
         <property name="delimiterResourceDao" ref="delimiterResourceDao"/>
@@ -198,11 +178,7 @@
         <property name="platformResourceDao" ref="platformResourceDao"/>
     </bean>
 
-    <bean class="edu.ucar.unidata.rosetta.service.wizard.UploadedFileManagerImpl"
-          id="uploadedFileManager">
-        <property name="uploadedFileDao" ref="uploadedFileDao"/>
-    </bean>
-
+    <!-- Data Access Object (DAO) injection into user-related service-layer classes. -->
     <bean class="edu.ucar.unidata.rosetta.service.user.UserDetailsServiceImpl"
           id="userDetailsService">
         <property name="userDao" ref="userDao"/>
@@ -211,6 +187,30 @@
     <bean class="edu.ucar.unidata.rosetta.service.user.UserManagerImpl" id="userManager">
         <property name="userDao" ref="userDao"/>
     </bean>
+
+    <!-- Data Access Object (DAO) injection into wizard-related service-layer classes. -->
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.WizardManagerImpl"
+          id="wizardManager">
+        <property name="uploadedFileDao" ref="uploadedFileDao"/>
+        <property name="wizardDataDao" ref="wizardDataDao"/>
+    </bean>
+
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl" id="dataManager">
+        <property name="dataDao" ref="dataDao"/>
+    </bean>
+
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.MetadataManagerImpl" id="metadataManager">
+        <property name="metadataProfileDao" ref="metadataProfileDao"/>
+    </bean>
+
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.UploadedFileManagerImpl"
+          id="uploadedFileManager">
+        <property name="uploadedFileDao" ref="uploadedFileDao"/>
+    </bean>
+
+
+
+
 
     <!-- Data Access Object (DAO) injection into utility-layer classes. -->
 
@@ -258,13 +258,8 @@
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <!-- Wizard datasource injection.   Wizard-related classes need to access to persisted data. -->
-    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcCfTypeDataDao" id="cfTypeDataDao">
-        <property name="dataSource" ref="dbDataSource"/>
-    </bean>
-
-    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcCustomFileAttributesDao"
-          id="customFileAttributesDao">
+    <!-- Wizard datasource injection. Wizard-related classes need to access to persisted data. -->
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcWizardDataDao" id="wizardDataDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 

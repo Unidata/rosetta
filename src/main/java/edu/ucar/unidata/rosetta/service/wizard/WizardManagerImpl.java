@@ -7,11 +7,16 @@ package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.resources.Community;
 import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
+import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
+import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
+import edu.ucar.unidata.rosetta.repository.wizard.UploadedFileDao;
 import edu.ucar.unidata.rosetta.repository.wizard.WizardDataDao;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Resource;
@@ -19,16 +24,23 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * Implements CF type manager functionality.
+ * Implements wizard manager functionality.
  */
-public class CfTypeManagerImpl implements CfTypeManager {
+public class WizardManagerImpl implements WizardManager {
 
-    private static final Logger logger = Logger.getLogger(CfTypeManagerImpl.class);
+    private static final Logger logger = Logger.getLogger(WizardManagerImpl.class);
 
+    private UploadedFileDao uploadedFileDao;
     private WizardDataDao wizardDataDao;
+
+    @Resource(name = "fileManager")
+    private FileManager fileManager;
 
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
+
+    @Resource(name = "uploadedFileManager")
+    private UploadedFileManager uploadedFileManager;
 
     /**
      * Determines the metadata profile to use based on the data contained in the
@@ -81,19 +93,18 @@ public class CfTypeManagerImpl implements CfTypeManager {
     }
 
     /**
-     * Looks up and retrieves persisted Cf type data using the given ID.
+     * Looks up and retrieves persisted wizard data using the given ID.
      *
      * @param id The ID corresponding to the data to retrieve.
-     * @return The persisted Cf type data.
+     * @return The persisted wizard data.
      */
     @Override
-    public WizardData lookupPersistedCfTypeDataById(String id) {
-        return wizardDataDao.lookupCfDataById(id);
+    public WizardData lookupPersistedWizardDataById(String id) {
+        return wizardDataDao.lookupWizardDataById(id);
     }
 
     /**
-     * Examines the given MetadataProfile object to see if one
-     * of its communities matches the provided community name.
+     * Examines the given MetadataProfile object to see if one of its communities matches the provided community name.
      *
      * @param metadataProfileResource The MetadataProfile object to examine.
      * @param communityName           The community name ot match.
@@ -113,6 +124,22 @@ public class CfTypeManagerImpl implements CfTypeManager {
     }
 
     /**
+     * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
+     * Used in the wizard for header line selection.
+     *
+     * @param id The unique id associated with the file (a sub directory in the uploads directory).
+     * @return A JSON string of the file data parsed by line.
+     * @throws RosettaFileException For any file I/O or JSON conversions problems.
+     */
+    @Override
+    public String parseDataFileByLine(String id) throws RosettaFileException {
+        UploadedFile dataFile = uploadedFileDao.lookupDataFileById(id);
+        String filePath = FilenameUtils
+                .concat(FilenameUtils.concat(PropertyUtils.getUploadDir(), id), dataFile.getFileName());
+        return fileManager.parseByLine(filePath);
+    }
+
+    /**
      * Persists the provided wizard data for the first time.
      *
      * @param wizardData The wizard data to persist.
@@ -123,7 +150,7 @@ public class CfTypeManagerImpl implements CfTypeManager {
     }
 
     /**
-     * Processes the data submitted by the user containing CF type information. If an ID already
+     * Processes the data collected from the wizard for the CF type step. If an ID already
      * exists, the persisted data corresponding to that ID is collected and updated with the newly
      * submitted data.  If no ID exists (is null), the data is persisted for the first time.
      *
@@ -140,7 +167,7 @@ public class CfTypeManagerImpl implements CfTypeManager {
         if (id != null) {
 
             // Get the persisted CF type data corresponding to this ID.
-            WizardData persistedData = lookupPersistedCfTypeDataById(id);
+            WizardData persistedData = lookupPersistedWizardDataById(id);
 
             // Update platform value (can be null).
             persistedData.setPlatform(wizardData.getPlatform());
@@ -169,7 +196,7 @@ public class CfTypeManagerImpl implements CfTypeManager {
             persistedData.setCfType(wizardData.getCfType());
 
             // Update persisted CF type data.
-            updatePersistedCfTypeData(persistedData);
+            updatePersistedWizardData(persistedData);
 
         } else {
             // No ID yet.  First time persisting CF type data.
@@ -186,9 +213,98 @@ public class CfTypeManagerImpl implements CfTypeManager {
             wizardData.setMetadataProfile(determineMetadataProfile(wizardData));
 
             // Persist the Cf type data.
-            persistCfTypeData(wizardData);
+            persistWizardData(wizardData);
         }
     }
+
+    /**
+     * Processes the data submitted by the user containing custom data file attributes.
+     *
+     * @param id The unique ID corresponding to already persisted data.
+     * @param wizardData The WizardData containing custom data file attributes.
+     */
+    @Override
+    public void processCustomFileTypeAttributes(String id, WizardData wizardData) {
+        // Get the persisted CF type data corresponding to this ID.
+        WizardData persistedData = lookupPersistedWizardDataById(id);
+
+        // Handle the no header lines value.
+        if (wizardData.isNoHeaderLines()) {
+            persistedData.setHeaderLineNumbers(null);
+        } else {
+            persistedData.setHeaderLineNumbers(wizardData.getHeaderLineNumbers());
+        }
+
+        // Add the delimiter.
+        persistedData.setDelimiter(wizardData.getDelimiter());
+
+        // Technically, an entry for this ID already exists in the wizardData table from file upload step.
+        // We just need to add/update the header line number and delimiter values.
+        wizardDataDao.updatePersistedWizardData(persistedData);
+    }
+
+    /**
+     * Determines the next step in the wizard based the user specified data file type. This method is called when there
+     * is a divergence of possible routes through the wizard.
+     *
+     * @param id The unique ID corresponding to already persisted data.
+     * @return The next step to redirect the user to in the wizard.
+     */
+    @Override
+    public String processNextStep(String id) {
+
+        // The placeholder for what we are going to return.
+        String nextStep;
+
+        // Get the persisted data.
+        UploadedFileCmd uploadedFileCmd = uploadedFileManager.lookupPersistedDataById(id);
+
+        // The next step depends on what the user specified for the data file type.
+        if (uploadedFileCmd.getDataFileType().equals("Custom_File_Type")) {
+            nextStep = "/customFileTypeAttributes";
+        } else {
+            nextStep = "/generalMetadata";
+        }
+
+        return nextStep;
+    }
+
+    /**
+     * Determines the previous step in the wizard based the user specified data file type. This method is called when
+     * there is a divergence of possible routes through the wizard.
+     *
+     * @param id The unique ID corresponding to already persisted data.
+     * @return The previous step to redirect the user to in the wizard.
+     */
+    @Override
+    public String processPreviousStep(String id) {
+
+        // The placeholder for what we are going to return.
+        String previousStep;
+
+        // Get the persisted data.
+        UploadedFileCmd uploadedFileCmd = uploadedFileManager.lookupPersistedDataById(id);
+
+        // The previous step (if the user chooses to go there) depends
+        // on what the user specified for the data file type.
+        if (uploadedFileCmd.getDataFileType().equals("Custom_File_Type")) {
+            previousStep = "/variableMetadata";
+        } else {
+            previousStep = "/fileUpload";
+        }
+
+        return previousStep;
+    }
+
+    /**
+     * Sets the data access object (DAO) for the UploadedFile object.
+     *
+     * @param uploadedFileDao The service DAO representing a UploadedFile object.
+     */
+    public void setUploadedFileDao(UploadedFileDao uploadedFileDao) {
+        this.uploadedFileDao = uploadedFileDao;
+    }
+
 
     /**
      * Sets the data access object (DAO) for the WizardData object.
@@ -205,7 +321,7 @@ public class CfTypeManagerImpl implements CfTypeManager {
      * @param wizardData The updated wizard data.
      */
     @Override
-    public void updatePersistedCfTypeData(WizardData wizardData) {
+    public void updatePersistedWizardData(WizardData wizardData) {
         wizardDataDao.updatePersistedWizardData(wizardData);
     }
 }

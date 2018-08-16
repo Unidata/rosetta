@@ -9,7 +9,7 @@ import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import edu.ucar.unidata.rosetta.service.wizard.MetadataManager;
-import edu.ucar.unidata.rosetta.service.wizard.ResourceManager;
+import edu.ucar.unidata.rosetta.service.ResourceManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -78,6 +78,8 @@ public class VariableMetadataController implements HandlerExceptionResolver {
       throw new IllegalStateException(
           "No persisted data available for file upload step.  Check the database & the cookie.");
     }
+
+    metadataManager.getMetadataProfiles(rosettaCookie.getValue());
 
     // Create a Data form-backing object.
     Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());

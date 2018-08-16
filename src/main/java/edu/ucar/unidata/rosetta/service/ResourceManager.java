@@ -3,7 +3,7 @@
  * See LICENSE for license information.
  */
 
-package edu.ucar.unidata.rosetta.service.wizard;
+package edu.ucar.unidata.rosetta.service;
 
 import edu.ucar.unidata.rosetta.domain.resources.CfType;
 import edu.ucar.unidata.rosetta.domain.resources.Community;

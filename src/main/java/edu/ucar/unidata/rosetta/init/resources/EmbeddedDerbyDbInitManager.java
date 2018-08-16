@@ -32,8 +32,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 /**
- * An implementation of the DbInitManager that creates the default embedded derby database for the
- * rosetta application.
+ * An implementation of the DbInitManager that creates the default embedded derby database for the rosetta application.
  *
  * @author oxelson@ucar.edu
  */
@@ -135,17 +134,6 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
       // Populate properties table.
       populatePropertiesTable(props);
 
-      // Table containing CF type related data.
-      String createCfTypeDataTable = "CREATE TABLE cfTypeData " +
-          "(" +
-          "id VARCHAR(255) primary key not null, " +
-          "cfType VARCHAR(50), " +
-          "community VARCHAR(100), " +
-          "metadataProfile VARCHAR(20), " +
-          "platform VARCHAR(100)" +
-          ")";
-      createTable(createCfTypeDataTable, props);
-
       // Table containing uploaded file data.
       String createUploadedFileTable = "CREATE TABLE uploadedFiles " +
               "(" +
@@ -154,7 +142,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
               "fileType VARCHAR(50) not null" +
               ")";
       createTable(createUploadedFileTable, props);
-
+/*
       // Table containing data file information.
       String createDataFileTable = "CREATE TABLE dataFiles " +
               "(" +
@@ -164,23 +152,19 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
               "headerLineNumbers VARCHAR(255)" +
               ")";
       createTable(createDataFileTable, props);
+*/
 
-
-      String createDataTable = "CREATE TABLE data " +
+      String createDataTable = "CREATE TABLE wizardData " +
           "(" +
-          "id VARCHAR(255) primary key not null, " +
-          "cfType VARCHAR(50), " +
-          "community VARCHAR(100), " +
-          "metadataProfile VARCHAR(10), " +
-          "platform VARCHAR(100), " +
-          "dataFileName VARCHAR(255), " +
-          "dataFileType VARCHAR(255), " +
-          "positionalFileName VARCHAR(255), " +
-          "templateFileName VARCHAR(255), " +
-          "headerLineNumbers VARCHAR(255), " +
-          "noHeaderLines VARCHAR(255), " +
-          "delimiter VARCHAR(255)," +
-          "otherDelimiter VARCHAR(255)," +
+              "id VARCHAR(255) primary key not null, " +
+              "cfType VARCHAR(50), " +
+              "community VARCHAR(100), " +
+              "metadataProfile VARCHAR(20), " +
+              "platform VARCHAR(100), " +
+              "dataFileType VARCHAR(255), " +
+              "headerLineNumbers VARCHAR(255), " +
+              "delimiter VARCHAR(255)," +
+
           "netcdfFile VARCHAR(255)," +
           "zip VARCHAR(255)" +
           ")";

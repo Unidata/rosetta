@@ -13,12 +13,12 @@ import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.wizard.DataDao;
+import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
@@ -38,8 +38,8 @@ public class DataManagerImpl implements DataManager {
 
 
   // The other managers we make use of in this file.
-  @Resource(name = "cfTypeDataManager")
-  private CfTypeDataManager cfTypeDataManager;
+  @Resource(name = "wizardManager")
+  private WizardManager wizardManager;
 
   @Resource(name = "uploadedFileManager")
   private UploadedFileManager uploadedFileManager;

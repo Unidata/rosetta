@@ -7,6 +7,7 @@ package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
+import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,12 @@ import java.util.Map;
  */
 public interface MetadataManager {
 
-  public void getMetadataProfileData();
+  public List<MetadataProfile> getMetadataProfiles(String id);
+
+
+
+
+
 
   /**
    * Deletes the persisted metadata information using the given id.

@@ -42,7 +42,7 @@ public class XmlMetadataProfileDao implements MetadataProfileDao {
     List<MetadataProfile> metadataProfiles = new ArrayList<>();
     try {
 
-      // Get the metadat profile file.
+      // Get the metadata profile file.
       Resource r = new ClassPathResource(FilenameUtils.concat("resources/MpsProfilesRosetta/", metadataProfileType + ".xml"));
       File file = r.getFile();
 
