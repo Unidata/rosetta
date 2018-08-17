@@ -12,8 +12,8 @@ import java.util.List;
 
 /**
  * Form-backing object for the wizard to collect a collection of uploaded files.
- *
- * @author oxelson@ucar.edu
+ * Used for dynamic form binding in Spring to collect multiple uploaded file objects.
+ * The term 'Cmd' in the name refers to the command object used in form data binding.
  */
 public class UploadedFileCmd extends WizardData {
 

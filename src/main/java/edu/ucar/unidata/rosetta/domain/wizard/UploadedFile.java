@@ -12,8 +12,6 @@ import java.io.Serializable;
 
 /**
  * Form-backing object for the wizard to collect an uploaded file.
- *
- * @author oxelson@ucar.edu
  */
 public class UploadedFile extends WizardData implements Serializable {
 

@@ -9,8 +9,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Form-backing object to collect data from the wizard.
- *
- * @author oxelson@ucar.edu
  */
 public class WizardData {
 

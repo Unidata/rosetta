@@ -8,20 +8,19 @@ package edu.ucar.unidata.rosetta.service.wizard;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
 import edu.ucar.unidata.rosetta.domain.MetadataProfile;
+import edu.ucar.unidata.rosetta.domain.wizard.MetadataProfileCmd;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Service for handling metadata in its various permutations.
- *
- * @author oxelson@ucar.edu
  */
 public interface MetadataManager {
 
-  public List<MetadataProfile> getMetadataProfiles(String id);
+  public List<MetadataProfile> getMetadataProfiles(String id, String metadataType);
 
-
+  public MetadataProfileCmd lookupMetadataById(String id, String metadataType);
 
 
 

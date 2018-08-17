@@ -8,6 +8,9 @@ package edu.ucar.unidata.rosetta.service.wizard;
 import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
+import edu.ucar.unidata.rosetta.domain.MetadataProfile;
+import edu.ucar.unidata.rosetta.domain.wizard.MetadataProfileCmd;
+import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.repository.wizard.MetadataDao;
 import edu.ucar.unidata.rosetta.repository.wizard.MetadataProfileDao;
@@ -17,8 +20,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 
@@ -41,20 +46,54 @@ public class MetadataManagerImpl implements MetadataManager {
   private WizardManager wizardManager;
 
 
-  public List<MetadataProfile> getMetadataProfiles(String id) {
-    List<MetadataProfile> metadataProfiles = new ArrayList<>();
-    /*
-    CfTypeData cfTypeData = wizardManager.lookupPersistedCfTypeDataById(id);
-    for (String metadataProfile : cfTypeData.getMetadataProfile().split(",")) {
-      logger.info(metadataProfile);
+  public MetadataProfileCmd lookupMetadataById(String id, String metadataType) {
+    // Create the new command object.
+    MetadataProfileCmd metadataProfileCmd = new MetadataProfileCmd();
+/*
+    // Get the metadata profiles corresponding to the ID.
+    WizardData wizardData = wizardManager.lookupPersistedWizardDataById(id);
+    for (String metadataProfile : wizardData.getMetadataProfile().split(",")) {
+      List<MetadataProfile> metadataProfiles = metadataProfileDao.getMetadataProfileByType(metadataProfile);
+      metadataProfiles.removeIf(p -> !metadataTypeValues.contains(p.getMetadataType()));
+      metadataProfileCmd.setMetadataProfiles(metadataProfiles);
     }
-    metadataProfileDao.getMetadataProfileByType("CF");
     */
-    return metadataProfiles;
+    return metadataProfileCmd;
+
   }
 
 
 
+  public List<MetadataProfile> getMetadataProfiles(String id, String metadataType) {
+    List<MetadataProfile> metadataProfiles = new ArrayList<>();
+
+    // Create a list of metadata type values for filtering based on the given metadataType value.
+    List<String> metadataTypeValues = new ArrayList<>();
+    if (metadataType.equals("variable")) {
+      // Variable metadata.
+      metadataTypeValues.add("CoordinateVariable");
+      metadataTypeValues.add("DataVariable");
+    } else {
+      // Global metadata.
+      metadataTypeValues.add("Global");
+      metadataTypeValues.add("MetadataGroup");
+    }
+
+    // Get the metadata profiles corresponding to the ID.
+    WizardData wizardData = wizardManager.lookupPersistedWizardDataById(id);
+    for (String metadataProfile : wizardData.getMetadataProfile().split(",")) {
+      List<MetadataProfile> profiles = metadataProfileDao.getMetadataProfileByType(metadataProfile);
+      profiles.removeIf(p -> !metadataTypeValues.contains(p.getMetadataType()));
+      metadataProfiles.addAll(profiles);
+    }
+
+    // Get rid of any duplicate entries.
+    Set<MetadataProfile> hs = new HashSet<>();
+    hs.addAll(metadataProfiles);
+    metadataProfiles.clear();
+    metadataProfiles.addAll(hs);
+    return metadataProfiles;
+  }
 
 
 
