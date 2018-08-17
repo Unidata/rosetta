@@ -35,17 +35,15 @@ The default index page gets redirected to here.
                   <c:if test="${currentStep eq 'fileUpload'}">class="current"</c:if>>
                     Upload Data File
                 </li>
-                <c:if test="${currentStep eq 'customFileTypeAttributes' || currentStep eq 'variableMetadata'}">
-                  <c:if test="${not empty data.dataFileType && data.dataFileType eq 'Custom_File_Type'}">
-                    <li id="${currentStep}"
-                      <c:if test="${currentStep eq 'customFileTypeAttributes'}">class="current"</c:if>>
-                        Specify Custom File Type Attributes
-                    </li>
-                    <li id="${currentStep}"
-                      <c:if test="${currentStep eq 'variableMetadata'}">class="current"</c:if>>
-                        Specify Variable Attributes
-                    </li>
-                  </c:if>
+                <c:if test="${customFileAttributesStep}">
+                  <li id="${currentStep}"
+                    <c:if test="${currentStep eq 'customFileTypeAttributes'}">class="current"</c:if>>
+                      Specify Custom File Type Attributes
+                  </li>
+                  <li id="${currentStep}"
+                    <c:if test="${currentStep eq 'variableMetadata'}">class="current"</c:if>>
+                      Specify Variable Attributes
+                  </li>
                 </c:if>
                 <li id="${currentStep}"
                   <c:if test="${currentStep eq 'generalMetadata'}">class="current"</c:if>>
@@ -74,20 +72,10 @@ The default index page gets redirected to here.
                     <%@ include file="/WEB-INF/views/jspf/variableMetadata.jspf" %>
                   </c:when>
                   <c:when test="${currentStep eq 'generalMetadata'}">
-                    <c:choose>
-                      <c:when test="${not empty data.platform && data.platform eq 'eTag'}">
-                        <script>
-                          var metadataType = "oiip";
-                        </script>
-                        <%@ include file="/WEB-INF/views/jspf/oiipGeneralMetadata.jspf" %>
-                      </c:when>
-                      <c:otherwise>
-                        <script>
-                          var metadataType = "general";
-                        </script>
-                        <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
-                      </c:otherwise>
-                    </c:choose>
+                   <script>
+                    var metadataType = "general";
+                   </script>
+                    <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
                   </c:when>
                   <c:when test="${currentStep eq 'convertAndDownload'}">
                     <%@ include file="/WEB-INF/views/jspf/convertAndDownload.jspf" %>

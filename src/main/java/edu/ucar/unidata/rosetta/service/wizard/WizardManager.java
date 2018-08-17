@@ -17,6 +17,14 @@ import javax.servlet.http.HttpServletRequest;
 public interface WizardManager {
 
     /**
+     * Determines whether the custom file attributes step needs to be visited in the wizard.
+     *
+     * @param id  The ID corresponding to the persisted data needed to make this determination.
+     * @return  true if custom file attributes step needs to be visited; otherwise false;
+     */
+    public boolean customFileAttributesStep(String id);
+
+    /**
      * Looks up and retrieves persisted wizard data using the given ID.
      *
      * @param id The ID corresponding to the data to retrieve.
@@ -83,5 +91,4 @@ public interface WizardManager {
      * @param wizardData The updated wizard data.
      */
     public void updatePersistedWizardData(WizardData wizardData);
-
 }

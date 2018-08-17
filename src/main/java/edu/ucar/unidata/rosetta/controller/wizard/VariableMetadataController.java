@@ -6,6 +6,9 @@
 package edu.ucar.unidata.rosetta.controller.wizard;
 
 import edu.ucar.unidata.rosetta.domain.Data;
+import edu.ucar.unidata.rosetta.domain.wizard.MetadataProfileCmd;
+import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
+import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import edu.ucar.unidata.rosetta.service.wizard.MetadataManager;
@@ -19,6 +22,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import edu.ucar.unidata.rosetta.service.wizard.UploadedFileManager;
+import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,6 +59,12 @@ public class VariableMetadataController implements HandlerExceptionResolver {
   @Resource(name = "resourceManager")
   private ResourceManager resourceManager;
 
+  @Resource(name = "uploadedFileManager")
+  private UploadedFileManager uploadedFileManager;
+
+  @Resource(name = "wizardManager")
+  private WizardManager wizardManager;
+
   @Autowired
   public VariableMetadataController(ServletContext servletContext) {
     this.servletContext = servletContext;
@@ -79,25 +91,38 @@ public class VariableMetadataController implements HandlerExceptionResolver {
           "No persisted data available for file upload step.  Check the database & the cookie.");
     }
 
-    metadataManager.getMetadataProfiles(rosettaCookie.getValue());
+    // Create the form backing object.
+    MetadataProfileCmd metadataProfileCmd;
+    // Have we been here before?  Do we have any data persisted?
+    MetadataProfileCmd persisted = metadataManager.lookupMetadataById(rosettaCookie.getValue(), "variable");
+    if (!persisted.getMetadataProfiles().isEmpty()) {
+      metadataProfileCmd = persisted;
+    } else {
+      // No persisted data.
+      metadataProfileCmd = new MetadataProfileCmd();
+    }
 
-    // Create a Data form-backing object.
-    Data data = dataManager.lookupPersistedDataById(rosettaCookie.getValue());
+    WizardData wizardData = wizardManager.lookupPersistedWizardDataById(rosettaCookie.getValue());
 
     // Populate with any existing variable metadata.
-    data.setVariableMetadata(dataManager.getMetadataStringForClient(data.getId(), "variable"));
+   // data.setVariableMetadata(dataManager.getMetadataStringForClient(data.getId(), "variable"));
 
-    // Add data object to Model.
-    model.addAttribute("data", data);
+    // Add form-backing object.
+    model.addAttribute("data", metadataProfileCmd);
     // Add command object to Model.
     model.addAttribute("command", "variableMetadata");
     // Add current step to the Model.
     model.addAttribute("currentStep", "variableMetadata");
+    model.addAttribute("variableData", metadataManager.getMetadataProfiles(rosettaCookie.getValue(), "variable"));
+    // Add whether we need to show the custom file attributes step in the wizard menu.
+    model.addAttribute("customFileAttributesStep",  wizardManager.customFileAttributesStep(rosettaCookie.getValue()));
     // Add parsed file data in JSON string format (to show in the SlickGrid).
     model.addAttribute("parsedData",
-        dataManager.parseDataFileByLine(data.getId(), data.getDataFileName()));
+        dataManager.parseDataFileByLine(wizardData.getId(), uploadedFileManager.getDataFile(rosettaCookie.getValue()).getFileName()));
     // Add delimiter to do additional client-side parsing for SlickGrid.
-    model.addAttribute("delimiterSymbol", resourceManager.getDelimiterSymbol(data.getDelimiter()));
+    model.addAttribute("delimiterSymbol", resourceManager.getDelimiterSymbol(wizardData.getDelimiter()));
+    // Add header line numbers value to do additional client-side parsing for SlickGrid.
+    model.addAttribute("headerLineNumbers", wizardData.getHeaderLineNumbers());
 
     // The currentStep variable will determine which jsp frag to load in the wizard.
     return new ModelAndView("wizard");

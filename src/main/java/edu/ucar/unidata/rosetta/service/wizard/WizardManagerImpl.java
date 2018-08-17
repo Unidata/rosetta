@@ -8,7 +8,6 @@ package edu.ucar.unidata.rosetta.service.wizard;
 import edu.ucar.unidata.rosetta.domain.resources.Community;
 import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
-import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
@@ -39,8 +38,20 @@ public class WizardManagerImpl implements WizardManager {
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
 
-    @Resource(name = "uploadedFileManager")
-    private UploadedFileManager uploadedFileManager;
+    /**
+     * Determines whether the custom file attributes step needs to be visited in the wizard.
+     *
+     * @param id  The ID corresponding to the persisted data needed to make this determination.
+     * @return  true if custom file attributes step needs to be visited; otherwise false;
+     */
+    public boolean customFileAttributesStep(String id) {
+        WizardData wizardData = lookupPersistedWizardDataById(id);
+        String dataFileType =  wizardData.getDataFileType();
+        if (dataFileType != null) {
+            return wizardData.getDataFileType().equals("Custom_File_Type");
+        }
+        return false;
+    }
 
     /**
      * Determines the metadata profile to use based on the data contained in the
@@ -244,8 +255,8 @@ public class WizardManagerImpl implements WizardManager {
     }
 
     /**
-     * Determines the next step in the wizard based the user specified data file type. This method is called when there
-     * is a divergence of possible routes through the wizard.
+     * Determines the next step in the wizard based the user specified data file type.
+     * This method is called when there is a divergence of possible routes through the wizard.
      *
      * @param id The unique ID corresponding to already persisted data.
      * @return The next step to redirect the user to in the wizard.
@@ -256,22 +267,18 @@ public class WizardManagerImpl implements WizardManager {
         // The placeholder for what we are going to return.
         String nextStep;
 
-        // Get the persisted data.
-        UploadedFileCmd uploadedFileCmd = uploadedFileManager.lookupPersistedDataById(id);
-
         // The next step depends on what the user specified for the data file type.
-        if (uploadedFileCmd.getDataFileType().equals("Custom_File_Type")) {
+        if (customFileAttributesStep(id)) {
             nextStep = "/customFileTypeAttributes";
         } else {
             nextStep = "/generalMetadata";
         }
-
         return nextStep;
     }
 
     /**
-     * Determines the previous step in the wizard based the user specified data file type. This method is called when
-     * there is a divergence of possible routes through the wizard.
+     * Determines the previous step in the wizard based the user specified data file type.
+     * This method is called when there is a divergence of possible routes through the wizard.
      *
      * @param id The unique ID corresponding to already persisted data.
      * @return The previous step to redirect the user to in the wizard.
@@ -282,12 +289,9 @@ public class WizardManagerImpl implements WizardManager {
         // The placeholder for what we are going to return.
         String previousStep;
 
-        // Get the persisted data.
-        UploadedFileCmd uploadedFileCmd = uploadedFileManager.lookupPersistedDataById(id);
-
         // The previous step (if the user chooses to go there) depends
         // on what the user specified for the data file type.
-        if (uploadedFileCmd.getDataFileType().equals("Custom_File_Type")) {
+        if (customFileAttributesStep(id)) {
             previousStep = "/variableMetadata";
         } else {
             previousStep = "/fileUpload";

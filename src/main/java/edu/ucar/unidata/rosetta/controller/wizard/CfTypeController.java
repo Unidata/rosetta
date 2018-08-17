@@ -68,9 +68,11 @@ public class CfTypeController implements HandlerExceptionResolver {
 
         // Create the form-backing object.
         WizardData wizardData;
+        boolean customFileAttributesStep = false;
         if (rosettaCookie != null) {
             // User-provided CF type data already exists.  Populate WizardData object.
             wizardData = wizardManager.lookupPersistedWizardDataById(rosettaCookie.getValue());
+            customFileAttributesStep = wizardManager.customFileAttributesStep(rosettaCookie.getValue());
         } else {
             wizardData = new WizardData();
         }
@@ -81,6 +83,8 @@ public class CfTypeController implements HandlerExceptionResolver {
         model.addAttribute("data", wizardData);
         // Add current step to the Model (used by view to keep track of where we are in the wizard).
         model.addAttribute("currentStep", "cfType");
+        // Add whether we need to show the custom file attributes step in the wizard menu.
+        model.addAttribute("customFileAttributesStep", customFileAttributesStep);
         // Add communities data to Model (for platform display).
         model.addAttribute("communities", resourceManager.getCommunities());
         // Add CF types data to Model (for direct display).

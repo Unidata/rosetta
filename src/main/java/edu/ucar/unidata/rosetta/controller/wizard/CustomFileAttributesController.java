@@ -8,7 +8,6 @@ package edu.ucar.unidata.rosetta.controller.wizard;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
-import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +85,8 @@ public class CustomFileAttributesController implements HandlerExceptionResolver 
         model.addAttribute("data", wizardData);
         // Add current step to the Model.
         model.addAttribute("currentStep", "customFileTypeAttributes");
+        // Add whether we need to show the custom file attributes step in the wizard menu.
+        model.addAttribute("customFileAttributesStep",  wizardManager.customFileAttributesStep(rosettaCookie.getValue()));
         // Add delimiters to Model.
         model.addAttribute("delimiters", resourceManager.getDelimiters());
         // Add parsed file data in JSON string format (to sho win the SlickGrid).
