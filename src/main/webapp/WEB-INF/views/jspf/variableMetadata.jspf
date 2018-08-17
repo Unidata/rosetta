@@ -5,13 +5,14 @@
 <label for="variableGrid" class="error"></label>
 <div id="variableGrid" class="rosettaGrid"></div>
 <div id="dialog"></div>
+<%-- input data was stashed here
 <input type="hidden" name="variableMetadata" value="${data.variableMetadata}"
        id="variableMetadata"/>
 
 <div class="buttonNav">
-    <%-- Show the previous button. --%>
+
     <input type="submit" name="submit" value="Previous" class="button"/>
-    <%-- Show the next button. --%>
+
     <input type="submit" name="submit" id="Next" value="Next"
             <c:if test="${empty data.variableMetadata}">
                 disabled
@@ -21,6 +22,18 @@
                 disabled
             </c:if>
         "/>
+</div>
+
+
+--%>
+
+
+<div class="buttonNav">
+    <%-- Show the previous button. --%>
+    <input type="submit" name="submit" value="Previous" class="button"/>
+    <%-- Show the next button. --%>
+    <input type="submit" name="submit" id="Next" value="Next"
+        />
 </div>
 
 
@@ -69,7 +82,7 @@
   // Parsed file data.
   var fileData = ${parsedData};
   var delimiter = '${delimiterSymbol}';
-  var headerLineNumbers = '${data.headerLineNumbers}';
+  var headerLineNumbers = '${headerLineNumbers}';
 
   gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter,
       headerLineNumbers);
