@@ -1,6 +1,6 @@
 {
     "delimiter": " ",
-    "cfType": "trajectoryProfile",
+    "cfType": "trajectory",
     "community": "Physical Ocean Sciences",
     "creationDate": "20180809T163000MDT",
     "platform": "Waveglider",
@@ -201,7 +201,7 @@
             "rosettaControlMetadata": [
                 {
                     "name": "type",
-                    "value": "STRING",
+                    "value": "DOUBLE",
                     "type": "STRING"
                 },
                 {
@@ -211,7 +211,7 @@
                 },
                 {
                     "name": "coordinateVariableType",
-                    "value": "lon",
+                    "value": "longitude",
                     "type": "STRING"
                 }
             ],
@@ -239,7 +239,7 @@
             "rosettaControlMetadata": [
                 {
                     "name": "type",
-                    "value": "STRING",
+                    "value": "DOUBLE",
                     "type": "STRING"
                 },
                 {
@@ -249,7 +249,7 @@
                 },
                 {
                     "name": "coordinateVariableType",
-                    "value": "lat",
+                    "value": "latitude",
                     "type": "STRING"
                 }
             ],
@@ -277,7 +277,7 @@
             "rosettaControlMetadata": [
                 {
                     "name": "type",
-                    "value": "STRING",
+                    "value": "DOUBLE",
                     "type": "STRING"
                 },
                 {
@@ -315,7 +315,7 @@
             "rosettaControlMetadata": [
                 {
                     "name": "type",
-                    "value": "STRING",
+                    "value": "DOUBLE",
                     "type": "STRING"
                 },
                 {
@@ -353,7 +353,7 @@
             "rosettaControlMetadata": [
                 {
                     "name": "type",
-                    "value": "STRING",
+                    "value": "DOUBLE",
                     "type": "STRING"
                 },
                 {
@@ -391,7 +391,7 @@
             "rosettaControlMetadata": [
                 {
                     "name": "type",
-                    "value": "STRING",
+                    "value": "DOUBLE",
                     "type": "STRING"
                 },
                 {

@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
@@ -31,10 +32,12 @@ public class TemplateTest {
     private String attrInt = "INTEGER";
     private String attrFloat = "FLOAT";
 
-    private RosettaAttribute modifiedGlobalAttrOld;
-    private RosettaAttribute modifiedGlobalAttrUpdated;
-    private RosettaAttribute newGlobalAttr;
-    private RosettaAttribute removedGlobalAttr;
+    private String newGroupName = "not-root/hi";
+
+    private RosettaGlobalAttribute modifiedGlobalAttrOld;
+    private RosettaGlobalAttribute modifiedGlobalAttrUpdated;
+    private RosettaGlobalAttribute newGlobalAttr;
+    private RosettaGlobalAttribute removedGlobalAttr;
 
     private RosettaAttribute modifiedVarAttrOld;
     private RosettaAttribute modifiedVarAttrUpdated;
@@ -57,12 +60,13 @@ public class TemplateTest {
         bogusTemplate.setServerId("serverId");
         bogusTemplate.setTemplateVersion("2.0");
 
-        List<RosettaAttribute> globalMetadata = new ArrayList<>();
+        List<RosettaGlobalAttribute> globalMetadata = new ArrayList<>();
         // will test this later to see if it has been modified
-        modifiedGlobalAttrOld = new RosettaAttribute("gastr", "yo", attrString);
+        modifiedGlobalAttrOld = new RosettaGlobalAttribute("gastr", "yo", attrString);
         globalMetadata.add(modifiedGlobalAttrOld);
-        globalMetadata.add(new RosettaAttribute("gaint", "1", attrInt));
-        globalMetadata.add(new RosettaAttribute("ga3float", "2.3", attrFloat));
+        removedGlobalAttr = new RosettaGlobalAttribute("gaint", "1", attrInt);
+        globalMetadata.add(removedGlobalAttr);
+        globalMetadata.add(new RosettaGlobalAttribute("ga3float", "2.3", attrFloat, newGroupName));
         bogusTemplate.setGlobalMetadata(globalMetadata);
 
         List<Integer> headerLineNumbers = new ArrayList<>();
@@ -132,11 +136,12 @@ public class TemplateTest {
         bogusTemplate2.setHeaderLineNumbers(headerLineNumbers);
 
         // update existing global attr and add new
-        List<RosettaAttribute> globalMetadata = new ArrayList<>();
-        modifiedGlobalAttrUpdated = new RosettaAttribute(modifiedGlobalAttrOld.getName(), "yo-updated", modifiedGlobalAttrOld.getType());
+        List<RosettaGlobalAttribute> globalMetadata = new ArrayList<>();
+        modifiedGlobalAttrUpdated = new RosettaGlobalAttribute(modifiedGlobalAttrOld.getName(), "yo-updated", modifiedGlobalAttrOld.getType());
         globalMetadata.add(modifiedGlobalAttrUpdated);
-        newGlobalAttr = new RosettaAttribute("ga-new", "w00t", attrString);
+        newGlobalAttr = new RosettaGlobalAttribute("ga-new", "w00t", attrString);
         globalMetadata.add(newGlobalAttr);
+        globalMetadata.add(new RosettaGlobalAttribute(removedGlobalAttr.getName(), "", attrString));
         bogusTemplate2.setGlobalMetadata(globalMetadata);
 
         // variable 0
@@ -226,7 +231,7 @@ public class TemplateTest {
     @Test
     public void testWavegliderTemplate() {
         // check a few items to make sure things are there, as expected
-        Assert.assertEquals(wavegliderTemplate.getCfType(),"trajectoryProfile");
+        Assert.assertEquals(wavegliderTemplate.getCfType(),"trajectory");
         Assert.assertEquals(wavegliderTemplate.getHeaderLineNumbers().size(), 1);
         int headerLine = wavegliderTemplate.getHeaderLineNumbers().get(0);
         Assert.assertNotNull(headerLine);
@@ -248,6 +253,16 @@ public class TemplateTest {
     }
 
     @Test
+    public void testGlobalAttributeGroupInfo() {
+        List<String> possibleGroupNames = Arrays.asList("root", newGroupName);
+        List<RosettaGlobalAttribute> rgaList = bogusTemplate.getGlobalMetadata();
+        for (RosettaGlobalAttribute rga : rgaList) {
+            String group = rga.getGroup();
+            Assert.assertTrue(possibleGroupNames.contains(group));
+        }
+    }
+
+    @Test
     public void testBogusModifiedGlobalMetadata() throws IOException {
         // get a copy the bogus template for modification
         Template modifiedTemplate = copyBogusTemplate();
@@ -255,13 +270,47 @@ public class TemplateTest {
         // now let's modify the template
         modifiedTemplate.update(bogusTemplate2);
 
-        // updated and new global metadata
+        // updated global metadata
         Assert.assertNotEquals(bogusTemplate.getGlobalMetadata().size(), modifiedTemplate.getGlobalMetadata().size());
-        Assert.assertFalse(bogusTemplate.getGlobalMetadata().contains(newGlobalAttr));
-        List<RosettaAttribute> modifiedGlobalMetadata = modifiedTemplate.getGlobalMetadata();
+
+        List<RosettaGlobalAttribute> modifiedGlobalMetadata = modifiedTemplate.getGlobalMetadata();
+        // modified attribute in modified template
         Assert.assertTrue(modifiedGlobalMetadata.contains(modifiedGlobalAttrUpdated));
-        Assert.assertTrue(modifiedGlobalMetadata.contains(newGlobalAttr));
+        // orig attribute not in modified template
         Assert.assertFalse(modifiedGlobalMetadata.contains(modifiedGlobalAttrOld));
+        // modified attribute not in orig template
+        Assert.assertFalse(bogusTemplate.getGlobalMetadata().contains(modifiedGlobalAttrUpdated));
+    }
+
+    @Test
+    public void testBogusModifiedNewGlobalMetadata() throws IOException {
+        // get a copy the bogus template for modification
+        Template modifiedTemplate = copyBogusTemplate();
+
+        // now let's modify the template
+        modifiedTemplate.update(bogusTemplate2);
+
+        // new global metadata
+        List<RosettaGlobalAttribute> modifiedGlobalMetadata = modifiedTemplate.getGlobalMetadata();
+        // in modified template
+        Assert.assertTrue(modifiedGlobalMetadata.contains(newGlobalAttr));
+        // not in orig template
+        Assert.assertFalse(bogusTemplate.getGlobalMetadata().contains(newGlobalAttr));
+    }
+
+    @Test
+    public void testBogusModifiedRemovedGlobalMetadata() throws IOException {
+        // get a copy the bogus template for modification
+        Template modifiedTemplate = copyBogusTemplate();
+
+        // now let's modify the template
+        modifiedTemplate.update(bogusTemplate2);
+
+        List<RosettaGlobalAttribute> modifiedGlobalMetadata = modifiedTemplate.getGlobalMetadata();
+        // was removed attribute in orig template?
+        Assert.assertTrue(bogusTemplate.getGlobalMetadata().contains(removedGlobalAttr));
+        // has the global metadata been removed?
+        Assert.assertFalse(modifiedGlobalMetadata.contains(removedGlobalAttr));
     }
 
     @Test
