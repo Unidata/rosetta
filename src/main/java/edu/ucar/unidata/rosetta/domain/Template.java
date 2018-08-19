@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 
 /**
  * An object representing a rosetta template. Used for both custom and known file types. As per:
@@ -28,7 +26,7 @@ public class Template {
     private String creationDate;
     private String delimiter;
     private String format;  // required
-    private List<RosettaAttribute> globalMetadata;
+    private List<RosettaGlobalAttribute> globalMetadata;
     private List<Integer> headerLineNumbers;
     private String platform;
     private String rosettaVersion;
@@ -133,7 +131,7 @@ public class Template {
      *
      * @return The global metadata.
      */
-    public List<RosettaAttribute> getGlobalMetadata() {
+    public List<RosettaGlobalAttribute> getGlobalMetadata() {
         return globalMetadata;
     }
 
@@ -142,7 +140,7 @@ public class Template {
      *
      * @param globalMetadata The global metadata.
      */
-    public void setGlobalMetadata(List<RosettaAttribute> globalMetadata) {
+    public void setGlobalMetadata(List<RosettaGlobalAttribute> globalMetadata) {
         this.globalMetadata = globalMetadata;
     }
 
@@ -279,12 +277,12 @@ public class Template {
             this.headerLineNumbers = headerLineNumbersUpdate;
         }
 
-        List<RosettaAttribute> globalMetadataUpdates = updatedTemplate.getGlobalMetadata();
+        List<RosettaGlobalAttribute> globalMetadataUpdates = updatedTemplate.getGlobalMetadata();
         if (globalMetadataUpdates != null) {
             // a little more complex. We need to go through each new piece of global metadata,
             // search for it by name in the existing list of global metadata, and remove it if it
             // exits. Then, we can merge the new and existing lists of global metadata.
-            for (RosettaAttribute globalMetadataUpdate : globalMetadataUpdates) {
+            for (RosettaGlobalAttribute globalMetadataUpdate : globalMetadataUpdates) {
                 Predicate<RosettaAttribute> attributePredicate = attr -> attr.getName().equals(globalMetadataUpdate.getName());
                 this.globalMetadata.removeIf(attributePredicate);
             }
