@@ -14,11 +14,25 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import edu.ucar.unidata.rosetta.util.test.category.NeedsLocalServer;
 import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
@@ -35,7 +49,29 @@ public class TestTagUniversalFileFormatBatchProcess {
     private static String etuffFileTld = TestUtils.getTestDataDirStr() + etuffDir;
     private static String uploadFile = String.join(File.separator, etuffFileTld, "test_simple_api.zip");
 
+    private static String topLevelDir = "/test_simple_api";
+
     String batchProcessUrl = TestUtils.getTestServerUrl() + "/batchProcess";
+
+    @Before
+    public void makeUploadZip() throws IOException {
+        Map<String, String> env = new HashMap<>();
+        env.put("create", "true");
+        // locate file system by using the syntax
+        // defined in java.net.JarURLConnection
+        String uploadFileUri = Paths.get(uploadFile).toUri().toString();
+        URI uri = URI.create("jar:" + uploadFileUri);
+        try (FileSystem zipfs = FileSystems.newFileSystem(uri, env)) {
+            List<String> filesToAdd = Arrays.asList("TagDataFlatFileExample.txt", "rosetta.template");
+            for (String file : filesToAdd) {
+                Path externalTxtFile = Paths.get(etuffFileTld, topLevelDir, file);
+                Path zipTopLevelDir = zipfs.getPath(topLevelDir);
+                Files.createDirectories(zipTopLevelDir);
+                Path pathInZipfile = zipTopLevelDir.resolve(file);
+                Files.copy(externalTxtFile, pathInZipfile, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
 
     @Test
     public void testBatchProcessEtuff() {
@@ -71,5 +107,14 @@ public class TestTagUniversalFileFormatBatchProcess {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @After
+    public void cleanup() {
+        File zipFile = Paths.get(uploadFile).toFile();
+        if (zipFile.exists()) {
+            zipFile.delete();
+        }
+
     }
 }
