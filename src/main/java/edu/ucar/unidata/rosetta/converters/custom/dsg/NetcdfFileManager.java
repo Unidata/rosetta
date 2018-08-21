@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +22,7 @@ import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
 import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
 import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.VariableInfo;
+import edu.ucar.unidata.rosetta.util.PathUtils;
 import edu.ucar.unidata.rosetta.util.RosettaGlobalAttributeUtils;
 import edu.ucar.unidata.rosetta.util.TemplateUtils;
 import edu.ucar.unidata.rosetta.util.VariableInfoUtils;
@@ -375,14 +378,12 @@ public abstract class NetcdfFileManager {
 
     }
 
-    public String createNetcdfFile(File datafile, Template template) throws IOException {
-        String dataFilePath = datafile.getAbsolutePath();
-        String dataFileName = FilenameUtils.getName(dataFilePath);
-        String ext = FilenameUtils.getExtension(dataFileName);
-        String netcdfFileName = dataFileName.replace(ext, "nc");
-        String netcdfFilePath = dataFilePath.replace(dataFileName, netcdfFileName);
+    public String createNetcdfFile(Path dataFile, Template template) throws IOException {
 
-        ParsedFile parsedFile = new ParsedFile(datafile, template);
+        Path netcdfFile = PathUtils.replaceExtension(dataFile, ".nc");
+        String netcdfFilePath = netcdfFile.toString();
+
+        ParsedFile parsedFile = new ParsedFile(dataFile, template);
         arrayData = parsedFile.getArrayData();
         stringData = parsedFile.getStringData();
         // TODO: add check to see if netCDF-4 is enabled

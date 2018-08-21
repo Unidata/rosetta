@@ -25,6 +25,7 @@ import java.util.List;
 
 import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
 import edu.ucar.unidata.rosetta.domain.Template;
+import edu.ucar.unidata.rosetta.util.TemplateFactory;
 import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
@@ -38,23 +39,11 @@ public class SingleTrajectoryTest {
         Path templatefile = Paths.get(TestUtils.getTestDataDirStr(), "singleTrajectory", "waveglider", "rosetta.template");
 
         // read template
-        ObjectMapper templateMapper = new ObjectMapper();
-        FileReader templateFileReader = new FileReader(templatefile.toFile());
-        Template template = templateMapper.readValue(templateFileReader, Template.class);
-        templateFileReader.close();
+        Template template = TemplateFactory.makeTemplateFromJsonFile(templatefile);
 
-        // find correct writer
-        NetcdfFileManager dsgWriter = null;
-        for (NetcdfFileManager potentialDsgWriter : NetcdfFileManager.getConverters()) {
-            if (potentialDsgWriter.isMine(template.getCfType())) {
-                dsgWriter = potentialDsgWriter;
-                break;
-            }
-        }
-
-        Assert.assertNotNull(dsgWriter);
-
-        wavegliderNetcdfFile = dsgWriter.createNetcdfFile(datafile.toFile(), template);
+        // get converter
+        NetcdfFileManager dsgWriter = new SingleTrajectory();
+        wavegliderNetcdfFile = dsgWriter.createNetcdfFile(datafile, template);
 
         NetcdfFile ncf = NetcdfFile.open(wavegliderNetcdfFile);
         Assert.assertNotNull(ncf);
