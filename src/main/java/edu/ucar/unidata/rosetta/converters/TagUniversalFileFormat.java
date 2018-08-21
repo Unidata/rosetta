@@ -51,7 +51,8 @@ public class TagUniversalFileFormat {
   private HashMap<String, TreeMap<Integer, HistBin>> binInfoMin = new HashMap<>();
   private HashMap<String, TreeMap<Integer, HistBin>> binInfoMax = new HashMap<>();
 
-  private boolean matchupOneLocOneOb = true;
+  // match one loc to many obs by default
+  private boolean matchupOneLocOneOb = false;
 
   private String timeDimName = "time";
   private String latDimName = "latitude";
