@@ -10,6 +10,12 @@ import ucar.nc2.Attribute;
 
 public class RosettaGlobalAttributeUtils {
 
+    /**
+     * Create a netCDF-Java Attribute from a RosettaGlobalAttribute
+     *
+     * @param globalAttr The RosettaGlobalAttribute to convert
+     * @return the equivalent netCDF-Java Attribute
+     */
     public static Attribute getAttributeFromGlobalAttr(RosettaGlobalAttribute globalAttr) {
         String name = globalAttr.getName();
         String value = globalAttr.getValue();

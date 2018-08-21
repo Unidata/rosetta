@@ -7,13 +7,18 @@ package edu.ucar.unidata.rosetta.util;
 
 import org.apache.commons.io.FilenameUtils;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class PathUtils {
 
+    /**
+     * Replace the extension of a file in a Path with a new extension
+     *
+     * @param inFile The path with the file whose extension will be replaced
+     * @param newExt The new extension
+     * @return The path of the file with the new extension
+     */
     public static Path replaceExtension(Path inFile, String newExt) {
 
         if (newExt.startsWith(".")) {

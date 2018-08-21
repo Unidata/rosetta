@@ -14,16 +14,28 @@ import ucar.ma2.DataType;
 public class RosettaAttributeUtils {
 
     // Numeric datatypes that Rosetta knows about
-    private static List<DataType> numericTypes =Arrays.asList(
+    private static List<DataType> numericTypes = Arrays.asList(
             DataType.FLOAT,
             DataType.INT,
             DataType.DOUBLE);
 
+    /**
+     * Check if the attribute has a numeric DataType
+     *
+     * @param ra The attribute to check
+     * @return <code>true</code> if numeric; <code>false</code> otherwise
+     */
     public static boolean isValueNumeric(RosettaAttribute ra) {
         DataType dt = VariableInfoUtils.getDataType(ra.getType());
         return numericTypes.contains(dt);
     }
 
+    /**
+     * Convert the value stored in a RosettaAttribute into a Number
+     *
+     * @param ra the attribute whose value to convert
+     * @return the Number value stored in the numeric attributes
+     */
     public static Number convertValueToNumber(RosettaAttribute ra) {
         String type = ra.getType();
         Number val = null;

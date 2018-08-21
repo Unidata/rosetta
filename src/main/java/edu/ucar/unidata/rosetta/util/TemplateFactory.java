@@ -7,7 +7,6 @@ package edu.ucar.unidata.rosetta.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,6 +24,12 @@ public class TemplateFactory {
     private static String nameValueSep = ":";
     private static String groupNameSep = "\\.";
 
+    /**
+     * Convert a line from a .metadata file into a RosettaGlobalAttribute
+     *
+     * @param line one entry from a .metadata file
+     * @return a RosettaGlobalAttribute representation of a single .metadata file entry
+     */
     private static RosettaGlobalAttribute convertMetadataFileLine(String line) {
         String group = "root";
         String name = "";
@@ -47,7 +52,13 @@ public class TemplateFactory {
         return new RosettaGlobalAttribute(name, value, "STRING", group);
     }
 
-    public static Template makeTemplateFromMetadataFile(Path metadataFile) {
+    /**
+     * Construct a template object from a .metadata file
+     *
+     * @param metadataFile the .metadata file
+     * @return a template representation of the .metadata file
+     */
+    public static Template makeTemplateFromMetadataFile(Path metadataFile) throws IOException {
         Template template = new Template();
         List<RosettaGlobalAttribute> globalAttrs = new ArrayList<>();
 
@@ -56,14 +67,18 @@ public class TemplateFactory {
                     .map(line -> convertMetadataFileLine(line))
                     .collect(Collectors.toList());
 
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         template.setGlobalMetadata(globalAttrs);
         return template;
     }
 
+    /**
+     * Construct a template object from a JSON representation of a template
+     *
+     * @param jsonFile the json template file
+     * @return a template object based on the json file
+     */
     public static Template makeTemplateFromJsonFile(Path jsonFile) throws IOException {
         ObjectMapper templateMapper = new ObjectMapper();
 

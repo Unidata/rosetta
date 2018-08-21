@@ -5,13 +5,10 @@
 
 package edu.ucar.unidata.rosetta.converters.custom.dsg;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,10 +74,18 @@ public abstract class NetcdfFileManager {
 
     abstract void makeOtherVariables();
 
+    /**
+     * Get the Discrete Sampling Geometry type handled by the converter
+     *
+     * @return The discrete sampling geometry
+     */
     String getMyDsgType() {
         return myDsgType;
     }
 
+    /**
+     * Check if this converter works with a given Discrete Sampling Geometry
+     */
     public boolean isMine(String reqType) {
         boolean mine = false;
         if (getMyDsgType().equals(reqType)) {
@@ -89,6 +94,9 @@ public abstract class NetcdfFileManager {
         return mine;
     }
 
+    /**
+     * Get a list of converters
+     */
     public static List<NetcdfFileManager> getConverters() {
         List<NetcdfFileManager> dsgWriters = new ArrayList<>();
 
@@ -97,7 +105,16 @@ public abstract class NetcdfFileManager {
         return dsgWriters;
     }
 
+    /**
+     * Convert list of date/time string to a list of longs with values representative of seconds
+     * since 1970-01-01T00:00:00UTC
+     *
+     * @param data   List of date/time strings
+     * @param format formart of the date/time strings
+     * @return list of values in seconds since 1970-01-01
+     */
     private Array createLongTimeDataFromFullDateTime(List<String> data, String format) {
+        // todo - support subsecond date/time strings
         CalendarDateFormatter fmt = new CalendarDateFormatter(format);
         int numVals = data.size();
         long[] newTimeVals = new long[numVals];
@@ -110,6 +127,14 @@ public abstract class NetcdfFileManager {
         return Array.makeFromJavaArray(newTimeVals);
     }
 
+    /**
+     * Convert list of date/time string to a list of ints with values representative of seconds
+     * since 1970-01-01T00:00:00UTC
+     *
+     * @param data   List of date/time strings
+     * @param format formart of the date/time strings
+     * @return list of values in seconds since 1970-01-01
+     */
     private Array createIntTimeDataFromFullDateTime(List<String> data, String format) {
         CalendarDateFormatter fmt = new CalendarDateFormatter(format);
         int numVals = data.size();
@@ -123,6 +148,12 @@ public abstract class NetcdfFileManager {
         return Array.makeFromJavaArray(newTimeVals);
     }
 
+    /**
+     * Sort out three kinds of variable types: - Time related coordinate variables - Non-time
+     * related coordinate variables - data variables
+     *
+     * @param template template containing VariableInfo objects
+     */
     private void identifyVariables(Template template) {
         // identify coordinate variables and separate out time related coordinate variables
         List<VariableInfo> variableInfoList = template.getVariableInfoList();
@@ -146,6 +177,11 @@ public abstract class NetcdfFileManager {
         }
     }
 
+    /**
+     * Helper method to get the basic time coordinate attributes
+     *
+     * @return A list of time related attributes
+     */
     private List<Attribute> getBaseTimeVarAttrs() {
         List<Attribute> baseTimeVarAttrs = new ArrayList<>();
         baseTimeVarAttrs.add(new Attribute("axis", "T"));
@@ -155,6 +191,12 @@ public abstract class NetcdfFileManager {
         return baseTimeVarAttrs;
     }
 
+    /**
+     * Create valid_min, valid_max attributes associated with the input data array
+     *
+     * @param data data from which to compute max/min values
+     * @return A list containing the valid_max and valid_min attributes
+     */
     private static List<Attribute> getMaxMinAttrs(Array data) {
         List<Attribute> attrs = new ArrayList<>();
         MinMax maxMinVals = MAMath.getMinMax(data);
@@ -164,6 +206,12 @@ public abstract class NetcdfFileManager {
         return attrs;
     }
 
+    /**
+     * Create the time variable based on a relative time coordinate variable
+     *
+     * @param relativeTimeVi The relative time coordinate variable
+     * @return <code>true</code> if successfully created, otherwise false
+     */
     private boolean makeTimeVarFromRelativeTime(VariableInfo relativeTimeVi) {
         boolean success;
         Group group = null;
@@ -175,7 +223,7 @@ public abstract class NetcdfFileManager {
             timeDim = ncf.addDimension(timeDimName, toIntExact(numTimeVals));
             timeVarName = relativeTimeVi.getName();
             DataType dataType = VariableInfoUtils.getDataType(relativeTimeVi);
-            RosettaAttribute timeUnitAttr = VariableInfoUtils.getAttributeByName("units", relativeTimeVi);
+            RosettaAttribute timeUnitAttr = VariableInfoUtils.findAttributeByName("units", relativeTimeVi);
             timeUnits = timeUnitAttr.getValue();
 
             Variable timeVar = ncf.addVariable(group, timeVarName, dataType, Collections.singletonList(timeDim));
@@ -194,6 +242,12 @@ public abstract class NetcdfFileManager {
 
     }
 
+    /**
+     * Create the time variable based on a full date/time time coordinate variable
+     *
+     * @param fullDateTimeVi The full date/time coordinate variable
+     * @return <code>true</code> if successfully created, otherwise false
+     */
     private boolean makeTimeVarFromFullDateTime(Template template, VariableInfo fullDateTimeVi) {
         boolean success;
         Group group = null;
@@ -234,6 +288,15 @@ public abstract class NetcdfFileManager {
 
     }
 
+    /**
+     * Create the time variable based on a date and time coordinate variables, stored as different
+     * VariableInfo objects
+     *
+     * @param template The template object
+     * @param dateOnly The VariableInfo object containing only the date information
+     * @param timeOnly The VariableInfo object containing only the time information
+     * @return <code>true</code> if successfully created, otherwise false
+     */
     private boolean makeTimeVarFromDateTimeOnly(Template template, VariableInfo dateOnly, VariableInfo timeOnly) {
         boolean success;
         Group group = null;
@@ -287,6 +350,12 @@ public abstract class NetcdfFileManager {
         return success;
     }
 
+    /**
+     * Get the auto-computed attributes for a given coordinate VariableInfo object
+     *
+     * @param variableInfo The coordinate variable for which attributes should be computed
+     * @return A list of computed attributes
+     */
     List<Attribute> calculateCoordVarAttrs(VariableInfo variableInfo) {
         List<Attribute> calculatedCoordVarAttrs = new ArrayList<>();
 
@@ -299,7 +368,7 @@ public abstract class NetcdfFileManager {
             calculatedCoordVarAttrs.add(new Attribute("axis", "Y"));
         } else if (type.equals(VariableInfoUtils.vertical)) {
             calculatedCoordVarAttrs.add(new Attribute("axis", "Z"));
-            RosettaAttribute positive = VariableInfoUtils.getAttributeByName(VariableInfoUtils.positiveAttrName, variableInfo);
+            RosettaAttribute positive = VariableInfoUtils.findAttributeByName(VariableInfoUtils.positiveAttrName, variableInfo);
             if (positive != null) {
                 calculatedCoordVarAttrs.add(new Attribute(positive.getName(), positive.getValue()));
             }
@@ -322,6 +391,12 @@ public abstract class NetcdfFileManager {
         return calculatedCoordVarAttrs;
     }
 
+    /**
+     * Get the auto-computed attributes for a given data VariableInfo object
+     *
+     * @param variableInfo The data variable for which attributes should be computed
+     * @return A list of computed attributes
+     */
     List<Attribute> calculateDataVarAttrs(VariableInfo variableInfo) {
         List<Attribute> calculatedDataVarAttrs = new ArrayList<>();
         //DataVariable	_FillValue
@@ -342,6 +417,11 @@ public abstract class NetcdfFileManager {
         return calculatedDataVarAttrs;
     }
 
+    /**
+     * If the file to be converted follows the eTuff standard, auto-compute the needed attributes
+     *
+     * @return A list of computed eTuff attributes
+     */
     private void addTuffGlobalAttrs() {
         int end = timeDim.getLength();
         for (VariableInfo coordVar : coordVars) {
@@ -368,6 +448,12 @@ public abstract class NetcdfFileManager {
         ncf.addGlobalAttribute(new Attribute("time_coverage_end", CalendarDateFormatter.toDateTimeStringISO(stop)));
     }
 
+    /**
+     * Get attributes related specifically to CF
+     *
+     * @param template template associated with the conversion
+     * @return A list of cf specific attributes
+     */
     private List<RosettaGlobalAttribute> getFeatureSpecificGlobalAttrs(Template template) {
         List<RosettaGlobalAttribute> featureSpecificAttrs = new ArrayList<>();
 
@@ -378,6 +464,14 @@ public abstract class NetcdfFileManager {
 
     }
 
+    /**
+     * Create a netCDF file, following CF DSGs, based on the data contained within a data file and
+     * the metadata contained within a template
+     *
+     * @param dataFile file containing observed data
+     * @param template template assocated with dataFile
+     * @return location of the created netCDF file
+     */
     public String createNetcdfFile(Path dataFile, Template template) throws IOException {
 
         Path netcdfFile = PathUtils.replaceExtension(dataFile, ".nc");
