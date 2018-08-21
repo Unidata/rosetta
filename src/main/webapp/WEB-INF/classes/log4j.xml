@@ -28,7 +28,7 @@
     <appender-ref ref="rosettaLogger"/>
   </logger>
 
-  <logger name="edu.ucar.unidata.rosetta.converters.EolSoundingComp">
+  <logger name="edu.ucar.unidata.rosetta.converters.known.EolSoundingComp">
     <level value="INFO"/>
     <appender-ref ref="converterLogger"/>
   </logger>

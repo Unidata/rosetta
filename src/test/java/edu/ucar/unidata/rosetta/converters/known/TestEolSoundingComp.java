@@ -1,8 +1,13 @@
 /*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
+/*
  * Copyright (c) 2012-2017 University Corporation for Atmospheric Research/Unidata
  */
 
-package edu.ucar.unidata.rosetta.converters;
+package edu.ucar.unidata.rosetta.converters.known;
 
 import org.junit.After;
 import org.junit.Ignore;
@@ -12,6 +17,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import edu.ucar.unidata.rosetta.converters.known.EolSoundingComp;
 import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
 
 import static org.junit.Assert.assertEquals;

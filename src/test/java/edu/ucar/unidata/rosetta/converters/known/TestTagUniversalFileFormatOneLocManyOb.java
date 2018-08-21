@@ -1,18 +1,23 @@
 /*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
+
+/*
  * Copyright (c) 2012-2017 University Corporation for Atmospheric Research/Unidata
  */
 
-package edu.ucar.unidata.rosetta.converters;
+package edu.ucar.unidata.rosetta.converters.known;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import edu.ucar.unidata.rosetta.converters.known.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
 import ucar.ma2.Array;
 import ucar.ma2.InvalidRangeException;
@@ -24,12 +29,11 @@ import ucar.nc2.time.CalendarDate;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 /**
  * Test the conversion of an eTUFF file
  */
-public class TestTagUniversalFileFormatOneLocOneOb {
+public class TestTagUniversalFileFormatOneLocManyOb {
 
     private static String etuffDir = String
             .join(File.separator, "conversions", "TagUniversalFileFormat");
@@ -46,12 +50,12 @@ public class TestTagUniversalFileFormatOneLocOneOb {
     @BeforeClass
     public static void sanityCheckAndOutputRead() {
         TagUniversalFileFormat converter = new TagUniversalFileFormat();
-        converter.setMatchupOneLocOneOb(true);
+        converter.setMatchupOneLocOneOb(false);
         // check to make sure no global metadata has been set
         assertEquals(converter.getGlobalMetadata().size(), 0);
         converter.parse(etuffFile);
         // check to make sure global metadata was parsed
-        assertEquals(converter.getGlobalMetadata().size(), 39);
+        //assertEquals(converter.getGlobalMetadata().size(), 39);
 
         try {
             String ncfile = converter.convert(etuffFileNc);
@@ -65,42 +69,42 @@ public class TestTagUniversalFileFormatOneLocOneOb {
     }
 
     @AfterClass
-    public static void cleanup() {
+    public static void cleanup() throws IOException {
+        ncd.close();
         File tmp = new File(etuffFileNc);
         tmp.delete();
     }
 
     @Test
-    @Ignore
     public void testCoordinateAxes() {
         List<CoordinateAxis> cas = ncd.getCoordinateAxes();
         assertEquals(cas.size(), 5);
         Dimension timeDim = ncd.findDimension("time");
-        assertEquals(timeDim.getLength(), 25);
+        assertEquals(timeDim.getLength(), 43201);
     }
 
     @Test
-    @Ignore
     public void testVariables() {
         List<Variable> vars = ncd.getVariables();
-        assertEquals(vars.size(), 8);
+        assertEquals(vars.size(), 9);
         // all variables, except the trajectory id, should have a length of 25
         for (Variable var : vars) {
             if (!var.getFullName().equals("trajectory")) {
                 List<Dimension> dims = var.getDimensions();
                 assertEquals(dims.size(), 1);
                 Dimension timeDim = dims.get(0);
-                assertEquals(timeDim.getLength(), 25);
+                assertEquals(timeDim.getLength(), 43201);
             }
         }
     }
 
     @Test
-    @Ignore
     public void testNoMatchup() throws IOException {
         // for this date and ob:
         //   2005-07-01 0:06:00,6,14.60,"temperature","Celsius"
         // there is no lat/lon matchup
+        // this tests makes sure it is matches with a location, as
+        // we are doing a many ob to one loc matchup
         CalendarDate findTimeCd = CalendarDate.parseISOformat("gregorian", "2005-07-01 0:06:00");
         long findTime = findTimeCd.toDate().getTime() / 1000;
         Variable time = ncd.findVariable("time");
@@ -113,11 +117,10 @@ public class TestTagUniversalFileFormatOneLocOneOb {
                 found = true;
             }
         }
-        assertFalse(found);
+        assertTrue(found);
     }
 
     @Test
-    @Ignore
     public void testMatchup() throws IOException {
         // for this date and ob:
         //   2005-07-10 0:00:00,6,15.10,"temperature","Celsius"
