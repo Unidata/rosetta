@@ -62,4 +62,5 @@ rosetta.tgz
 src/test/resources/testData/esc/*.nc
 src/test/rosetta_home/downloads
 src/test/rosetta_home/uploads
+src/test/rosetta_home/application.properties
 rosettaDb
