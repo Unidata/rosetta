@@ -5,6 +5,9 @@
 
 package edu.ucar.unidata.rosetta.util;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,4 +48,11 @@ public class TemplateUtils {
         }
         return name;
     }
+
+    public static Template copy(Template in) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(in);
+        return mapper.readValue(json, Template.class);
+    }
+
 }
