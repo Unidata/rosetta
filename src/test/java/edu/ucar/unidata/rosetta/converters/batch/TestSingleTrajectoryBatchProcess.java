@@ -3,15 +3,6 @@
  * See LICENSE for license information.
  */
 
-/*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
- * See LICENSE for license information.
- */
-
-/*
- * Copyright (c) 2012-2017 University Corporation for Atmospheric Research/Unidata
- */
-
 package edu.ucar.unidata.rosetta.converters.batch;
 
 import org.apache.http.Header;
