@@ -5,8 +5,6 @@
 
 package edu.ucar.unidata.rosetta.service.batch;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,9 +13,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,10 +26,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
+import edu.ucar.unidata.rosetta.converters.known.TagUniversalFileFormat;
+import edu.ucar.unidata.rosetta.converters.custom.dsg.NetcdfFileManager;
 import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
+import edu.ucar.unidata.rosetta.util.PathUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
+import edu.ucar.unidata.rosetta.util.TemplateFactory;
+import edu.ucar.unidata.rosetta.util.TemplateUtils;
 import ucar.ma2.InvalidRangeException;
 
 public class BatchFileManagerImpl implements BatchFileManager {
@@ -178,18 +180,50 @@ public class BatchFileManagerImpl implements BatchFileManager {
             }
         }
 
-        // load template
-        ObjectMapper templateMapper = new ObjectMapper();
-
-        FileReader templateFileReader = new FileReader(mainTemplateFile);
-        Template template = templateMapper.readValue(templateFileReader, Template.class);
-        templateFileReader.close();
-        String format = template.getFormat();
+        // load maimn template
+        Template baseTemplate = TemplateFactory.makeTemplateFromJsonFile(Paths.get(mainTemplateFile));
+        String format = baseTemplate.getFormat();
 
         // todo log errors and return that in the zip file, if errors occur
 
         // process data files based on convertTo type
-        if (format.equals("eTuff")) {
+        if (format.equals("custom")) {
+            for (String file : inventory) {
+                if (!file.endsWith("template") && !file.endsWith("metadata")) {
+                    // found a data file.
+                    Path dataFile = Paths.get(file);
+
+                    // make a copy of the base template so that we can make modifications
+                    Template template = TemplateUtils.copy(baseTemplate);
+
+                    // look for a template file specific to the data file
+                    Path potentialTemplateFile = PathUtils.replaceExtension(dataFile, ".template");
+                    if (Files.exists(potentialTemplateFile)) {
+                        Template fileTemplate = TemplateFactory.makeTemplateFromJsonFile(potentialTemplateFile);
+                        template.update(fileTemplate);
+                    }
+
+                    // look for a metadata file specific to the data file
+                    Path potentialMetadataFile = PathUtils.replaceExtension(dataFile, ".metadata");
+                    if (Files.exists(potentialMetadataFile)) {
+                        Template fileTemplate = TemplateFactory.makeTemplateFromMetadataFile(potentialMetadataFile);
+                        template.update(fileTemplate);
+                    }
+
+                    // now find the proper converter
+                    NetcdfFileManager dsgWriter = null;
+                    for (NetcdfFileManager potentialDsgWriter : NetcdfFileManager.getConverters()) {
+                        if (potentialDsgWriter.isMine(baseTemplate.getCfType())) {
+                            dsgWriter = potentialDsgWriter;
+                            break;
+                        }
+                    }
+
+                    String netcdfFile = dsgWriter.createNetcdfFile(dataFile, template);
+                    convertedFiles.add(netcdfFile);
+                }
+            }
+        } else if (format.equals("eTuff")) {
             for (String inventoryFile : inventory) {
                 if (!inventoryFile.endsWith("template") && !inventoryFile.endsWith("metadata")) {
                     TagUniversalFileFormat tuff = new TagUniversalFileFormat();

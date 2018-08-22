@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.ucar.unidata.rosetta.util.TemplateUtils;
 import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
 
 
@@ -196,15 +197,6 @@ public class TemplateTest {
         templateFileReader.close();
     }
 
-    private Template copyBogusTemplate() throws IOException {
-        // make a copy of bogus template that we can modify without
-        // screwing up the rest of the tests that might rely on bogusTemplate
-        // --> should probably make Template clonable...but for now, we'll do this
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(bogusTemplate);
-        return mapper.readValue(json, Template.class);
-    }
-
     @Before
     public void setupTemplates() throws IOException {
         createBogusTemplate();
@@ -242,7 +234,7 @@ public class TemplateTest {
     @Test
     public void testBogusModifiedHeaderLines() throws IOException {
         // get a copy the bogus template for modification
-        Template modifiedTemplate = copyBogusTemplate();
+        Template modifiedTemplate = TemplateUtils.copy(bogusTemplate);
 
         // now let's modify the template
         modifiedTemplate.update(bogusTemplate2);
@@ -265,7 +257,7 @@ public class TemplateTest {
     @Test
     public void testBogusModifiedGlobalMetadata() throws IOException {
         // get a copy the bogus template for modification
-        Template modifiedTemplate = copyBogusTemplate();
+        Template modifiedTemplate = TemplateUtils.copy(bogusTemplate);
 
         // now let's modify the template
         modifiedTemplate.update(bogusTemplate2);
@@ -285,7 +277,7 @@ public class TemplateTest {
     @Test
     public void testBogusModifiedNewGlobalMetadata() throws IOException {
         // get a copy the bogus template for modification
-        Template modifiedTemplate = copyBogusTemplate();
+        Template modifiedTemplate = TemplateUtils.copy(bogusTemplate);
 
         // now let's modify the template
         modifiedTemplate.update(bogusTemplate2);
@@ -301,7 +293,7 @@ public class TemplateTest {
     @Test
     public void testBogusModifiedRemovedGlobalMetadata() throws IOException {
         // get a copy the bogus template for modification
-        Template modifiedTemplate = copyBogusTemplate();
+        Template modifiedTemplate = TemplateUtils.copy(bogusTemplate);
 
         // now let's modify the template
         modifiedTemplate.update(bogusTemplate2);
@@ -316,7 +308,7 @@ public class TemplateTest {
     @Test
     public void testBogusModifiedVariableMetadata() throws IOException {
         // get a copy the bogus template for modification
-        Template modifiedTemplate = copyBogusTemplate();
+        Template modifiedTemplate = TemplateUtils.copy(bogusTemplate);
 
         // now let's modify the template
         modifiedTemplate.update(bogusTemplate2);
@@ -354,7 +346,7 @@ public class TemplateTest {
     @Test
     public void testBogusModifiedGeneral() throws IOException {
         // get a copy the bogus template for modification
-        Template modifiedTemplate = copyBogusTemplate();
+        Template modifiedTemplate = TemplateUtils.copy(bogusTemplate);
         // first, let's make sure we cloned the template correctly
         Assert.assertEquals(bogusTemplate, modifiedTemplate);
 

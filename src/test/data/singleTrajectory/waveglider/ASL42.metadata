@@ -1,0 +1,7 @@
+root.title : Waveglider ASL42 data
+root.summary : Hour averaged measurements for waveglider ASL42 during the scope of SPURS
+root.instrument : Waveglider ASL42
+root.uuid : new_uuid_ASL42
+root.date_created : 20131102
+root.date_modified : 20180820
+root.history : Updated history for ASL42

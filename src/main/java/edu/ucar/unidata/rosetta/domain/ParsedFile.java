@@ -5,9 +5,9 @@
 
 package edu.ucar.unidata.rosetta.domain;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,7 +60,7 @@ public class ParsedFile {
         return arrayData;
     }
 
-    public ParsedFile(File datafile, Template template) throws IOException {
+    public ParsedFile(Path datafile, Template template) throws IOException {
 
         List<Integer> headerLineNumbers = template.getHeaderLineNumbers();
         headerLineNumbers.sort(Collections.reverseOrder());
@@ -71,7 +71,7 @@ public class ParsedFile {
             delimiter = "\\s+";
         }
         List<String> dataLines = Collections.emptyList();
-        dataLines = Files.readAllLines(datafile.toPath());
+        dataLines = Files.readAllLines(datafile);
 
         header = new ArrayList<String>();
         for (int headerLine : headerLineNumbers) {
@@ -121,7 +121,7 @@ public class ParsedFile {
             Array arr = null;
             DataType dataType = null;
 
-            if(type.toLowerCase().equals("string")) {
+            if (type.toLowerCase().equals("string")) {
                 dataType = DataType.STRING;
             } else if (type.toLowerCase().equals("integer")) {
                 dataType = DataType.INT;

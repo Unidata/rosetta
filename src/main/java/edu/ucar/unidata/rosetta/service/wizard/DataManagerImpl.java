@@ -5,28 +5,22 @@
 
 package edu.ucar.unidata.rosetta.service.wizard;
 
-import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
+import edu.ucar.unidata.rosetta.converters.known.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
-import edu.ucar.unidata.rosetta.domain.resources.Community;
-import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
-import edu.ucar.unidata.rosetta.domain.wizard.CfTypeData;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-import edu.ucar.unidata.rosetta.repository.PropertiesDao;
 import edu.ucar.unidata.rosetta.repository.wizard.DataDao;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import ucar.ma2.InvalidRangeException;
 

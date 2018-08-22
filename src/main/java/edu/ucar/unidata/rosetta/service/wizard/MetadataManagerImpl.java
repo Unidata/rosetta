@@ -5,10 +5,9 @@
 
 package edu.ucar.unidata.rosetta.service.wizard;
 
-import edu.ucar.unidata.rosetta.converters.TagUniversalFileFormat;
+import edu.ucar.unidata.rosetta.converters.known.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.Metadata;
-import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.repository.wizard.MetadataDao;
 import edu.ucar.unidata.rosetta.repository.wizard.MetadataProfileDao;

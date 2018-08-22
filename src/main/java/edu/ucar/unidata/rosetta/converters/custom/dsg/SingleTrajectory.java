@@ -23,6 +23,9 @@ public class SingleTrajectory extends NetcdfFileManager {
         featureVarName = "trajectory";
     }
 
+    /**
+     * make variables specific to trajectory DSGs
+     */
     @Override
     void makeOtherVariables() {
         // try to ge trajectory name
@@ -40,6 +43,10 @@ public class SingleTrajectory extends NetcdfFileManager {
         featureId.addAttribute(new Attribute("cf_role", "trajectory_id"));
     }
 
+    /**
+     * Create a data variable for a /trajectory DSG
+     * @param variableInfo Variable to create
+     */
     void makeDataVars(VariableInfo variableInfo) {
         // trajectory specific
         List<Dimension> coordVarDimensions = Collections.singletonList(timeDim);
@@ -60,6 +67,10 @@ public class SingleTrajectory extends NetcdfFileManager {
         var.addAll(allVarAttrs);
     }
 
+    /**
+     * Create a coordnate variable for a non-time related coordinate variable
+     * @param variableInfo non-time related coordinate variable
+     */
     void makeNonTimeCoordVars(VariableInfo variableInfo) {
         // for a trajectory, all coordinate variables will have a dimension of time
         List<Dimension> coordVarDimensions = Collections.singletonList(timeDim);
