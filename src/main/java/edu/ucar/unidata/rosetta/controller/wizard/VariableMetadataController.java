@@ -114,7 +114,7 @@ public class VariableMetadataController implements HandlerExceptionResolver {
     // Add current step to the Model.
     model.addAttribute("currentStep", "variableMetadata");
     model.addAttribute("variableData", metadataManager.getMetadataProfiles(rosettaCookie.getValue(), "variable"));
-    // Add whether we need to show the custom file attributes step in the wizard menu.
+    // Add whether we need to show the custom file attributes step in the wizard menu (boolean value).
     model.addAttribute("customFileAttributesStep",  wizardManager.customFileAttributesStep(rosettaCookie.getValue()));
     // Add parsed file data in JSON string format (to show in the SlickGrid).
     model.addAttribute("parsedData",
