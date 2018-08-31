@@ -22,7 +22,7 @@ public class MetadataProfile {
   private String metadataProfileName; // required
   private String metadataProfileVersion; // required
   private String metadataType = "Global";
-  private String metadataTypeStructure = "Global Attributes";
+  private String metadataTypeStructureName = "Global Attributes";
   private String metadataValueType = "String";
 
   /**
@@ -210,17 +210,17 @@ public class MetadataProfile {
    *
    * @return The metadata type structure.
    */
-  public String getMetadataTypeStructure() {
-    return metadataTypeStructure;
+  public String getMetadataTypeStructureName() {
+    return metadataTypeStructureName;
   }
 
   /**
    * Sets the structure with which the metadata attribute is associated.
    *
-   * @param metadataTypeStructure The metadata type structure.
+   * @param metadataTypeStructureName The metadata type structure.
    */
-  public void setMetadataTypeStructure(String metadataTypeStructure) {
-    this.metadataTypeStructure = metadataTypeStructure;
+  public void setMetadataTypeStructureName(String metadataTypeStructureName) {
+    this.metadataTypeStructureName = metadataTypeStructureName;
   }
 
   /**
