@@ -26,7 +26,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import edu.ucar.unidata.rosetta.converters.known.TagUniversalFileFormat;
+import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.converters.custom.dsg.NetcdfFileManager;
 import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;

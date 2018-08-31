@@ -5,7 +5,7 @@
 
 package edu.ucar.unidata.rosetta.service.wizard;
 
-import edu.ucar.unidata.rosetta.converters.known.TagUniversalFileFormat;
+import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
@@ -15,6 +15,7 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.wizard.DataDao;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,7 +81,11 @@ public class DataManagerImpl implements DataManager {
       // Tag Universal File Format.
       TagUniversalFileFormat tagUniversalFileFormat = new TagUniversalFileFormat();
       tagUniversalFileFormat.parse(FilenameUtils.concat(filePathUploadDir, data.getDataFileName()));
-      tagUniversalFileFormat.convert(ncFileToCreate);
+      try {
+        tagUniversalFileFormat.convert(ncFileToCreate);
+      } catch (IOException e) {
+        throw new RosettaFileException(e.getMessage());
+      }
 
     } else {
       // Custom file type, so we need to convert it here.
