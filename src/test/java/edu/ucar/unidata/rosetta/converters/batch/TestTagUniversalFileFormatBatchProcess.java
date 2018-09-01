@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class TestTagUniversalFileFormatBatchProcess {
     private static String etuffFileTld = TestUtils.getTestDataDirStr() + etuffDir;
     private static String uploadFile = String.join(File.separator, etuffFileTld, "test_simple_api.zip");
 
-    private static String topLevelDir = "/test_simple_api";
+    private static String topLevelZip = "/test_simple_api";
 
     String batchProcessUrl = TestUtils.getTestServerUrl() + "/batchProcess";
 
@@ -63,12 +64,14 @@ public class TestTagUniversalFileFormatBatchProcess {
         String uploadFileUri = Paths.get(uploadFile).toUri().toString();
         URI uri = URI.create("jar:" + uploadFileUri);
         try (FileSystem zipfs = FileSystems.newFileSystem(uri, env)) {
-            List<String> filesToAdd = Arrays.asList("TagDataFlatFileExample.txt", "rosetta.template");
-            for (String file : filesToAdd) {
-                Path externalTxtFile = Paths.get(etuffFileTld, topLevelDir, file);
-                Path zipTopLevelDir = zipfs.getPath(topLevelDir);
+            //List<String> filesToAdd = Arrays.asList("TagDataFlatFileExample.txt", "rosetta.template");
+            List<Path> filesToAdd = new ArrayList<>();
+            filesToAdd.add(Paths.get(etuffFileTld, "eTUFF-tuna-590051-small.txt"));
+            filesToAdd.add(Paths.get(etuffFileTld, topLevelZip, "rosetta.template"));
+            for (Path externalTxtFile : filesToAdd) {
+                Path zipTopLevelDir = zipfs.getPath(topLevelZip);
                 Files.createDirectories(zipTopLevelDir);
-                Path pathInZipfile = zipTopLevelDir.resolve(file);
+                Path pathInZipfile = zipTopLevelDir.resolve(externalTxtFile.getFileName().toString());
                 Files.copy(externalTxtFile, pathInZipfile, StandardCopyOption.REPLACE_EXISTING);
             }
         }

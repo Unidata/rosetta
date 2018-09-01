@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import edu.ucar.unidata.rosetta.converters.known.TagUniversalFileFormat;
+import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
 import ucar.ma2.Array;
 import ucar.ma2.InvalidRangeException;
@@ -37,9 +37,9 @@ public class TestTagUniversalFileFormatOneLocOneOb {
     private static String etuffFileTld = TestUtils.getTestDataDirStr() + etuffDir;
     //private static String etuffFile = String.join(File.separator, etuffFileTld, "eTUFF-tuna-590051.gz");
     private static String etuffFile = String
-            .join(File.separator, etuffFileTld, "TagDataFlatFileExample.gz");
+            .join(File.separator, etuffFileTld, "eTUFF-tuna-590051-small.txt");
     private static String etuffFileNc = String
-            .join(File.separator, etuffFileTld, "eTUFF-tuna-590051.nc");
+            .join(File.separator, etuffFileTld, "eTUFF-tuna-590051-small.nc");
     private static NetcdfDataset ncd;
 
     private TagUniversalFileFormat etuffConvertor = new TagUniversalFileFormat();
@@ -48,11 +48,14 @@ public class TestTagUniversalFileFormatOneLocOneOb {
     public static void sanityCheckAndOutputRead() {
         TagUniversalFileFormat converter = new TagUniversalFileFormat();
         converter.setMatchupOneLocOneOb(true);
+        // won't always have netCDF-C lib installed where running tests
+        converter.setUseNetcdf4(false);
+
         // check to make sure no global metadata has been set
         assertEquals(converter.getGlobalMetadata().size(), 0);
         converter.parse(etuffFile);
         // check to make sure global metadata was parsed
-        assertEquals(converter.getGlobalMetadata().size(), 39);
+        assertEquals(30, converter.getGlobalMetadata().size());
 
         try {
             String ncfile = converter.convert(etuffFileNc);
@@ -77,7 +80,7 @@ public class TestTagUniversalFileFormatOneLocOneOb {
         List<CoordinateAxis> cas = ncd.getCoordinateAxes();
         assertEquals(cas.size(), 5);
         Dimension timeDim = ncd.findDimension("time");
-        assertEquals(timeDim.getLength(), 25);
+        assertEquals(2, timeDim.getLength());
     }
 
     @Test
@@ -90,7 +93,7 @@ public class TestTagUniversalFileFormatOneLocOneOb {
                 List<Dimension> dims = var.getDimensions();
                 assertEquals(dims.size(), 1);
                 Dimension timeDim = dims.get(0);
-                assertEquals(timeDim.getLength(), 25);
+                assertEquals(2, timeDim.getLength());
             }
         }
     }
@@ -98,9 +101,9 @@ public class TestTagUniversalFileFormatOneLocOneOb {
     @Test
     public void testNoMatchup() throws IOException {
         // for this date and ob:
-        //   2005-07-01 0:06:00,6,14.60,"temperature","Celsius"
+        // "2005-04-15 21:33:00",6,23.30,"temperature","Celsius"
         // there is no lat/lon matchup
-        CalendarDate findTimeCd = CalendarDate.parseISOformat("gregorian", "2005-07-01 0:06:00");
+        CalendarDate findTimeCd = CalendarDate.parseISOformat("gregorian", "2005-04-15 21:33:00");
         long findTime = findTimeCd.toDate().getTime() / 1000;
         Variable time = ncd.findVariable("time");
         Array timeVals = time.read();
@@ -118,9 +121,9 @@ public class TestTagUniversalFileFormatOneLocOneOb {
     @Test
     public void testMatchup() throws IOException {
         // for this date and ob:
-        //   2005-07-10 0:00:00,6,15.10,"temperature","Celsius"
+        //  "2005-04-16 00:00:00",6,21.50,"temperature","Celsius"
         // there is a lat/lon matchup
-        CalendarDate findTimeCd = CalendarDate.parseISOformat("gregorian", "2005-07-10 0:00:00");
+        CalendarDate findTimeCd = CalendarDate.parseISOformat("gregorian", "2005-04-16 00:00:00");
         long findTime = findTimeCd.toDate().getTime() / 1000;
         Variable time = ncd.findVariable("time");
         Array timeVals = time.read();
@@ -138,6 +141,6 @@ public class TestTagUniversalFileFormatOneLocOneOb {
         // check that temperature value is as expected
         Variable temp = ncd.findVariable("temperature");
         Array tempVals = temp.read();
-        assertEquals(tempVals.getFloat(foundIndex), 15.10, 0.001);
+        assertEquals(21.50, tempVals.getFloat(foundIndex), 0.001);
     }
 }

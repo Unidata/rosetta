@@ -36,6 +36,7 @@ import ucar.nc2.Variable;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateFormatter;
 
+import static edu.ucar.unidata.rosetta.converters.utils.VariableAttributeUtils.getMaxMinAttrs;
 import static java.lang.Math.toIntExact;
 import static ucar.nc2.time.CalendarDate.parseUdunits;
 
@@ -189,21 +190,6 @@ public abstract class NetcdfFileManager {
         baseTimeVarAttrs.add(new Attribute("standard_name", "time"));
         baseTimeVarAttrs.add(new Attribute("units", timeUnits));
         return baseTimeVarAttrs;
-    }
-
-    /**
-     * Create valid_min, valid_max attributes associated with the input data array
-     *
-     * @param data data from which to compute max/min values
-     * @return A list containing the valid_max and valid_min attributes
-     */
-    private static List<Attribute> getMaxMinAttrs(Array data) {
-        List<Attribute> attrs = new ArrayList<>();
-        MinMax maxMinVals = MAMath.getMinMax(data);
-        attrs.add(new Attribute("valid_max", maxMinVals.max));
-        attrs.add(new Attribute("valid_min", maxMinVals.min));
-
-        return attrs;
     }
 
     /**
