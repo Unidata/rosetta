@@ -5,10 +5,11 @@
 <label for="variableGrid" class="error"></label>
 <div id="variableGrid" class="rosettaGrid"></div>
 <div id="dialog"></div>
-<%-- input data was stashed here
-<input type="hidden" name="variableMetadata" value="${data.variableMetadata}"
+<%-- input data was stashed here --%>
+<input type="hidden" name="variableMetadata" value=""
        id="variableMetadata"/>
 
+<%--
 <div class="buttonNav">
 
     <input type="submit" name="submit" value="Previous" class="button"/>
@@ -63,8 +64,8 @@
 
   // A custom formatter (see slick.formatters.js) to format the lines for the header line toggle functionality
   var LineNumberFormatter = function (row, cell, value, columnDef, dataContext) {
-    if (dataContext.parent != null) { // header row: a parent row is present
-      if (dataContext.id == dataContext.parent) { // header row that is the parent row
+    if (dataContext.parent !== null) { // header row: a parent row is present
+      if (dataContext.id === dataContext.parent) { // header row that is the parent row
         // return the appropriate item depending on the current state of the parent
         // (expanded or collapsed)
         if (dataContext._collapsed) {
@@ -84,7 +85,7 @@
   var delimiter = '${delimiterSymbol}';
   var headerLineNumbers = '${headerLineNumbers}';
 
-  <%-- populate variable data array with metadata profile information --%>
+  <%-- populate variable data array with metadata profile information passed from the server-side --%>
   var variableData = [];
   <c:forEach items="${variableData}" var="profile">
     var profile = {};
@@ -96,13 +97,14 @@
     profile["metadataType"] = '${fn:escapeXml(profile.metadataType)}';
     variableData.push(profile);
   </c:forEach>
-
+/*
   for (var i = 0; i < variableData.length; i++) {
      var metadataItem = variableData[i];
      console.log(metadataItem);
 
 
   }
+  */
 
   gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter,
       headerLineNumbers, variableData);
