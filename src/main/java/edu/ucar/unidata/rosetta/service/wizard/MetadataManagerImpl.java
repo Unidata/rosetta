@@ -78,15 +78,51 @@ public class MetadataManagerImpl implements MetadataManager {
             List<MetadataProfile> profiles = metadataProfileDao.getMetadataProfileByType(metadataProfile);
             // Remove the unwanted metadata type (global or variable).
             profiles.removeIf(p -> !metadataTypeValues.contains(p.getMetadataType()));
+            // Filter out metadata attributes that will be auto-computed.
+            profiles.removeIf(this::filterOutIgnored);
             metadataProfiles.addAll(profiles);
         }
 
         // Get rid of any duplicate entries.
-        Set<MetadataProfile> hs = new HashSet<>();
-        hs.addAll(metadataProfiles);
+        Set<MetadataProfile> hs = new HashSet<>(metadataProfiles);
         metadataProfiles.clear();
         metadataProfiles.addAll(hs);
         return metadataProfiles;
+    }
+
+    /**
+     * Method to filter metadata attributes that will be auto-computed.  These attributes do not need
+     * to be displayed in the wizard.  As per
+     * https://github.com/Unidata/rosetta/wiki/Using-Metadata-Profiles-in-Rosetta#which-metadata-profiles-to-use
+     *
+     * @param profile   The MetadataProfile object to examine.
+     * @return  true if the MetadataProfile object matches an ignored attribute; otherwise false.
+     */
+    private boolean filterOutIgnored(MetadataProfile profile) {
+        for (MetadataProfile ignored : getIgnoredMetadataProfileAttributes()) {
+            if (profile.getMetadataType().equals(ignored.getMetadataType()) && profile.getAttributeName().equals(ignored.getAttributeName())) {
+                if (profile.getMetadataProfileName().equals("eTUFF")) {
+                    if (profile.getMetadataGroup().equals("deployment") || profile.getMetadataGroup().equals("end_of_mission")) {
+                        return true;
+                    }
+                }
+
+                if (!profile.getAttributeName().equals("valid_min") && !profile.getAttributeName().equals("valid_max")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Retrieves the persisted metadata profile attributes to ignore in the wizard interface.
+     *
+     * @return  A list of MetadataProfile objects containing the attributes to ignore.
+     */
+    private List<MetadataProfile> getIgnoredMetadataProfileAttributes() {
+        return metadataProfileDao.getIgnoredMetadataProfileAttributes();
     }
 
 
