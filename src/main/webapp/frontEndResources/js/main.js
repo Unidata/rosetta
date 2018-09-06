@@ -79,7 +79,7 @@ $(document).ready(function ($) {
    */
   $("select#dataFileType").change(function (event, ui) {
     var fileType = $(this).find(":selected").text();
-    if (fileType == "--") {
+    if (fileType === "--") {
       // user de-selected the file type.
       if (!$("#upload").hasClass("hideMe")) {
         // add hideMe class for file upload section.
