@@ -85,8 +85,7 @@
   var delimiter = '${delimiterSymbol}';
   var headerLineNumbers = '${headerLineNumbers}';
 
-  <%-- populate metadata profile variable data array with metadata profile information passed from the server-side --%>
-  var metadataProfileVariableData = [];
+  <%-- populate global metadata profile variable data array with metadata profile info passed from the server-side --%>
   <c:forEach items="${metadataProfileVariableData}" var="profile">
     var profile = {};
     profile["attributeName"] =  '${fn:escapeXml(profile.attributeName)}';
@@ -95,10 +94,10 @@
     profile["displayName"] = '${fn:escapeXml(profile.displayName)}';
     profile["exampleValues"] = '${fn:escapeXml(profile.exampleValues)}';
     profile["metadataType"] = '${fn:escapeXml(profile.metadataType)}';
+    profile["metadataTypeStructure"] = '${fn:escapeXml(profile.metadataTypeStructure)}';
     metadataProfileVariableData.push(profile);
   </c:forEach>
 
-  gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter,
-      headerLineNumbers, metadataProfileVariableData);
+  gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter, headerLineNumbers);
 
 </script>
