@@ -432,11 +432,11 @@ function bindDialogEvents(key) {
         //validateVariableData(key);
         // if there are no validation errors, we can proceed
         if ($("#dialog #coordinateVariableAssignment").find("label.error").text() === "") {
-            enableVariableAttributes("dataTypeAssignment");
+            enableVariableAttributes("coordinateVariableTypeAssignment");
         }
     });
 
-    // coordinate variable type
+    // coordinate variable type "flavor"
     $("#dialog #coordinateVarTypeAssignment select[name=\"coordVarType\"]").bind("change", function () {
 
         // get rid of any error messages
@@ -445,50 +445,20 @@ function bindDialogEvents(key) {
         // coordinate variable type value the user selected
         var valueSelected = $(this).val();
 
-        var metadataTypeStructure;
-        if (valueSelected === "latitude") {
-            metadataTypeStructure = "__lat";
-        } else if (valueSelected === "longitude") {
-            metadataTypeStructure = "__lon";
-        } else if (valueSelected === "vertical") {
-            metadataTypeStructure = "__depth";
-        } else {
-            metadataTypeStructure = "__time";
-        }
-
-        // Remove the un-needed attributes from the data imported in via the metadata profile.
-        // (metadata profile values contain dups for all types of coord var values, e.g., a 'comments' entry exists for
-        // for lat, lon, depth, etc.  We only need one of these.) 
-
-        // Because the metadata profile attributes can contain duplicate items with the attribute name
-            // we need to find the dups and make sure one the correct one (the cone that corresponds to the
-            // selected coordinate variable type) is shown.
-        var duplicatesAttributesMap = getDuplicateAttributes();
-
-        var attributeNames = duplicatesAttributesMap[Symbol.iterator]();
-        for(var innerArray of attributeNames) {
-            var storedData = innerArray[1];
-            console.log(storedData);
-            var createdInputIdValue = innerArray[0] + metadataTypeStructure;
-            console.log(createdInputIdValue);
-            for (var i = 0; i < storedData.length; i++) {
-                var inputIdValue = $(storedData[i]).find("input").attr("id");
-                console.log(inputIdValue);
-            }
-        }
+        // Remove the un-needed variable attributes from the DOM based on the user's selection.
+        removeUnusedAttributesFromDOM(valueSelected);
 
         // concatenation the entered value to any existing Metadata values pulled from the variableMetadata value field
         var metadataString = buildStringForVariableString(key + "Metadata", "_coordinateVariableType", valueSelected);
         removeItemFromVariableString(key + "Metadata", "_coordinateVariableType");
         addToVariableString(key + "Metadata", metadataString);
 
-        // vertical coordinate variable type selected
+        // vertical coordinate variable type selected; ask which direction is positive
         if (valueSelected === "vertical") {
             enableDiv("verticalDirection");
         } else {
             disableDiv("verticalDirection");
         }
-
 
         // validate user input
         var coordVarTypeError = lookForBlankSelection($(this).val(), "Coordinate Variable Type");
@@ -526,40 +496,6 @@ function bindDialogEvents(key) {
     });
 }
 
-
-function removeUnusedAttributesFromDOM(valueSelected) {
-    var metadataTypeStructure;
-    if (valueSelected === "latitude") {
-        metadataTypeStructure = "__lat";
-    } else if (valueSelected === "longitude") {
-        metadataTypeStructure = "__lon";
-    } else if (valueSelected === "vertical") {
-        metadataTypeStructure = "__depth";
-    } else {
-        metadataTypeStructure = "__time";
-    }
-}
-
-/**
- * This function finds all of the metadatra profile variable attributes that have the same 
- * name attached to the DOM's required, recommended, and additional divs. Returns a map of
- * the variable attributes where key = attribute name & value = array of matching DOM elements. 
- */           
-function getDuplicateAttributes() {
-    var names = new Map();
-    $("#dialog #requiredMetadataAssignment ul").find("li").each(function () {
-        var name = $(this).find("input").attr("name");
-        if (names.has(name)) {
-            // Already exists, so add to inner array
-            var storedAttributes = names.get(name);
-            storedAttributes.push($(this));
-        } else {
-            // Add for the first time.
-            names.set(name, [$(this)]);
-        }
-    });
-    return names;
-}
 
 /**
  * This function binds general events associated with the metadata entries added to the dialog DOM.
@@ -869,7 +805,6 @@ function addContentToDialog(key) {
         " </div>\n" +
         " <div id=\"verticalDirection\">\n" +
         "  <h3>Which direction do the vertical values increase?</h3>\n" +
-        "  <label for=\"verticalDirection\" class=\"error\"></label>\n" +
         "  <ul class=\"third\">\n" +
         "   <li>\n" +
         "    <label>\n" +
@@ -1283,7 +1218,7 @@ function createMetadataTagElement(key, metadataItem, variableValue) {
     var tag;
 
     if (metadataNecessity === "additional") {
-        tag = "<option value=\"" + tagName + "\">" + displayName + "</option>\n";
+        tag = "<option id=\"" + tagName + "__" + metadataTypeStructure + "\" value=\"" + tagName + "\">" + displayName + "</option>\n";
     } else {
         // if the user has specified the coordinate var type and data type, then enable input tags (otherwise start out disabled)
         var isDisabled = "disabled";
@@ -1318,9 +1253,8 @@ function createMetadataTagElement(key, metadataItem, variableValue) {
  */
 function populateMetadataInputTags(key, variableType, metadataNecessity) {
     var variableValue = getFromVariableString(key);
-    var metadataTags = "";
+    var metadataTags = [];
 
-    console.log(metadataProfileVariableData.length);
     for (var i = 0; i < metadataProfileVariableData.length; i++) {
         var metadataItem = metadataProfileVariableData[i];
 
@@ -1328,7 +1262,6 @@ function populateMetadataInputTags(key, variableType, metadataNecessity) {
         var type;
         if (metadataItem.metadataType === "CoordinateVariable") {
             type = "coordinate";
-            console.log(metadataItem);
         }    
         if (metadataItem.metadataType === "DataVariable") {
             type = "non-coordinate";
@@ -1345,43 +1278,17 @@ function populateMetadataInputTags(key, variableType, metadataNecessity) {
         if (type === variableType) {
             if (metadataItem.complianceLevel === metadataNecessity) {
                 tag = createMetadataTagElement(key, metadataItem, variableValue);
-                metadataTags = metadataTags + tag;
+                metadataTags.push(tag);
             }
         }
     }
-
-/*
-    // loop through known metadata
-    for (var i = 0; i < metadata.length; i++) {
-        var metadataItem = metadata[i];
-      //  console.log(metadataItem);
-        var tag;
-
-        // Grab the metadata entries that correspond to the variable type (coordinate or
-        // non-coordinate),  grab the metadata entries that correspond to the variable necessity
-        // (required, recommended, or additional), create a form tag containing that information.
-        if (metadataItem.type === variableType) {
-            if (metadataItem.necessity === metadataNecessity) {
-                tag = createTagElement(key, metadataItem.entry, variableValue,
-                    metadataItem.displayName, metadataItem.necessity,
-                    metadataItem.helptip);
-                metadataTags = metadataTags + tag;
-            }
-        }
-
-        // Grab the metadata entries that correspond to the both coordinate or non-coordinate
-        // variables and create a form tag containing that information.
-        if (metadataItem.type === "both") {
-            if (metadataItem.necessity === metadataNecessity) {
-                tag = createTagElement(key, metadataItem.entry, variableValue,
-                    metadataItem.displayName, metadataItem.necessity,
-                    metadataItem.helptip);
-                metadataTags = metadataTags + tag;
-            }
-        }
+    // Sort the array.
+    metadataTags.sort();
+    var metadataTagsAsAString = "";
+    for (var x = 0; x < metadataTags.length; x++) {
+        metadataTagsAsAString = metadataTagsAsAString + metadataTags[x];
     }
-    */
-    return metadataTags;
+    return metadataTagsAsAString;
 }
 
 /**
@@ -1716,4 +1623,110 @@ function testVariableCompleteness(key, variableName) {
         }
     }
     return true;
+}
+
+/**
+ * This function removes the un-needed attributes from the data imported in via the metadata profile.
+ * (Metadata profile values contain dups for all types of coordinate variable values, e.g., a 'comments' 
+ * entry exists for for lat, lon, depth, etc.  We only need one of these -- the one that corresponds to 
+ * the selected coordinate variable type.)
+ *
+ * @param  The coordinate variable value selected by the user.
+ */
+function removeUnusedAttributesFromDOM(valueSelected) {
+    // Determine the metadata type structure string to use based on the valueSelected.
+    var metadataTypeStructure;
+    if (valueSelected === "latitude") {
+        metadataTypeStructure = "__lat";
+    } else if (valueSelected === "longitude") {
+        metadataTypeStructure = "__lon";
+    } else if (valueSelected === "vertical") {
+        metadataTypeStructure = "__depth";
+    } else {
+        metadataTypeStructure = "__time";
+    }
+
+    var necessityTypes = ["required", "recommended", "additional"];
+
+    for (var x = 0; x < necessityTypes.length; x++) {
+        var necessityType = necessityTypes[x];
+        // Get a map of containing the variable attributes by name, where key=attribute name & value=array of matching DOM elements. 
+        var duplicatesAttributesMap = findDuplicateAttributesFromDOM(necessityType);
+
+        var attributeNames = duplicatesAttributesMap[Symbol.iterator]();
+        for(var innerArray of attributeNames) {
+            var storedData = innerArray[1];
+            // Derive the ID value for the metadata attribute we need to keep based on the user's coord var type selection.
+            var createdInputIdValue = innerArray[0] + metadataTypeStructure;
+            // If the array of attributues with the same name has more than one entry.
+            if (storedData.length > 1) {
+                // Loop through the array and find the entry that matches the createdInputIdValue.
+                for (var i = 0; i < storedData.length; i++) {
+                    if (necessityType !== "additional") {
+                        var inputIdValue = $(storedData[i]).find("input").attr("id");
+                        if (inputIdValue !== createdInputIdValue) {
+                            // Remove the attributes that do not match.
+                            var idValue = necessityType + "MetadataAssignment"
+                            $("#dialog #" + idValue + " ul li").find("#" + inputIdValue).closest("li").remove();
+                        }
+                        // Remove the valid_min/max attributes if the coord var value isn't vertical, as per:
+                        // https://github.com/Unidata/rosetta/wiki/Using-Metadata-Profiles-in-Rosetta
+                        if (valueSelected !== "vertical") {
+                            if (createdInputIdValue.includes("valid_m")) {
+                                // Remove the valid_min/max attributes.
+                                var idValue = necessityType + "MetadataAssignment"
+                                $("#dialog #" + idValue + " ul li").find("#" + inputIdValue).closest("li").remove();                  
+                            }
+                        }
+                    } else {
+                        var inputIdValue = $(storedData[i]).attr("id");
+                        if (inputIdValue !== createdInputIdValue) {
+                            // Remove the option tags that do not match.
+                            $("#dialog #additionalMetadataAssignment select").find("#" + inputIdValue).closest("option").remove();
+                        }
+
+                    }
+                }
+            }
+        }
+    }    
+}
+
+/**
+ * This function finds all of the metadatra profile variable attributes that have the same 
+ * name attached to the DOM's required, recommended, and additional divs. Returns a map of
+ * the variable attributes where key=attribute name & value=array of matching DOM elements. 
+ *
+ * @param metadataNecessity  Either required, recommended, or additional
+ */           
+function findDuplicateAttributesFromDOM(metadataNecessity) {
+    var names = new Map();
+    // Required and recommended metadata
+    if (metadataNecessity !== "additional") {
+        var idValue = metadataNecessity + "MetadataAssignment"
+        $("#dialog #" + idValue + " ul").find("li").each(function () {
+            var name = $(this).find("input").attr("name");
+            if (names.has(name)) {
+                // Already exists, so add to inner array
+                var storedAttributes = names.get(name);
+                storedAttributes.push($(this));
+            } else {
+                // Add for the first time.
+                names.set(name, [$(this)]);
+            }
+        });
+    } else { // Additional metadata 
+        $("#dialog #additionalMetadataAssignment select option").each(function () {
+            var name = $(this).val();
+            if (names.has(name)) {
+                // Already exists, so add to inner array
+                var storedAttributes = names.get(name);
+                storedAttributes.push($(this));
+            } else {
+                // Add for the first time.
+                names.set(name, [$(this)]);
+            }
+        });
+    }
+    return names;
 }
