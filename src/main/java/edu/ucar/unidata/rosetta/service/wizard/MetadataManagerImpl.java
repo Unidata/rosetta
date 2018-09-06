@@ -80,10 +80,11 @@ public class MetadataManagerImpl implements MetadataManager {
             profiles.removeIf(p -> !metadataTypeValues.contains(p.getMetadataType()));
             // Filter out metadata attributes that will be auto-computed.
             profiles.removeIf(this::filterOutIgnored);
+
             metadataProfiles.addAll(profiles);
         }
 
-        // Get rid of any duplicate entries.
+        // Get rid of any duplicate entries
         Set<MetadataProfile> hs = new HashSet<>(metadataProfiles);
         metadataProfiles.clear();
         metadataProfiles.addAll(hs);
