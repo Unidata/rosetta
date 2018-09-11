@@ -445,6 +445,9 @@ function bindDialogEvents(key) {
         // coordinate variable type value the user selected
         var valueSelected = $(this).val();
 
+        // update the metadata choices based on the user input
+        addMetadataHTMLToDialog(key);
+
         // Remove the un-needed variable attributes from the DOM based on the user's selection.
         removeUnusedAttributesFromDOM(valueSelected);
 
@@ -453,12 +456,6 @@ function bindDialogEvents(key) {
         removeItemFromVariableString(key + "Metadata", "_coordinateVariableType");
         addToVariableString(key + "Metadata", metadataString);
 
-        // vertical coordinate variable type selected; ask which direction is positive
-        if (valueSelected === "vertical") {
-            enableDiv("verticalDirection");
-        } else {
-            disableDiv("verticalDirection");
-        }
 
         // validate user input
         var coordVarTypeError = lookForBlankSelection($(this).val(), "Coordinate Variable Type");
@@ -468,9 +465,39 @@ function bindDialogEvents(key) {
 
         // if there are no validation errors, we can proceed
         if ($("#dialog #coordinateVarTypeAssignment").find("label.error").text() === "") {
+            // vertical coordinate variable type selected; ask which direction is positive
+            if (valueSelected === "vertical") {
+                enableDiv("verticalDirection");
+            } else {
+                disableDiv("verticalDirection");
+                $("#dialog #verticalDirection input[name=\"verticalDirection\"]").prop('checked', false);
+                removeItemFromVariableString(key + "Metadata", "verticalDirection");
+                enableVariableAttributes("dataTypeAssignment");
+            }
+        }
+    });
+
+    // vertical direction
+    $("#dialog #verticalDirection input[name=\"verticalDirection\"]").bind("click", function () {
+
+        // get rid of any error messages
+        $("#dialog #verticalDirection").find("label.error").text("");
+
+        // concatenation the entered value to any existing Metadata values pulled from the variableMetadata value field
+        var metadataString = buildStringForVariableString(key + "Metadata", "verticalDirection", $(this).val());
+
+        // update the data in the variableMetadata value field
+        addToVariableString(key + "Metadata", metadataString);
+
+        // validate user input
+        //validateVariableData(key);
+
+        // if there are no validation errors, we can proceed
+        if ($("#dialog #dataTypeAssignment").find("label.error").text() === "") {
             enableVariableAttributes("dataTypeAssignment");
         }
     });
+
 
     // data type
     $("#dialog #dataTypeAssignment input[name=\"dataType\"]").bind("click", function () {
@@ -1333,8 +1360,7 @@ function populateDataFromStorage(key) {
             if (variableMetadataInStorage) {
 
                 // coordinate variable
-                var coordinateVariableSelected = getItemEnteredFromVariableString(key
-                    + "Metadata", "_coordinateVariable");
+                var coordinateVariableSelected = getItemEnteredFromVariableString(key + "Metadata", "_coordinateVariable");
                 if (coordinateVariableSelected != null) {
                     // check the appropriate choice and update the metadata options accordingly
                     $("#dialog #coordinateVariableAssignment input[name=\"isCoordinateVariable\"][value=\"" + coordinateVariableSelected + "\"]").prop("checked", true);
@@ -1668,15 +1694,6 @@ function removeUnusedAttributesFromDOM(valueSelected) {
                             // Remove the attributes that do not match.
                             var idValue = necessityType + "MetadataAssignment"
                             $("#dialog #" + idValue + " ul li").find("#" + inputIdValue).closest("li").remove();
-                        }
-                        // Remove the valid_min/max attributes if the coord var value isn't vertical, as per:
-                        // https://github.com/Unidata/rosetta/wiki/Using-Metadata-Profiles-in-Rosetta
-                        if (valueSelected !== "vertical") {
-                            if (createdInputIdValue.includes("valid_m")) {
-                                // Remove the valid_min/max attributes.
-                                var idValue = necessityType + "MetadataAssignment"
-                                $("#dialog #" + idValue + " ul li").find("#" + inputIdValue).closest("li").remove();                  
-                            }
                         }
                     } else {
                         var inputIdValue = $(storedData[i]).attr("id");
