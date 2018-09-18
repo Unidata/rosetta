@@ -10,7 +10,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.Objects;
 
 /**
- * Object representing a metadata profile schema as outlined in https://github.com/Unidata/rosetta/wiki/Metadata-Profile-Schema
+ * Object representing a metadata profile schema as outlined in
+ * https://github.com/Unidata/rosetta/wiki/Metadata-Profile-Schema
  */
 public class MetadataProfile {
 
@@ -45,10 +46,7 @@ public class MetadataProfile {
                     Objects.equals(getDescription(), other.getDescription()) &&
                     Objects.equals(getDisplayName(), other.getDisplayName()) &&
                     Objects.equals(getExampleValues(), other.getExampleValues()) &&
-                    Objects.equals(getId(), other.getId()) &&
                     Objects.equals(getMetadataGroup(), other.getMetadataGroup()) &&
-                    Objects.equals(getMetadataProfileName(), other.getMetadataProfileName()) &&
-                    Objects.equals(getMetadataProfileVersion(), other.getMetadataProfileVersion()) &&
                     Objects.equals(getMetadataType(), other.getMetadataType()) &&
                     Objects.equals(getMetadataTypeStructure(), other.getMetadataTypeStructure()) &&
                     Objects.equals(getMetadataValueType(), other.getMetadataValueType());

@@ -9,6 +9,7 @@ import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
+import edu.ucar.unidata.rosetta.util.CookieUtils;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -122,7 +123,7 @@ public class CfTypeController implements HandlerExceptionResolver {
             // Haven't been before, so proceed with persisting the CF type data.
             wizardManager.processCfType(null, wizardData, request);
             // First time posting to this page in this session; create the cookie.
-            response.addCookie(new Cookie("rosetta", wizardData.getId()));
+            response.addCookie(CookieUtils.createCookie(wizardData.getId(), request));
         }
         return new ModelAndView(new RedirectView("/fileUpload", true));
     }

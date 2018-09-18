@@ -370,8 +370,7 @@ function bindDialogEvents(key) {
     //$("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").autocomplete({ source: cfStandards, delay: 0});
 
     // variable name assignment
-    $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").focusout(
-        function () {
+    $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").focusout(function () {
 
             // get rid of any error messages
             $("#dialog #variableNameTypeAssignment").find("label.error").text("");
@@ -1680,23 +1679,24 @@ function removeUnusedAttributesFromDOM(valueSelected) {
         var duplicatesAttributesMap = findDuplicateAttributesFromDOM(necessityType);
 
         var attributeNames = duplicatesAttributesMap[Symbol.iterator]();
-        for(var innerArray of attributeNames) {
+        for(var innerArray in attributeNames) {
             var storedData = innerArray[1];
             // Derive the ID value for the metadata attribute we need to keep based on the user's coord var type selection.
             var createdInputIdValue = innerArray[0] + metadataTypeStructure;
             // If the array of attributues with the same name has more than one entry.
             if (storedData.length > 1) {
                 // Loop through the array and find the entry that matches the createdInputIdValue.
+                var inputIdValue;
                 for (var i = 0; i < storedData.length; i++) {
                     if (necessityType !== "additional") {
-                        var inputIdValue = $(storedData[i]).find("input").attr("id");
+                        inputIdValue = $(storedData[i]).find("input").attr("id");
                         if (inputIdValue !== createdInputIdValue) {
                             // Remove the attributes that do not match.
                             var idValue = necessityType + "MetadataAssignment"
                             $("#dialog #" + idValue + " ul li").find("#" + inputIdValue).closest("li").remove();
                         }
                     } else {
-                        var inputIdValue = $(storedData[i]).attr("id");
+                        inputIdValue = $(storedData[i]).attr("id");
                         if (inputIdValue !== createdInputIdValue) {
                             // Remove the option tags that do not match.
                             $("#dialog #additionalMetadataAssignment select").find("#" + inputIdValue).closest("option").remove();

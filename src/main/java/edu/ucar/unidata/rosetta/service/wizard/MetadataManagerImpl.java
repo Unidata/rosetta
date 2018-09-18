@@ -22,6 +22,7 @@ import java.beans.Statement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Implements MetadataManager functionality.
@@ -80,15 +81,17 @@ public class MetadataManagerImpl implements MetadataManager {
             profiles.removeIf(p -> !metadataTypeValues.contains(p.getMetadataType()));
             // Filter out metadata attributes that will be auto-computed.
             profiles.removeIf(this::filterOutIgnored);
-
+            // Add to metadataProfiles list.
             metadataProfiles.addAll(profiles);
         }
 
-        // Get rid of any duplicate entries
-        Set<MetadataProfile> hs = new HashSet<>(metadataProfiles);
-        metadataProfiles.clear();
-        metadataProfiles.addAll(hs);
-        return metadataProfiles;
+        // Remove duplicates and return.
+        List<MetadataProfile> unique =  metadataProfiles.stream()
+                .distinct()
+                .collect(Collectors.toList());
+
+        return unique;
+
     }
 
     /**
@@ -106,9 +109,7 @@ public class MetadataManagerImpl implements MetadataManager {
                     if (profile.getMetadataGroup().equals("deployment") || profile.getMetadataGroup().equals("end_of_mission")) {
                         return true;
                     }
-                }
-
-                if (!profile.getAttributeName().equals("valid_min") && !profile.getAttributeName().equals("valid_max")) {
+                } else {
                     return true;
                 }
             }
