@@ -42,14 +42,17 @@ public class MetadataProfile {
         if (obj instanceof MetadataProfile) {
             MetadataProfile other = (MetadataProfile) obj;
             return Objects.equals(getAttributeName(), other.getAttributeName()) &&
-                    Objects.equals(getComplianceLevel(), other.getComplianceLevel()) &&
-                    Objects.equals(getDescription(), other.getDescription()) &&
-                    Objects.equals(getDisplayName(), other.getDisplayName()) &&
-                    Objects.equals(getExampleValues(), other.getExampleValues()) &&
-                    Objects.equals(getMetadataGroup(), other.getMetadataGroup()) &&
-                    Objects.equals(getMetadataType(), other.getMetadataType()) &&
-                    Objects.equals(getMetadataTypeStructure(), other.getMetadataTypeStructure()) &&
-                    Objects.equals(getMetadataValueType(), other.getMetadataValueType());
+                   Objects.equals(getComplianceLevel(), other.getComplianceLevel()) &&
+                   Objects.equals(getDescription(), other.getDescription()) &&
+                   Objects.equals(getDisplayName(), other.getDisplayName()) &&
+                   Objects.equals(getExampleValues(), other.getExampleValues()) &&
+                   Objects.equals(getId(), other.getId()) &&
+                   Objects.equals(getMetadataGroup(), other.getMetadataGroup()) &&
+                   Objects.equals(getMetadataProfileName(), other.getMetadataProfileName()) &&
+                   Objects.equals(getMetadataProfileVersion(), other.getMetadataProfileVersion()) &&
+                   Objects.equals(getMetadataType(), other.getMetadataType()) &&
+                   Objects.equals(getMetadataTypeStructure(), other.getMetadataTypeStructure()) &&
+                   Objects.equals(getMetadataValueType(), other.getMetadataValueType());
         }
         return false;
     }
