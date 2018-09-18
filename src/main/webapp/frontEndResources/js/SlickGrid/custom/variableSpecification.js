@@ -1656,7 +1656,7 @@ function testVariableCompleteness(key, variableName) {
  * entry exists for for lat, lon, depth, etc.  We only need one of these -- the one that corresponds to 
  * the selected coordinate variable type.)
  *
- * @param  The coordinate variable value selected by the user.
+ * @param  valueSelected  The coordinate variable value selected by the user.
  */
 function removeUnusedAttributesFromDOM(valueSelected) {
     // Determine the metadata type structure string to use based on the valueSelected.
@@ -1677,9 +1677,8 @@ function removeUnusedAttributesFromDOM(valueSelected) {
         var necessityType = necessityTypes[x];
         // Get a map of containing the variable attributes by name, where key=attribute name & value=array of matching DOM elements. 
         var duplicatesAttributesMap = findDuplicateAttributesFromDOM(necessityType);
-
         var attributeNames = duplicatesAttributesMap[Symbol.iterator]();
-        for(var innerArray in attributeNames) {
+        for(var innerArray of attributeNames) {
             var storedData = innerArray[1];
             // Derive the ID value for the metadata attribute we need to keep based on the user's coord var type selection.
             var createdInputIdValue = innerArray[0] + metadataTypeStructure;
@@ -1720,7 +1719,7 @@ function findDuplicateAttributesFromDOM(metadataNecessity) {
     var names = new Map();
     // Required and recommended metadata
     if (metadataNecessity !== "additional") {
-        var idValue = metadataNecessity + "MetadataAssignment"
+        var idValue = metadataNecessity + "MetadataAssignment";
         $("#dialog #" + idValue + " ul").find("li").each(function () {
             var name = $(this).find("input").attr("name");
             if (names.has(name)) {
