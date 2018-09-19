@@ -37,6 +37,8 @@
         src="${baseUrl}/resources/js/SlickGrid/custom/headerLineSelection.js"></script>
 <script type="text/javascript"
         src="${baseUrl}/resources/js/SlickGrid/custom/variableSpecification.js"></script>
+<script type="text/javascript"
+        src="${baseUrl}/resources/js/SlickGrid/custom/variableMetadata.js"></script>
 <link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/SlickGrid/custom.css"/>
 <link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/SlickGrid/slick.grid.css"/>
 <link type="text/css" rel="stylesheet"
