@@ -80,10 +80,14 @@
       return value;
     }
   };
+
+
   // Parsed file data.
   var fileData = ${parsedData};
   var delimiter = '${delimiterSymbol}';
-  var headerLineNumbers = '${headerLineNumbers}';
+  // Add to session for later use.
+  addToSession("headerLineNumbers", '${headerLineNumbers}');
+
 
   <%-- populate global metadata profile variable data array with metadata profile info passed from the server-side --%>
   <c:forEach items="${metadataProfileVariableData}" var="profile">
@@ -98,6 +102,6 @@
     metadataProfileVariableData.push(profile);
   </c:forEach>
 
-  gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter, headerLineNumbers);
+  gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter);
 
 </script>
