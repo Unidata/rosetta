@@ -12,9 +12,6 @@ var variableMetadata = (function () {
             variableMetadata.push(
             { 
                 "column": i,
-                "name": "",
-                "metadataType": "",
-                "metadataValueType": "",
                 "required": {},
                 "recommended": {},
                 "additional": {}
@@ -52,6 +49,49 @@ var variableMetadata = (function () {
         updateStoredVariableData(variableMetadata, variable, columnNumber);
     }
 
+    function getVariableData(columnNumber, key) {
+        // Get the stored variable data.
+        var variableMetadata = getStoredVariableMetadata();
+
+        // Get the desired object.
+        var variable = getVariable(columnNumber, variableMetadata);
+        return variable[key];
+    }
+
+    function removeNonMetadataTypeEntriesFromVariableData(columnNumber) {
+        var keep = ["column", "name", "required", "recommended", "additional", "metadataType", "metadataValueType"];
+
+        // Get the stored variable data.
+        var variableMetadata = getStoredVariableMetadata();
+
+        // Get the desired object.
+        var variable = getVariable(columnNumber, variableMetadata);
+
+        Object.keys(variable).forEach(function(key) {
+            if (!keep.includes(key)) {
+                // Not one of the chosen, so delete.
+                delete variable[key];
+            } else {
+                if (key === "required" || key === "recommended" || key === "additional") {
+                    // Remove attributes of nested compliance level objects.
+                    var innerKeep = ["standard_name", "units", "long_name"];
+                    var complianceLevelData = variable[key];
+                    Object.keys(complianceLevelData).forEach(function(innerKey) {
+                        // Remove all of the nested required attributes except the few specified in the innerKeep array.
+                        if (!innerKeep.includes(innerKey)) {
+                            delete complianceLevelData[innerKey];   
+                        }
+                    });
+                    // Update the compliance level inner object in the variable.
+                    variable[key] = complianceLevelData;
+                }
+            }
+        });
+
+        // Update the stored data with updated variable.
+        updateStoredVariableData(variableMetadata, variable, columnNumber);
+
+    }
 
     function storeComplianceLevelVariableData(columnNumber, key, value, complianceLevel) {
         // Get the stored variable data.
@@ -73,6 +113,7 @@ var variableMetadata = (function () {
         updateStoredVariableData(variableMetadata, variable, columnNumber);
     }
 
+
     function removeComplianceLevelVariableData(columnNumber, key, complianceLevel) {
         // Get the stored variable data.
         var variableMetadata = getStoredVariableMetadata();
@@ -86,7 +127,7 @@ var variableMetadata = (function () {
         // delete the entry using the provided object key.
         delete complianceLevelData[key];
 
-         // Update the compliance level inner object in the variable.
+        // Update the compliance level inner object in the variable.
         variable[complianceLevel] = complianceLevelData;
 
         // Update the stored data with updated variable.
@@ -146,6 +187,8 @@ var variableMetadata = (function () {
         storeVariableData: storeVariableData,
         storeComplianceLevelVariableData: storeComplianceLevelVariableData,
         removeVariableData: removeVariableData,
-        removeComplianceLevelVariableData: removeComplianceLevelVariableData
+        removeComplianceLevelVariableData: removeComplianceLevelVariableData,
+        removeNonMetadataTypeEntriesFromVariableData: removeNonMetadataTypeEntriesFromVariableData,
+        getVariableData: getVariableData
     };
 })();
