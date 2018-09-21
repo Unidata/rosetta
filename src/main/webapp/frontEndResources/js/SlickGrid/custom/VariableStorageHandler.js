@@ -150,18 +150,76 @@ var VariableStorageHandler = (function () {
 
 
 
-    function getVariable(columnNumber, variableMetadata) {
-        // Get the index number for accessing the object in the array from the columnNumber variable.
-        columnNumber = parseInt(columnNumber.replace("variableName", ""));
 
-        // Get the desired object.
-        var variable = variableMetadata[columnNumber];
+    /**
+     * Retrieves and returns an array of columns who have stored metadata.
+     * Note, those variables specified "Do Not Use" are ignored and not included.
+     *
+     * @return candidateColumns  Array of columns who have stored metadata.
+     */
+    function getVariablesWithMetadata() {
+        // Place to stash canidate columns who can provided their metadata.
+        var candidateColumns = [];
 
-        // Sanity check that we are operating on the correct object.
-        sanityCheck(columnNumber, variable);
-
-        return variable;
+        // Get the stored variable data.
+        var variableMetadata = getStoredVariableMetadata();
+        for (var i = 0; i < variableMetadata.length; i++) {
+            var variable = variableMetadata[i];
+            var variableName = variable[name];
+            if (variableName !== undefined  && variableName !== "do_not_use" ) {
+                candidateColumns.push(variableName);
+            }
+        }
+        return candidateColumns;
     }
+
+    /**
+     * Checks to see if the needed input for a particular variable/column of data is complete.
+     * Checks to make sure that the coordinate variable, data type and required metadata values
+     * are present in the variableMetadata value field.  This function is called by the testIfComplete() function.
+     *
+     * @param key  The key used to store the data in the variableMetadata value field.
+     * @param variableName  The variable name assigned to the column of data by the user.
+     */
+    function testVariableCompleteness(key, variableName) {
+        if (variableName !== "Do Not Use") {
+            // do we have the coordinateVariable?
+            var coordinateVariableInStorage = getItemEntered(key + "Metadata", "_coordinateVariable");
+            if (coordinateVariableInStorage != null) {
+                // do we have the dataType?
+                var dataTypeInStorage = getItemEntered(key + "Metadata", "dataType");
+                if (dataTypeInStorage != null) {
+                    // do we have the required metadata?
+                    var metadataProvided = getAllButTheseFromSessionString(key + "Metadata", ["_coordinateVariable", "dataType"]);
+                    if (metadataProvided.length > 0) {
+                        // get the metadata names (not values) held in the variableMetadata value field
+                        var metadataInStorage = getKeysFromSessionData(metadataProvided);
+                        var requiredMetadata = getKnownRequiredMetadataList(coordinateVariableInStorage);
+                        for (var i = 0; i < requiredMetadata.length; i++) {
+                            if (metadataInStorage.indexOf(requiredMetadata[i]) < 0) {
+                                // some required metadata is missing
+                                return false;
+                            }
+                        }
+                    } else { // ALL metadata is missing
+                        return false;
+                    }
+                } else { // dataType is missing
+                    return false;
+                }
+            } else {  // coordinateVariable is missing
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+
+    /*
+     * Private functions
+     */   
 
     function sanityCheck(columnNumber, variable) {
         // Sanity check that we are operating on the correct object.
@@ -179,6 +237,11 @@ var VariableStorageHandler = (function () {
         storeData("variableMetadata", JSON.stringify(variableMetadata));
     }
 
+    /**
+     * Private, utility function.
+     * Retrieved all of the variable metadata from storage with the key "variableMetadata".
+     * Parses the retrieved data into proper JSON objects and returns the result.
+     */
     function getStoredVariableMetadata() {
         // Get the stored variable data.
         var variableMetadata = getStoredData("variableMetadata");
@@ -190,6 +253,26 @@ var VariableStorageHandler = (function () {
             // Un-stringify.
             return JSON.parse(variableMetadata);
         }
+    }
+
+    /**
+     * Private, utility function.
+     * Retrieves and returns the JSON object from the provided variableMetadata array at index columnNumber.
+     *
+     * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
+     * @param variableMetadata  Array of JSON objects
+     */
+    function getVariable(columnNumber, variableMetadata) {
+        // Get the index number for accessing the object in the array from the columnNumber variable.
+        columnNumber = parseInt(columnNumber.replace("variableName", ""));
+
+        // Get the desired object.
+        var variable = variableMetadata[columnNumber];
+
+        // Sanity check that we are operating on the correct object.
+        sanityCheck(columnNumber, variable);
+
+        return variable;
     }
 
     function displayErrorMessage(message) {
@@ -205,6 +288,8 @@ var VariableStorageHandler = (function () {
         removeComplianceLevelVariableData: removeComplianceLevelVariableData,
         removeNonMetadataTypeEntriesFromVariableData: removeNonMetadataTypeEntriesFromVariableData,
         getVariableData: getVariableData,
-        getComplianceLevelVariableData: getComplianceLevelVariableData
+        getComplianceLevelVariableData: getComplianceLevelVariableData,
+        getVariablesWithMetadata: getVariablesWithMetadata,
+        testVariableCompleteness: testVariableCompleteness
     };
 })();

@@ -1,9 +1,9 @@
 /**
- * SlickGrid/custom/UnitBuilderHandler.js
+ * SlickGrid/custom/UnitBuilder.js
  *
- * Module to handle the unit builder.
+ * Module to handle the creation of event handling for the unit builder.
  */
-var UnitBuilderHandler = (function () {
+var UnitBuilder = (function () {
 
     /**
      * This function binds events associated with the unit builder added to the dialog DOM.
@@ -195,6 +195,19 @@ var UnitBuilderHandler = (function () {
             $(this).removeClass("hideMe");
         });
     }
+
+    /**
+     * This function binds general events associated with unit builder entries added to the dialog DOM.
+     *
+     * @param key  The key used to access the stores data.
+     */
+    function bindUnitBuilderEvent(key) {
+        // Unit builder activation: toggle unit builder box
+        $("#dialog #requiredMetadataAssignment input[type=\"checkbox\"]").bind("click", function () {
+            $("#dialog #requiredMetadataAssignment #unitBuilder").toggleClass("hideMe");
+            createUnitBuilder(key);
+        });
+    }
     
     
     
@@ -204,8 +217,8 @@ var UnitBuilderHandler = (function () {
         createUnitBuilder: createUnitBuilder,
         createUnitBuilderTypeSelector: createUnitBuilderTypeSelector,
         bindUnitBuildEvents: bindUnitBuildEvents,
+        bindUnitBuilderEvent: bindUnitBuilderEvent,
         addUnitBuilderOptionsToDom: addUnitBuilderOptionsToDom
-
     };
     
 

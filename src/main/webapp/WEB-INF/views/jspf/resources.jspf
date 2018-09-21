@@ -46,7 +46,11 @@
 <script type="text/javascript"
         src="${baseUrl}/resources/js/SlickGrid/custom/ComplianceLevelDataHandler.js"></script>
 <script type="text/javascript"
-        src="${baseUrl}/resources/js/SlickGrid/custom/UnitBuilderHandler.js"></script>
+        src="${baseUrl}/resources/js/SlickGrid/custom/UnitBuilder.js"></script>
+<script type="text/javascript"
+        src="${baseUrl}/resources/js/SlickGrid/custom/MetadataImporter.js"></script>
+
+
 
 <link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/SlickGrid/custom.css"/>
 <link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/SlickGrid/slick.grid.css"/>

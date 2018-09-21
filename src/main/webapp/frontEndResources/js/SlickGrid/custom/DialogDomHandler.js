@@ -5,7 +5,7 @@
  * that attaches, dettaches, or directly changes the dialog DOM .
  *
  * Compliance level in ComplianceLevelHandler
- * UnitBuilder in UnitBuilderHandler 
+ * UnitBuilder in UnitBuilder 
 
  */
 var DialogDomHandler = (function () {
@@ -98,14 +98,14 @@ var DialogDomHandler = (function () {
             "   <label id=\"variableNameAssignment\">\n" +
             "    <input type=\"text\" name=\"variableName\" value=\"\"/>\n" +
             "   </label>\n" +
-            "   <label class=\"existingMetadataImporter hideMe\">\n" +
+            "   <label class=\"metadataImporter hideMe\">\n" +
             "     use metadata from another column?  \n" +
-            "    <input type=\"checkbox\" name=\"existingMetadataImporter\" value=\"true\"/> \n" +
+            "    <input type=\"checkbox\" name=\"metadataImporter\" value=\"true\"/> \n" +
             "   </label>\n" +
-            "   <div id=\"existingMetadataImporter\" class=\"hideMe\">\n" +
-            "    <label for=\"existingMetadataChoice\" class=\"whole\">\n" +
+            "   <div id=\"metadataImporter\" class=\"hideMe\">\n" +
+            "    <label for=\"metadataChoice\" class=\"whole\">\n" +
             "     Import metadata from: \n" +
-            "     <select name=\"existingMetadataChoice\">\n" +
+            "     <select name=\"metadataChoice\">\n" +
             "     </select>\n" +
             "    </label>\n" +
             "   </div>\n" +
@@ -197,15 +197,20 @@ var DialogDomHandler = (function () {
             " </div>\n" +
             " <div id=\"additionalMetadataAssignment\">\n" +
             "  <h3>Additional Metadata:</h3>\n" +
-            "  <label for=\"additionalMetadataAssignment\" class=\"error\"></label> \n" +
-            "  <img src=\"resources/img/add.png\" id=\"additionalMetadataChooser\" alt=\"Add Metadata\" /> \n" +
-            "  <img src=\"resources/img/remove.png\" id=\"additionalMetadataChooser\" alt=\"Remove Metadata\" /> \n" +
-            "  <select name=\"additionalMetadata\">\n" +
-            "  </select>\n" +
+            "  <ul>\n" +
+            "  </ul>\n" +  
+           // "  <label for=\"additionalMetadataAssignment\" class=\"error\"></label> \n" +
+           // "  <img src=\"resources/img/add.png\" id=\"additionalMetadataChooser\" alt=\"Add Metadata\" /> \n" +
+          //  "  <img src=\"resources/img/remove.png\" id=\"additionalMetadataChooser\" alt=\"Remove Metadata\" /> \n" +
+          //  "  <select name=\"additionalMetadata\">\n" +
+          //  "  </select>\n" +
             " </div>\n" +
             "</div>\n";
 
         $("#dialog").append(dialogContent);
+
+        // Start off with the 
+        disableDiv("variableNameAssignment");
 
         // Start off with only the first part of the dialog visible (everything in the variableAttributes div is hidden).
         disableVariableAttributes(key);
