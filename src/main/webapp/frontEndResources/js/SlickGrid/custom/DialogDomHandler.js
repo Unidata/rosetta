@@ -1,7 +1,14 @@
 /**
- * SlickGrid/custom/dialogDOM.js
+ * SlickGrid/custom/DialogDOMHandler.js
+ *
+ * Module to handle DOM manipulation for dialog, meaning any function
+ * that attaches, dettaches, or directly changes the dialog DOM .
+ *
+ * Compliance level in ComplianceLevelHandler
+ * UnitBuilder in UnitBuilderHandler 
+
  */
-var dialogDOM = (function () {
+var DialogDomHandler = (function () {
 
     function disableDiv(dialogDomSection) {
         // disable this section of the dialog content.
@@ -60,10 +67,10 @@ var dialogDOM = (function () {
                 // See if the metadata to delete is in the stored object's nested entities.
                 if (divTagId === "required" || divTagId === "recommended" || divTagId === "additional") {
                     // Is a nested entity.
-                    variableMetadata.removeComplianceLevelVariableData(key, $(inputTag).attr("name"), divTagId) 
+                    VariableStorageHandler.removeComplianceLevelVariableData(key, $(inputTag).attr("name"), divTagId) 
                 } else {
                     // Not nested.
-                    variableMetadata.removeVariableData(key, $(inputTag).attr("name")); 
+                    VariableStorageHandler.removeVariableData(key, $(inputTag).attr("name")); 
                 }
             });
         });
@@ -201,16 +208,14 @@ var dialogDOM = (function () {
         $("#dialog").append(dialogContent);
 
         // Start off with only the first part of the dialog visible (everything in the variableAttributes div is hidden).
-        dialogDOM.disableVariableAttributes(key);
+        disableVariableAttributes(key);
 
-
-        // The following dynamically generated and hence separate from the above.
-        addMetadataHTMLToDialog(key);
-
+        // Use any stored data to auto-populate the dialog web form elements.
         populateDataFromStorage(key);
         bindDialogEvents(key);
     }
-    
+
+
 
 
 
@@ -220,5 +225,6 @@ var dialogDOM = (function () {
         enableDiv: enableDiv,
         addContentToDialog: addContentToDialog,
         disableVariableAttributes: disableVariableAttributes
+
     };
 })();

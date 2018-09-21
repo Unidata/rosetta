@@ -37,10 +37,17 @@
         src="${baseUrl}/resources/js/SlickGrid/custom/headerLineSelection.js"></script>
 <script type="text/javascript"
         src="${baseUrl}/resources/js/SlickGrid/custom/variableSpecification.js"></script>
+
+
 <script type="text/javascript"
-        src="${baseUrl}/resources/js/SlickGrid/custom/variableMetadata.js"></script>
+        src="${baseUrl}/resources/js/SlickGrid/custom/VariableStorageHandler.js"></script>
 <script type="text/javascript"
-        src="${baseUrl}/resources/js/SlickGrid/custom/dialogDOM.js"></script>
+        src="${baseUrl}/resources/js/SlickGrid/custom/DialogDomHandler.js"></script>
+<script type="text/javascript"
+        src="${baseUrl}/resources/js/SlickGrid/custom/ComplianceLevelDataHandler.js"></script>
+<script type="text/javascript"
+        src="${baseUrl}/resources/js/SlickGrid/custom/UnitBuilderHandler.js"></script>
+
 <link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/SlickGrid/custom.css"/>
 <link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/SlickGrid/slick.grid.css"/>
 <link type="text/css" rel="stylesheet"
@@ -68,3 +75,6 @@
 <script type="text/javascript" src="${baseUrl}/resources/js/sessionFunctions.js"></script>
 <script type="text/javascript" src="${baseUrl}/resources/js/validationFunctions.js"></script>
 <link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/main.css"/>
+
+
+

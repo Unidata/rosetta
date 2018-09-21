@@ -1,9 +1,9 @@
 /**
- * SlickGrid/custom/variableMetadata.js
+ * SlickGrid/custom/VariableStorageHandler.js
  * 
  * Module for handling variableMetadata
  */
-var variableMetadata = (function () {
+var VariableStorageHandler = (function () {
 
     function initialize (numberOfColumns) {
         var variableMetadata = [];
@@ -135,6 +135,21 @@ var variableMetadata = (function () {
     }
 
 
+    function getComplianceLevelVariableData(columnNumber, key, complianceLevel) {
+        // Get the stored variable data.
+        var variableMetadata = getStoredVariableMetadata();
+
+        // Get the desired object.
+        var variable = getVariable(columnNumber, variableMetadata);
+
+        // Get the compliance level inner object.
+        var complianceLevelData = variable[complianceLevel];
+
+        return complianceLevelData[key];
+    }
+
+
+
     function getVariable(columnNumber, variableMetadata) {
         // Get the index number for accessing the object in the array from the columnNumber variable.
         columnNumber = parseInt(columnNumber.replace("variableName", ""));
@@ -189,6 +204,7 @@ var variableMetadata = (function () {
         removeVariableData: removeVariableData,
         removeComplianceLevelVariableData: removeComplianceLevelVariableData,
         removeNonMetadataTypeEntriesFromVariableData: removeNonMetadataTypeEntriesFromVariableData,
-        getVariableData: getVariableData
+        getVariableData: getVariableData,
+        getComplianceLevelVariableData: getComplianceLevelVariableData
     };
 })();

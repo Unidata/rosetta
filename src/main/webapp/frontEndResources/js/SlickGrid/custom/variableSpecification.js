@@ -199,7 +199,7 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
         };
 
         // initialize the session storage for variable info metadata.
-        variableMetadata.initialize((columns.length - 1));
+        VariableStorageHandler.initialize((columns.length - 1));
        
         // initialize the grid with the data model
         grid = new Slick.Grid("#variableGrid", dataView, columns, options);
@@ -314,7 +314,7 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid) {
                 }
 
                 // Add content to the dialog widget and bind event handlers
-                dialogDOM.addContentToDialog(variableKey);
+                DialogDomHandler.addContentToDialog(variableKey);
             });
         }
     });
@@ -341,7 +341,7 @@ function bindDialogEvents(key) {
                 // User has elected to not use this variable; save info to variableMetadata & disable rest of dialog.
 
                 // Update the stored variable data with the "do_not_use" for a variable name.
-                variableMetadata.storeVariableData(key, "name", useColumnData);
+                VariableStorageHandler.storeVariableData(key, "name", useColumnData);
 
                 // Hide & remove any existing user entry for variable name input tag.
                 $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").prop("value", "");
@@ -351,7 +351,7 @@ function bindDialogEvents(key) {
                 $("#dialog label.existingMetadataImporter").addClass("hideMe");
 
                 // Disable the rest of the dialog DOM content.
-                dialogDOM.disableVariableAttributes(key);
+                DialogDomHandler.disableVariableAttributes(key);
 
             } else { 
                 // User has elected to use the column's data.
@@ -381,31 +381,29 @@ function bindDialogEvents(key) {
         var variableName = $(this).val();
 
         // Update the stored variable data with the variable name.
-        variableMetadata.storeVariableData(key, "name", variableName);
+        VariableStorageHandler.storeVariableData(key, "name", variableName);
 
         // If the user entered a standard name for the variable, then we can use this value here.
         if (isCFStandardName(variableName)) {
              // Update the stored variable data with the standard name.
-            variableMetadata.storeComplianceLevelVariableData(key, "standard_name", variableName, "required");
+            VariableStorageHandler.storeComplianceLevelVariableData(key, "standard_name", variableName, "required");
 
             // Automatically add any corrsponding units.
             var units = cfStandardUnits[variableName];
             if (units !== "") {
                 if (units !== undefined) {
                     // Update the stored variable data with the units.
-                    variableMetadata.storeComplianceLevelVariableData(key, "units", units, "required");
+                    VariableStorageHandler.storeComplianceLevelVariableData(key, "units", units, "required");
                 }
             }
         }
-        // Add the corresponding metadata to collect to the DOM.
-        addMetadataHTMLToDialog(key);
 
         // validate user input
         //validateVariableData(key);
 
         // If there are no validation errors, we can proceed.
         if ($("#dialog #variableNameTypeAssignment").find("label.error").text() === "") {
-            dialogDOM.enableDiv("metadataTypeAssignment");
+            DialogDomHandler.enableDiv("metadataTypeAssignment");
         }
     });
 
@@ -426,19 +424,20 @@ function bindDialogEvents(key) {
         var metadataType = $(this).val();
 
         // Update the stored variable data with the chosen metadata type (coordinate or data variable).  
-        variableMetadata.storeVariableData(key, "metadataType", metadataType);
+        VariableStorageHandler.storeVariableData(key, "metadataType", metadataType);
 
         // Remove any prior collected entries from variable that does not pertain to the metadata type.
         // (This is needed if the user goes back to change the metadata type selection... we don't want to keep mismatched metadata.)
-        variableMetadata.removeNonMetadataTypeEntriesFromVariableData(key);
+        VariableStorageHandler.removeNonMetadataTypeEntriesFromVariableData(key);
 
         // Remove any prior metadata type structure entries.
-        dialogDOM.disableDiv("metadataTypeStructureAssignment");
+        DialogDomHandler.disableDiv("metadataTypeStructureAssignment");
         // Remove any prior vertical direction entries.
-        dialogDOM.disableDiv("verticalDirectionAssignment");
-
-        // Update the metadata choices based on the user's metadata type selection.
-        addMetadataHTMLToDialog(key, metadataType);
+        DialogDomHandler.disableDiv("verticalDirectionAssignment");
+        // Clear the prior required, recommended, or additional areas; need to repopulate them with different metadata profile data.
+        $("#dialog #requiredMetadataAssignment ul").empty();
+        $("#dialog #recommendedMetadataAssignment ul").empty();
+        $("#dialog #additionalMetadataAssignment select").empty();
 
         // validate user input
         //validateVariableData(key);
@@ -449,10 +448,10 @@ function bindDialogEvents(key) {
             // Enable DOM attribute collection based on the metadata type selected.
             if (metadataType === "coordinate") {
                 // Coordinate variable selected.
-                dialogDOM.enableDiv("coordinateVariableTypeAssignment");
+                DialogDomHandler.enableDiv("metadataTypeStructureAssignment");
             } else {
                 // Data variable selected.
-                dialogDOM.enableDiv("metadataValueTypeAssignment");
+                DialogDomHandler.enableDiv("metadataValueTypeAssignment");
             }
         }
     });
@@ -466,14 +465,8 @@ function bindDialogEvents(key) {
         // Assign the metadata type structure (metadataTypeStructure) to the user input.
         var metadataTypeStructure = $(this).val();
 
-        // Update the metadata choices based on the user's metadata type structure selection.
-        //addMetadataHTMLToDialog(key);
-
-        // Remove the un-needed variable attributes from the DOM based on the user's selection.
-        //removeUnusedAttributesFromDOM(metadataTypeStructure);
-
         // Update the stored variable data with the chosen metadata type structure.  
-        variableMetadata.storeVariableData(key, "metadataTypeStructure", metadataTypeStructure);
+        VariableStorageHandler.storeVariableData(key, "metadataTypeStructure", metadataTypeStructure);
 
         // Validate user input.
         var coordVarTypeError = lookForBlankSelection($(this).val(), "Coordinate Variable Type");
@@ -487,13 +480,13 @@ function bindDialogEvents(key) {
             // Determine if 'vertical' was selected for the metadata type structure.  
             if (metadataTypeStructure === "vertical") {
                 // Vertical selected; enable DOM section that determines direction of vertical.
-                dialogDOM.enableDiv("verticalDirectionAssignment");
+                DialogDomHandler.enableDiv("verticalDirectionAssignment");
             } else {
                 // Vertical not chosen; undo any prior vertical direction selection options
-                dialogDOM.disableDiv("verticalDirectionAssignment");
+                DialogDomHandler.disableDiv("verticalDirectionAssignment");
 
                 // If it hasn't been enabled aready, show the metadataValueType assignment DOM section.
-                dialogDOM.enableDiv("metadataValueTypeAssignment");
+                DialogDomHandler.enableDiv("metadataValueTypeAssignment");
             }
         }
     });
@@ -508,7 +501,7 @@ function bindDialogEvents(key) {
         var verticalDirection = $(this).val();
 
         // Update the stored variable data with the chosen vertical direction.  
-        variableMetadata.storeVariableData(key, "verticalDirection", verticalDirection);
+        VariableStorageHandler.storeVariableData(key, "verticalDirection", verticalDirection);
 
         // validate user input
         //validateVariableData(key);
@@ -516,7 +509,7 @@ function bindDialogEvents(key) {
         // if there are no validation errors, we can proceed
         if ($("#dialog #metadataValueTypeAssignment").find("label.error").text() === "") {
              // If it hasn't been enabled aready, show the metadataValueType assignment DOM section.
-            dialogDOM.enableDiv("metadataValueTypeAssignment");
+            DialogDomHandler.enableDiv("metadataValueTypeAssignment");
         }
     });
 
@@ -531,16 +524,20 @@ function bindDialogEvents(key) {
         var metadataValueType = $(this).val();
 
         // Update the stored variable data with the chosen metadata type value.  
-        variableMetadata.storeVariableData(key, "metadataValueType", metadataValueType);
+        VariableStorageHandler.storeVariableData(key, "metadataValueType", metadataValueType);
 
         // validate user input
         //validateVariableData(key);
 
-        // if there are no validation errors, we can proceed
+        // If there are no validation errors, we can proceed
         if ($("#dialog #metadataValueTypeAssignment").find("label.error").text() === "") {
-            dialogDOM.enableDiv("requiredMetadataAssignment");
-            dialogDOM.enableDiv("recommendedMetadataAssignment");
-            dialogDOM.enableDiv("additionalMetadataAssignment");
+
+            // Populate the required, recommended, & additional metadata areas with metadata profile info.
+            ComplianceLevelDataHandler.addComplainceLevelDataToDialog(key);
+            // Reveal the metadata sections.
+            DialogDomHandler.enableDiv("requiredMetadataAssignment");
+            DialogDomHandler.enableDiv("recommendedMetadataAssignment");
+            DialogDomHandler.enableDiv("additionalMetadataAssignment");
         }
     });
 }
@@ -681,83 +678,6 @@ function bindAdditionalMetadataEvents(key) {
     });
 }
 
-/**
- * This function binds events associated with the unit builder added to the dialog DOM.
- *
- * @param key  The key used to store the data in the variableMetadata value field.
- */
-function bindUnitBuildEvents(key) {
-    // unit builder data type selection
-    $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitBuilderDataType\"]").on("change", function () {
-        if ($(this).val() !== "") {
-            addUnitBuilderOptionsToDom($(this).val());
-        }
-    });
-
-    // unit builder chooser
-    $("#dialog #unitBuilder img#unitBuilderChooser").bind("click", function () {
-
-        var unitString;
-
-        // get the user selected values of the unit chooser
-        var unitSelected = $("#dialog #unitBuilder select[name=\"unitSelected\"]").val();
-
-        var prefixSelected = $("#dialog #unitBuilder select[name=\"unitPrefix\"]").val();
-        if (prefixSelected !== null) {
-            unitString = prefixSelected + unitSelected;
-        } else {
-            unitString = unitSelected;
-        }
-
-        // get what is in the units from variableMetadata value field
-        var unitsInStorage = getItemEntered(key + "Metadata", "units");
-        if (unitsInStorage === null) {
-            unitsInStorage = "";
-        }
-
-        var metadataString;
-        if ($(this).attr("alt") === "Add To Units") { // Adding to units
-
-            // get rid of any error messages
-            $(this).parents("li").find("label[for=\"units\"].error").text("");
-
-            unitsInStorage = unitsInStorage + unitString;
-
-            // concatenation the entered value to any existing Metadata values pulled from the variableMetadata value field
-            metadataString = buildStringForSession(key + "Metadata", "units", unitsInStorage);
-
-            // update the data in the variableMetadata value field
-            addToSession(key + "Metadata", metadataString);
-
-            // update units display in dialog to show new value
-            $("#dialog #requiredMetadataAssignment input[name=\"units\"]").prop("value", unitsInStorage);
-
-
-        } else { // Removing from units
-            var index = unitsInStorage.lastIndexOf(unitString);
-            if (index >= 0) {
-                // lame
-                var pre = unitsInStorage.substring(0, index);
-                var post = unitsInStorage.substring(index + unitString.length);
-
-                // concatenation the entered value to any existing Metadata values pulled from the variableMetadata value field
-                metadataString = buildStringForSession(key + "Metadata", "units", pre + post);
-
-                // update the data in the variableMetadata value field
-                addToSession(key + "Metadata", metadataString);
-
-                // update units display in dialog to show new value
-                $("#dialog #requiredMetadataAssignment input[name=\"units\"]").prop("value", pre + post);
-
-            } else {
-                $("#dialog #requiredMetadataAssignment #unitBuilder").find("label.error")
-                    .text("'" + unitString
-                    + "' has NOT been detected in the current units and therefore cannot be removed.");
-            }
-        }
-
-    });
-}
 
 /**
  * This function binds events associated with the metadata import feature added to the dialog DOM.
@@ -782,56 +702,6 @@ function bindImportMetadataEvents(key) {
  **/
 
 
-/**
- * Create the empty metadata input tags from the reference metadata file and add to DOM.
- *
- * @param key  The key used to store the data in the variableMetadata value field.
- * @param variableType  The variable "type" (coordinate variable or not). Optional.
- */
-function addMetadataHTMLToDialog(key, variableType) {
-    // There are a number of times when we need to add the metadata items to the dialog that is NOT
-    // a result of a coordinate variable selection event.  Hence, we need to check the variableMetadata value field to
-    // see if the user has already specified that information and assign the variableType based on
-    // that info.
-    if (variableType === undefined) {
-        variableMetadata.getVariableData(key, "metadataType")
-        var coordinateVariableSelected = getItemEntered(key + "Metadata", "_coordinateVariable");
-        if (coordinateVariableSelected != null) {
-            variableType = coordinateVariableSelected;
-            if (variableType === "coordinate") {
-                dialogDOM.enableDiv("metadataTypeStructureAssignment");
-            } else {
-                dialogDOM.disableDiv("metadataTypeStructureAssignment");
-            }
-        } else {
-            variableType = "coordinate";
-            dialogDOM.disableDiv("metadataTypeStructureAssignment");
-        }
-    } else {
-        if (variableType === "coordinate") {
-            dialogDOM.enableDiv("metadataTypeStructureAssignment");
-        } else {
-            // Data variable selected.
-            dialogDOM.disableDiv("metadataTypeStructureAssignment");
-        }
-    }
-    $("#dialog #requiredMetadataAssignment ul").empty();
-    var requiredMetadata = populateMetadataInputTags(key, variableType, "required");
-    $("#dialog #requiredMetadataAssignment ul").append(requiredMetadata);
-
-    $("#dialog #recommendedMetadataAssignment ul").empty();
-    var recommendedMetadata = populateMetadataInputTags(key, variableType, "recommended");
-    $("#dialog #recommendedMetadataAssignment ul").append(recommendedMetadata);
-
-    $("#dialog #additionalMetadataAssignment select").empty();
-    var additionalMetadata = populateMetadataInputTags(key, variableType, "additional");
-    $("#dialog #additionalMetadataAssignment select").append(additionalMetadata);
-
-    // remove any additional metadata items added to the DOM since the additional metadata choices gets redrawn
-    $("#dialog #additionalMetadataAssignment ul").remove("ul");
-
-    bindGeneralMetadataEvents(key);
-}
 
 /**
  * Creates the HTML input tag for collecting additional metadata.  This function is called
@@ -856,46 +726,7 @@ function createAdditionalMetadataTag(tagName, displayName, tagValue) {
         "   </li>\n";
 }
 
-/**
- * Creates the initial HTML input tags for the unit builder.
- *
- * @param key  The key used to store the data in the variableMetadata value field.
- */
-function createUnitBuilder(key) {
-    var optionTags = "<option value=\"\">---- select one ----</option>";
-    // loop through unitBuilderData
-    for (var i = 0; i < unitBuilderData.length; i++) {
-        var unitItem = unitBuilderData[i];
-        if (unitItem.entry !== "prefix") {
-            optionTags = optionTags + "<option value=\"" + unitItem.entry + "\">"
-                + unitItem.entry + "</option>\n";
-        }
-    }
 
-    // add option tags to selection menu and show to user.
-    $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitBuilderDataType\"]").append(optionTags);
-    $("#dialog #requiredMetadataAssignment #unitBuilder label[for=\"unitBuilderDataType\"]").removeClass("hideMe");
-
-    var selectionTags = "     <label for=\"unitPrefix\" class=\"hideMe\">\n" +
-        "      unit prefix:\n" +
-        "      <select name=\"unitPrefix\">\n" +
-        "      </select>\n" +
-        "     </label>\n" +
-        "     <label for=\"unitSelected\" class=\"hideMe\">\n" +
-        "      unit:\n" +
-        "      <select name=\"unitSelected\">\n" +
-        "      </select>\n" +
-        "     </label>\n" +
-        "     <img src=\"resources/img/add.png\" id=\"unitBuilderChooser\" alt=\"Add To Units\" class=\"hideMe\" /> \n" +
-        "     <img src=\"resources/img/remove.png\" id=\"unitBuilderChooser\" alt=\"Remove From Units\" class=\"hideMe\"/> \n" +
-        "     <label class=\"error\"></label>";
-
-    // add the additional selection menu tags but hide until activated
-    $("#dialog #requiredMetadataAssignment #unitBuilder").append(selectionTags);
-
-    // bind events
-    bindUnitBuildEvents(key);
-}
 
 /**
  * Creates the initial HTML input tags for the existing metadata importer.
@@ -924,254 +755,20 @@ function createExistingMetadataImporter(key) {
 
 }
 
-/**
- * Creates the initial HTML input tags for the unit builder.
- *
- * @param dataTypeSelected  The type of data we are building units for.
- */
-function addUnitBuilderOptionsToDom(dataTypeSelected) {
-
-    var unitTags = "";
-    var prefixTags = "";
-
-    var showPrefixList = true;
-
-    // loop through known unitBuilderData
-    for (var i = 0; i < unitBuilderData.length; i++) {
-        var unitItem = unitBuilderData[i];
-        if (unitItem.entry === dataTypeSelected) {
-            var units = unitItem.unit;
-            for (var x = 0; x < units.length; x++) {
-                unitTags = unitTags + "<option value=\"" + units[x] + "\">" + units[x] + "</option>\n";
-            }
-            if (unitItem.use_prefix !== "") {
-                showPrefixList = false;
-            }
-        }
-
-        if (unitItem.entry === "prefix") {
-            var prefixes = unitItem.unit;
-            for (var y = 0; y < prefixes.length; y++) {
-                prefixTags = prefixTags + "<option value=\"" + prefixes[y] + "\">" + prefixes[y] + "</option>\n";
-            }
-        }
-
-    }
-
-    // prefixes
-    $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitPrefix\"] option").remove();
-    if (showPrefixList) {
-        $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitPrefix\"]").append(prefixTags);
-        $("#dialog #requiredMetadataAssignment #unitBuilder label[for=\"unitPrefix\"]").removeClass("hideMe");
-    } else {
-        $("#dialog #requiredMetadataAssignment #unitBuilder label[for=\"unitPrefix\"]").addClass("hideMe");
-    }
-
-    // units
-    $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitSelected\"] option").remove();
-    $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitSelected\"]").append(unitTags);
-    $("#dialog #requiredMetadataAssignment #unitBuilder label[for=\"unitSelected\"]").removeClass("hideMe");
-
-    // add/remove buttons
-    $("#dialog #requiredMetadataAssignment #unitBuilder").find("img").each(function () {
-        $(this).removeClass("hideMe");
-    });
-}
-
-/**
- * Creates a text input tag containing the metadata information.
- *
- * @param key  The key used to store the data in the variableMetadata value field.
- * @param tagName  The name attribute of the input tag, which happens to be the id of the metadata item as it appears in the reference XML file.
- * @param variableValue  The name value assigned to the variable by the user.
- * @param displayName  The user-friendly name of the metadata item as it appears in the reference XML file.
- * @param metadataNecessity  The importance of the metadata entry (required, recommended or additional)
- * @param helpTip The text for for the help tip hover text.
- */
-function createTagElement(key, tagName, variableValue, displayName, metadataNecessity, helpTip) {
-
-    // first thing we do is get any metadata items already stored in the variableMetadata value field and assign them to tagValue
-    var tagValue = getItemEntered(key + "Metadata", tagName);
-    if (tagValue == null) { // nothing entered yet
-        tagValue = "";
-        // if the user selected a standard name for the variable we can use this value.
-        if (isCFStandardName(variableValue)) {
-            if (tagName === "standard_name") {
-                tagValue = variableValue;
-            }
-            // we can also use the defacto units
-            if (tagName === "units") {
-                tagValue = cfStandardUnits[variableValue];
-            }
-        }
-    }
-
-    // get the display (pretty) name if it exists
-    if (displayName === undefined) {
-        displayName = tagName;
-    }
-
-    // if we are building the units tag, add in the unit builder
-    var unitBuilderSelector = "";
-    var unitBuilder = "";
-    if (tagName === "units") {
-        unitBuilderSelector = 
-            "    <label class=\"unitBuilder\">\n" +
-            "     show unit builder \n" +
-            "     <input type=\"checkbox\" name=\"unitBuilder\" value=\"true\"/> \n" +
-            "    </label>\n";
-
-        var optionTags = "";
-        unitBuilder = 
-            "    <div id=\"unitBuilder\" class=\"hideMe\">\n" +
-            "     <label for=\"unitBuilderDataType\" class=\"hideMe whole\">\n" +
-            "      What type of data are we building units for?\n" +
-            "      <select name=\"unitBuilderDataType\">\n" +
-            "      </select>\n" +
-            "     </label>\n" +
-            "    </div>\n";
-    }
-
-    // create help tip element, if defined
-    var helpTipElement = "";
-    if (helpTip !== "") {
-        helpTipElement = "<img src=\"resources/img/help.png\" alt=\"" + helpTip + "\" />";
-    }
-
-    // create the tag!
-    var tag;
-
-    if (metadataNecessity === "additional") {
-        tag = "<option value=\"" + tagName + "\">" + displayName + "</option>\n";
-    } else {
-        // if the user has specified the coordinate var type and data type, then enable input tags (otherwise start out disabled)
-        var isDisabled = "disabled";
-        if (getItemEntered(key + "Metadata", "_coordinateVariable") != null) {
-            if (getItemEntered(key + "Metadata", "dataType") != null) {
-                isDisabled = "";
-            }
-        }
-
-        tag = "   <li>\n" +
-            "    <label for=\"" + tagName + "\" class=\"error\"></label>" +
-            "    <label>\n" +
-            "     " + displayName + "\n" +
-            "     " + helpTipElement + "\n" +
-            "     <input type=\"text\" name=\"" + tagName + "\" value=\"" + tagValue + "\" " + isDisabled + "/> \n" +
-            "    </label>\n" + unitBuilderSelector + unitBuilder +
-            "   </li>\n";
-    }
-    return tag;
-}
-
-function createMetadataTagElement(key, metadataItem, variableValue) {
-
-    // Pull out the relevant data items for the metadataItem object and assign to variables.
-    var tagName = metadataItem.attributeName;
-    var displayName = metadataItem.attributeName.replace(/_/g, " ");
-    if (metadataItem.displayName) {
-        displayName = metadataItem.displayName;
-    } 
-    var helpTip = "";
-    if (metadataItem.description) {
-        helpTip = metadataItem.description;
-    } 
-    if (metadataItem.exampleValues) {
-        helpTip = helpTip + "  Examples: " + metadataItem.exampleValues;
-    } 
-    var metadataNecessity = "additional"; // Default
-    if (metadataItem.complianceLevel) {
-        metadataNecessity = metadataItem.complianceLevel;
-    }
-    var metadataTypeStructure;
-    if (metadataItem.metadataTypeStructure) {
-        metadataTypeStructure = metadataItem.metadataTypeStructure;
-    }
-
-    // first thing we do is get any metadata items already stored in the variableMetadata value field and assign them to tagValue
-    var tagValue = getItemEntered(key + "Metadata", tagName);
-    if (tagValue == null) { // nothing entered yet
-        tagValue = "";
-        // if the user selected a standard name for the variable we can use this value.
-        if (isCFStandardName(variableValue)) {
-            if (tagName === "standard_name") {
-                tagValue = variableValue;
-            }
-            // we can also use the defacto units
-            if (tagName === "units") {
-                tagValue = cfStandardUnits[variableValue];
-            }
-        }
-    }
-
-    // if we are building the units tag, add in the unit builder
-    var unitBuilderSelector = "";
-    var unitBuilder = "";
-    if (tagName === "units") {
-        unitBuilderSelector = 
-            "    <label class=\"unitBuilder\">\n" +
-            "     show unit builder \n" +
-            "     <input type=\"checkbox\" name=\"unitBuilder\" value=\"true\"/> \n" +
-            "    </label>\n";
-
-        var optionTags = "";
-        unitBuilder = 
-            "    <div id=\"unitBuilder\" class=\"hideMe\">\n" +
-            "     <label for=\"unitBuilderDataType\" class=\"hideMe whole\">\n" +
-            "      What type of data are we building units for?\n" +
-            "      <select name=\"unitBuilderDataType\">\n" +
-            "      </select>\n" +
-            "     </label>\n" +
-            "    </div>\n";
-    }
-
-    // create help tip element, if defined
-    var helpTipElement = "";
-    if (helpTip !== "") {
-        helpTipElement = "<img src=\"resources/img/help.png\" alt=\"" + helpTip + "\" />";
-    }
-
-    // create the tag!
-    var tag;
-
-    if (metadataNecessity === "additional") {
-        tag = "<option id=\"" + tagName + "__" + metadataTypeStructure + "\" value=\"" + tagName + "\">" + displayName + "</option>\n";
-    } else {
-        // if the user has specified the coordinate var type and data type, then enable input tags (otherwise start out disabled)
-        var isDisabled = "disabled";
-        if (getItemEntered(key + "Metadata", "_coordinateVariable") != null) {
-            if (getItemEntered(key + "Metadata", "dataType") != null) {
-                isDisabled = "";
-            }
-        }
-
-        tag = 
-            "   <li>\n" +
-            "    <label for=\"" + tagName + "\" class=\"error\"></label>" +
-            "    <label>\n" +
-            "     " + displayName + "\n" +
-            "     " + helpTipElement + "\n" +
-            "     <input id=\"" + tagName + "__" + metadataTypeStructure + "\" type=\"text\" name=\"" + tagName + "\" value=\"" + tagValue + "\" " + isDisabled + "/> \n" +
-            "    </label>\n" + unitBuilderSelector + unitBuilder +
-            "   </li>\n";
-    }
-    return tag;
-}
 
 
 /**
- * Uses the array of know metadata items gleaned from the metadata.xml file.
- * Creates a list of form tags for the required metadata items corresponding to the
- * variable type (coordinate or non-coordinate).
+ * Uses the array of compliance level metadata attributes gleaned from server-side metadata profiles.
+ * Creates a list of form tags for these items corresponding to the metadataType (coordinate or non-coordinate).
  *
- * @param key  The key used to store the data in the variableMetadata value field.
- * @param variableType  The variable "type" (coordinate variable or not).
- * @param metadataNecessity  The importance of the metadata entry (required, recommended or additional)
+ * @param key  The key used to access the stored variable data.
+ * @param complianceLevel  Whether the attribute is required, recommended or additional.
  */
-function populateMetadataInputTags(key, variableType, metadataNecessity) {
-    var variableValue = getFromSession(key);
+
+function populateMetadataInputTags(key, complianceLevel) {
+    var metadataType = VariableStorageHandler.getVariableData(key, "metadataType");
     var metadataTags = [];
-
+    // The metadataProfileVariableData comes from the server-side.
     for (var i = 0; i < metadataProfileVariableData.length; i++) {
         var metadataItem = metadataProfileVariableData[i];
 
@@ -1184,20 +781,20 @@ function populateMetadataInputTags(key, variableType, metadataNecessity) {
             type = "non-coordinate";
         }  
         if (metadataItem.complianceLevel === "optional") {
-            // perfer the term additional to optional
+            // We prefer the term additional to optional.
             metadataItem.complianceLevel = "additional";
         }
 
         var tag;
-        // Grab the metadata entries that correspond to the variable type (coordinate or
-        // non-coordinate),  grab the metadata entries that correspond to the variable necessity
+        // Grab the metadata entries that correspond to the metadataType (coordinate or non-coordinate) and iable necessity
         // (required, recommended, or additional), create a form tag containing that information.
         if (type === variableType) {
-            if (metadataItem.complianceLevel === metadataNecessity) {
-                tag = createMetadataTagElement(key, metadataItem, variableValue);
+            if (metadataItem.complianceLevel === complianceLevel) {
+                tag = createMetadataTagElement(key, metadataItem);
                 metadataTags.push(tag);
             }
         }
+
     }
     // Sort the array.
     metadataTags.sort();
@@ -1221,7 +818,7 @@ function populateMetadataInputTags(key, variableType, metadataNecessity) {
 function populateDataFromStorage(key) {
 
     // disable all parts of the dialog content except the first part
-    dialogDOM.disableVariableAttributes(key);
+    DialogDomHandler.disableVariableAttributes(key);
 
     // start of with variable name input hidden
     $("#dialog #variableNameAssignment").addClass("hideMe");
@@ -1242,7 +839,7 @@ function populateDataFromStorage(key) {
             }
 
             // if they've provided a variable name, then enable the coordinate variable section
-            dialogDOM.enableDiv("metadataTypeAssignment");
+            DialogDomHandler.enableDiv("metadataTypeAssignment");
 
             // from here after, all data collected is stored in the variableMetadata value field as "Metadata"
             // if we have metadata in the variableMetadata value field, grab it and populate the input tags
@@ -1254,23 +851,23 @@ function populateDataFromStorage(key) {
                 if (coordinateVariableSelected != null) {
                     // check the appropriate choice and update the metadata options accordingly
                     $("#dialog #metadataTypeAssignment input[name=\"isCoordinateVariable\"][value=\"" + coordinateVariableSelected + "\"]").prop("checked", true);
-                    addMetadataHTMLToDialog(key);
+                    //addMetadataHTMLToDialog(key);
 
                     var coordinateVariableType = getItemEntered(key + "Metadata", "_coordinateVariableType");
                     if (coordinateVariableType != null) {
                         $("#dialog #metadataTypeStructureAssignment select[name=\"coordVarType\"]").val(coordinateVariableType);
                     }
                     // data type
-                    dialogDOM.enableDiv("metadataValueTypeAssignment");
+                    DialogDomHandler.enableDiv("metadataValueTypeAssignment");
                     var dataTypeSelected = getItemEntered(key + "Metadata", "dataType");
                     if (dataTypeSelected != null) {
                         // check the appropriate choice and update the metadata options accordingly
                         $("#dialog #metadataValueTypeAssignment input[name=\"dataType\"][value=\"" + dataTypeSelected + "\"]").prop("checked", true);
 
                         // metadata
-                        dialogDOM.enableDiv("requiredMetadataAssignment");
-                        dialogDOM.enableDiv("recommendedMetadataAssignment");
-                        dialogDOM.enableDiv("additionalMetadataAssignment");
+                        DialogDomHandler.enableDiv("requiredMetadataAssignment");
+                        DialogDomHandler.enableDiv("recommendedMetadataAssignment");
+                        DialogDomHandler.enableDiv("additionalMetadataAssignment");
 
                         // any required and recommended metadata stored in the variableMetadata value field gets
                         // inserted when the metadata HTML is added to the dialog DOM need to
@@ -1477,99 +1074,4 @@ function testVariableCompleteness(key, variableName) {
     return true;
 }
 
-/**
- * This function removes the un-needed attributes from the data imported in via the metadata profile.
- * (Metadata profile values contain dups for all types of coordinate variable values, e.g., a 'comments' 
- * entry exists for for lat, lon, depth, etc.  We only need one of these -- the one that corresponds to 
- * the selected coordinate variable type.)
- *
- * @param  valueSelected  The coordinate variable value selected by the user.
- */
-function removeUnusedAttributesFromDOM(valueSelected) {
-    // Determine the metadata type structure string to use based on the valueSelected.
-    var metadataTypeStructure;
-    if (valueSelected === "latitude") {
-        metadataTypeStructure = "__lat";
-    } else if (valueSelected === "longitude") {
-        metadataTypeStructure = "__lon";
-    } else if (valueSelected === "vertical") {
-        metadataTypeStructure = "__depth";
-    } else {
-        metadataTypeStructure = "__time";
-    }
 
-    var necessityTypes = ["required", "recommended", "additional"];
-
-    for (var x = 0; x < necessityTypes.length; x++) {
-        var necessityType = necessityTypes[x];
-        // Get a map of containing the variable attributes by name, where key=attribute name & value=array of matching DOM elements. 
-        var duplicatesAttributesMap = findDuplicateAttributesFromDOM(necessityType);
-        var attributeNames = duplicatesAttributesMap[Symbol.iterator]();
-        for(var innerArray of attributeNames) {
-            var storedData = innerArray[1];
-            // Derive the ID value for the metadata attribute we need to keep based on the user's coord var type selection.
-            var createdInputIdValue = innerArray[0] + metadataTypeStructure;
-            // If the array of attributues with the same name has more than one entry.
-            if (storedData.length > 1) {
-                // Loop through the array and find the entry that matches the createdInputIdValue.
-                var inputIdValue;
-                for (var i = 0; i < storedData.length; i++) {
-                    if (necessityType !== "additional") {
-                        inputIdValue = $(storedData[i]).find("input").attr("id");
-                        if (inputIdValue !== createdInputIdValue) {
-                            // Remove the attributes that do not match.
-                            var idValue = necessityType + "MetadataAssignment"
-                            $("#dialog #" + idValue + " ul li").find("#" + inputIdValue).closest("li").remove();
-                        }
-                    } else {
-                        inputIdValue = $(storedData[i]).attr("id");
-                        if (inputIdValue !== createdInputIdValue) {
-                            // Remove the option tags that do not match.
-                            $("#dialog #additionalMetadataAssignment select").find("#" + inputIdValue).closest("option").remove();
-                        }
-
-                    }
-                }
-            }
-        }
-    }    
-}
-
-/**
- * This function finds all of the metadatra profile variable attributes that have the same 
- * name attached to the DOM's required, recommended, and additional divs. Returns a map of
- * the variable attributes where key=attribute name & value=array of matching DOM elements. 
- *
- * @param metadataNecessity  Either required, recommended, or additional
- */           
-function findDuplicateAttributesFromDOM(metadataNecessity) {
-    var names = new Map();
-    // Required and recommended metadata
-    if (metadataNecessity !== "additional") {
-        var idValue = metadataNecessity + "MetadataAssignment"
-        $("#dialog #" + idValue + " ul").find("li").each(function () {
-            var name = $(this).find("input").attr("name");
-            if (names.has(name)) {
-                // Already exists, so add to inner array
-                var storedAttributes = names.get(name);
-                storedAttributes.push($(this));
-            } else {
-                // Add for the first time.
-                names.set(name, [$(this)]);
-            }
-        });
-    } else { // Additional metadata 
-        $("#dialog #additionalMetadataAssignment select option").each(function () {
-            var name = $(this).val();
-            if (names.has(name)) {
-                // Already exists, so add to inner array
-                var storedAttributes = names.get(name);
-                storedAttributes.push($(this));
-            } else {
-                // Add for the first time.
-                names.set(name, [$(this)]);
-            }
-        });
-    }
-    return names;
-}
