@@ -1,7 +1,7 @@
 /**
  * SlickGrid/custom/VariableStorageHandler.js
  * 
- * Module for handling variableMetadata
+ * Module for handling storing the variable metadata.
  */
 var VariableStorageHandler = (function () {
 
@@ -21,6 +21,13 @@ var VariableStorageHandler = (function () {
         storeData("variableMetadata", JSON.stringify(variableMetadata));
     }
 
+    /**
+     * Adds an entry in the stored variable.
+     *
+     * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
+     * @param key           The key of the attribute to store.
+     * @param value         The value of the attribute to store.
+     */
     function storeVariableData(columnNumber, key, value) {
         // Get the stored variable data.
         var variableMetadata = getStoredVariableMetadata();
@@ -35,6 +42,12 @@ var VariableStorageHandler = (function () {
         updateStoredVariableData(variableMetadata, variable, columnNumber);
     }
 
+    /**
+     * Finds and removes the value for the given key in the stored variable.
+     *
+     * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
+     * @param key               The object key to use to remove the stored value data.
+     */
     function removeVariableData(columnNumber, key) {
         // Get the stored variable data.
         var variableMetadata = getStoredVariableMetadata();
@@ -49,6 +62,12 @@ var VariableStorageHandler = (function () {
         updateStoredVariableData(variableMetadata, variable, columnNumber);
     }
 
+    /**
+     * Finds and returns the value for the given key in the stored variable.
+     *
+     * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
+     * @param key           The object key to use to get the stored value data.
+     */
     function getVariableData(columnNumber, key) {
         // Get the stored variable data.
         var variableMetadata = getStoredVariableMetadata();
@@ -58,6 +77,11 @@ var VariableStorageHandler = (function () {
         return variable[key];
     }
 
+    /**
+     * Removes all but the designated entries from the variable and its inner compliance-level objects.
+     *
+     * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
+     */
     function removeNonMetadataTypeEntriesFromVariableData(columnNumber) {
         var keep = ["column", "name", "required", "recommended", "additional", "metadataType", "metadataValueType"];
 
@@ -93,6 +117,15 @@ var VariableStorageHandler = (function () {
 
     }
 
+    /**
+     * Adds an entry in the stored compliance-level (required, recommended, or additional)
+     * inner object of the variable.
+     *
+     * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
+     * @param key           The key of the attribute to store.
+     * @param value         The value of the attribute to store.
+     * @param complianceLevel   The compliance level (required, recommended, or additional).
+     */
     function storeComplianceLevelVariableData(columnNumber, key, value, complianceLevel) {
         // Get the stored variable data.
         var variableMetadata = getStoredVariableMetadata();
@@ -113,7 +146,14 @@ var VariableStorageHandler = (function () {
         updateStoredVariableData(variableMetadata, variable, columnNumber);
     }
 
-
+    /**
+     * Finds and removes the value for the given key in the stored compliance-level
+     * (required, recommended, or additional) inner object of the variable.
+     *
+     * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
+     * @param key               The object key to use to remove the stored value data.
+     * @param complianceLevel   The compliance level (required, recommended, or additional).
+     */
     function removeComplianceLevelVariableData(columnNumber, key, complianceLevel) {
         // Get the stored variable data.
         var variableMetadata = getStoredVariableMetadata();
@@ -134,7 +174,14 @@ var VariableStorageHandler = (function () {
         updateStoredVariableData(variableMetadata, variable, columnNumber);
     }
 
-
+    /**
+     * Finds and returns the value for the given key in the stored compliance-level
+     * (required, recommended, or additional) inner object of the variable.
+     *
+     * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
+     * @param key               The object key to use to get the stored value data.
+     * @param complianceLevel   The compliance level (required, recommended, or additional).
+     */
     function getComplianceLevelVariableData(columnNumber, key, complianceLevel) {
         // Get the stored variable data.
         var variableMetadata = getStoredVariableMetadata();
@@ -147,9 +194,6 @@ var VariableStorageHandler = (function () {
 
         return complianceLevelData[key];
     }
-
-
-
 
     /**
      * Retrieves and returns an array of columns who have stored metadata.
@@ -214,13 +258,12 @@ var VariableStorageHandler = (function () {
         return true;
     }
 
-
-
-
-    /*
-     * Private functions
-     */   
-
+    /**
+     * Confirms that the columnNumber and the column value in the provided variable match (they should).
+     *
+     * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
+     * @param variable      The stored variable
+     */
     function sanityCheck(columnNumber, variable) {
         // Sanity check that we are operating on the correct object.
         if (columnNumber !== variable.column) {
@@ -229,6 +272,14 @@ var VariableStorageHandler = (function () {
         }
     }
 
+    /**
+     * Private, utility function.
+     * Updated the stored variable metadata array with the provided variable.
+     *
+     * @param variableMetadata  The variable metadata array that holds all the variables in storage.
+     * @param variable          The variable to update in the array.
+     * @param columnNumber      The index of the variable to update.
+     */
     function updateStoredVariableData(variableMetadata, variable, columnNumber) {
         // Update the variableMetadataArray with the new object.
         variableMetadata[columnNumber] = variable;
