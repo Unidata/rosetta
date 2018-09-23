@@ -5,7 +5,7 @@
 
 package edu.ucar.unidata.rosetta.repository.wizard;
 
-import edu.ucar.unidata.rosetta.domain.Metadata;
+import edu.ucar.unidata.rosetta.domain.wizard.Metadata;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -131,7 +131,7 @@ public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
         "WHERE id = ?";
     int rowsAffected = getJdbcTemplate().update(sql, new Object[]{
         // order matters here
-        metadata.getType(),
+       // metadata.getType(),
         metadata.getMetadataKey(),
         metadata.getMetadataValue(),
         metadata.getId()
@@ -201,7 +201,7 @@ public class JdbcMetadataDao extends JdbcDaoSupport implements MetadataDao {
     public Metadata mapRow(ResultSet rs, int rowNum) throws SQLException {
       Metadata metadata = new Metadata();
       metadata.setId(rs.getString("id"));
-      metadata.setType(rs.getString("type"));
+   //   metadata.setType(rs.getString("type"));
       metadata.setMetadataKey(rs.getString("metadataKey"));
       metadata.setMetadataValue(rs.getString("metadataValue"));
       return metadata;
