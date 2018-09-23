@@ -77,6 +77,27 @@ var VariableStorageHandler = (function () {
         return variable[key];
     }
 
+    function getAllVariableData(columnNumber) {
+        // Get the stored variable data.
+        return getStoredVariableMetadata();
+    }
+
+    function resetVariableData(columnNumber) {
+        // Get the stored variable data.
+        var variableMetadata = getStoredVariableMetadata();
+
+        // Reset the object.
+        var variable =  { 
+                "column": columnNumber.replace("variableName", ""),
+                "required": {},
+                "recommended": {},
+                "additional": {}
+            }; 
+
+        // Update the stored data with updated variable.
+        updateStoredVariableData(variableMetadata, variable, columnNumber);
+    }
+
     /**
      * Removes all but the designated entries from the variable and its inner compliance-level objects.
      *
@@ -114,8 +135,9 @@ var VariableStorageHandler = (function () {
 
         // Update the stored data with updated variable.
         updateStoredVariableData(variableMetadata, variable, columnNumber);
-
     }
+
+
 
     /**
      * Adds an entry in the stored compliance-level (required, recommended, or additional)
@@ -195,6 +217,19 @@ var VariableStorageHandler = (function () {
         return complianceLevelData[key];
     }
 
+    function getRequiredVariableData(columnNumber) {
+        // Get the stored variable data.
+        var variableMetadata = getStoredVariableMetadata();
+
+        // Get the desired object.
+        var variable = getVariable(columnNumber, variableMetadata);
+
+        // Get & return the required inner object.
+        return variable["required"];
+    }
+
+
+
     /**
      * Retrieves and returns an array of columns who have stored metadata.
      * Note, those variables specified "Do Not Use" are ignored and not included.
@@ -219,39 +254,103 @@ var VariableStorageHandler = (function () {
 
     /**
      * Checks to see if the needed input for a particular variable/column of data is complete.
-     * Checks to make sure that the coordinate variable, data type and required metadata values
-     * are present in the variableMetadata value field.  This function is called by the testIfComplete() function.
+     * This function is called by the testIfComplete() function.
      *
      * @param key  The key used to store the data in the variableMetadata value field.
      * @param variableName  The variable name assigned to the column of data by the user.
+     * @return true if variable has all it's required data; otherwise false.
      */
     function testVariableCompleteness(key, variableName) {
-        if (variableName !== "Do Not Use") {
-            // do we have the coordinateVariable?
-            var coordinateVariableInStorage = getItemEntered(key + "Metadata", "_coordinateVariable");
-            if (coordinateVariableInStorage != null) {
-                // do we have the dataType?
-                var dataTypeInStorage = getItemEntered(key + "Metadata", "dataType");
-                if (dataTypeInStorage != null) {
-                    // do we have the required metadata?
-                    var metadataProvided = getAllButTheseFromSessionString(key + "Metadata", ["_coordinateVariable", "dataType"]);
-                    if (metadataProvided.length > 0) {
-                        // get the metadata names (not values) held in the variableMetadata value field
-                        var metadataInStorage = getKeysFromSessionData(metadataProvided);
-                        var requiredMetadata = getKnownRequiredMetadataList(coordinateVariableInStorage);
-                        for (var i = 0; i < requiredMetadata.length; i++) {
-                            if (metadataInStorage.indexOf(requiredMetadata[i]) < 0) {
-                                // some required metadata is missing
+
+        if (variableName !== "do_not_use") {
+
+            // Do we have the metadataType?
+            var metadataType = getVariableData(key, "metadataType");
+
+            if (metadataType !== undefined) {
+
+                // If coordinate variable.
+                if (metadataType === "coordinate") {
+                    // Do we have a metadataTypeStructure?
+                    var metadataTypeStructure = getVariableData(key, "metadataTypeStructure");
+
+                    if (metadataTypeStructure !== undefined) {
+
+                        // If metadataTypeStructure is vertical.
+                        if (metadataTypeStructure === "vertical") {
+
+                            // Do we have a verticalDirection?
+                            var verticalDirection = getVariableData(key, "verticalDirection");
+
+                            if (verticalDirection === undefined) {
+                                // verticalDirection is missing.
                                 return false;
                             }
                         }
-                    } else { // ALL metadata is missing
+                    
+                    } else {
+                        // metadataTypeStructure is missing.
                         return false;
                     }
-                } else { // dataType is missing
+                } 
+
+                // Do we have the metadataValueType?
+                var metadataValueType = getVariableData(key, "metadataValueType");
+
+                if (metadataValueType !== undefined) {
+
+                    // Do we have the required metadata?
+
+                    // Get the list of required metadata items.
+                    var required = getStoredData("_v" + key.replace("variableName", "")).split(/,/g);
+          
+                    // Get the stored required data.
+                    var storedRequired = getRequiredVariableData(key);
+
+                    // If the required metadata object is empty.
+                    if ($.isEmptyObject(storedRequired)) {
+    
+                        // ALL required metadata is missing.
+                        return false;
+
+                    } else {
+
+                        // Some required metadata has been stored; compare to required list.
+                        
+                        // Create map from the stored required entries.
+                        var requiredStoredMap = new Map();
+                        Object.keys(storedRequired).forEach(function(key) {
+                            requiredStoredMap.set(key, storedRequired[key]);
+                        });
+                        
+                        // Confirm each of the required metadata entries:
+                        //      1) matches what is in the required list; and
+                        //      2) has a value associated with it.
+                        for (var i = 0; i < required.length; i++) {
+
+                            if (requiredStoredMap.has(required[i])){
+                                // Get the value of the stored entry.
+                                var storedValue = requiredStoredMap.get(required[i]);
+
+                                if (storedValue === "") {
+                                    // No value associated with stored entry.
+                                    return false;
+                                }
+
+                            } else {
+                                // Missing a required metadata item.
+                                return false;
+                            }
+                        }
+                    }
+
+                } else { 
+                    // metadataValueType is missing.
                     return false;
                 }
-            } else {  // coordinateVariable is missing
+
+            } else {  
+                // metadataType is missing.
                 return false;
             }
         }
@@ -341,6 +440,8 @@ var VariableStorageHandler = (function () {
         getVariableData: getVariableData,
         getComplianceLevelVariableData: getComplianceLevelVariableData,
         getVariablesWithMetadata: getVariablesWithMetadata,
-        testVariableCompleteness: testVariableCompleteness
+        testVariableCompleteness: testVariableCompleteness,
+        resetVariableData: resetVariableData,
+        getAllVariableData:  getAllVariableData
     };
 })();

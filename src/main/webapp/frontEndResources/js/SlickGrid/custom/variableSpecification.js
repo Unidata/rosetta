@@ -263,12 +263,13 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid) {
                             // only if we don't have any errors
                             if ($("#dialog").find("label.error").text() === "") {
                                 // get the variable name, assign to the column and update the header with the value
-                                var variableName = getFromSession(variableKey);
-                                grid.updateColumnHeader(id, variableName, "column " + id + ": "
-                                    + variableName);
 
-                                // make sure the column is enabled/disabled depending on the user's choice
+                                var variableName = VariableStorageHandler.getVariableData(variableKey, "name");
+                                grid.updateColumnHeader(id, variableName, "column " + id + ": " + variableName);
+
+                                // Make sure the column is enabled/disabled depending on the user's choice.
                                 checkIfColumnIsDisabled(colNumber, grid);
+
                                 // have all the columns been handled?
                                 testIfComplete(colNumber);
 
@@ -277,8 +278,7 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid) {
                         },
                         "cancel": function () {
                             // remove variable info from variableMetadata value field
-                            removeFromSession(variableKey);
-                            removeFromSession(variableKey + "Metadata");
+                            VariableStorageHandler.resetVariableData(variableKey);
 
                             // ugh!  Kludge to counter the fact the grid header
                             // button resets to previous options if revisiting
@@ -304,10 +304,8 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid) {
                 });
 
                 // If they've already entered in data for the variable and of they are revisiting the dialog, hide the cancel button.
-                if (getFromSession(variableKey)) {
-                    $("div.ui-dialog-buttonset button span:contains('cancel')").parents(
-                        "button")
-                        .addClass("hideMe");
+                if (VariableStorageHandler.getVariableData(variableKey, "name")) {
+                    $("div.ui-dialog-buttonset button span:contains('cancel')").parents("button").addClass("hideMe");
                     $(".ui-dialog-titlebar-close").removeClass("hideMe");
                 } else {
                     $(".ui-dialog-titlebar-close").addClass("hideMe");
@@ -663,13 +661,13 @@ function populateDataFromStorage(key) {
  * @param grid  The grid object we are working on.
  */
 function checkIfColumnIsDisabled(colNumber, grid) {
-    // loop through all of the data columns
+    // Loop through all of the data columns
     for (var i = 0; i < colNumber; i++) {
-        // get the variable name assigned by the user for the column
-        var assignedVariableName = getFromSession("variableName" + i);
-        // if we have data for this column
+        // Get the variable name assigned by the user for the column
+        var assignedVariableName = VariableStorageHandler.getVariableData("variableName" + i, "name");
+        // If we have data for this column
         if (assignedVariableName) {
-            var headerLines = sessionStorage.getItem("headerLineNumbers").split(/,/g);
+            var headerLines = getStoredData("headerLineNumbers").split(/,/g);
             var firstHeaderLine = headerLines[0];
             var item = grid.getDataItem(0);
             if (item) {
@@ -703,6 +701,7 @@ function checkIfColumnIsDisabled(colNumber, grid) {
     }
 }
 
+
 /**
  * This function is kludgy hack to work around to alter the button element
  * (unable to make immediate changes using args.button). It makes sure the
@@ -727,14 +726,16 @@ function hackGridButtonElement(id, variableName) {
  * @param colNumber  The total number of SlickGrid columns.
  */
 function testIfComplete(colNumber) {
-    // loop through all the data columns
+    // Loop through all the data columns.
     for (var i = 0; i < colNumber; i++) {
-        // see if we have values for the column in the variableMetadata value field
-        var variableName = getFromSession("variableName" + i);
-        // something exists in the variableMetadata value field, see if the metadata exists as well
-        if (variableName) {
-            if (VariableStorageHandler.testVariableCompleteness("variableName" + i, variableName)) {
+        // Get the variable name assigned by the user for the column
+        var assignedVariableName = VariableStorageHandler.getVariableData("variableName" + i, "name");
+
+        // Have an assigned name.
+        if (assignedVariableName) {
+            if (VariableStorageHandler.testVariableCompleteness("variableName" + i, assignedVariableName)) {                
                 if (i === (colNumber - 1)) {
+                    populateCmd();
                     // remove disabled status for submit button.
                     $("input[type=submit]#Next").removeAttr("disabled");
                     // remove disabled class for submit button.
@@ -749,6 +750,31 @@ function testIfComplete(colNumber) {
         }
     }
 }
+
+function populateCmd(key) {
+    // Get the object from storage.
+    var storedVariableData = JSON.stringify(VariableStorageHandler.getAllVariableData());
+    $("input#variableMetadata").val(storedVariableData);
+}
+
+
+    /**
+     * Marks a column of data as disabled by changing the css info.
+     *
+     * @param node  The grid's cell node data.
+     */
+    function disableColumn(node) {
+        $(node).addClass("columnDisabled");
+    }
+
+    /**
+     * Marks a column of data as enabled by changing the css info.
+     *
+     * @param node  The grid's cell node data.
+     */
+    function enableColumn(node) {
+        $(node).removeClass("columnDisabled");
+    }
 
 
 

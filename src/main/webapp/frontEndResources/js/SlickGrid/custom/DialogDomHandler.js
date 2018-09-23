@@ -29,7 +29,6 @@ var DialogDomHandler = (function () {
 
     }
 
-    
     /**
      * Enables the input tags and emphasizes the text of the #variableAttributes assignment section of the dialog form.
      *
@@ -219,10 +218,6 @@ var DialogDomHandler = (function () {
         populateDataFromStorage(key);
         bindDialogEvents(key);
     }
-
-
-
-
 
     // Expose these functions.
     return {

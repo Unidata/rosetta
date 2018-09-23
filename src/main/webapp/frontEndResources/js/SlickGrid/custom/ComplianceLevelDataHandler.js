@@ -17,7 +17,10 @@ var ComplianceLevelDataHandler = (function () {
         var metadataType = VariableStorageHandler.getVariableData(key, "metadataType");
         var metadataTypeStructure = VariableStorageHandler.getVariableData(key, "metadataTypeStructure");
 
+        // We will stash oru created tags here.
         var metadataTags = [];
+        // We will stash our required attribute names here.
+        var required = [];
         
         // Get the compliance-level data in map form to quickly eliminate duplicates and create the correct input tag.
         var complianceLevelData = findDuplicateAttributes();
@@ -49,14 +52,26 @@ var ComplianceLevelDataHandler = (function () {
                 var attributeObject = metadataTypeStructuresMap.get(metadataTypeStructure);
                 if (attributeObject !== undefined) {
                     tag = createComplianceLevelTagElement(key, attributeObject);
+                    if (complianceLevel === "required" && attributeObject.complianceLevel === "required") {
+                        // Push attribute name onto required array.
+                        required.push(attributeObject.attributeName);
+                    }
                 }
             } else {
                 var attributeObject = metadataTypeStructuresMap.get("data");
                 if (attributeObject !== undefined) {
                     tag = createComplianceLevelTagElement(key, attributeObject);
+                    if (complianceLevel === "required" && attributeObject.complianceLevel === "required") {
+                        // Push attribute name onto required array.
+                        required.push(attributeObject.attributeName);
+                    }
                 }
             }
             metadataTags.push(tag);
+        }
+
+        if (complianceLevel === "required") {
+            storeData("_v" + key.replace("variableName", ""), required);
         }
 
         // Sort the array.
