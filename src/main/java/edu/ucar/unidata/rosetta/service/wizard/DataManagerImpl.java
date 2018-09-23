@@ -146,7 +146,8 @@ public class DataManagerImpl implements DataManager {
   @Override
   public GeneralMetadata getMetadataFromKnownFile(String filePath, String fileType,
       GeneralMetadata metadata) throws RosettaDataException {
-    return metadataManager.getMetadataFromKnownFile(filePath, fileType, metadata);
+   // return metadataManager.getMetadataFromKnownFile(filePath, fileType, metadata);
+      return new GeneralMetadata();
   }
 
   /**
@@ -159,7 +160,8 @@ public class DataManagerImpl implements DataManager {
    */
   @Override
   public String getMetadataStringForClient(String id, String type) {
-    return metadataManager.getMetadataStringForClient(id, type);
+  //  return metadataManager.getMetadataStringForClient(id, type);
+      return "foo";
   }
 
 
@@ -226,7 +228,7 @@ public class DataManagerImpl implements DataManager {
       throws RosettaDataException {
 
     // Persist the global metadata.
-    metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(metadata, id));
+    //metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(metadata, id));
   }
 
   /**
@@ -291,8 +293,7 @@ public class DataManagerImpl implements DataManager {
   @Override
   public void processVariableMetadata(String id, Data data) {
     // Persist the variable metadata.
-    metadataManager
-        .persistMetadata(metadataManager.parseVariableMetadata(data.getVariableMetadata(), id));
+    //metadataManager.persistMetadata(metadataManager.parseVariableMetadata(data.getVariableMetadata(), id));
   }
 
   /**
