@@ -5,6 +5,7 @@
 
 package edu.ucar.unidata.rosetta.service.wizard;
 
+import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
@@ -84,6 +85,14 @@ public interface WizardManager {
      * @return The previous step to redirect the user to in the wizard.
      */
     public String processPreviousStep(String id);
+
+    /**
+     * Processes the data submitted by the user containing variable metadata information.
+     *
+     * @param id The unique ID corresponding to already persisted data.
+     * @param wizardData The WizardData containing variable metadata information.
+     */
+    public void processVariableMetadata(String id, WizardData wizardData);
 
     /**
      * Updates persisted wizard data with the information in the provided WizardData object.

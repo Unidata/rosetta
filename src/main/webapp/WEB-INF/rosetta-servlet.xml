@@ -193,6 +193,7 @@
           id="wizardManager">
         <property name="uploadedFileDao" ref="uploadedFileDao"/>
         <property name="wizardDataDao" ref="wizardDataDao"/>
+        <property name="variableDao" ref="variableDao"/>
     </bean>
 
     <bean class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl" id="dataManager">
@@ -267,7 +268,7 @@
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcMetadataDao" id="metadataDao">
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcVariableDao" id="variableDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 

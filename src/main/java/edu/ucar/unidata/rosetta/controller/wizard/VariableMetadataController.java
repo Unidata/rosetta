@@ -5,8 +5,6 @@
 
 package edu.ucar.unidata.rosetta.controller.wizard;
 
-import edu.ucar.unidata.rosetta.domain.Data;
-import edu.ucar.unidata.rosetta.domain.wizard.MetadataProfileCmd;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
@@ -21,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -88,27 +87,12 @@ public class VariableMetadataController implements HandlerExceptionResolver {
                     "No persisted data available for file upload step.  Check the database & the cookie.");
         }
 
-        // Create the form backing object.
-        MetadataProfileCmd metadataProfileCmd;
-        // Have we been here before?  Do we have any data persisted?
-        MetadataProfileCmd persisted = metadataManager
-                .lookupMetadataById(rosettaCookie.getValue(), "variable");
-        if (!persisted.getMetadataProfiles().isEmpty()) {
-            metadataProfileCmd = persisted;
-        } else {
-            // No persisted data.
-            metadataProfileCmd = new MetadataProfileCmd();
-        }
-
         WizardData wizardData = wizardManager.lookupPersistedWizardDataById(rosettaCookie.getValue());
 
-        // Populate with any existing variable metadata.
-        // data.setVariableMetadata(dataManager.getMetadataStringForClient(data.getId(), "variable"));
-
         // Add form-backing object.
-        model.addAttribute("data", metadataProfileCmd);
+        model.addAttribute("data", wizardData);
         // Add command object to Model.
-        model.addAttribute("command", "variableMetadata");
+        model.addAttribute("command", "WizardData");
         // Add current step to the Model.
         model.addAttribute("currentStep", "variableMetadata");
         // Add whether we need to show the custom file attributes step in the wizard menu (boolean value).
@@ -137,7 +121,8 @@ public class VariableMetadataController implements HandlerExceptionResolver {
      * submitted data and persists it to the database.  Redirects user to next step or previous step
      * depending on submitted form button (Next or Previous).
      *
-     * @param data    The form-backing object.
+     * @param wizardData The form-backing object.
+     * @param submit     The value sent via the submit button.
      * @param result  The BindingResult for error handling.
      * @param model   The Model object to be populated by file upload data in the next step.
      * @param request HttpServletRequest needed to get the cookie.
@@ -145,25 +130,24 @@ public class VariableMetadataController implements HandlerExceptionResolver {
      * @throws IllegalStateException If cookie is null.
      */
     @RequestMapping(value = "/variableMetadata", method = RequestMethod.POST)
-    public ModelAndView processVariableMetadata(Data data, BindingResult result, Model model,
+    public ModelAndView processVariableMetadata(WizardData wizardData, @RequestParam("submit") String submit, BindingResult result, Model model,
                                                 HttpServletRequest request) {
 
-        // Take user back to custom file attribute collection step (and don't save any data to this step).
-        if (data.getSubmit().equals("Previous")) {
-            return new ModelAndView(new RedirectView("/customFileTypeAttributes", true));
+        // Take user back to file upload step (and don't save any data to this step).
+        if (submit != null && submit.equals("Previous")) {
+            return new ModelAndView(new RedirectView("/fileUpload", true));
         }
 
         // Get the cookie so we can get the persisted data.
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-        if (rosettaCookie == null)
-        // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-        {
+        if (rosettaCookie == null) {
+            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
             throw new IllegalStateException(
-                    "No persisted data available for file upload step.  Check the database & the cookie.");
+                    "No persisted data available for custom file attributes step. Check the database & the cookie.");
         }
 
         // Persist the variable metadata information.
-        dataManager.processVariableMetadata(rosettaCookie.getValue(), data);
+        wizardManager.processVariableMetadata(rosettaCookie.getValue(), wizardData);
 
         // Send user to next step to collect general metadata.
         return new ModelAndView(new RedirectView("/generalMetadata", true));

@@ -5,6 +5,7 @@
 
 package edu.ucar.unidata.rosetta.service.wizard;
 
+import edu.ucar.unidata.rosetta.domain.Variable;
 import edu.ucar.unidata.rosetta.domain.resources.Community;
 import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
@@ -12,8 +13,10 @@ import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.wizard.UploadedFileDao;
+import edu.ucar.unidata.rosetta.repository.wizard.VariableDao;
 import edu.ucar.unidata.rosetta.repository.wizard.WizardDataDao;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
+import edu.ucar.unidata.rosetta.util.JsonUtil;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -21,6 +24,8 @@ import org.apache.log4j.Logger;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Implements wizard manager functionality.
@@ -30,6 +35,7 @@ public class WizardManagerImpl implements WizardManager {
     private static final Logger logger = Logger.getLogger(WizardManagerImpl.class);
 
     private UploadedFileDao uploadedFileDao;
+    private VariableDao variableDao;
     private WizardDataDao wizardDataDao;
 
     @Resource(name = "fileManager")
@@ -301,12 +307,61 @@ public class WizardManagerImpl implements WizardManager {
     }
 
     /**
+     * Processes the data submitted by the user containing variable metadata information.
+     *
+     * @param id The unique ID corresponding to already persisted data.
+     * @param wizardData The WizardData containing variable metadata information.
+     */
+    @Override
+    public void processVariableMetadata(String id, WizardData wizardData) {
+
+        //List<Variable> variables = JsonUtil.convertFromJSON(wizardData.getVariableMetadata());
+        String jsonString = "[{\"column\":0,\"required\":{\"standard_name\":\"air_density\",\"units\":\"kg m-3\",\"comment\":\"comment\",\"long_name\":\"long name\"},\"recommended\":{},\"additional\":{\"cf_role\":\"cf role\",\"missing_value\":\"missing value\"},\"name\":\"air_density\",\"metadataType\":\"coordinate\",\"metadataTypeStructure\":\"vertical\",\"verticalDirection\":\"up\",\"metadataValueType\":\"Integer\"},{\"column\":1,\"required\":{\"comment\":\"comment\",\"long_name\":\"long name\",\"standard_name\":\"standard name\",\"units\":\"units\",\"valid_max\":\"valid max\",\"valid_min\":\"valid min\"},\"recommended\":{\"add_offset\":\"xx\",\"references\":\"xx\"},\"additional\":{\"ancillary_variables\":\"xx\",\"bounds\":\"xx\",\"cell_measures\":\"xx\",\"cell_methods\":\"xx\",\"climatology\":\"xx\",\"compress\":\"xx\",\"flag_masks\":\"xx\",\"flag_meanings\":\"xx\",\"flag_values\":\"xx\",\"missing_value\":\"xx\",\"scale_factor\":\"xx\",\"source\":\"xx\"},\"name\":\"foo\",\"metadataType\":\"non-coordinate\",\"metadataValueType\":\"Text\"},{\"column\":2,\"required\":{},\"recommended\":{},\"additional\":{},\"name\":\"do_not_use\"},{\"column\":3,\"required\":{},\"recommended\":{},\"additional\":{},\"name\":\"do_not_use\"}]";
+
+        // Parse the JSON get get Variable objects.
+        List<Variable> variables = JsonUtil.convertFromJSON(jsonString);
+
+        // Look up any persisted data corresponding to the id.
+        List<Variable> persisted = variableDao.lookupVariable(id);
+        // Get the variable IDs and columns numbers from persisted data.
+        Map<Integer, Integer> variableMap = new HashMap<>(persisted.size());
+        if (persisted.size() > 0) {
+            // Create map of column numbers to variable ids.
+            for (Variable persistedVar : persisted) {
+                int variableId = persistedVar.getVariableId();
+                int columnNumber = persistedVar.getColumnNumber();
+                variableMap.put(columnNumber, variableId);
+            }
+            // Update new variables with column numbers.
+            for (Variable variable : variables) {
+                int variableId = variableMap.get(variable.getColumnNumber());
+                variable.setVariableId(variableId);
+                variable.setWizardDataId(id);
+            }
+            variableDao.updatePersistedVariables(variables);
+        } else {
+            // No persisted data; this is the first time we are persisting it.
+            variableDao.persistVariables(id, variables);
+        }
+    }
+
+
+    /**
      * Sets the data access object (DAO) for the UploadedFile object.
      *
      * @param uploadedFileDao The service DAO representing a UploadedFile object.
      */
     public void setUploadedFileDao(UploadedFileDao uploadedFileDao) {
         this.uploadedFileDao = uploadedFileDao;
+    }
+
+    /**
+     * Sets the data access object (DAO) for the Variable object.
+     *
+     * @param variableDao The service DAO representing a Variable object.
+     */
+    public void setVariableDao(VariableDao variableDao) {
+        this.variableDao = variableDao;
     }
 
 
