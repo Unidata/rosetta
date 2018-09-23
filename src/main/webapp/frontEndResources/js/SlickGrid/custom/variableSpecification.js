@@ -537,12 +537,8 @@ function bindDialogEvents(key) {
         // If there are no validation errors, we can proceed
         if ($("#dialog #metadataValueTypeAssignment").find("label.error").text() === "") {
 
-            // Populate the required, recommended, & additional metadata areas with metadata profile info.
+            // Populate the required, recommended, & additional metadata areas with metadata profile info & reveal the metadata sections.
             ComplianceLevelDataHandler.addComplainceLevelDataToDialog(key);
-            // Reveal the metadata sections.
-            DialogDomHandler.enableDiv("requiredMetadataAssignment");
-            DialogDomHandler.enableDiv("recommendedMetadataAssignment");
-            DialogDomHandler.enableDiv("additionalMetadataAssignment");
         }
     });
 }
