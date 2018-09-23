@@ -5,7 +5,8 @@
 
 package edu.ucar.unidata.rosetta.repository.wizard;
 
-import edu.ucar.unidata.rosetta.domain.wizard.Metadata;
+import edu.ucar.unidata.rosetta.domain.Variable;
+
 import java.util.List;
 import org.springframework.dao.DataRetrievalFailureException;
 
@@ -14,74 +15,66 @@ import org.springframework.dao.DataRetrievalFailureException;
  *
  * @author oxelson@ucar.edu
  */
-public interface MetadataDao {
+public interface VariableDao {
 
-  /**
-   * Looks up and retrieves a list of persisted Metadata objects using the given id.
-   *
-   * @param id The id of the corresponding Data object.
-   * @return The Metadata object.
-   * @throws DataRetrievalFailureException If unable to lookup Metadata with the given id.
-   */
-  public List<Metadata> lookupMetadata(String id) throws DataRetrievalFailureException;
+    /**
+     * Looks up and retrieves a list of persisted Variable objects using the given id.
+     *
+     * @param wizardDataId The id of the corresponding WizardData object.
+     * @return The Variable object.
+     */
+    public List<Variable> lookupVariable(String wizardDataId);
 
-  /**
-   * Looks up and retrieves a list of persisted Metadata objects using the given id & type.
-   *
-   * @param id The id of the corresponding Data object.
-   * @param type The type of the Metadata.
-   * @return The Metadata object.
-   * @throws DataRetrievalFailureException If unable to lookup Metadata with the given id & type.
-   */
-  public List<Metadata> lookupMetadata(String id, String type) throws DataRetrievalFailureException;
 
-  /**
-   * Persists the information in the given list of metadata objects.
-   *
-   * @param metadata The list of Metadata objects to persist.
-   * @throws DataRetrievalFailureException If unable to persist the Metadata objects.
-   */
-  public void persistMetadata(List<Metadata> metadata) throws DataRetrievalFailureException;
 
-  /**
-   * Persists the information in the give metadata object.
-   *
-   * @param metadata The Metadata object to persist.
-   * @throws DataRetrievalFailureException If unable to persist the Metadata object.
-   */
-  public void persistMetadata(Metadata metadata) throws DataRetrievalFailureException;
+    /**
+     * Persists the information in the given list of variable objects.
+     *
+     * @param wizardDataId The id of the corresponding WizardData object.
+     * @param variables The list of Variable objects to persist.
+     * @throws DataRetrievalFailureException If unable to persist the Variable objects.
+     */
+    public void persistVariables(String wizardDataId, List<Variable> variables) throws DataRetrievalFailureException;
 
-  /**
-   * Updated the information corresponding to the given list of metadata objects.
-   *
-   * @param metadata The list of metadata objects to update.
-   * @throws DataRetrievalFailureException If unable to update persisted Metadata objects.
-   */
-  public void updatePersistedMetadata(List<Metadata> metadata) throws DataRetrievalFailureException;
+    /**
+     * Persists the information in the given variable object.
+     *
+     * @param wizardDataId The id of the corresponding WizardData object.
+     * @param variable The Variable object to persist.
+     * @throws DataRetrievalFailureException If unable to persist the Variable object.
+     */
+    public void persistVariable(String wizardDataId, Variable variable) throws DataRetrievalFailureException;
 
-  /**
-   * Updated the information corresponding to the given metadata object.
-   *
-   * @param metadata The metadata object to update.
-   * @throws DataRetrievalFailureException If unable to update persisted Metadata object.
-   */
-  public void updatePersistedMetadata(Metadata metadata) throws DataRetrievalFailureException;
+    /**
+     * Updated the information corresponding to the given list of variable objects.
+     *
+     * @param variables The list of variable objects to update.
+     * @throws DataRetrievalFailureException If unable to update persisted Variable objects.
+     */
+    public void updatePersistedVariables(List<Variable> variables) throws DataRetrievalFailureException;
 
-  /**
-   * Deletes the persisted metadata information using the given id.
-   *
-   * @param id The id of the metadata information to delete.
-   * @throws DataRetrievalFailureException If unable to delete persisted metadata information.
-   */
-  public void deletePersistedMetadata(String id) throws DataRetrievalFailureException;
+    /**
+     * Updated the information corresponding to the given variable object.
+     *
+     * @param variable The variable object to update.
+     * @throws DataRetrievalFailureException If unable to update persisted Variable object.
+     */
+    public void updatePersistedVariable(Variable variable) throws DataRetrievalFailureException;
 
-  /**
-   * Deletes the persisted metadata object information using the given id & type.
-   *
-   * @param id The id of the metadata information to delete.
-   * @param type The type of the metadata information to delete.
-   * @throws DataRetrievalFailureException If unable to delete persisted metadata information.
-   */
-  public void deletePersistedMetadata(String id, String type) throws DataRetrievalFailureException;
 
+    /**
+     * Deletes the persisted list of variable information using the given id.
+     *
+     * @param variables The list of variable objects to update.
+     * @throws DataRetrievalFailureException If unable to delete persisted variable information.
+     */
+    public void deletePersistedVariables(List<Variable> variables) throws DataRetrievalFailureException ;
+
+    /**
+     * Deletes the persisted variable object information using the given id.
+     *
+     * @param variable The variable object to delete.
+     * @throws DataRetrievalFailureException If unable to delete persisted variable information.
+     */
+    public void deletePersistedVariable(Variable variable) throws DataRetrievalFailureException ;
 }
