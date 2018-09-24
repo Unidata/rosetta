@@ -6,12 +6,14 @@
 package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.Variable;
+import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
 import edu.ucar.unidata.rosetta.domain.resources.Community;
 import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
+import edu.ucar.unidata.rosetta.repository.wizard.GlobalMetadataDao;
 import edu.ucar.unidata.rosetta.repository.wizard.UploadedFileDao;
 import edu.ucar.unidata.rosetta.repository.wizard.VariableDao;
 import edu.ucar.unidata.rosetta.repository.wizard.WizardDataDao;
@@ -37,6 +39,7 @@ public class WizardManagerImpl implements WizardManager {
     private UploadedFileDao uploadedFileDao;
     private VariableDao variableDao;
     private WizardDataDao wizardDataDao;
+    private GlobalMetadataDao globalMetadataDao;
 
     @Resource(name = "fileManager")
     private FileManager fileManager;
@@ -119,17 +122,27 @@ public class WizardManagerImpl implements WizardManager {
     public WizardData lookupPersistedWizardDataById(String id) {
         // Get the persisted wizard data.
         WizardData wizardData = wizardDataDao.lookupWizardDataById(id);
+
         // Get persisted variable metadata if it exists.
         List<Variable> variables = variableDao.lookupVariables(id);
         if (variables.size() > 0) {
             StringBuilder variableMetadata = new StringBuilder("[");
             for (Variable variable : variables) {
-                String jsonVariable = JsonUtil.convertToJson(variable);
+                String jsonVariable = JsonUtil.convertVariableDataToJson(variable);
                 variableMetadata.append(jsonVariable).append(",");
             }
             variableMetadata = new StringBuilder(variableMetadata.substring(0, variableMetadata.length() - 1) + "]");
             wizardData.setVariableMetadata(variableMetadata.toString());
         }
+        // Get persisted global metadata if it exists.
+        List<GlobalMetadata> persisted = globalMetadataDao.lookupGlobalMetadata(id);
+        StringBuilder globalMetadata = new StringBuilder("{");
+        for (GlobalMetadata item : persisted) {
+            String jsonGlobalMetadataString = JsonUtil.convertGlobalDataToJson(item);
+            globalMetadata.append(jsonGlobalMetadataString).append(",");
+        }
+        globalMetadata = new StringBuilder(globalMetadata.substring(0, globalMetadata.length() - 1) + "}");
+        wizardData.setGlobalMetadata(globalMetadata.toString());
         return wizardData;
     }
 
@@ -284,9 +297,19 @@ public class WizardManagerImpl implements WizardManager {
      */
     @Override
     public void processGeneralMetadata(String id, WizardData wizardData) throws RosettaDataException {
-        logger.info(wizardData);
-        // Persist the global metadata.
-        //metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(metadata, id));
+        // Parse the JSON to get GlobalMetadata objects.
+        List<GlobalMetadata> globalMetadata = JsonUtil.convertGlobalDataFromJSON(wizardData.getGlobalMetadata());
+
+        // Look up any persisted data corresponding to the id.
+        List<GlobalMetadata> persisted = globalMetadataDao.lookupGlobalMetadata(id);
+
+        if (persisted.size() > 0) {
+            // Update the persisted data.
+            globalMetadataDao.updatePersistedGlobalMetadata(id, globalMetadata);
+        } else {
+            // No persisted data; this is the first time we are persisting it.
+            globalMetadataDao.persistGlobalMetadata(id, globalMetadata);
+        }
     }
 
     /**
@@ -343,15 +366,12 @@ public class WizardManagerImpl implements WizardManager {
      */
     @Override
     public void processVariableMetadata(String id, WizardData wizardData) {
-        // Parse the JSON get get Variable objects.
-        List<Variable> variables = JsonUtil.convertFromJSON(wizardData.getVariableMetadata());
-        //String jsonString = "[{\"column\":0,\"required\":{\"standard_name\":\"air_density\",\"units\":\"kg m-3\",\"comment\":\"comment\",\"long_name\":\"long name\"},\"recommended\":{},\"additional\":{\"cf_role\":\"cf role\",\"missing_value\":\"missing value\"},\"name\":\"air_density\",\"metadataType\":\"coordinate\",\"metadataTypeStructure\":\"vertical\",\"verticalDirection\":\"up\",\"metadataValueType\":\"Integer\"},{\"column\":1,\"required\":{\"comment\":\"comment\",\"long_name\":\"long name\",\"standard_name\":\"standard name\",\"units\":\"units\",\"valid_max\":\"valid max\",\"valid_min\":\"valid min\"},\"recommended\":{\"add_offset\":\"xx\",\"references\":\"xx\"},\"additional\":{\"ancillary_variables\":\"xx\",\"bounds\":\"xx\",\"cell_measures\":\"xx\",\"cell_methods\":\"xx\",\"climatology\":\"xx\",\"compress\":\"xx\",\"flag_masks\":\"xx\",\"flag_meanings\":\"xx\",\"flag_values\":\"xx\",\"missing_value\":\"xx\",\"scale_factor\":\"xx\",\"source\":\"xx\"},\"name\":\"foo\",\"metadataType\":\"non-coordinate\",\"metadataValueType\":\"Text\"},{\"column\":2,\"required\":{},\"recommended\":{},\"additional\":{},\"name\":\"do_not_use\"},{\"column\":3,\"required\":{},\"recommended\":{},\"additional\":{},\"name\":\"do_not_use\"}]";
-
-        // Parse the JSON get get Variable objects.
-       // List<Variable> variables = JsonUtil.convertFromJSON(jsonString);
+        // Parse the JSON to get Variable objects.
+        List<Variable> variables = JsonUtil.convertVariableDataFromJSON(wizardData.getVariableMetadata());
 
         // Look up any persisted data corresponding to the id.
         List<Variable> persisted = variableDao.lookupVariables(id);
+
         // Get the variable IDs and columns numbers from persisted data.
         Map<Integer, Integer> variableMap = new HashMap<>(persisted.size());
         if (persisted.size() > 0) {
@@ -391,6 +411,15 @@ public class WizardManagerImpl implements WizardManager {
      */
     public void setVariableDao(VariableDao variableDao) {
         this.variableDao = variableDao;
+    }
+
+    /**
+     * Sets the data access object (DAO) for the GlobalMetadata object.
+     *
+     * @param globalMetadataDao The service DAO representing a GlobalMetadata object.
+     */
+    public void setGlobalMetadataDao(GlobalMetadataDao globalMetadataDao) {
+        this.globalMetadataDao = globalMetadataDao;
     }
 
 
