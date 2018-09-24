@@ -75,7 +75,6 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
         for (Variable variable : variables) {
             persistVariable(wizardDataId, variable);
         }
-
     }
 
     /**
@@ -93,7 +92,6 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
         this.insertActor = new SimpleJdbcInsert(getDataSource()).withTableName("variables").usingGeneratedKeyColumns("variableId");
         SqlParameterSource parameters = new BeanPropertySqlParameterSource(variable);
         int generatedId = insertActor.executeAndReturnKey(parameters).intValue();
-        logger.info(generatedId);
         /*
         if (rowsAffected <= 0) {
             String message = "Unable to persist Variable object  " + variable.toString();
@@ -227,7 +225,7 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
      */
     public void deletePersistedVariables(List<Variable> variables) throws DataRetrievalFailureException {
         for (Variable variable : variables) {
-            updatePersistedVariable(variable);
+            deletePersistedVariable(variable);
         }
     }
 
