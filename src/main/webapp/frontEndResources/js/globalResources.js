@@ -10,6 +10,7 @@
 var cfStandards = [];
 var cfStandardUnits = {};
 var metadata = [];
+var metadataProfileVariableData = [];
 var unitBuilderData = [];
 var platform = null;
 

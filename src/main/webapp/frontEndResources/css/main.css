@@ -420,6 +420,10 @@ ul#delimiterList li {
   margin: 0 0 10px 0;
 }
 
+#dialog #metadataTypeStructureAssignment select {
+  margin: 0 0 20px 0;
+}
+
 /* dialog box unit builder formatting */
 #dialog #unitBuilder,
 #dialog #existingMetadataImporter {
@@ -442,6 +446,7 @@ ul#delimiterList li {
 #dialog label.existingMetadataImporter {
   margin: 10px 0;
   display: block;
+  line-height: 10px;
 }
 
 /* dialog box unit builder label formatting for data type section */
@@ -509,16 +514,16 @@ ul#delimiterList li {
   border-bottom: 1px solid #CFCFCF;
 }
 
-#generalMetadata ul {
+#generalMetadata .category {
   width: 100%;
   list-style: none;
   margin: 0 0 10px 0;
   padding: 10px;
   float: left;
   background: #F8F8F8; /* Old browsers */
-  background: -moz-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to bottom, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  background: -moz-linear-gradient(bottom, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(bottom, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to top, #F8F8F8 -1%, #F9F9F9 0%, #F6F6F6 0%, #F6F6F6 0%, #F8F8F8 2%, #F8F8F8 4%, #ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8F8F8', endColorstr='#ffffff', GradientType=0); /* IE6-9 */
 }
 

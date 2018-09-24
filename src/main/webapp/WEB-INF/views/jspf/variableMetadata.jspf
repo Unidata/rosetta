@@ -1,28 +1,28 @@
 <h3>Specify Variable Attributes</h3>
 
 <p>Please click on the column headers and provide the requested metadata.</p>
-
 <label for="variableGrid" class="error"></label>
 <div id="variableGrid" class="rosettaGrid"></div>
 <div id="dialog"></div>
-<input type="hidden" name="variableMetadata" value="${data.variableMetadata}"
+<%-- input data was stashed here --%>
+<input type="hidden" name="variableMetadata" value=""
        id="variableMetadata"/>
 
+
 <div class="buttonNav">
-    <%-- Show the previous button. --%>
+
     <input type="submit" name="submit" value="Previous" class="button"/>
-    <%-- Show the next button. --%>
+
     <input type="submit" name="submit" id="Next" value="Next"
             <c:if test="${empty data.variableMetadata}">
                 disabled
             </c:if>
-           class="button
+           class="button"
             <c:if test="${empty data.variableMetadata}">
                 disabled
             </c:if>
         "/>
 </div>
-
 
 <script>
   var grid;
@@ -50,8 +50,8 @@
 
   // A custom formatter (see slick.formatters.js) to format the lines for the header line toggle functionality
   var LineNumberFormatter = function (row, cell, value, columnDef, dataContext) {
-    if (dataContext.parent != null) { // header row: a parent row is present
-      if (dataContext.id == dataContext.parent) { // header row that is the parent row
+    if (dataContext.parent !== null) { // header row: a parent row is present
+      if (dataContext.id === dataContext.parent) { // header row that is the parent row
         // return the appropriate item depending on the current state of the parent
         // (expanded or collapsed)
         if (dataContext._collapsed) {
@@ -66,12 +66,30 @@
       return value;
     }
   };
+
+
   // Parsed file data.
   var fileData = ${parsedData};
   var delimiter = '${delimiterSymbol}';
-  var headerLineNumbers = '${data.headerLineNumbers}';
+  // Store for later use.
+  storeData("headerLineNumbers", '${headerLineNumbers}');
+  <c:if test="${not empty data.variableMetadata}">
+    storeData("variableMetadata", '${data.variableMetadata}');
+  </c:if> 
 
-  gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter,
-      headerLineNumbers);
+  <%-- populate global metadata profile variable data array with metadata profile info passed from the server-side --%>
+  <c:forEach items="${metadataProfileVariableData}" var="profile">
+    var profile = {};
+    profile["attributeName"] =  '${fn:escapeXml(profile.attributeName)}';
+    profile["complianceLevel"]  = '${fn:escapeXml(profile.complianceLevel)}';
+    profile["description"] = '${fn:escapeXml(profile.description)}';
+    profile["displayName"] = '${fn:escapeXml(profile.displayName)}';
+    profile["exampleValues"] = '${fn:escapeXml(profile.exampleValues)}';
+    profile["metadataType"] = '${fn:escapeXml(profile.metadataType)}';
+    profile["metadataTypeStructure"] = '${fn:escapeXml(profile.metadataTypeStructure)}';
+    metadataProfileVariableData.push(profile);
+  </c:forEach>
+
+  gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter);
 
 </script>
