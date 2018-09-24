@@ -21,6 +21,13 @@ var VariableStorageHandler = (function () {
         storeData("variableMetadata", JSON.stringify(variableMetadata));
     }
 
+    function variableDataExists() {
+        if (getStoredData("variableMetadata") === null) {
+            return false;
+        }       
+        return true;
+    }
+
     /**
      * Adds an entry in the stored variable.
      *
@@ -442,6 +449,7 @@ var VariableStorageHandler = (function () {
         getVariablesWithMetadata: getVariablesWithMetadata,
         testVariableCompleteness: testVariableCompleteness,
         resetVariableData: resetVariableData,
-        getAllVariableData:  getAllVariableData
+        getAllVariableData:  getAllVariableData,
+        variableDataExists, variableDataExists
     };
 })();
