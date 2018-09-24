@@ -194,6 +194,7 @@
         <property name="uploadedFileDao" ref="uploadedFileDao"/>
         <property name="wizardDataDao" ref="wizardDataDao"/>
         <property name="variableDao" ref="variableDao"/>
+        <property name="globalMetadataDao" ref="globalMetadataDao"/>
     </bean>
 
     <bean class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl" id="dataManager">
@@ -260,6 +261,10 @@
     </bean>
 
     <!-- Wizard datasource injection. Wizard-related classes need to access to persisted data. -->
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcGlobalMetadataDao" id="globalMetadataDao">
+        <property name="dataSource" ref="dbDataSource"/>
+    </bean>
+
     <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcWizardDataDao" id="wizardDataDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
