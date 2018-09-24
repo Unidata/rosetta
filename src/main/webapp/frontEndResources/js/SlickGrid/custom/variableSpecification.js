@@ -199,7 +199,9 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
         };
 
         // Initialize the storage to hold the collected variable metadata.
-        VariableStorageHandler.initialize((columns.length - 1));
+        if (!VariableStorageHandler.variableDataExists()) {
+            VariableStorageHandler.initialize((columns.length - 1));
+        }
        
         // initialize the grid with the data model
         grid = new Slick.Grid("#variableGrid", dataView, columns, options);
