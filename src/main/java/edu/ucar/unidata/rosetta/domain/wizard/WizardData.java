@@ -22,7 +22,7 @@ public class WizardData {
     private boolean noHeaderLines;
     private String platform;
     private String variableMetadata;
-
+    private String generalMetadata;
 
     /**
      * Returns the CF Type selected by the user.
@@ -203,6 +203,14 @@ public class WizardData {
      */
     public void setVariableMetadata(String variableMetadata) {
         this.variableMetadata = variableMetadata;
+    }
+
+    public String getGeneralMetadata() {
+        return generalMetadata;
+    }
+
+    public void setGeneralMetadata(String generalMetadata) {
+        this.generalMetadata = generalMetadata;
     }
 
     /**
