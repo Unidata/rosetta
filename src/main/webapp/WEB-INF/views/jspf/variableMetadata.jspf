@@ -1,7 +1,6 @@
 <h3>Specify Variable Attributes</h3>
 
 <p>Please click on the column headers and provide the requested metadata.</p>
-
 <label for="variableGrid" class="error"></label>
 <div id="variableGrid" class="rosettaGrid"></div>
 <div id="dialog"></div>
@@ -9,34 +8,17 @@
 <input type="hidden" name="variableMetadata" value=""
        id="variableMetadata"/>
 
-<%--
+
 <div class="buttonNav">
 
     <input type="submit" name="submit" value="Previous" class="button"/>
 
-    <input type="submit" name="submit" id="Next" value="Next"
-            <c:if test="${empty data.variableMetadata}">
-                disabled
-            </c:if>
-           class="button
+    <input type="submit" name="submit" id="Next" value="Next" class="button"
             <c:if test="${empty data.variableMetadata}">
                 disabled
             </c:if>
         "/>
 </div>
-
-
---%>
-
-
-<div class="buttonNav">
-    <%-- Show the previous button. --%>
-    <input type="submit" name="submit" value="Previous" class="button"/>
-    <%-- Show the next button. --%>
-    <input type="submit" name="submit" id="Next" value="Next"
-        />
-</div>
-
 
 <script>
   var grid;
@@ -85,9 +67,11 @@
   // Parsed file data.
   var fileData = ${parsedData};
   var delimiter = '${delimiterSymbol}';
-  // Add to session for later use.
-  addToSession("headerLineNumbers", '${headerLineNumbers}');
-
+  // Store for later use.
+  storeData("headerLineNumbers", '${headerLineNumbers}');
+  <c:if test="${not empty data.variableMetadata}">
+    storeData("variableMetadata", '${data.variableMetadata}');
+  </c:if> 
 
   <%-- populate global metadata profile variable data array with metadata profile info passed from the server-side --%>
   <c:forEach items="${metadataProfileVariableData}" var="profile">
