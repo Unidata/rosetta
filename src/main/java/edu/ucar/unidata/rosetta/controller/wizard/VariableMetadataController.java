@@ -137,7 +137,7 @@ public class VariableMetadataController implements HandlerExceptionResolver {
 
         // Take user back to file upload step (and don't save any data to this step).
         if (submit != null && submit.equals("Previous")) {
-            return new ModelAndView(new RedirectView("/fileUpload", true));
+            return new ModelAndView(new RedirectView("/customFileTypeAttributes", true));
         }
 
         // Get the cookie so we can get the persisted data.
