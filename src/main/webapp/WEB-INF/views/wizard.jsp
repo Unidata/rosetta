@@ -72,9 +72,6 @@ The default index page gets redirected to here.
                     <%@ include file="/WEB-INF/views/jspf/variableMetadata.jspf" %>
                   </c:when>
                   <c:when test="${currentStep eq 'generalMetadata'}">
-                   <script>
-                    var metadataType = "general";
-                   </script>
                     <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
                   </c:when>
                   <c:when test="${currentStep eq 'convertAndDownload'}">
