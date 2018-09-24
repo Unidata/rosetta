@@ -1,0 +1,28 @@
+<?xml version="1.0" standalone="yes"?>
+<!--
+  ~ Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+  ~ See LICENSE for license information.
+  -->
+
+<DATAPACKET Version="2.0">
+<METADATA>
+<FIELDS>
+<FIELD FieldName="metadataProfileName" DisplayLabel="metadataProfileName" FieldType="String" FieldClass="TField"/>
+<FIELD FieldName="metadataProfileVersion" DisplayLabel="metadataProfileVersion" FieldType="Float" FieldClass="TField"/>
+<FIELD FieldName="attributeName" DisplayLabel="attributeName" FieldType="String" FieldClass="TField"/>
+<FIELD FieldName="displayName" DisplayLabel="displayName" FieldType="String" FieldClass="TField"/>
+<FIELD FieldName="description" DisplayLabel="description" FieldType="String" FieldClass="TField"/>
+<FIELD FieldName="exampleValues" DisplayLabel="exampleValues" FieldType="String" FieldClass="TField"/>
+<FIELD FieldName="metadataType" DisplayLabel="metadataType" FieldType="String" FieldClass="TField"/>
+<FIELD FieldName="metadataTypeStructure" DisplayLabel="metadataTypeStructure" FieldType="String" FieldClass="TField"/>
+<FIELD FieldName="metadataTypeStructureName" DisplayLabel="metadataTypeStructureName" FieldType="String" FieldClass="TField"/>
+<FIELD FieldName="metadataGroup" DisplayLabel="metadataGroup" FieldType="String" FieldClass="TField"/>
+<FIELD FieldName="metadataValueType" DisplayLabel="metadataValueType" FieldType="String" FieldClass="TField"/>
+<FIELD FieldName="complianceLevel" DisplayLabel="complianceLevel" FieldType="String" FieldClass="TField"/>
+</FIELDS>
+</METADATA>
+<ROWDATA>
+<ROW metadataProfileName="RosettaTimeSeriesDsg" metadataProfileVersion="1.0" attributeName="geospatial_lat_start" displayName="geospatial lat start" description="The starting latitude of the data set (degrees_north)." exampleValues="geospatial_lat_start = 40.893f ;" metadataType="Global" metadataTypeStructure="Global Attributes" metadataTypeStructureName="Global Attributes" metadataGroup="root" metadataValueType="float" complianceLevel="required"/>
+<ROW metadataProfileName="RosettaTimeSeriesDsg" metadataProfileVersion="1.0" attributeName="geospatial_lon_start" displayName="geospatial lon start" description="The starting longitude of the data set (degrees_east)." exampleValues="geospatial_lon_start = -105.893f ;" metadataType="Global" metadataTypeStructure="Global Attributes" metadataTypeStructureName="Global Attributes" metadataGroup="root" metadataValueType="float" complianceLevel="required"/>
+</ROWDATA>
+</DATAPACKET>
