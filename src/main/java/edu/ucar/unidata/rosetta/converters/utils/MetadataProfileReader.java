@@ -33,7 +33,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import edu.ucar.unidata.rosetta.domain.Metadata;
 import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 
 public class MetadataProfileReader {

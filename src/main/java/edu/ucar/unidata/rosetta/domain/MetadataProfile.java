@@ -51,7 +51,7 @@ public class MetadataProfile {
                    Objects.equals(getMetadataProfileName(), other.getMetadataProfileName()) &&
                    Objects.equals(getMetadataProfileVersion(), other.getMetadataProfileVersion()) &&
                    Objects.equals(getMetadataType(), other.getMetadataType()) &&
-                   Objects.equals(getMetadataTypeStructure(), other.getMetadataTypeStructure()) &&
+                   Objects.equals(getMetadataTypeStructureName(), other.getMetadataTypeStructureName()) &&
                    Objects.equals(getMetadataValueType(), other.getMetadataValueType());
         }
         return false;
@@ -74,7 +74,7 @@ public class MetadataProfile {
                 getMetadataProfileName(),
                 getMetadataProfileVersion(),
                 getMetadataType(),
-                getMetadataTypeStructure(),
+                getMetadataTypeStructureName(),
                 getMetadataValueType());
     }
 

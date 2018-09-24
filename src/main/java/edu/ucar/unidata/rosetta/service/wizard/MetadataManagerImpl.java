@@ -175,7 +175,7 @@ public class MetadataManagerImpl implements MetadataManager {
             MetadataProfile profile = profiles.get(i);
             if (metadataProfile.getComplianceLevel().equals(profile.getComplianceLevel()) &&
                     metadataProfile.getMetadataType().equals(profile.getMetadataType()) &&
-                    metadataProfile.getMetadataTypeStructure().equals(profile.getMetadataTypeStructure())) {
+                    metadataProfile.getMetadataTypeStructureName().equals(profile.getMetadataTypeStructureName())) {
                 matches = true;
                 break;
             }
