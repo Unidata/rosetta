@@ -21,6 +21,8 @@ public class WizardData {
     private String metadataProfile;
     private boolean noHeaderLines;
     private String platform;
+    private String variableMetadata;
+
 
     /**
      * Returns the CF Type selected by the user.
@@ -183,6 +185,24 @@ public class WizardData {
      */
     public void setPlatform(String platform) {
         this.platform = platform;
+    }
+
+    /**
+     * Returns the variableMetadata selected by the user.
+     *
+     * @return The variableMetadata.
+     */
+    public String getVariableMetadata() {
+        return variableMetadata;
+    }
+
+    /**
+     * Sets the variableMetadata selected by the user.
+     *
+     * @param variableMetadata The variableMetadata.
+     */
+    public void setVariableMetadata(String variableMetadata) {
+        this.variableMetadata = variableMetadata;
     }
 
     /**
