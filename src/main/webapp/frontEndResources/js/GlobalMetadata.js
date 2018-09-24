@@ -109,6 +109,7 @@ var GlobalMetadata = (function () {
                 }
             }
         }
+        populateDataFromStorage();
     }
 
     function bindGeneralMetadataEvents() {
@@ -146,6 +147,40 @@ var GlobalMetadata = (function () {
             }
         }
         return true;
+    }
+
+    function populateDataFromStorage() {
+        // Get the stored global data.
+        var globalMetadata = getStoredGlobalMetadata();
+        Object.keys(globalMetadata).forEach(function(key) {
+            var inputTag = $("#generalMetadataAssignment input#" + key);
+            $(inputTag).val(globalMetadata[key]);
+        });
+        toggleCategories();
+    }
+
+    function toggleCategories() {
+        $("#generalMetadataAssignment input").each(function () {  
+            var inputTag = $(this);
+            $(inputTag).prevAll().each(function () { 
+                if($(this).prop("tagName") === "SMALL") {
+                    var complianceLevel = $(this).text();
+                    if (complianceLevel === "(required)") {
+                        if (!$(inputTag).val().match(/\w+/)) {
+                            $(inputTag).parents().each(function () { 
+                                var parent = (this);
+                                if($(parent).prop("tagName") === "UL") {
+                                    $(parent).removeClass("hideMe");
+                                    var categoryTitle = $(parent).prev();
+                                    $(categoryTitle).removeClass("expand");
+                                    $(categoryTitle).addClass("collapse");
+                                }
+                            });                   
+                        }
+                    }
+                }
+            });
+        });
     }
 
 
