@@ -156,6 +156,7 @@
 
     <!-- Declaration for resource use -->
 
+
     <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileManager"/>
     <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileParserManager"/>
     <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.CFTypeValidator"
@@ -193,6 +194,11 @@
           id="wizardManager">
         <property name="uploadedFileDao" ref="uploadedFileDao"/>
         <property name="wizardDataDao" ref="wizardDataDao"/>
+        <property name="variableDao" ref="variableDao"/>
+        <property name="globalMetadataDao" ref="globalMetadataDao"/>
+    </bean>
+
+    <bean class="edu.ucar.unidata.rosetta.service.wizard.TemplateManagerImpl" id="templateManager">
         <property name="variableDao" ref="variableDao"/>
         <property name="globalMetadataDao" ref="globalMetadataDao"/>
     </bean>
