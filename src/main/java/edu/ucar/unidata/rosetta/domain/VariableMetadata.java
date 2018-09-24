@@ -37,7 +37,7 @@ public class VariableMetadata {
 
 
     /**
-     * Returns the metadata complianceLevel (global or variable).
+     * Returns the metadata complianceLevel.
      *
      * @return The metadata complianceLevel.
      */
@@ -46,7 +46,7 @@ public class VariableMetadata {
     }
 
     /**
-     * Sets the the metadata complianceLevel (global or variable).
+     * Sets the the metadata complianceLevel.
      *
      * @param complianceLevel The metadata complianceLevel.
      */
