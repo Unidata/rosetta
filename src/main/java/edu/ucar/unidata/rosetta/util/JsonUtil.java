@@ -81,7 +81,10 @@ public class JsonUtil {
     }
 
     public static String convertGlobalDataToJson(GlobalMetadata globalMetadata) {
-        return  "\"" + globalMetadata.getMetadataKey() + "__" + globalMetadata.getMetadataGroup() + "\":" +
+        return  "\"" +
+                globalMetadata.getMetadataKey() + "__" +
+                globalMetadata.getMetadataGroup() + "__" +
+                globalMetadata.getMetadataValueType() + "\":" +
                 "\"" + globalMetadata.getMetadataValue() + "\"";
     }
 
@@ -156,6 +159,7 @@ public class JsonUtil {
                 String key = field.getKey().replaceAll("\"", "");
                 String[] splitted = key.split("__");
                 JsonNode value = field.getValue();
+                globalMetadata.setMetadataValueType(splitted[2]);
                 globalMetadata.setMetadataGroup(splitted[1]);
                 globalMetadata.setMetadataKey(splitted[0]);
                 globalMetadata.setMetadataValue(value.textValue());

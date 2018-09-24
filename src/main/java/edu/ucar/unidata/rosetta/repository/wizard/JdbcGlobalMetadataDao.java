@@ -154,6 +154,7 @@ public class JdbcGlobalMetadataDao extends JdbcDaoSupport implements GlobalMetad
         public GlobalMetadata mapRow(ResultSet rs, int rowNum) throws SQLException {
             GlobalMetadata globalMetadata = new GlobalMetadata();
             globalMetadata.setWizardDataId(rs.getString("wizardDataId"));
+            globalMetadata.setMetadataValueType(rs.getString("metadataValueType"));
             globalMetadata.setMetadataGroup(rs.getString("metadataGroup"));
             globalMetadata.setMetadataKey(rs.getString("metadataKey"));
             globalMetadata.setMetadataValue(rs.getString("metadataValue"));

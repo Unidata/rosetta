@@ -19,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import edu.ucar.unidata.rosetta.service.wizard.TemplateManager;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,8 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
     @Resource(name = "dataManager")
     private DataManager dataManager;
 
-    @Resource(name = "wizardManager")
-    private WizardManager wizardManager;
+    @Resource(name = "templateManager")
+    private TemplateManager templateManager;
 
     @Autowired
     public ConvertAndDownloadController(ServletContext servletContext) {
@@ -75,7 +76,7 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
                     "No persisted data available for file upload step.  Check the database & the cookie.");
         }
 
-        WizardData wizardData = wizardManager.lookupPersistedWizardDataById(rosettaCookie.getValue());
+        templateManager.createTemplate(rosettaCookie.getValue());
 
         // Convert the uploaded file to netCDF & create a template for future conversions.
         //data = dataManager.convertToNetCDF(data);

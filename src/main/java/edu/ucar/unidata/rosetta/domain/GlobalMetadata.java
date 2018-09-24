@@ -14,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class GlobalMetadata {
 
     private String wizardDataId;
+    private String metadataValueType;
     private String metadataGroup;
     private String metadataKey;
     private String metadataValue;
@@ -36,6 +37,13 @@ public class GlobalMetadata {
         this.wizardDataId = wizardDataId;
     }
 
+    public String getMetadataValueType() {
+        return metadataValueType;
+    }
+
+    public void setMetadataValueType(String metadataValueType) {
+        this.metadataValueType = metadataValueType;
+    }
 
     /**
      * Returns the metadata metadataGroup.

@@ -167,6 +167,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     "(" +
                     "wizardDataId VARCHAR(255)," +
                     "metadataGroup VARCHAR(255), " +
+                    "metadataValueType VARCHAR(255), " +
                     "metadataKey VARCHAR(255), " +
                     "metadataValue VARCHAR(255)" +
                     ")";

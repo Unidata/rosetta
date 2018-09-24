@@ -17,6 +17,7 @@ var GlobalMetadata = (function () {
             var complianceLevel = attribute.complianceLevel;
             var attributeName = attribute.attributeName;
             var displayName = attribute.displayName;
+            var metadataValueType = attribute.metadataValueType;
             if (!displayName) {
                 displayName = attributeName;
             }
@@ -24,7 +25,7 @@ var GlobalMetadata = (function () {
             var exampleValues = attribute.exampleValues;
             
             if (complianceLevel === "required") {
-                required.push(attributeName + "__" + metadataGroup);
+                required.push(attributeName + "__" + metadataGroup +  "__" + metadataValueType);
             }
 
             if (complianceLevel === "optional") {
@@ -41,7 +42,7 @@ var GlobalMetadata = (function () {
             }
             tag = tag +    
                 "       <br/>\n" +
-                "       <input class=\"" + complianceLevel + "\" type=\"text\" name=\"" + attributeName + "\" id=\"" + attributeName + "__" + metadataGroup + "\" value=\"\"/>\n" +
+                "       <input class=\"" + complianceLevel + "\" type=\"text\" name=\"" + attributeName + "\" id=\"" + attributeName + "__" + metadataGroup +  "__" + metadataValueType + "\" value=\"\"/>\n" +
                 "   </label>\n" +
                 "   <label for=\"" + attributeName + "\" class=\"error\"></label>\n" +
                 "</li>\n";
