@@ -142,7 +142,11 @@ public class WizardManagerImpl implements WizardManager {
             globalMetadata.append(jsonGlobalMetadataString).append(",");
         }
         globalMetadata = new StringBuilder(globalMetadata.substring(0, globalMetadata.length() - 1) + "}");
-        wizardData.setGlobalMetadata(globalMetadata.toString());
+        String g = globalMetadata.toString();
+        if (g.equals("}")) {
+            g = "";
+        }
+        wizardData.setGlobalMetadata(g);
         return wizardData;
     }
 
