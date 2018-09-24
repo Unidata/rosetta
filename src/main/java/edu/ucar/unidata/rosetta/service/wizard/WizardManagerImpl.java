@@ -117,7 +117,20 @@ public class WizardManagerImpl implements WizardManager {
      */
     @Override
     public WizardData lookupPersistedWizardDataById(String id) {
-        return wizardDataDao.lookupWizardDataById(id);
+        // Get the persisted wizard data.
+        WizardData wizardData = wizardDataDao.lookupWizardDataById(id);
+        // Get persisted variable metadata if it exists.
+        List<Variable> variables = variableDao.lookupVariables(id);
+        if (variables.size() > 0) {
+            StringBuilder variableMetadata = new StringBuilder("[");
+            for (Variable variable : variables) {
+                String jsonVariable = JsonUtil.convertToJson(variable);
+                variableMetadata.append(jsonVariable).append(",");
+            }
+            variableMetadata = new StringBuilder(variableMetadata.substring(0, variableMetadata.length() - 1) + "]");
+            wizardData.setVariableMetadata(variableMetadata.toString());
+        }
+        return wizardData;
     }
 
     /**
@@ -315,14 +328,14 @@ public class WizardManagerImpl implements WizardManager {
     @Override
     public void processVariableMetadata(String id, WizardData wizardData) {
 
-        //List<Variable> variables = JsonUtil.convertFromJSON(wizardData.getVariableMetadata());
-        String jsonString = "[{\"column\":0,\"required\":{\"standard_name\":\"air_density\",\"units\":\"kg m-3\",\"comment\":\"comment\",\"long_name\":\"long name\"},\"recommended\":{},\"additional\":{\"cf_role\":\"cf role\",\"missing_value\":\"missing value\"},\"name\":\"air_density\",\"metadataType\":\"coordinate\",\"metadataTypeStructure\":\"vertical\",\"verticalDirection\":\"up\",\"metadataValueType\":\"Integer\"},{\"column\":1,\"required\":{\"comment\":\"comment\",\"long_name\":\"long name\",\"standard_name\":\"standard name\",\"units\":\"units\",\"valid_max\":\"valid max\",\"valid_min\":\"valid min\"},\"recommended\":{\"add_offset\":\"xx\",\"references\":\"xx\"},\"additional\":{\"ancillary_variables\":\"xx\",\"bounds\":\"xx\",\"cell_measures\":\"xx\",\"cell_methods\":\"xx\",\"climatology\":\"xx\",\"compress\":\"xx\",\"flag_masks\":\"xx\",\"flag_meanings\":\"xx\",\"flag_values\":\"xx\",\"missing_value\":\"xx\",\"scale_factor\":\"xx\",\"source\":\"xx\"},\"name\":\"foo\",\"metadataType\":\"non-coordinate\",\"metadataValueType\":\"Text\"},{\"column\":2,\"required\":{},\"recommended\":{},\"additional\":{},\"name\":\"do_not_use\"},{\"column\":3,\"required\":{},\"recommended\":{},\"additional\":{},\"name\":\"do_not_use\"}]";
+        List<Variable> variables = JsonUtil.convertFromJSON(wizardData.getVariableMetadata());
+        //String jsonString = "[{\"column\":0,\"required\":{\"standard_name\":\"air_density\",\"units\":\"kg m-3\",\"comment\":\"comment\",\"long_name\":\"long name\"},\"recommended\":{},\"additional\":{\"cf_role\":\"cf role\",\"missing_value\":\"missing value\"},\"name\":\"air_density\",\"metadataType\":\"coordinate\",\"metadataTypeStructure\":\"vertical\",\"verticalDirection\":\"up\",\"metadataValueType\":\"Integer\"},{\"column\":1,\"required\":{\"comment\":\"comment\",\"long_name\":\"long name\",\"standard_name\":\"standard name\",\"units\":\"units\",\"valid_max\":\"valid max\",\"valid_min\":\"valid min\"},\"recommended\":{\"add_offset\":\"xx\",\"references\":\"xx\"},\"additional\":{\"ancillary_variables\":\"xx\",\"bounds\":\"xx\",\"cell_measures\":\"xx\",\"cell_methods\":\"xx\",\"climatology\":\"xx\",\"compress\":\"xx\",\"flag_masks\":\"xx\",\"flag_meanings\":\"xx\",\"flag_values\":\"xx\",\"missing_value\":\"xx\",\"scale_factor\":\"xx\",\"source\":\"xx\"},\"name\":\"foo\",\"metadataType\":\"non-coordinate\",\"metadataValueType\":\"Text\"},{\"column\":2,\"required\":{},\"recommended\":{},\"additional\":{},\"name\":\"do_not_use\"},{\"column\":3,\"required\":{},\"recommended\":{},\"additional\":{},\"name\":\"do_not_use\"}]";
 
         // Parse the JSON get get Variable objects.
-        List<Variable> variables = JsonUtil.convertFromJSON(jsonString);
+       // List<Variable> variables = JsonUtil.convertFromJSON(jsonString);
 
         // Look up any persisted data corresponding to the id.
-        List<Variable> persisted = variableDao.lookupVariable(id);
+        List<Variable> persisted = variableDao.lookupVariables(id);
         // Get the variable IDs and columns numbers from persisted data.
         Map<Integer, Integer> variableMap = new HashMap<>(persisted.size());
         if (persisted.size() > 0) {
