@@ -164,7 +164,7 @@ $(document).ready(function ($) {
   });
 
   /**
-   * STEP 5: OIIP general metadata.
+   * STEP 5: general metadata.
    * toggle metadata sections
    */
   $("h5.toggle").click(function () {
@@ -185,23 +185,6 @@ $(document).ready(function ($) {
   });
 
 
-  /**
-   * STEP 5: OIIP general metadata.
-   * all required fields have data, so show next button.
-   */
-  $("input.required").change(function () {
-    if (metadataType === "general") {
-      if ($("input#title").val() && $("input#description").val() && $(
-              "input#institution").val()) {
-        // remove disabled status for submit button.
-        $("input[type=submit]#Next").removeAttr("disabled");
-        // remove disabled class for submit button.
-        $("input[type=submit]#Next").removeClass("disabled");
-      }
-    }
-
- 
-  });
 
 });
 
