@@ -235,6 +235,28 @@ var VariableStorageHandler = (function () {
         return variable["required"];
     }
 
+    function getRecommendedVariableData(columnNumber) {
+        // Get the stored variable data.
+        var variableMetadata = getStoredVariableMetadata();
+
+        // Get the desired object.
+        var variable = getVariable(columnNumber, variableMetadata);
+
+        // Get & return the recommended inner object.
+        return variable["recommended"];
+    }
+
+    function getAdditionalVariableData(columnNumber) {
+        // Get the stored variable data.
+        var variableMetadata = getStoredVariableMetadata();
+
+        // Get the desired object.
+        var variable = getVariable(columnNumber, variableMetadata);
+
+        // Get & return the additional inner object.
+        return variable["additional"];
+    }
+
 
 
     /**
@@ -450,6 +472,11 @@ var VariableStorageHandler = (function () {
         testVariableCompleteness: testVariableCompleteness,
         resetVariableData: resetVariableData,
         getAllVariableData:  getAllVariableData,
-        variableDataExists, variableDataExists
+        variableDataExists, variableDataExists,
+        getRequiredVariableData: getRequiredVariableData,
+        getRecommendedVariableData: getRecommendedVariableData,
+        getAdditionalVariableData: getAdditionalVariableData
+
+
     };
 })();

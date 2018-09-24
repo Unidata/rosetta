@@ -64,6 +64,7 @@ var DialogDomHandler = (function () {
                 var divTagId = $(divTag).attr("id").replace("MetadataAssignment", "");
 
                 // See if the metadata to delete is in the stored object's nested entities.
+/*
                 if (divTagId === "required" || divTagId === "recommended" || divTagId === "additional") {
                     // Is a nested entity.
                     VariableStorageHandler.removeComplianceLevelVariableData(key, $(inputTag).attr("name"), divTagId) 
@@ -71,6 +72,7 @@ var DialogDomHandler = (function () {
                     // Not nested.
                     VariableStorageHandler.removeVariableData(key, $(inputTag).attr("name")); 
                 }
+*/
             });
         });
     }
@@ -86,14 +88,15 @@ var DialogDomHandler = (function () {
     function addContentToDialog(key) {
         $("#dialog").empty(); // start off with a dialog box free of content
 
-        var dialogContent = "<div id=\"variableNameTypeAssignment\">\n" +
+        var dialogContent = 
+            "<div id=\"variableNameTypeAssignment\">\n" +
             " <h3>What would you like to do with this column of data?</h3>\n" +
             " <label class=\"error\"></label>" +
             " <ul class=\"half\">\n" +
             "  <li>\n" +
             "   <label>\n" +
             "    <input type=\"radio\" name=\"variableNameType\" value=\"assign\"/> Assign a variable name\n" +
-                "   </label>\n" +
+            "   </label>\n" +
             "   <label id=\"variableNameAssignment\">\n" +
             "    <input type=\"text\" name=\"variableName\" value=\"\"/>\n" +
             "   </label>\n" +
@@ -208,16 +211,17 @@ var DialogDomHandler = (function () {
 
         $("#dialog").append(dialogContent);
 
-        // Start off with the 
+        // Start off with the name input box hidden.
         disableDiv("variableNameAssignment");
 
         // Start off with only the first part of the dialog visible (everything in the variableAttributes div is hidden).
         disableVariableAttributes(key);
-
         // Use any stored data to auto-populate the dialog web form elements.
-        populateDataFromStorage(key);
+        populateDataFromStorage(key);        
         bindDialogEvents(key);
     }
+
+
 
     // Expose these functions.
     return {
