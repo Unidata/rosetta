@@ -327,7 +327,7 @@ public class WizardManagerImpl implements WizardManager {
      */
     @Override
     public void processVariableMetadata(String id, WizardData wizardData) {
-
+        // Parse the JSON get get Variable objects.
         List<Variable> variables = JsonUtil.convertFromJSON(wizardData.getVariableMetadata());
         //String jsonString = "[{\"column\":0,\"required\":{\"standard_name\":\"air_density\",\"units\":\"kg m-3\",\"comment\":\"comment\",\"long_name\":\"long name\"},\"recommended\":{},\"additional\":{\"cf_role\":\"cf role\",\"missing_value\":\"missing value\"},\"name\":\"air_density\",\"metadataType\":\"coordinate\",\"metadataTypeStructure\":\"vertical\",\"verticalDirection\":\"up\",\"metadataValueType\":\"Integer\"},{\"column\":1,\"required\":{\"comment\":\"comment\",\"long_name\":\"long name\",\"standard_name\":\"standard name\",\"units\":\"units\",\"valid_max\":\"valid max\",\"valid_min\":\"valid min\"},\"recommended\":{\"add_offset\":\"xx\",\"references\":\"xx\"},\"additional\":{\"ancillary_variables\":\"xx\",\"bounds\":\"xx\",\"cell_measures\":\"xx\",\"cell_methods\":\"xx\",\"climatology\":\"xx\",\"compress\":\"xx\",\"flag_masks\":\"xx\",\"flag_meanings\":\"xx\",\"flag_values\":\"xx\",\"missing_value\":\"xx\",\"scale_factor\":\"xx\",\"source\":\"xx\"},\"name\":\"foo\",\"metadataType\":\"non-coordinate\",\"metadataValueType\":\"Text\"},{\"column\":2,\"required\":{},\"recommended\":{},\"additional\":{},\"name\":\"do_not_use\"},{\"column\":3,\"required\":{},\"recommended\":{},\"additional\":{},\"name\":\"do_not_use\"}]";
 
