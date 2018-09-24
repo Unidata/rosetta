@@ -1,26 +1,32 @@
 <h3>Specify General Information</h3>
 <p>Please provide the requested metadata:</p>
+   <input type="hidden" name="globalMetadata" value="" id="globalMetadata"/>
 
-
+    <div id="generalMetadataAssignment">
+        <label class="error"></label>
+    </div>
 
     <div class="buttonNav">
         <%-- Show the previous button. --%>
         <input type="submit" name="submit" value="Previous" class="button"/>
         <%-- Show the next button. --%>
         <input type="submit" name="submit" id="Next" value="Next"
-            <c:if test="${empty data.generalMetadata}">
+            <c:if test="${empty data.globalMetadata}">
                 disabled
             </c:if>
            class="button
-            <c:if test="${empty data.generalMetadata}">
+            <c:if test="${empty data.globalMetadata}">
                 disabled
             </c:if>
         "/>
     </div>
 
 <script>
-   
+    
+    // Initialize storage.
+    storeData("globalMetadata", "{}");
 
+    var metadataProfileGeneralData = [];
     <%-- populate global metadata profile general data array with metadata profile info passed from the server-side --%>
     <c:forEach items="${metadataProfileGeneralData}" var="profile">
         
@@ -34,7 +40,7 @@
         metadataProfileGeneralData.push(profile);
     </c:forEach>
 
-    GlobalMetadata.populateTags();
+    GlobalMetadata.populateTags(metadataProfileGeneralData);
 
 </script>
 
