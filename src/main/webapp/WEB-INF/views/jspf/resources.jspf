@@ -80,5 +80,8 @@
 <script type="text/javascript" src="${baseUrl}/resources/js/validationFunctions.js"></script>
 <link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/main.css"/>
 
+<script type="text/javascript"
+        src="${baseUrl}/resources/js/GlobalMetadata.js"></script>
+
 
 

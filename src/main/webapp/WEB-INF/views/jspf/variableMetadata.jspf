@@ -13,7 +13,11 @@
 
     <input type="submit" name="submit" value="Previous" class="button"/>
 
-    <input type="submit" name="submit" id="Next" value="Next" class="button"
+    <input type="submit" name="submit" id="Next" value="Next"
+            <c:if test="${empty data.variableMetadata}">
+                disabled
+            </c:if>
+           class="button"
             <c:if test="${empty data.variableMetadata}">
                 disabled
             </c:if>
