@@ -6,6 +6,10 @@
 var GlobalMetadata = (function () {
 
     function populateTags(metadataProfileGeneralData) {
+
+        // We will stash our required attribute names here.
+        var required = [];
+
         var metadataGroupsMap = new Map();
         for (var i = 0; i < metadataProfileGeneralData.length; i++) {
             var attribute = metadataProfileGeneralData[i];
@@ -18,7 +22,14 @@ var GlobalMetadata = (function () {
             }
             var description = attribute.description;
             var exampleValues = attribute.exampleValues;
-    
+            
+            if (complianceLevel === "required") {
+                required.push(attributeName + "__" + metadataGroup);
+            }
+
+            if (complianceLevel === "optional") {
+                complianceLevel = "additional";
+            }
     
             var tag =     
                 "<li>\n" +
@@ -30,7 +41,7 @@ var GlobalMetadata = (function () {
             }
             tag = tag +    
                 "       <br/>\n" +
-                "       <input class=\"" + complianceLevel + "\" type=\"text\" name=\"" + attributeName + "\" id=\"\" value=\"\"/>\n" +
+                "       <input class=\"" + complianceLevel + "\" type=\"text\" name=\"" + attributeName + "\" id=\"" + attributeName + "__" + metadataGroup + "\" value=\"\"/>\n" +
                 "   </label>\n" +
                 "   <label for=\"" + attributeName + "\" class=\"error\"></label>\n" +
                 "</li>\n";
@@ -69,9 +80,14 @@ var GlobalMetadata = (function () {
                 metadataGroupsMap.set(metadataGroup, complianceLevelsMap);
             }
         }
-        console.log(metadataGroupsMap);
+        
+        // Store required globals.
+        storeData("_g", required);
+
         // Attach tags to the DOM.
         attachToDom(metadataGroupsMap);
+        // Bind general metadata events.
+        bindGeneralMetadataEvents() 
     }
 
     function attachToDom(metadataGroupsMap) {
@@ -94,6 +110,101 @@ var GlobalMetadata = (function () {
             }
         }
     }
+
+    function bindGeneralMetadataEvents() {
+        $("#generalMetadataAssignment input").focusout(function () {
+            storeGlobalMetadataEntry($(this).attr("id"), $(this).val());
+            isComplete();      
+        });
+    }    
+
+    function isComplete() {
+        if (testCompleteness()) {
+            // Add stored global metadata info to input tag value.
+            $("#globalMetadata").val(JSON.stringify(getStoredGlobalMetadata()));
+
+            // remove disabled status for submit button.
+            $("input[type=submit]#Next").removeAttr("disabled");
+            // remove disabled class for submit button.
+            $("input[type=submit]#Next").removeClass("disabled");
+        }
+    }
+
+    function testCompleteness() {
+        var required = getStoredData("_g").split(/,/g);
+
+        // Get the stored global data.
+        var globalMetadata = getStoredGlobalMetadata();
+        var stored = [];
+        Object.keys(globalMetadata).forEach(function(key) {
+            stored.push(key);
+        });
+        
+        for (var i = 0; i < required.length; i++) {
+            if (!stored.includes(required[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    function storeGlobalMetadataEntry(key, value) {
+        // Get the stored global data.
+        var globalMetadata = getStoredGlobalMetadata();
+        
+        // Assign the provided object key to the provided value.
+        globalMetadata[key] = value;
+
+        // Update the stored global data.
+        updateStoredGlobalMetadata(globalMetadata);
+    }
+
+
+    function removeGlobaMetadataEntry(key) {
+        // Get the stored global data.
+        var globalMetadata =getStoredGlobalMetadata();
+
+        // Delete the entry using the provided object key.
+        delete globalMetadata[key];
+
+        // Update the stored global data.
+        updateStoredGlobalMetadata(globalMetadata);
+    }
+
+   function getGlobalDataMetadataEntry(key) {
+        // Get the stored global data.
+        var globalMetadata = getStoredGlobalMetadata();
+
+        return globalMetadata[key];
+    }
+
+ 
+    function getStoredGlobalMetadata() {
+        // Get the stored global data.
+        var globalMetadata = getStoredData("globalMetadata");
+
+        if (globalMetadata === null) {
+            // This shouldn't happen; if we are here then something has gone very wrong (this info should be in the stored).
+            displayErrorMessage("Unable to access stored variable matadata.");
+        } else {
+            // Un-stringify.
+            return JSON.parse(globalMetadata);
+        }
+    }
+
+    function updateStoredGlobalMetadata(globalMetadata) {
+        // Stringify and stored data.
+        storeData("globalMetadata", JSON.stringify(globalMetadata));
+    }
+
+    function displayErrorMessage(message) {
+        $("#dialog #variableNameTypeAssignment").find("label.error").text(message + "  Please contact the Rosetta site administrator.");
+    }
+
+
+
 
 
     // Expose these functions.
