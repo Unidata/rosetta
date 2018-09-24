@@ -23,9 +23,7 @@ public interface VariableDao {
      * @param wizardDataId The id of the corresponding WizardData object.
      * @return The Variable object.
      */
-    public List<Variable> lookupVariable(String wizardDataId);
-
-
+    public List<Variable> lookupVariables(String wizardDataId);
 
     /**
      * Persists the information in the given list of variable objects.

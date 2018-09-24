@@ -37,7 +37,7 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
      * @param wizardDataId The id of the corresponding WizardData object.
      * @return The Variable object.
      */
-    public List<Variable> lookupVariable(String wizardDataId)  {
+    public List<Variable> lookupVariables(String wizardDataId)  {
         String sql = "SELECT * FROM variables WHERE wizardDataId = ?";
         List<Variable> variables = getJdbcTemplate().query(sql, new JdbcVariableDao.VariableMapper(), wizardDataId);
         sql = "SELECT * FROM variableMetadata WHERE variableId = ?";
