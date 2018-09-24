@@ -163,6 +163,15 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     ")";
             createTable(createVariableMetadataTable, props);
 
+            String createGlobalMetadataTable = "CREATE TABLE globalMetadata " +
+                    "(" +
+                    "wizardDataId VARCHAR(255)," +
+                    "metadataGroup VARCHAR(255), " +
+                    "metadataKey VARCHAR(255), " +
+                    "metadataValue VARCHAR(255)" +
+                    ")";
+            createTable(createGlobalMetadataTable, props);
+
             String createPlatformTable = "CREATE TABLE platforms " +
                     "(" +
                     "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
