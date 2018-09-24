@@ -5,7 +5,7 @@
 
 package edu.ucar.unidata.rosetta.util;
 
-import edu.ucar.unidata.rosetta.domain.MetadataProfile;
+import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
 import edu.ucar.unidata.rosetta.domain.Variable;
 import edu.ucar.unidata.rosetta.domain.VariableMetadata;
 
@@ -80,7 +80,12 @@ public class JsonUtil {
         return actualObj;
     }
 
-    public static String convertToJson(Variable variable) {
+    public static String convertGlobalDataToJson(GlobalMetadata globalMetadata) {
+        return  "\"" + globalMetadata.getMetadataKey() + "__" + globalMetadata.getMetadataGroup() + "\":" +
+                "\"" + globalMetadata.getMetadataValue() + "\"";
+    }
+
+    public static String convertVariableDataToJson(Variable variable) {
         String variableAsJsonString =
                 "{" +
                     "\"column\":" + variable.getColumnNumber() +
@@ -136,7 +141,31 @@ public class JsonUtil {
         return jsonString.toString();
     }
 
-    public static List<Variable> convertFromJSON(String jsonString) {
+
+    public static List<GlobalMetadata> convertGlobalDataFromJSON(String jsonString) {
+        List<GlobalMetadata> globalMetadataObjects = new ArrayList<>();
+
+        // Convert string to JSON object.
+        JsonNode jsonVariables = mapStringToJson(jsonString);
+        // If there is something to work with.
+        if (jsonVariables != null) {
+            // Get the elements.
+            for (Iterator<Map.Entry<String, JsonNode>> it = jsonVariables.fields(); it.hasNext();) {
+                GlobalMetadata globalMetadata = new GlobalMetadata();
+                Map.Entry<String, JsonNode> field = it.next();
+                String key = field.getKey().replaceAll("\"", "");
+                String[] splitted = key.split("__");
+                JsonNode value = field.getValue();
+                globalMetadata.setMetadataGroup(splitted[1]);
+                globalMetadata.setMetadataKey(splitted[0]);
+                globalMetadata.setMetadataValue(value.textValue());
+                globalMetadataObjects.add(globalMetadata);
+            }
+        }
+        return globalMetadataObjects;
+    }
+
+    public static List<Variable> convertVariableDataFromJSON(String jsonString) {
         List<Variable> variableObjects = new ArrayList<>();
 
         // Convert string to JSON object.
