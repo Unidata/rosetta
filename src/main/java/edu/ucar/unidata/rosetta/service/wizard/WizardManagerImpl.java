@@ -274,6 +274,22 @@ public class WizardManagerImpl implements WizardManager {
     }
 
     /**
+     * Processes the data submitted by the user containing general metadata information.  Since this
+     * is the final step of collecting data in the wizard, the uploaded data file is converted to
+     * netCDF format in preparation for user download.
+     *
+     * @param id The unique ID corresponding to already persisted data.
+     * @param wizardData The WizardData containing the general metadata.
+     * @throws RosettaDataException If unable to populate the metadata object.
+     */
+    @Override
+    public void processGeneralMetadata(String id, WizardData wizardData) throws RosettaDataException {
+        logger.info(wizardData);
+        // Persist the global metadata.
+        //metadataManager.persistMetadata(metadataManager.parseGeneralMetadata(metadata, id));
+    }
+
+    /**
      * Determines the next step in the wizard based the user specified data file type.
      * This method is called when there is a divergence of possible routes through the wizard.
      *
