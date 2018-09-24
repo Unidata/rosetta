@@ -22,9 +22,16 @@
     </div>
 
 <script>
+    <c:choose>
+        <c:when test="${not empty data.globalMetadata}">
+            storeData("globalMetadata", '${data.globalMetadata}');
+        </c:when>
+        <c:otherwise>
+            // Initialize storage.
+            storeData("globalMetadata", "{}");
+        </c:otherwise>
+    </c:choose>
     
-    // Initialize storage.
-    storeData("globalMetadata", "{}");
 
     var metadataProfileGeneralData = [];
     <%-- populate global metadata profile general data array with metadata profile info passed from the server-side --%>
