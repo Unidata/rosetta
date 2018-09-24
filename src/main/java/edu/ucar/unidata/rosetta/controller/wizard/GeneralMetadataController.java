@@ -5,15 +5,11 @@
 
 package edu.ucar.unidata.rosetta.controller.wizard;
 
-import edu.ucar.unidata.rosetta.domain.Data;
-import edu.ucar.unidata.rosetta.domain.GeneralMetadata;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import edu.ucar.unidata.rosetta.service.wizard.MetadataManager;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
-import edu.ucar.unidata.rosetta.util.PropertyUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -95,7 +91,7 @@ public class GeneralMetadataController implements HandlerExceptionResolver {
         // Add current step to the Model.
         model.addAttribute("currentStep", "generalMetadata");
         // Add whether we need to show the custom file attributes step in the wizard menu.
-        model.addAttribute("customFileAttributesStep",  wizardManager.customFileAttributesStep(rosettaCookie.getValue()));
+        model.addAttribute("customFileAttributesStep", wizardManager.customFileAttributesStep(rosettaCookie.getValue()));
 
         // Add relevant metadata profile information for variable metadata collection.
         model.addAttribute("metadataProfileGeneralData",
@@ -112,9 +108,9 @@ public class GeneralMetadataController implements HandlerExceptionResolver {
      *
      * @param wizardData The form-backing object.
      * @param submit     The value sent via the submit button.
-     * @param result  The BindingResult for error handling.
-     * @param model   The Model object to be populated by file upload data in the next step.
-     * @param request HttpServletRequest needed to get the cookie.
+     * @param result     The BindingResult for error handling.
+     * @param model      The Model object to be populated by file upload data in the next step.
+     * @param request    HttpServletRequest needed to get the cookie.
      * @return Redirect to next step.
      * @throws IllegalStateException If cookie is null.
      * @throws RosettaDataException  If unable to populate the metadata object.
@@ -139,7 +135,7 @@ public class GeneralMetadataController implements HandlerExceptionResolver {
         }
 
         // Persist the general metadata information.
-        wizardManager.processCustomFileTypeAttributes(rosettaCookie.getValue(), wizardData);
+        wizardManager.processGeneralMetadata(rosettaCookie.getValue(), wizardData);
 
         // Send user to next step to download the converted file(s).
         return new ModelAndView(new RedirectView("/convertAndDownload", true));
