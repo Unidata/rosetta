@@ -58,9 +58,14 @@ public class JsonUtil {
      * @throws JsonProcessingException If unable to map Object to JSON string.
      */
     public static String mapObjectToJSON(Object obj) throws JsonProcessingException {
-
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(obj);
+        String jsonString = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+             jsonString = mapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            logger.info(e);
+        }
+        return jsonString;
     }
 
 
@@ -73,6 +78,62 @@ public class JsonUtil {
             logger.error(e);
         }
         return actualObj;
+    }
+
+    public static String convertToJson(Variable variable) {
+        String variableAsJsonString =
+                "{" +
+                    "\"column\":" + variable.getColumnNumber() +
+                    ",\"name\":\"" + variable.getVariableName() + "\"";
+        if (variable.getVariableName().equals("do_not_use")) {
+            variableAsJsonString = variableAsJsonString +
+                    ",\"required\":{}" +
+                    ",\"recommended\":{}" +
+                    ",\"additional\":{}";
+        } else {
+            variableAsJsonString = variableAsJsonString +
+                    ",\"metadataType\":\"" + variable.getMetadataType() + "\"" +
+                    ",\"metadataValueType\":\"" + variable.getMetadataValueType() + "\"";
+
+            if (variable.getMetadataTypeStructure() != null) {
+                variableAsJsonString = variableAsJsonString +
+                    ",\"metadataTypeStructure\":\"" + variable.getMetadataTypeStructure() + "\"";
+            }
+
+            if (variable.getVerticalDirection() != null) {
+                variableAsJsonString = variableAsJsonString +
+                        ",\"verticalDirection\":\"" + variable.getVerticalDirection() + "\"";
+            }
+
+            if (variable.getRequiredMetadata().size() > 0) {
+                String requiredJson = convertComplianceLevelDataToJson(variable.getRequiredMetadata());
+                variableAsJsonString = variableAsJsonString +
+                        ",\"required\":" +  requiredJson;
+            }
+            if (variable.getRecommendedMetadata().size() > 0) {
+                String recommendedJson = convertComplianceLevelDataToJson(variable.getRecommendedMetadata());
+                variableAsJsonString = variableAsJsonString +
+                        ",\"recommended\":" +  recommendedJson;
+            }
+            if (variable.getAdditionalMetadata().size() > 0) {
+                String additionalJson = convertComplianceLevelDataToJson(variable.getAdditionalMetadata());
+                variableAsJsonString = variableAsJsonString +
+                        ",\"additional\":" +  additionalJson;
+            }
+        }
+        variableAsJsonString = variableAsJsonString + "}";
+        return variableAsJsonString;
+
+    }
+
+    private static String convertComplianceLevelDataToJson(List<VariableMetadata> variableMetadataList) {
+        StringBuilder jsonString = new StringBuilder("{");
+        for (VariableMetadata variableMetadata : variableMetadataList) {
+            jsonString.append("\"").append(variableMetadata.getMetadataKey()).append("\":\"").append(variableMetadata.getMetadataValue()).append("\",");
+        }
+        jsonString = new StringBuilder(jsonString.substring(0, jsonString.length() - 1));
+        jsonString.append("}");
+        return jsonString.toString();
     }
 
     public static List<Variable> convertFromJSON(String jsonString) {
