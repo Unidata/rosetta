@@ -11,7 +11,7 @@ import java.util.List;
 import org.springframework.dao.DataRetrievalFailureException;
 
 /**
- * The data access object representing metadata.
+ * The data access object representing a Variable.
  *
  * @author oxelson@ucar.edu
  */
@@ -66,7 +66,7 @@ public interface VariableDao {
      * @param variables The list of variable objects to update.
      * @throws DataRetrievalFailureException If unable to delete persisted variable information.
      */
-    public void deletePersistedVariables(List<Variable> variables) throws DataRetrievalFailureException ;
+    public void deletePersistedVariables(List<Variable> variables) throws DataRetrievalFailureException;
 
     /**
      * Deletes the persisted variable object information using the given id.
@@ -74,5 +74,5 @@ public interface VariableDao {
      * @param variable The variable object to delete.
      * @throws DataRetrievalFailureException If unable to delete persisted variable information.
      */
-    public void deletePersistedVariable(Variable variable) throws DataRetrievalFailureException ;
+    public void deletePersistedVariable(Variable variable) throws DataRetrievalFailureException;
 }
