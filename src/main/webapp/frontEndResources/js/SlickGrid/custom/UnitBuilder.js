@@ -34,7 +34,7 @@ var UnitBuilder = (function () {
             }
 
             // get what is in the units from variableMetadata value field
-            var unitsInStorage = getItemEntered(key + "Metadata", "units");
+            var unitsInStorage = getComplianceLevelVariableData(key, "units", "");
             if (unitsInStorage === null) {
                 unitsInStorage = "";
             }
@@ -63,12 +63,8 @@ var UnitBuilder = (function () {
                     // lame
                     var pre = unitsInStorage.substring(0, index);
                     var post = unitsInStorage.substring(index + unitString.length);
-    
-                    // concatenation the entered value to any existing Metadata values pulled from the variableMetadata value field
-                    metadataString = buildStringForSession(key + "Metadata", "units", pre + post);
 
-                    // update the data in the variableMetadata value field
-                    addToSession(key + "Metadata", metadataString);
+                    storeComplianceLevelVariableData(key, "units", pre + post,"required");
 
                     // update units display in dialog to show new value
                     $("#dialog #requiredMetadataAssignment input[name=\"units\"]").prop("value", pre + post);

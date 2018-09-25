@@ -5,7 +5,10 @@
 
 package edu.ucar.unidata.rosetta.service.wizard;
 
+import edu.ucar.unidata.rosetta.converters.custom.dsg.NetcdfFileManager;
+import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.domain.Variable;
+import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
 import edu.ucar.unidata.rosetta.domain.resources.Community;
 import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
@@ -20,6 +23,15 @@ import edu.ucar.unidata.rosetta.repository.wizard.WizardDataDao;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.util.JsonUtil;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
+import edu.ucar.unidata.rosetta.util.TemplateFactory;
+
+import ucar.ma2.InvalidRangeException;
+
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
@@ -28,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.nio.file.Paths;
 
 /**
  * Implements wizard manager functionality.
@@ -44,8 +57,88 @@ public class WizardManagerImpl implements WizardManager {
     @Resource(name = "fileManager")
     private FileManager fileManager;
 
+    @Resource(name = "uploadedFileManager")
+    private UploadedFileManager uploadedFileManager;
+
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
+
+    @Resource(name = "templateManager")
+    private TemplateManager templateManager;
+
+
+    public void convertToNetcdf(String id) throws RosettaFileException {
+        String netcdfFile = null;
+
+        Template template = templateManager.createTemplate(id);
+        String downloadDirPath = FilenameUtils.concat(PropertyUtils.getDownloadDir(), id);
+        File downloadDir = new File(downloadDirPath);
+        if (!downloadDir.exists()) {
+            logger.info("Creating downloads directory at " + downloadDir.getPath());
+            if (!downloadDir.mkdirs()) {
+                throw new RosettaFileException("Unable to create downloads directory for " + id);
+            }
+        }
+
+        String templateFilePath = FilenameUtils.concat(downloadDirPath, "rosetta.template");
+        String uploadDirPath = FilenameUtils.concat(PropertyUtils.getUploadDir(), id);
+        String dataFilePath = FilenameUtils.concat(uploadDirPath, uploadedFileManager.getDataFile(id).getFileName());
+        logger.info("here: " + dataFilePath);
+
+        // Load main template.
+        try {
+            Template baseTemplate = TemplateFactory.makeTemplateFromJsonFile(Paths.get(templateFilePath));
+            String format = baseTemplate.getFormat();
+
+            // If custom.
+            if (format.equals("custom")) {
+                logger.info("Creating netCDF file for custom data file " + dataFilePath);
+                // now find the proper converter
+                NetcdfFileManager dsgWriter = null;
+                for (NetcdfFileManager potentialDsgWriter : NetcdfFileManager.getConverters()) {
+                    if (potentialDsgWriter.isMine(baseTemplate.getCfType())) {
+                        dsgWriter = potentialDsgWriter;
+                        break;
+                    }
+                }
+                netcdfFile = dsgWriter.createNetcdfFile(Paths.get(dataFilePath), template);
+
+            }
+
+            // If eTuff.
+            if (template.getFormat().equals("etuff")) {
+                logger.info("Creating netCDF file for eTuff file " + dataFilePath);
+                TagUniversalFileFormat tuff = new TagUniversalFileFormat();
+                tuff.parse(dataFilePath);
+                String fullFileNameExt = FilenameUtils.getExtension(dataFilePath);
+                String ncfile = dataFilePath.replace(fullFileNameExt, "nc");
+                ncfile = FilenameUtils.concat(PropertyUtils.getDownloadDir(), ncfile);
+                netcdfFile = tuff.convert(ncfile, template);
+            }
+
+
+
+        } catch (IOException | InvalidRangeException e) {
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            throw new RosettaFileException("Unable to create template file " + errors);
+        }
+
+
+        logger.info(netcdfFile);
+    }
+
+
+
+    public HashMap<String, String> getGlobalMetadataFromeTuffFile(String id) {
+        String uploadDirPath = FilenameUtils.concat(PropertyUtils.getUploadDir(), id);
+        String dataFilePath = FilenameUtils.concat(uploadDirPath, uploadedFileManager.getDataFile(id).getFileName());
+
+        TagUniversalFileFormat tuff = new TagUniversalFileFormat();
+        tuff.parse(dataFilePath);
+        return tuff.getGlobalMetadata();
+
+    }
 
     /**
      * Determines whether the custom file attributes step needs to be visited in the wizard.
@@ -115,7 +208,7 @@ public class WizardManagerImpl implements WizardManager {
     /**
      * Looks up and retrieves persisted wizard data using the given ID.
      *
-     * @param id The ID corresponding to the data to retrieve.
+     * @param id The ID corresponding to the data to retemperaturetrieve.
      * @return The persisted wizard data.
      */
     @Override
@@ -136,8 +229,15 @@ public class WizardManagerImpl implements WizardManager {
         }
         // Get persisted global metadata if it exists.
         List<GlobalMetadata> persisted = globalMetadataDao.lookupGlobalMetadata(id);
+
+
+
         StringBuilder globalMetadata = new StringBuilder("{");
         for (GlobalMetadata item : persisted) {
+            if (wizardData.getDataFileType().equals("eTuff")) {
+                HashMap<String, String> eTuffGlobals = getGlobalMetadataFromeTuffFile(id);
+
+            }
             String jsonGlobalMetadataString = JsonUtil.convertGlobalDataToJson(item);
             globalMetadata.append(jsonGlobalMetadataString).append(",");
         }

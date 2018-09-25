@@ -15,64 +15,56 @@ var ComplianceLevelDataHandler = (function () {
     function populateComplianceLevelInputTags(key, complianceLevel) {        
 
         var metadataType = VariableStorageHandler.getVariableData(key, "metadataType");
-        var metadataTypeStructure = VariableStorageHandler.getVariableData(key, "metadataTypeStructure");
-
         // We will stash oru created tags here.
         var metadataTags = [];
         // We will stash our required attribute names here.
         var required = [];
-        
-        // Get the compliance-level data in map form to quickly eliminate duplicates and create the correct input tag.
-        var complianceLevelData = findDuplicateAttributes();
-
-        // Get the metadata profile data that corresponds to the provided complianceLevel.
-        var metadataTypesMap = complianceLevelData.get(complianceLevel);
-
-        // Get the attribute names data that corresponds to the stored metadataType.
-        var attributeNamesMap = metadataTypesMap.get(metadataType);
-        
-        if (metadataTypeStructure !== undefined) {
-            if (metadataTypeStructure === "latitude") {
-                metadataTypeStructure = "lat";
-            } else if (metadataTypeStructure === "longitude") {
-                metadataTypeStructure = "lon";
-            } else if (metadataTypeStructure === "vertical") {
-                metadataTypeStructure = "depth";
-            } else  {
-                metadataTypeStructure = "time";
+        var used = [];
+        for (var i = 0; i < metadataProfileVariableData.length; i++) {
+            var metadataProfile = metadataProfileVariableData[i];
+            if (metadataProfile.complianceLevel === "optional") {
+                metadataProfile.complianceLevel = "additional";
             }
-        }
+            if (metadataProfile.complianceLevel === complianceLevel) {
+                if (metadataProfile.metadataType === "CoordinateVariable") {
+                   metadataProfile.metadataType = "coordinate";
+                } 
+                if (metadataProfile.metadataType === "DataVariable") {
+                    metadataProfile.metadataType = "non-coordinate";
+                }
 
-        
-        for (const [attributeName, metadataTypeStructuresMap] of attributeNamesMap) {
-            var tag = "";
-
-            // If we have a saved metadataTypeStructure value, create tags for the attributed that have the matching metadataTypeStructure value.
-            if (metadataTypeStructure !== undefined) {
-                var attributeObject = metadataTypeStructuresMap.get(metadataTypeStructure);
-                if (attributeObject !== undefined) {
-                    tag = createComplianceLevelTagElement(key, attributeObject);
-                    if (complianceLevel === "required" && attributeObject.complianceLevel === "required") {
-                        // Push attribute name onto required array.
-                        required.push(attributeObject.attributeName);
+                // Kludge
+                if (metadataProfile.attributeName.includes("valid_")) {
+                    continue;
+                }
+                
+                // Kludge
+                if (metadataProfile.attributeName === "calendar") {
+                    var metadataTypeStructure = VariableStorageHandler.getVariableData(key, "metadataTypeStructure");
+                    if (metadataTypeStructure === "latitude" || metadataTypeStructure === "longitude" || metadataTypeStructure === "vertical") {
+                        continue;
                     }
                 }
-            } else {
-                var attributeObject = metadataTypeStructuresMap.get("data");
-                if (attributeObject !== undefined) {
-                    tag = createComplianceLevelTagElement(key, attributeObject);
-                    if (complianceLevel === "required" && attributeObject.complianceLevel === "required") {
+
+                
+                if (!used.includes(metadataProfile.attributeName)) {
+                    used.push(metadataProfile.attributeName);
+                    var tag = createComplianceLevelTagElement(key, metadataProfile);
+                    metadataTags.push(tag);
+                    if (complianceLevel === "required" && metadataProfile.complianceLevel === "required") {
                         // Push attribute name onto required array.
-                        required.push(attributeObject.attributeName);
+                        required.push(metadataProfile.attributeName);
                     }
                 }
-            }
-            metadataTags.push(tag);
+            } 
+            
         }
-
+        
+        // If compliance level is required, add list to storage.
         if (complianceLevel === "required") {
             storeData("_v" + key.replace("variableName", ""), required);
         }
+        
 
         // Sort the array.
         metadataTags.sort();
@@ -85,106 +77,6 @@ var ComplianceLevelDataHandler = (function () {
 
 
 
-    /**
-     * This function loops through the server-side metadata profile data and creates the following map based on compliance level:
-     *
-     * map name                     key                     value
-     *--------------------------------------------------------------------------------
-     * complianceLevelMap           compliance level        metadataTypesMap
-     * metadataTypesMap             metadata type           attributeNamesMap
-     * attributeNamesMap            attribute name          metadataTypeStructuresMap
-     * metadataTypeStructuresMap    metadataSTypetructure   attribute object
-     * 
-     * @return  The aforementioned compliance level map.
-     */           
-    function findDuplicateAttributes() {
-        var complianceLevelsMap = new Map();
-        // The metadataProfileVariableData comes from the server-side.
-        for (var i = 0; i < metadataProfileVariableData.length; i++) {
-            var attributeName = metadataProfileVariableData[i].attributeName;
-            var metadataType = metadataProfileVariableData[i].metadataType;
-            // Make the data from metadata profile look like the client-side data.
-            if (metadataType === "CoordinateVariable") {
-                metadataType = "coordinate";
-            } 
-            if (metadataType === "DataVariable") {
-                metadataType = "non-coordinate";
-            }  
-            var metadataTypeStructure = metadataProfileVariableData[i].metadataTypeStructure;
-            var complianceLevel = metadataProfileVariableData[i].complianceLevel;
-            // Make the data from metadata profile look like the client-side data.
-            if (complianceLevel === "optional") {
-                metadataProfileVariableData[i].complianceLevel = "additional";
-                complianceLevel = "additional";
-            }
-
-            if (complianceLevelsMap.has(complianceLevel)) {
-                // Already exists.
-
-                // Get the existing metadata type map.
-                var metadataTypesMap = complianceLevelsMap.get(complianceLevel);
-    
-                if (metadataTypesMap.has(metadataType)) {
-                    // Already exists.
-
-                    // Get the existing metadata type map.
-                    var attributeNamesMap = metadataTypesMap.get(metadataType);
-
-                    if (attributeNamesMap.has(attributeName)) {
-                        // Already exists.
-
-                        // Get the existing metadata type structures map.
-                        var metadataTypeStructuresMap = attributeNamesMap.get(attributeName);
-                        metadataTypeStructuresMap.set(metadataTypeStructure, metadataProfileVariableData[i]);
-                                    
-                     } else {
-                        // Doesn't exist in the attribute names map yet.
-
-                        // Create a map for the metadata type structures where the metadata type structure is a key to the entire metadat profile attribute object.
-                        var metadataTypeStructuresMap = new Map();
-                        metadataTypeStructuresMap.set(metadataTypeStructure, metadataProfileVariableData[i]);
-                    
-                        // Add attribute name what holds an array of corresponding the metadata type structures.
-                        attributeNamesMap.set(attributeName, metadataTypeStructuresMap);
-                     }
-
-                } else {
-                    // Doesn't exist in the metadata types map yet.
-
-                    // Create a map for the metadata type structures where the metadata type structure is a key to the entire metadat profile attribute object.
-                    var metadataTypeStructuresMap = new Map();
-                    metadataTypeStructuresMap.set(metadataTypeStructure, metadataProfileVariableData[i]);
-
-                    // Create a map for the attribute names and add the metadata type structures map.
-                    var attributeNamesMap = new Map();
-                    attributeNamesMap.set(attributeName, metadataTypeStructuresMap);
-
-                    // Add the attribute names map to the metadata types map.
-                    metadataTypesMap.set(metadataType, attributeNamesMap);
-                }
-                
-            } else {
-                // Doesn't exist in the compliance levels map yet.
-
-                // Create a map for the metadata type structures where the metadata type structure is a key to the entire metadat profile attribute object.
-                var metadataTypeStructuresMap = new Map();
-                metadataTypeStructuresMap.set(metadataTypeStructure, metadataProfileVariableData[i]);
-
-                // Create a map for the attribute names and add the metadata type structures map.
-                var attributeNamesMap = new Map();
-                attributeNamesMap.set(attributeName, metadataTypeStructuresMap);
-
-                // Create a map for the metadata types and add the attribute names map.
-                var metadataTypesMap = new Map();
-                metadataTypesMap.set(metadataType, attributeNamesMap);
-
-                // Add the metadata types map to the compliance level map.
-                complianceLevelsMap.set(complianceLevel, metadataTypesMap);
-            }
-        }
-
-        return complianceLevelsMap;
-    }
 
     /**
      *
@@ -208,10 +100,6 @@ var ComplianceLevelDataHandler = (function () {
         var complianceLevel = "additional"; // Default
         if (metadataItem.complianceLevel) {
             complianceLevel = metadataItem.complianceLevel;
-        }
-        var metadataTypeStructure;
-        if (metadataItem.metadataTypeStructure) {
-            metadataTypeStructure = metadataItem.metadataTypeStructure;
         }
 
         // Assign any matching stored compliance level data to the tagValue.
@@ -257,7 +145,7 @@ var ComplianceLevelDataHandler = (function () {
             "    <label>\n" +
             "     " + displayName + "\n" +
             "     " + helpTipElement + "\n" +
-            "     <input id=\"" + tagName + "__" + metadataTypeStructure + "\" type=\"text\" name=\"" + tagName + "\" value=\"" + tagValue + "\" /> \n" +
+            "     <input id=\"" + tagName + "\" type=\"text\" name=\"" + tagName + "\" value=\"" + tagValue + "\" /> \n" +
             "    </label>\n" + unitBuilderSelector + unitBuilder +
             "   </li>\n";
 
