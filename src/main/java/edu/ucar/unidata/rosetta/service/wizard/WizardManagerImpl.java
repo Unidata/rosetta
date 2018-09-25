@@ -93,6 +93,10 @@ public class WizardManagerImpl implements WizardManager {
         try {
             Template baseTemplate = TemplateFactory.makeTemplateFromJsonFile(Paths.get(templateFilePath));
             String format = baseTemplate.getFormat();
+            baseTemplate.setFormat(format.toLowerCase());
+            baseTemplate.setCfType(baseTemplate.getCfType().toLowerCase());
+            template.setCfType(template.getCfType().toLowerCase());
+            template.setFormat(template.getFormat().toLowerCase());
 
             // If custom.
             if (format.equals("custom")) {

@@ -121,7 +121,7 @@ public class ParsedFile {
             Array arr = null;
             DataType dataType = null;
 
-            if (type.toLowerCase().equals("string")) {
+            if (type.toLowerCase().equals("string") || type.toLowerCase().equals("text")) {
                 dataType = DataType.STRING;
             } else if (type.toLowerCase().equals("integer")) {
                 dataType = DataType.INT;
