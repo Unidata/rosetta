@@ -47,8 +47,8 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
     @Resource(name = "dataManager")
     private DataManager dataManager;
 
-    @Resource(name = "templateManager")
-    private TemplateManager templateManager;
+    @Resource(name = "wizardManager")
+    private WizardManager wizardManager;
 
     @Autowired
     public ConvertAndDownloadController(ServletContext servletContext) {
@@ -76,7 +76,7 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
                     "No persisted data available for file upload step.  Check the database & the cookie.");
         }
 
-        templateManager.createTemplate(rosettaCookie.getValue());
+        wizardManager.convertToNetcdf(rosettaCookie.getValue());
 
         // Convert the uploaded file to netCDF & create a template for future conversions.
         //data = dataManager.convertToNetCDF(data);
