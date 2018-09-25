@@ -87,7 +87,7 @@ public class TemplateManagerImpl implements TemplateManager {
         template.setCommunity(wizardData.getCommunity());
         String platform = wizardData.getPlatform();
         template.setPlatform(platform);
-        String cfType = wizardData.getCfType();
+        String cfType = wizardData.getCfType().toLowerCase();
         if (cfType.equals("") || cfType == null) {
             cfType = resourceManager.getCFTypeFromPlatform(platform);
         }
@@ -240,7 +240,11 @@ public class TemplateManagerImpl implements TemplateManager {
         // Create RosettaAttribute for type info.
         RosettaAttribute type = new RosettaAttribute();
         type.setName("type");
-        type.setValue(variable.getMetadataValueType());
+        String t = variable.getMetadataValueType();
+        if (t.equals("text")) {
+            t = "String";
+        }
+        type.setValue(t);
         type.setType("STRING");
         rosettaControlMetadata.add(type);
 

@@ -80,12 +80,22 @@ public class JsonUtil {
         return actualObj;
     }
 
-    public static String convertGlobalDataToJson(GlobalMetadata globalMetadata) {
-        return  "\"" +
+    public static String convertGlobalDataToJson(GlobalMetadata globalMetadata, HashMap<String, String> fileGlobals) {
+
+        String value = globalMetadata.getMetadataValue();
+
+        // We have globals from a file.
+        if (fileGlobals != null) {
+            if (value.equals("")) {
+                value = fileGlobals.get(globalMetadata.getMetadataKey());
+            }
+        }
+        String jsonString =
+                "\"" +
                 globalMetadata.getMetadataKey() + "__" +
-                globalMetadata.getMetadataGroup() + "__" +
                 globalMetadata.getMetadataValueType() + "\":" +
-                "\"" + globalMetadata.getMetadataValue() + "\"";
+                "\"" + value + "\"";
+        return jsonString;
     }
 
     public static String convertVariableDataToJson(Variable variable) {
