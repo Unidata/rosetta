@@ -32,6 +32,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
@@ -42,6 +44,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.nio.file.Paths;
+import org.apache.commons.io.FileUtils;
 
 /**
  * Implements wizard manager functionality.
@@ -71,7 +74,7 @@ public class WizardManagerImpl implements WizardManager {
     private MetadataManager metadataManager;
 
 
-    public void convertToNetcdf(String id) throws RosettaFileException {
+    public String convertToNetcdf(String id) throws RosettaFileException {
         String netcdfFile = null;
 
         Template template = templateManager.createTemplate(id);
@@ -87,8 +90,8 @@ public class WizardManagerImpl implements WizardManager {
         String templateFilePath = FilenameUtils.concat(downloadDirPath, "rosetta.template");
         String uploadDirPath = FilenameUtils.concat(PropertyUtils.getUploadDir(), id);
         String dataFilePath = FilenameUtils.concat(uploadDirPath, uploadedFileManager.getDataFile(id).getFileName());
-        logger.info("here: " + dataFilePath);
 
+        String dest = null;
         // Load main template.
         try {
             Template baseTemplate = TemplateFactory.makeTemplateFromJsonFile(Paths.get(templateFilePath));
@@ -110,6 +113,11 @@ public class WizardManagerImpl implements WizardManager {
                     }
                 }
                 netcdfFile = dsgWriter.createNetcdfFile(Paths.get(dataFilePath), template);
+                logger.info(netcdfFile);
+
+                dest = netcdfFile.replace("uploads", "downloads");
+                logger.info(dest);
+                FileUtils.copyFile(new File(netcdfFile), new File(dest));
 
             }
 
@@ -122,6 +130,12 @@ public class WizardManagerImpl implements WizardManager {
                 String ncfile = dataFilePath.replace(fullFileNameExt, "nc");
                 ncfile = FilenameUtils.concat(PropertyUtils.getDownloadDir(), ncfile);
                 netcdfFile = tuff.convert(ncfile, template);
+
+                logger.info(netcdfFile);
+
+                dest = netcdfFile.replace("uploads", "downloads");
+                logger.info(dest);
+                FileUtils.copyFile(new File(netcdfFile), new File(dest));
             }
 
 
@@ -133,9 +147,13 @@ public class WizardManagerImpl implements WizardManager {
         }
 
 
-        logger.info(netcdfFile);
+        return dest;
     }
 
+    public String getTemplateFile(String id) {
+        String downloadDirPath = FilenameUtils.concat(PropertyUtils.getDownloadDir(), id);
+        return FilenameUtils.concat(downloadDirPath, "rosetta.template");
+    }
 
 
     public HashMap<String, String> getGlobalMetadataFromTuffFile(String id) {
