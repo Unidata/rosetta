@@ -6,19 +6,6 @@
  * SlickGrid instance to input variable attributes corresponding to the data columns.
  */
 
-/**
- * Returns the sum of all numbers passed to the function.
- * @param {string} target - A string representing the characters you wish to replace.
- * @param {string} replace,emt - A string representing the characters you wish to replace @find
- *     with.
- *
- * @returns {string} A new string where all instances of @find have been replaced with @replace in
- *     the @str
- *
- */
-String.prototype.replaceAll = function (target, replacement) {
-    return this.split(target).join(replacement);
-};
 
 /**
  * This function creates a SlickGrid displaying the parsed file data by by row
@@ -38,7 +25,6 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
     loadCFStandards();
     loadUnitBuilderData();
     loadCFStandardUnits();
-    //loadMetadata();
 
     // SlickGrid options.
     var options = {
@@ -84,7 +70,7 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
                 if (jQuery.inArray(i.toString(), headerLines) < 0) { // it's not a header line
                     var dataItems;
                     // split the data line using the given delimiter
-                    if (delimiter !== " ") {
+                    if (delimiter !== "") {
                         dataItems = fileData[i].split(delimiter);
                     } else {
                         dataItems = fileData[i].split(/\s+/);
