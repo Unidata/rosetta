@@ -65,7 +65,11 @@ public class MetadataManagerImpl implements MetadataManager {
             metadataProfiles.addAll(profiles);
         }
         // Remove any duplicates between different profiles.
-        return removeDuplicates(metadataProfiles);
+        //return removeDuplicates(metadataProfiles);
+        for (MetadataProfile m : metadataProfiles) {
+            //logger.info(m);
+        }
+        return metadataProfiles;
     }
 
     /**
