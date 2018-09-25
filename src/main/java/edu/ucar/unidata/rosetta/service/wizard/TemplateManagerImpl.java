@@ -81,29 +81,70 @@ public class TemplateManagerImpl implements TemplateManager {
         // Create the template.
         Template template = new Template();
 
-        logger.info("platform" + wizardData.getPlatform());
-
         // Data from the WizardData object.
-        template.setCommunity(wizardData.getCommunity());
-        String platform = wizardData.getPlatform();
-        template.setPlatform(platform);
-        String cfType = wizardData.getCfType().toLowerCase();
-        if (cfType.equals("") || cfType == null) {
-            cfType = resourceManager.getCFTypeFromPlatform(platform);
-        }
-        template.setCfType(cfType);
-        String delimiter = resourceManager.getDelimiterSymbol(wizardData.getDelimiter());
-        if (delimiter.equals("")) {
-            delimiter = " ";
-        }
-        template.setDelimiter(delimiter);
         String format = wizardData.getDataFileType().toLowerCase();
         if (format.equals("custom_file_type")) {
             format = "custom";
         }
         template.setFormat(format);
-        List<String> headerLineNumbers = Arrays.asList(wizardData.getHeaderLineNumbers().split(","));
-        template.setHeaderLineNumbers(headerLineNumbers.stream().map(Integer::parseInt).collect(Collectors.toList()));
+        logger.info(format);
+        if (!format.equals("etuff")) {
+            template.setCommunity(wizardData.getCommunity());
+            String platform = wizardData.getPlatform();
+            template.setPlatform(platform);
+            String cfType = wizardData.getCfType().toLowerCase();
+            if (cfType.equals("") || cfType == null) {
+                cfType = resourceManager.getCFTypeFromPlatform(platform);
+            }
+            template.setCfType(cfType);
+            String delimiter = resourceManager.getDelimiterSymbol(wizardData.getDelimiter());
+            if (delimiter.equals("")) {
+                delimiter = " ";
+            }
+            template.setDelimiter(delimiter);
+
+            List<String> headerLineNumbers = Arrays.asList(wizardData.getHeaderLineNumbers().split(","));
+            template.setHeaderLineNumbers(headerLineNumbers.stream().map(Integer::parseInt).collect(Collectors.toList()));
+
+            // Need this to get the metadataValueType for the RosettaAttribute data.
+            List<MetadataProfile> metadataProfiles = metadataManager.getMetadataProfiles(id, "variable");
+
+            // VariableInfo
+            List<Variable> variables = variableDao.lookupVariables(id);
+            List<VariableInfo> variableInfoList = new ArrayList<>();
+            for (Variable variable : variables) {
+
+                VariableInfo variableInfo = new VariableInfo();
+                // Common to all.
+                variableInfo.setColumnId(variable.getColumnNumber());
+                // Common to all.
+                String name = variable.getVariableName();
+                if (name.equals("do_not_use")) {
+                    variableInfo.setName(name.toUpperCase());
+                    variableInfoList.add(variableInfo);
+                } else {
+                    variableInfo.setName(variable.getVariableName());
+
+                    // variableMetadata
+                    List<RosettaAttribute> variableMetadata = populateVariableData(
+                            variable.getRequiredMetadata(), metadataProfiles);
+                    variableMetadata.addAll(
+                            populateVariableData(variable.getRecommendedMetadata(), metadataProfiles));
+                    variableMetadata.addAll(
+                            populateVariableData(variable.getAdditionalMetadata(), metadataProfiles));
+                    variableInfo.setVariableMetadata(variableMetadata);
+
+
+                    // rosettaControlMetadata
+                    List<RosettaAttribute> rosettaControlMetadata = populateRosettaControlMetadata(
+                            variable);
+                    variableInfo.setRosettaControlMetadata(rosettaControlMetadata);
+                    variableInfoList.add(variableInfo);
+                }
+            }
+            template.setVariableInfoList(variableInfoList);
+        }
+
 
         // RosettaGlobalAttribute
         List<GlobalMetadata> globalMetadata = globalMetadataDao.lookupGlobalMetadata(id);
@@ -113,43 +154,7 @@ public class TemplateManagerImpl implements TemplateManager {
         }
         template.setGlobalMetadata(rosettaGlobalAttributes);
 
-        // Need this to get the metadataValueType for the RosettaAttribute data.
-        List<MetadataProfile> metadataProfiles = metadataManager.getMetadataProfiles(id, "variable");
 
-        // VariableInfo
-        List<Variable> variables = variableDao.lookupVariables(id);
-        List<VariableInfo> variableInfoList = new ArrayList<>();
-        for (Variable variable : variables) {
-
-            VariableInfo variableInfo = new VariableInfo();
-            // Common to all.
-            variableInfo.setColumnId(variable.getColumnNumber());
-            // Common to all.
-            String name = variable.getVariableName();
-            if (name.equals("do_not_use")) {
-                variableInfo.setName(name.toUpperCase());
-                variableInfoList.add(variableInfo);
-            } else {
-                variableInfo.setName(variable.getVariableName());
-
-                // variableMetadata
-                List<RosettaAttribute> variableMetadata = populateVariableData(
-                    variable.getRequiredMetadata(), metadataProfiles);
-                variableMetadata.addAll(
-                    populateVariableData(variable.getRecommendedMetadata(), metadataProfiles));
-                variableMetadata.addAll(
-                    populateVariableData(variable.getAdditionalMetadata(), metadataProfiles));
-                variableInfo.setVariableMetadata(variableMetadata);
-
-
-                // rosettaControlMetadata
-                List<RosettaAttribute> rosettaControlMetadata = populateRosettaControlMetadata(
-                    variable);
-                variableInfo.setRosettaControlMetadata(rosettaControlMetadata);
-                variableInfoList.add(variableInfo);
-            }
-        }
-        template.setVariableInfoList(variableInfoList);
 
         // Providence data.
         template.setTemplateVersion(TEMPLATE_VERSION);

@@ -76,13 +76,12 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
                     "No persisted data available for file upload step.  Check the database & the cookie.");
         }
 
-        wizardManager.convertToNetcdf(rosettaCookie.getValue());
-
         // Convert the uploaded file to netCDF & create a template for future conversions.
-        //data = dataManager.convertToNetCDF(data);
-
+        String netcdfFile = wizardManager.convertToNetcdf(rosettaCookie.getValue());
+        String template =  wizardManager.getTemplateFile(rosettaCookie.getValue());
         // Add data object to Model.
-       // model.addAttribute("data", data);
+        model.addAttribute("netCDF", netcdfFile);
+        model.addAttribute("template", netcdfFile);
 
         // Add current step to the Model.
         model.addAttribute("currentStep", "convertAndDownload");
