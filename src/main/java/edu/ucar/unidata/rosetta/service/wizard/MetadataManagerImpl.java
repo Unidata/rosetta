@@ -65,11 +65,7 @@ public class MetadataManagerImpl implements MetadataManager {
             metadataProfiles.addAll(profiles);
         }
         // Remove any duplicates between different profiles.
-        //return removeDuplicates(metadataProfiles);
-        for (MetadataProfile m : metadataProfiles) {
-            //logger.info(m);
-        }
-        return metadataProfiles;
+        return removeDuplicates(metadataProfiles);
     }
 
     /**
@@ -120,7 +116,6 @@ public class MetadataManagerImpl implements MetadataManager {
 
 
             } else {
-
                 // NOT the first profile we're examining; need to compare values in the map.
                 profileByName = addProfileToMap(profileByName, attributeName, metadataProfile);
             }

@@ -5,6 +5,8 @@
 package edu.ucar.unidata.rosetta.service.wizard;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
 import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
@@ -99,7 +101,7 @@ public class TemplateManagerImpl implements TemplateManager {
         if (format.equals("custom_file_type")) {
             format = "custom";
         }
-        template.setFormat(wizardData.getDataFileType());
+        template.setFormat(format);
         List<String> headerLineNumbers = Arrays.asList(wizardData.getHeaderLineNumbers().split(","));
         template.setHeaderLineNumbers(headerLineNumbers.stream().map(Integer::parseInt).collect(Collectors.toList()));
 
@@ -169,7 +171,7 @@ public class TemplateManagerImpl implements TemplateManager {
         template.setServerId(hostname);
 
         try {
-            writeTemplateToFile(template);
+            writeTemplateToFile(template, id);
         } catch (IOException e) {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
@@ -180,13 +182,24 @@ public class TemplateManagerImpl implements TemplateManager {
 
     }
 
-    private void writeTemplateToFile(Template template) throws IOException {
-        String templateFilePath = FilenameUtils.concat(PropertyUtils.getDownloadDir(), "rosetta.template");
+    private void writeTemplateToFile(Template template, String id) throws RosettaFileException, IOException {
+        String downloadDirPath = FilenameUtils.concat(PropertyUtils.getDownloadDir(), id);
+        File downloadDir = new File(downloadDirPath);
+        if (!downloadDir.exists()) {
+            logger.info("Creating downloads directory at " + downloadDir.getPath());
+            if (!downloadDir.mkdirs()) {
+                throw new RosettaFileException("Unable to create downloads directory for " + id);
+            }
+        }
+
+        String templateFilePath = FilenameUtils.concat(downloadDirPath, "rosetta.template");
+        logger.info(templateFilePath);
 
         String jsonString = JsonUtil.mapObjectToJSON(template);
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(
             new FileWriter(new File(templateFilePath)))) {
+            logger.info(jsonString);
             bufferedWriter.write(jsonString);
         }
     }

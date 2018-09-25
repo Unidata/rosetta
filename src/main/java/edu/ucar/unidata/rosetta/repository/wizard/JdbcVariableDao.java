@@ -5,8 +5,6 @@
 
 package edu.ucar.unidata.rosetta.repository.wizard;
 
-import edu.ucar.unidata.rosetta.domain.Variable;
-import edu.ucar.unidata.rosetta.domain.VariableMetadata;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,6 +17,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.ucar.unidata.rosetta.domain.Variable;
+import edu.ucar.unidata.rosetta.domain.VariableMetadata;
 
 /**
  * Implementation of a variable DAO.
@@ -37,7 +38,7 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
      * @param wizardDataId The id of the corresponding WizardData object.
      * @return The Variable object.
      */
-    public List<Variable> lookupVariables(String wizardDataId)  {
+    public List<Variable> lookupVariables(String wizardDataId) {
         String sql = "SELECT * FROM variables WHERE wizardDataId = ?";
         List<Variable> variables = getJdbcTemplate().query(sql, new JdbcVariableDao.VariableMapper(), wizardDataId);
         sql = "SELECT * FROM variableMetadata WHERE variableId = ?";
@@ -63,12 +64,11 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
     }
 
 
-
     /**
      * Persists the information in the given list of variable objects.
      *
      * @param wizardDataId The id of the corresponding WizardData object.
-     * @param variables The list of Variable objects to persist.
+     * @param variables    The list of Variable objects to persist.
      * @throws DataRetrievalFailureException If unable to persist the Variable objects.
      */
     public void persistVariables(String wizardDataId, List<Variable> variables) throws DataRetrievalFailureException {
@@ -81,7 +81,7 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
      * Persists the information in the given variable object.
      *
      * @param wizardDataId The id of the corresponding WizardData object.
-     * @param variable The Variable object to persist.
+     * @param variable     The Variable object to persist.
      * @throws DataRetrievalFailureException If unable to persist the Variable object.
      */
     public void persistVariable(String wizardDataId, Variable variable) throws DataRetrievalFailureException {
@@ -110,7 +110,7 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
 
         List<VariableMetadata> recommended = variable.getRecommendedMetadata();
         if (recommended.size() > 0) {
-                persistVariableMetadata(generatedId, recommended, "recommended");
+            persistVariableMetadata(generatedId, recommended, "recommended");
         }
 
         List<VariableMetadata> additional = variable.getAdditionalMetadata();
@@ -204,16 +204,20 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
     }
 
     private void deletePersistedVariableMetadata(int variableId) {
-        // Get the compliance level variable metadata and update.
-        String sql = "DELETE FROM variableMetadata WHERE variableId = ?";
-        int rowsAffected = getJdbcTemplate().update(sql, variableId);
+        String sql = "SELECT * FROM variableMetadata WHERE variableId = ?";
+        List<VariableMetadata> variableMetadataValues = getJdbcTemplate().query(sql, new JdbcVariableDao.VariableMetadataMapper(), variableId);
+        if (variableMetadataValues.size() > 0) {
+            // Get the compliance level variable metadata and update.
+            sql = "DELETE FROM variableMetadata WHERE variableId = ?";
+            int rowsAffected = getJdbcTemplate().update(sql, variableId);
 
-        if (rowsAffected <= 0) {
-            String message = "Unable to delete variable metadata entries corresponding to variable " + variableId;
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        } else {
-            logger.info("Deleted variable metadata entries corresponding to variable " + variableId);
+            if (rowsAffected <= 0) {
+                String message = "Unable to delete variable metadata entries corresponding to variable " + variableId;
+                logger.error(message);
+                throw new DataRetrievalFailureException(message);
+            } else {
+                logger.info("Deleted variable metadata entries corresponding to variable " + variableId);
+            }
         }
     }
 
