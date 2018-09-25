@@ -32,6 +32,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.WebUtils;
+
+import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import ucar.ma2.InvalidRangeException;
 
 /**
@@ -80,8 +82,10 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
         String netcdfFile = wizardManager.convertToNetcdf(rosettaCookie.getValue());
         String template =  wizardManager.getTemplateFile(rosettaCookie.getValue());
         // Add data object to Model.
-        model.addAttribute("netCDF", netcdfFile);
-        model.addAttribute("template", netcdfFile);
+        String downloadDir = PropertyUtils.getDownloadDir();
+
+        model.addAttribute("netCDF", netcdfFile.replace(downloadDir, ""));
+        model.addAttribute("template", template.replace(downloadDir, ""));
 
         // Add current step to the Model.
         model.addAttribute("currentStep", "convertAndDownload");

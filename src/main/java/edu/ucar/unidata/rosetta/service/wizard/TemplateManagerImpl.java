@@ -150,7 +150,11 @@ public class TemplateManagerImpl implements TemplateManager {
         List<GlobalMetadata> globalMetadata = globalMetadataDao.lookupGlobalMetadata(id);
         List<RosettaGlobalAttribute> rosettaGlobalAttributes = new ArrayList<>();
         for (GlobalMetadata item: globalMetadata) {
-            rosettaGlobalAttributes.add(new RosettaGlobalAttribute(item.getMetadataKey(), item.getMetadataValue(), item.getMetadataValueType().toUpperCase(), item.getMetadataGroup()));
+            if (item.getMetadataValueType() != null) {
+                rosettaGlobalAttributes.add(new RosettaGlobalAttribute(item.getMetadataKey(), item.getMetadataValue(), item.getMetadataValueType().toUpperCase(), item.getMetadataGroup()));
+            } else {
+                rosettaGlobalAttributes.add(new RosettaGlobalAttribute(item.getMetadataKey(), item.getMetadataValue(), "STRING", item.getMetadataGroup()));
+            }
         }
         template.setGlobalMetadata(rosettaGlobalAttributes);
 

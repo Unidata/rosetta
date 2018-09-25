@@ -11,13 +11,13 @@
 <c:otherwise>
 --%>
     <%-- List individual files. --%>
-    <c:if test="${not empty data.netcdfFile}">
+    <c:if test="${not empty netCDF}">
         <li>NetCDF File: <a
-                href="${baseUrl}/download/${data.id}/${data.netcdfFile}">${data.netcdfFile}</a></li>
+                href="${baseUrl}/download/${netCDF}">netCDF File</a></li>
     </c:if>
-    <c:if test="${not empty data.templateFileName}">
+    <c:if test="${not empty template}">
         <li>Rosetta Template File: <a
-                href="${baseUrl}/download/${data.id}/${data.templateFileName}">${data.templateFileName}</a>
+                href="${baseUrl}/download/${template}">template</a>
         </li>
     </c:if>
     <%--
