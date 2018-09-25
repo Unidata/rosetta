@@ -51,6 +51,9 @@ public class JdbcPlatformResourceDao extends JdbcDaoSupport implements PlatformR
       Platform platform = new Platform();
       platform.setName(name);
       while (rs.next()) {
+        platform.setId(rs.getInt(1));
+        platform.setImgPath(rs.getString(3));
+        platform.setCfType(rs.getString(4));
         platform.setCommunity(rs.getString(5));
       }
       return platform;
