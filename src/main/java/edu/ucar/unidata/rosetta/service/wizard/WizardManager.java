@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface WizardManager {
 
+    public void convertToNetcdf(String id) throws RosettaFileException;
+
     /**
      * Determines whether the custom file attributes step needs to be visited in the wizard.
      *
