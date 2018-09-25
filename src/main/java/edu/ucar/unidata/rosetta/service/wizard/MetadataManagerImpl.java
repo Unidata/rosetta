@@ -38,6 +38,11 @@ public class MetadataManagerImpl implements MetadataManager {
     @Resource(name = "wizardManager")
     private WizardManager wizardManager;
 
+
+    public List<MetadataProfile> getETuffProfile() {
+        return metadataProfileDao.getMetadataProfileByType("eTuff");
+    }
+
     public List<MetadataProfile> getMetadataProfiles(String id, String metadataType) {
         List<MetadataProfile> metadataProfiles = new ArrayList<>();
 

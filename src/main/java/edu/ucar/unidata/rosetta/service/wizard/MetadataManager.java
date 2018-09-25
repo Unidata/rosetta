@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public interface MetadataManager {
 
+    public List<MetadataProfile> getETuffProfile();
+
     public List<MetadataProfile> getMetadataProfiles(String id, String metadataType);
 
     /**

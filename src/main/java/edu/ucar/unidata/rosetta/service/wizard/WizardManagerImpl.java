@@ -67,6 +67,9 @@ public class WizardManagerImpl implements WizardManager {
     @Resource(name = "templateManager")
     private TemplateManager templateManager;
 
+    @Resource(name = "metadataManager")
+    private MetadataManager metadataManager;
+
 
     public void convertToNetcdf(String id) throws RosettaFileException {
         String netcdfFile = null;
@@ -242,26 +245,36 @@ public class WizardManagerImpl implements WizardManager {
         if (persisted.size() > 0) {
             for (GlobalMetadata item : persisted) {
                String jsonGlobalMetadataString = JsonUtil.convertGlobalDataToJson(item, fileGlobals);
-                logger.info(jsonGlobalMetadataString);
                 globalMetadata.append(jsonGlobalMetadataString).append(",");
             }
 
         } else {
-            /*
+
             if (fileGlobals != null) {
+                List<edu.ucar.unidata.rosetta.domain.MetadataProfile> eTuff = metadataManager.getETuffProfile();
+
                 Iterator it = fileGlobals.entrySet().iterator();
                 while (it.hasNext()) {
+                    String group = null;
                     Map.Entry pair = (Map.Entry) it.next();
-                    String jsonString =
-                        "\"" +
-                                pair.getKey() + "__" +
-                                globalMetadata.getMetadataValueType() + "\":" +
-                                "\"" + pair.getValue() + "\"";
-                    it.remove(); // avoids a ConcurrentModificationException
-                    globalMetadata.append(jsonString).append(",");
+                    for (edu.ucar.unidata.rosetta.domain.MetadataProfile profile : eTuff) {
+
+                        if (profile.getAttributeName().equals(pair.getKey())) {
+                             group = profile.getMetadataGroup();
+                        }
+                    }
+                    if (group != null) {
+                        String jsonString =
+                                "\"" +
+                                        pair.getKey() + "__" +
+                                        group + "\":" +
+                                        "\"" + pair.getValue() + "\"";
+                        it.remove(); // avoids a ConcurrentModificationException
+                        globalMetadata.append(jsonString).append(",");
+                    }
                 }
             }
-            */
+
         }
         globalMetadata = new StringBuilder(globalMetadata.substring(0, globalMetadata.length() - 1) + "}");
         String g = globalMetadata.toString();

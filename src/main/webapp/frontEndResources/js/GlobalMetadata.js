@@ -25,7 +25,7 @@ var GlobalMetadata = (function () {
             var exampleValues = attribute.exampleValues;
             
             if (complianceLevel === "required") {
-                required.push(attributeName + "__" + metadataGroup +  "__" + metadataValueType);
+                required.push(attributeName + "__" + metadataGroup);
             }
 
             if (complianceLevel === "optional") {
@@ -42,7 +42,7 @@ var GlobalMetadata = (function () {
             }
             tag = tag +    
                 "       <br/>\n" +
-                "       <input class=\"" + complianceLevel + "\" type=\"text\" name=\"" + attributeName + "\" id=\"" + attributeName + "__" + metadataGroup +  "__" + metadataValueType + "\" value=\"\"/>\n" +
+                "       <input class=\"" + complianceLevel + "\" type=\"text\" name=\"" + attributeName + "\" id=\"" + attributeName + "__" + metadataGroup+ "\" value=\"\"/>\n" +
                 "   </label>\n" +
                 "   <label for=\"" + attributeName + "\" class=\"error\"></label>\n" +
                 "</li>\n";
