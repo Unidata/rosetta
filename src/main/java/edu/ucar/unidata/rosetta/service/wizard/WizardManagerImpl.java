@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.nio.file.Paths;
 
 /**
@@ -130,7 +131,7 @@ public class WizardManagerImpl implements WizardManager {
 
 
 
-    public HashMap<String, String> getGlobalMetadataFromeTuffFile(String id) {
+    public HashMap<String, String> getGlobalMetadataFromTuffFile(String id) {
         String uploadDirPath = FilenameUtils.concat(PropertyUtils.getUploadDir(), id);
         String dataFilePath = FilenameUtils.concat(uploadDirPath, uploadedFileManager.getDataFile(id).getFileName());
 
@@ -213,6 +214,7 @@ public class WizardManagerImpl implements WizardManager {
      */
     @Override
     public WizardData lookupPersistedWizardDataById(String id) {
+        logger.info("here");
         // Get the persisted wizard data.
         WizardData wizardData = wizardDataDao.lookupWizardDataById(id);
 
@@ -230,16 +232,36 @@ public class WizardManagerImpl implements WizardManager {
         // Get persisted global metadata if it exists.
         List<GlobalMetadata> persisted = globalMetadataDao.lookupGlobalMetadata(id);
 
-
-
-        StringBuilder globalMetadata = new StringBuilder("{");
-        for (GlobalMetadata item : persisted) {
+        HashMap<String, String> fileGlobals = null;
+        if (wizardData.getDataFileType() != null) {
             if (wizardData.getDataFileType().equals("eTuff")) {
-                HashMap<String, String> eTuffGlobals = getGlobalMetadataFromeTuffFile(id);
-
+                fileGlobals = getGlobalMetadataFromTuffFile(id);
             }
-            String jsonGlobalMetadataString = JsonUtil.convertGlobalDataToJson(item);
-            globalMetadata.append(jsonGlobalMetadataString).append(",");
+        }
+        StringBuilder globalMetadata = new StringBuilder("{");
+        if (persisted.size() > 0) {
+            for (GlobalMetadata item : persisted) {
+               String jsonGlobalMetadataString = JsonUtil.convertGlobalDataToJson(item, fileGlobals);
+                logger.info(jsonGlobalMetadataString);
+                globalMetadata.append(jsonGlobalMetadataString).append(",");
+            }
+
+        } else {
+            /*
+            if (fileGlobals != null) {
+                Iterator it = fileGlobals.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    String jsonString =
+                        "\"" +
+                                pair.getKey() + "__" +
+                                globalMetadata.getMetadataValueType() + "\":" +
+                                "\"" + pair.getValue() + "\"";
+                    it.remove(); // avoids a ConcurrentModificationException
+                    globalMetadata.append(jsonString).append(",");
+                }
+            }
+            */
         }
         globalMetadata = new StringBuilder(globalMetadata.substring(0, globalMetadata.length() - 1) + "}");
         String g = globalMetadata.toString();
