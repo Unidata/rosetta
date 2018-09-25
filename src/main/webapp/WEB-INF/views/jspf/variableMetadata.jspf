@@ -86,7 +86,6 @@
     profile["displayName"] = '${fn:escapeXml(profile.displayName)}';
     profile["exampleValues"] = '${fn:escapeXml(profile.exampleValues)}';
     profile["metadataType"] = '${fn:escapeXml(profile.metadataType)}';
-    profile["metadataTypeStructure"] = '${fn:escapeXml(profile.metadataTypeStructure)}';
     metadataProfileVariableData.push(profile);
   </c:forEach>
 
