@@ -121,9 +121,9 @@ public class WizardManagerImpl implements WizardManager {
 
             }
 
-            // If eTuff.
+            // If eTUFF.
             if (template.getFormat().equals("etuff")) {
-                logger.info("Creating netCDF file for eTuff file " + dataFilePath);
+                logger.info("Creating netCDF file for eTUFF file " + dataFilePath);
                 TagUniversalFileFormat tuff = new TagUniversalFileFormat();
                 tuff.parse(dataFilePath);
                 String fullFileNameExt = FilenameUtils.getExtension(dataFilePath);
@@ -239,7 +239,6 @@ public class WizardManagerImpl implements WizardManager {
      */
     @Override
     public WizardData lookupPersistedWizardDataById(String id) {
-        logger.info("here");
         // Get the persisted wizard data.
         WizardData wizardData = wizardDataDao.lookupWizardDataById(id);
 
@@ -259,7 +258,7 @@ public class WizardManagerImpl implements WizardManager {
 
         HashMap<String, String> fileGlobals = null;
         if (wizardData.getDataFileType() != null) {
-            if (wizardData.getDataFileType().equals("eTuff")) {
+            if (wizardData.getDataFileType().equals("eTUFF")) {
                 fileGlobals = getGlobalMetadataFromTuffFile(id);
             }
         }
@@ -273,13 +272,13 @@ public class WizardManagerImpl implements WizardManager {
         } else {
 
             if (fileGlobals != null) {
-                List<edu.ucar.unidata.rosetta.domain.MetadataProfile> eTuff = metadataManager.getETuffProfile();
+                List<edu.ucar.unidata.rosetta.domain.MetadataProfile> eTUFF = metadataManager.getETUFFProfile();
 
                 Iterator it = fileGlobals.entrySet().iterator();
                 while (it.hasNext()) {
                     String group = null;
                     Map.Entry pair = (Map.Entry) it.next();
-                    for (edu.ucar.unidata.rosetta.domain.MetadataProfile profile : eTuff) {
+                    for (edu.ucar.unidata.rosetta.domain.MetadataProfile profile : eTUFF) {
 
                         if (profile.getAttributeName().equals(pair.getKey())) {
                              group = profile.getMetadataGroup();
