@@ -180,6 +180,7 @@ var GlobalMetadata = (function () {
                 $(this).removeClass("required");
                 storeGlobalMetadataEntry($(this).attr("id"), $(this).val());
                 isComplete();
+                toggleCategories();
             }
         });
     }
