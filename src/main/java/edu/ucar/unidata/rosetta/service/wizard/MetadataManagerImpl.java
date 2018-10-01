@@ -33,6 +33,10 @@ public class MetadataManagerImpl implements MetadataManager {
     @Resource(name = "wizardManager")
     private WizardManager wizardManager;
 
+    // name
+    //profile
+    //metadataTypeStructureName
+
     /**
      * Returns all eTUFF metadata profiles.
      *
