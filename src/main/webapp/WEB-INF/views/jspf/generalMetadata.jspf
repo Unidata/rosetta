@@ -3,7 +3,6 @@
    <input type="hidden" name="globalMetadata" value="" id="globalMetadata"/>
 
     <div id="generalMetadataAssignment">
-        <label class="error"></label>
     </div>
 
     <div class="buttonNav">
@@ -44,7 +43,6 @@
         profile["displayName"] = '${fn:escapeXml(profile.displayName)}';
         profile["exampleValues"] = '${fn:escapeXml(profile.exampleValues)}';
         profile["metadataGroup"] = '${fn:escapeXml(profile.metadataGroup)}';
-        profile["metadataValueType"] = '${fn:escapeXml(profile.metadataValueType)}';
         metadataProfileGeneralData.push(profile);
     </c:forEach>
 
