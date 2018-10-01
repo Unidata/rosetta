@@ -27,10 +27,11 @@ public class TestContext {
         return Mockito.mock(ResourceManager.class);
     }
 
-    @Bean
-    public DataManager dataManager() {
-        return Mockito.mock(DataManager.class);
-    }
+    // todo: DataManager no longer exits - does this need replaced?
+    //@Bean
+    //public DataManager dataManager() {
+    //    return Mockito.mock(DataManager.class);
+    //}
 
     @Bean
     public FileManager fileParserManager() {
