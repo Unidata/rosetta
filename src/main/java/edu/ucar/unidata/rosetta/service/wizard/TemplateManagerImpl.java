@@ -3,10 +3,6 @@
  * See LICENSE for license information.
  */
 package edu.ucar.unidata.rosetta.service.wizard;
-
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
 import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
@@ -15,13 +11,11 @@ import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.Variable;
 import edu.ucar.unidata.rosetta.domain.VariableInfo;
 import edu.ucar.unidata.rosetta.domain.VariableMetadata;
-import edu.ucar.unidata.rosetta.domain.resources.Community;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.wizard.GlobalMetadataDao;
 import edu.ucar.unidata.rosetta.repository.wizard.VariableDao;
-import edu.ucar.unidata.rosetta.repository.wizard.WizardDataDao;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.ServerInfoBean;
 
@@ -87,7 +81,6 @@ public class TemplateManagerImpl implements TemplateManager {
             format = "custom";
         }
         template.setFormat(format);
-        logger.info(format);
         if (!format.equals("etuff")) {
             template.setCommunity(wizardData.getCommunity());
             String platform = wizardData.getPlatform();
@@ -192,23 +185,20 @@ public class TemplateManagerImpl implements TemplateManager {
     }
 
     private void writeTemplateToFile(Template template, String id) throws RosettaFileException, IOException {
-        String downloadDirPath = FilenameUtils.concat(PropertyUtils.getDownloadDir(), id);
-        File downloadDir = new File(downloadDirPath);
-        if (!downloadDir.exists()) {
-            logger.info("Creating downloads directory at " + downloadDir.getPath());
-            if (!downloadDir.mkdirs()) {
-                throw new RosettaFileException("Unable to create downloads directory for " + id);
+        String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
+        File userFilesDir = new File(userFilesDirPath);
+        if (!userFilesDir.exists()) {
+            logger.info("Creating user files directory at " + userFilesDir.getPath());
+            if (!userFilesDir.mkdirs()) {
+                throw new RosettaFileException("Unable to create user files directory for " + id);
             }
         }
 
-        String templateFilePath = FilenameUtils.concat(downloadDirPath, "rosetta.template");
-        logger.info(templateFilePath);
-
+        String templateFilePath = FilenameUtils.concat(userFilesDirPath, "rosetta.template");
         String jsonString = JsonUtil.mapObjectToJSON(template);
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(
             new FileWriter(new File(templateFilePath)))) {
-            logger.info(jsonString);
             bufferedWriter.write(jsonString);
         }
     }
@@ -263,7 +253,6 @@ public class TemplateManagerImpl implements TemplateManager {
 
     private List<RosettaAttribute> populateVariableData(List<VariableMetadata> requiredMetadata, List<MetadataProfile> metadataProfiles) {
         List<RosettaAttribute> rosettaAttributes = new ArrayList<>();
-        logger.info("size: " + requiredMetadata.size());
         int i = 0;
         for (VariableMetadata variableMetadata : requiredMetadata) {
             RosettaAttribute rosettaAttribute = new RosettaAttribute();

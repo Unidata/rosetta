@@ -7,7 +7,6 @@ package edu.ucar.unidata.rosetta.controller.wizard;
 
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import edu.ucar.unidata.rosetta.service.wizard.MetadataManager;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import org.apache.log4j.Logger;
@@ -45,9 +44,6 @@ public class GeneralMetadataController implements HandlerExceptionResolver {
     private static final Logger logger = Logger.getLogger(GeneralMetadataController.class);
 
     private final ServletContext servletContext;
-
-    @Resource(name = "dataManager")
-    private DataManager dataManager;
 
     @Resource(name = "metadataManager")
     private MetadataManager metadataManager;

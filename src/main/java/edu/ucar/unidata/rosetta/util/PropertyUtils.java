@@ -42,12 +42,12 @@ public class PropertyUtils {
     }
 
     /**
-     * Retrieves the name of the directory used for storing files for downloading.
+     * Retrieves the name of the directory used for storing user files.
      *
-     * @return The name of the directory used for storing files for downloading.
+     * @return The name of the directory used for storing user files.
      */
-    public static String getDownloadDir() {
-        return propertiesDao.lookupDownloadDirectory();
+    public static String getUserFilesDir() {
+        return propertiesDao.lookupUserFilesDirectory();
     }
 
     /**
@@ -66,15 +66,6 @@ public class PropertyUtils {
             ipAddress = StringUtils.replaceChars(ipAddress, ".", "");
         }
         return ipAddress;
-    }
-
-    /**
-     * Retrieves the name of the directory used for storing uploaded files.
-     *
-     * @return The name of the directory used for storing uploaded files.
-     */
-    public static String getUploadDir() {
-        return propertiesDao.lookupUploadDirectory();
     }
 
     /**

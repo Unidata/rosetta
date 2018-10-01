@@ -42,8 +42,9 @@ public class MetadataManagerImpl implements MetadataManager {
      *
      * @return  All eTUFF metadata profiles.
      */
-    public List<MetadataProfile> getETUFFProfile() {
-        return metadataProfileDao.getMetadataProfileByType("eTUFF");
+    public List<MetadataProfile> getMetadataProfile(String metadataProfile) {
+        List<MetadataProfile> metadataProfiles = metadataProfileDao.getMetadataProfileByType(metadataProfile);
+        return metadataProfiles;
     }
 
     /**

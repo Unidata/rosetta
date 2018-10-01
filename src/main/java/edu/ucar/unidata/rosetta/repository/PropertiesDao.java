@@ -5,6 +5,8 @@
 
 package edu.ucar.unidata.rosetta.repository;
 
+import org.springframework.dao.DataRetrievalFailureException;
+
 /**
  * The data access object representing a rosetta property.
  *
@@ -13,16 +15,10 @@ package edu.ucar.unidata.rosetta.repository;
 public interface PropertiesDao {
 
   /**
-   * Looks up and retrieves the persisted uploads directory.
+   * Looks up and retrieves the persisted user files directory.
    *
-   * @return The persisted uploads directory.
+   * @return The persisted user files directory.
+   * @throws DataRetrievalFailureException If unable to lookup user files directory.
    */
-  public String lookupUploadDirectory();
-
-  /**
-   * Looks up and retrieves the persisted downloads directory.
-   *
-   * @return The persisted downloads directory.
-   */
-  public String lookupDownloadDirectory();
+  public String lookupUserFilesDirectory() throws DataRetrievalFailureException;
 }

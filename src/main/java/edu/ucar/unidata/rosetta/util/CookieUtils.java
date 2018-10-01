@@ -2,6 +2,7 @@ package edu.ucar.unidata.rosetta.util;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class CookieUtils {
 
@@ -15,4 +16,10 @@ public class CookieUtils {
         return cookie;
     }
 
+    public static void invalidateCookie(Cookie cookie, HttpServletResponse response) {
+        cookie.setValue("");
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+    }
 }

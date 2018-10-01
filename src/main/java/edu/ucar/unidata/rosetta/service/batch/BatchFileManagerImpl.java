@@ -138,9 +138,9 @@ public class BatchFileManagerImpl implements BatchFileManager {
 
     public String batchProcess(BatchProcessZip batchZipFile) throws IOException {
         String uniqueId = batchZipFile.getId();
-        String uploadDir = PropertyUtils.getUploadDir();
+        String userFilesDir = PropertyUtils.getUserFilesDir();
 
-        String filePath = FilenameUtils.concat(uploadDir, uniqueId);
+        String filePath = FilenameUtils.concat(userFilesDir, uniqueId);
         List<String> convertedFiles = new ArrayList<>();
 
         // make directory in which the uploaded zip file will be saved

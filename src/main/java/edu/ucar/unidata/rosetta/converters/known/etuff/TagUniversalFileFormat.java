@@ -5,7 +5,7 @@
 
 package edu.ucar.unidata.rosetta.converters.known.etuff;
 
-import edu.ucar.unidata.rosetta.service.wizard.MetadataManager;
+import edu.ucar.unidata.rosetta.repository.wizard.XmlMetadataProfileDao;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -50,8 +50,6 @@ import ucar.nc2.Variable;
 import ucar.nc2.jni.netcdf.Nc4Iosp;
 import ucar.nc2.time.CalendarDate;
 
-import javax.annotation.Resource;
-
 import static edu.ucar.unidata.rosetta.converters.utils.VariableAttributeUtils.getMaxMinAttrs;
 
 /**
@@ -63,9 +61,6 @@ import static edu.ucar.unidata.rosetta.converters.utils.VariableAttributeUtils.g
 public class TagUniversalFileFormat {
 
     private static Logger log = Logger.getLogger(TagUniversalFileFormat.class.getName());
-
-    @Resource(name = "metadataManager")
-    private MetadataManager metadataManager;
 
     private static String etagGroup = "Meta_eTag";
 
@@ -100,8 +95,8 @@ public class TagUniversalFileFormat {
 
         useNetcdf4 = Nc4Iosp.isClibraryPresent();
 
-
-        List<MetadataProfile> etuffProfile = metadataManager.getETUFFProfile();
+        XmlMetadataProfileDao metadataProfileDao = new XmlMetadataProfileDao();
+        List<MetadataProfile> etuffProfile =  metadataProfileDao.getMetadataProfileByType("eTUFF");
         etuffMap = etuffProfile.stream()
                 .collect(Collectors.toMap(
                         MetadataProfile::getAttributeName,

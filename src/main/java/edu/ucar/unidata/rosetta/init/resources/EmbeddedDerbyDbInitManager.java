@@ -390,6 +390,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                 "DataVariable=_FillValue",
                 "DataVariable=coordinates",
                 "DataVariable=coverage_content_type",
+                "DataVariable=valid_min",
+                "DataVariable=valid_max",
                 "Global=featureType",
                 "Global=conventions",
                 "MetadataGroup=geospatial_lat_start",

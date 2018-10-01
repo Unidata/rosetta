@@ -19,7 +19,7 @@ public interface MetadataManager {
      *
      * @return  All eTUFF metadata profiles.
      */
-    public List<MetadataProfile> getETUFFProfile();
+    public List<MetadataProfile> getMetadataProfile(String metadataProfile);
 
     /**
      * Finds and returns all the metadata profiles corresponding to the given ID

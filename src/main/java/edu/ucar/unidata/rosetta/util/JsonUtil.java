@@ -63,7 +63,7 @@ public class JsonUtil {
             ObjectMapper mapper = new ObjectMapper();
              jsonString = mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            logger.info(e);
+            logger.error(e);
         }
         return jsonString;
     }

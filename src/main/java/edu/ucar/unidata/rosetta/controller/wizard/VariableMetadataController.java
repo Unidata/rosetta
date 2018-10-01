@@ -9,7 +9,6 @@ package edu.ucar.unidata.rosetta.controller.wizard;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
-import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import edu.ucar.unidata.rosetta.service.wizard.MetadataManager;
 import edu.ucar.unidata.rosetta.service.wizard.UploadedFileManager;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
@@ -46,9 +45,6 @@ public class VariableMetadataController implements HandlerExceptionResolver {
     private static final Logger logger = Logger.getLogger(VariableMetadataController.class);
 
     private final ServletContext servletContext;
-
-    @Resource(name = "dataManager")
-    private DataManager dataManager;
 
     @Resource(name = "metadataManager")
     private MetadataManager metadataManager;
@@ -107,7 +103,7 @@ public class VariableMetadataController implements HandlerExceptionResolver {
 
         // Add parsed file data in JSON string format (to show in the SlickGrid).
         model.addAttribute("parsedData",
-                dataManager.parseDataFileByLine(wizardData.getId(),
+                uploadedFileManager.parseDataFileByLine(wizardData.getId(),
                         uploadedFileManager.getDataFile(rosettaCookie.getValue()).getFileName()));
         // Add delimiter to do additional client-side parsing for SlickGrid.
         model.addAttribute("delimiterSymbol",

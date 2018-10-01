@@ -185,6 +185,21 @@ $(document).ready(function ($) {
   });
 
 
+    /**
+     * STEP 6: convert and download
+     * remove storage and cookie
+     */
+  $("#convertAndDownload input").click(function () {
+      var name = "rosetta="; //Create the cookie name variable with cookie name concatenate with = sign
+      // Invalidate tjhe cookie.
+      var cookie = window.document.cookie;
+      if (cookie.includes("rosetta")) {
+          document.cookie = 'rosetta=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      }
+      // Remove everything from storage.
+      removeAllFromStorage();
+  });
+
 
 });
 

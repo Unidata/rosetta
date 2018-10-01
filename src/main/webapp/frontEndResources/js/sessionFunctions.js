@@ -121,6 +121,19 @@ function removeFromSession(key) {
     // add some jQuery method here for non-HTML5
   }
 }
+
+function removeFromStorage(key) {
+    if (typeof(Storage) !== "undefined") {
+        sessionStorage.removeItem(key);
+    }
+}
+
+function removeAllFromStorage() {
+    if (typeof(Storage) !== "undefined") {
+        sessionStorage.clear();
+    }
+}
+
 /*
 function removeFromVariableString(key) {
   var newString = "";

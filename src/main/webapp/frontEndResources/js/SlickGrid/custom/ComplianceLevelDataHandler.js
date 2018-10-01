@@ -15,13 +15,18 @@ var ComplianceLevelDataHandler = (function () {
     function populateComplianceLevelInputTags(key, complianceLevel) {        
 
         var metadataType = VariableStorageHandler.getVariableData(key, "metadataType");
-        // We will stash oru created tags here.
+        var metadataTypeStructure = VariableStorageHandler.getVariableData(key, "metadataTypeStructure");
+
+        // We will stash our created tags here.
         var metadataTags = [];
         // We will stash our required attribute names here.
         var required = [];
         var used = [];
         for (var i = 0; i < metadataProfileVariableData.length; i++) {
             var metadataProfile = metadataProfileVariableData[i];
+            var typeStructure = metadataTypeStructure;
+            var metadataTypeStructureName = metadataProfile.metadataTypeStructureName;
+
             if (metadataProfile.complianceLevel === "optional") {
                 metadataProfile.complianceLevel = "additional";
             }
@@ -33,20 +38,24 @@ var ComplianceLevelDataHandler = (function () {
                     metadataProfile.metadataType = "non-coordinate";
                 }
 
-                // Kludge
-                if (metadataProfile.attributeName.includes("valid_")) {
-                    continue;
-                }
-                
-                // Kludge
-                if (metadataProfile.attributeName === "calendar") {
-                    var metadataTypeStructure = VariableStorageHandler.getVariableData(key, "metadataTypeStructure");
-                    if (metadataTypeStructure === "latitude" || metadataTypeStructure === "longitude" || metadataTypeStructure === "vertical") {
+                if (typeStructure !== undefined) {
+                    if (typeStructure === "latitude") {
+                        typeStructure = "lat";
+                    } else if (typeStructure === "longitude") {
+                        typeStructure = "lon";
+                    } else if (typeStructure === "vertical") {
+                        typeStructure = "depth";
+                    } else {
+                        typeStructure = "time";
+                    }
+
+                    if (typeStructure !== metadataTypeStructureName) {
                         continue;
                     }
                 }
 
-                
+
+
                 if (!used.includes(metadataProfile.attributeName)) {
                     used.push(metadataProfile.attributeName);
                     var tag = createComplianceLevelTagElement(key, metadataProfile);
@@ -56,7 +65,7 @@ var ComplianceLevelDataHandler = (function () {
                         required.push(metadataProfile.attributeName);
                     }
                 }
-            } 
+            }
             
         }
         
@@ -75,7 +84,21 @@ var ComplianceLevelDataHandler = (function () {
         return metadataTagsAsAString;
     }
 
-
+    function getRequired(key) {
+        var used = [];
+        var required = [];
+        for (var i = 0; i < metadataProfileVariableData.length; i++) {
+            var metadataProfile = metadataProfileVariableData[i];
+            if (!used.includes(metadataProfile.attributeName)) {
+                used.push(metadataProfile.attributeName);
+                if (metadataProfile.complianceLevel === "required") {
+                    // Push attribute name onto required array.
+                    required.push(metadataProfile.attributeName);
+                }
+            }
+        }
+        storeData("_v" + key.replace("variableName", ""), required);
+    }
 
 
     /**
@@ -265,7 +288,8 @@ var ComplianceLevelDataHandler = (function () {
     
     // Expose these functions.
     return {
-        addComplainceLevelDataToDialog: addComplainceLevelDataToDialog
+        addComplainceLevelDataToDialog: addComplainceLevelDataToDialog,
+        getRequired: getRequired
     };
     
 

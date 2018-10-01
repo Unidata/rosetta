@@ -27,31 +27,14 @@ public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
   private SimpleJdbcInsert insertActor;
 
   /**
-   * Looks up and retrieves the persisted uploads directory.
+   * Looks up and retrieves the persisted user files directory.
    *
-   * @return The persisted uploads directory.
-   * @throws DataRetrievalFailureException If unable to lookup uploads directory.
+   * @return The persisted user files directory.
+   * @throws DataRetrievalFailureException If unable to lookup user files directory.
    */
   @Override
-  public String lookupUploadDirectory() throws DataRetrievalFailureException {
-    String sql = "SELECT * FROM properties WHERE propertyKey = 'rosetta.uploadDir'";
-    List<RosettaProperties> properties = getJdbcTemplate()
-        .query(sql, new JdbcPropertiesDao.DataMapper());
-    if (properties.isEmpty()) {
-      String message = "Unable to find persisted Rosetta properties";
-      logger.error(message);
-      throw new DataRetrievalFailureException(message);
-    }
-    return properties.get(0).getPropertyValue();
-  }
-
-  /**
-   * Looks up and retrieves the persisted downloads directory.
-   *
-   * @return The persisted downloads directory.
-   */
-  public String lookupDownloadDirectory() {
-    String sql = "SELECT * FROM properties WHERE propertyKey = 'rosetta.downloadDir'";
+  public String lookupUserFilesDirectory() throws DataRetrievalFailureException {
+    String sql = "SELECT * FROM properties WHERE propertyKey = 'rosetta.userFilesDir'";
     List<RosettaProperties> properties = getJdbcTemplate()
         .query(sql, new JdbcPropertiesDao.DataMapper());
     if (properties.isEmpty()) {
