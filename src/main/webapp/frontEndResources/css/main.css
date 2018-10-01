@@ -546,6 +546,7 @@ ul#delimiterList li {
 #generalMetadata ul#additional,
 #generalMetadata ul#recommended,
 #generalMetadata ul#required {
+  width:100%;
   margin:0 0 10px 0;
   float:left;
 }
@@ -555,7 +556,7 @@ ul#delimiterList li {
   float:left;
 }
 
-#generalMetadata ul#required li .required{
+#generalMetadata ul#required li .required {
   border: 1px solid #FF0000;
 }
 
