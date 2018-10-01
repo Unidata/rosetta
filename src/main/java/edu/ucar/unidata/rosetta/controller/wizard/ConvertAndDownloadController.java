@@ -5,10 +5,7 @@
 
 package edu.ucar.unidata.rosetta.controller.wizard;
 
-import edu.ucar.unidata.rosetta.domain.Data;
-import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-import edu.ucar.unidata.rosetta.service.wizard.DataManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -19,7 +16,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.ucar.unidata.rosetta.service.wizard.TemplateManager;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.WebUtils;
 
+import edu.ucar.unidata.rosetta.util.CookieUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import ucar.ma2.InvalidRangeException;
 
@@ -45,9 +42,6 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
     private static final Logger logger = Logger.getLogger(ConvertAndDownloadController.class);
 
     private final ServletContext servletContext;
-
-    @Resource(name = "dataManager")
-    private DataManager dataManager;
 
     @Resource(name = "wizardManager")
     private WizardManager wizardManager;
@@ -82,10 +76,10 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
         String netcdfFile = wizardManager.convertToNetcdf(rosettaCookie.getValue());
         String template =  wizardManager.getTemplateFile(rosettaCookie.getValue());
         // Add data object to Model.
-        String downloadDir = PropertyUtils.getDownloadDir();
+        String userFilesDir = PropertyUtils.getUserFilesDir();
 
-        model.addAttribute("netCDF", netcdfFile.replace(downloadDir, ""));
-        model.addAttribute("template", template.replace(downloadDir, ""));
+        model.addAttribute("netCDF", netcdfFile.replace(userFilesDir, ""));
+        model.addAttribute("template", template.replace(userFilesDir, ""));
 
         // Add current step to the Model.
         model.addAttribute("currentStep", "convertAndDownload");
@@ -102,8 +96,16 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
      * @return Redirect to previous step.
      */
     @RequestMapping(value = "/convertAndDownload", method = RequestMethod.POST)
-    public ModelAndView processConvertAndDownload() {
-        return new ModelAndView(new RedirectView("/generalMetadata", true));
+    public ModelAndView processConvertAndDownload(HttpServletRequest request, HttpServletResponse response) {
+
+        // Invalidate the cookie.
+        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+        if (rosettaCookie != null) {
+            CookieUtils.invalidateCookie(rosettaCookie, response);
+        }
+
+        // Take user back to first step.
+        return new ModelAndView(new RedirectView("/cfType", true));
     }
 
     /**

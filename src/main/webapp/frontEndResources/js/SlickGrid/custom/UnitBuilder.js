@@ -20,57 +20,46 @@ var UnitBuilder = (function () {
 
         // unit builder chooser
         $("#dialog #unitBuilder img#unitBuilderChooser").bind("click", function () {
-
             var unitString;
     
             // get the user selected values of the unit chooser
             var unitSelected = $("#dialog #unitBuilder select[name=\"unitSelected\"]").val();
 
             var prefixSelected = $("#dialog #unitBuilder select[name=\"unitPrefix\"]").val();
-            if (prefixSelected !== null) {
-                unitString = prefixSelected + unitSelected;
-            } else {
-                unitString = unitSelected;
+            if (prefixSelected === null) {
+                prefixSelected = "";
             }
 
-            // get what is in the units from variableMetadata value field
-            var unitsInStorage = getComplianceLevelVariableData(key, "units", "");
-            if (unitsInStorage === null) {
-                unitsInStorage = "";
-            }
+            var units = prefixSelected + unitSelected
+            console.log("prefix" + prefixSelected);
+            console.log("units" + unitSelected);
 
-            var metadataString;
+
             if ($(this).attr("alt") === "Add To Units") { // Adding to units
     
-                // get rid of any error messages
+                // Get rid of any error messages
                 $(this).parents("li").find("label[for=\"units\"].error").text("");
-    
-                unitsInStorage = unitsInStorage + unitString;
-    
-                // concatenation the entered value to any existing Metadata values pulled from the variableMetadata value field
-                metadataString = buildStringForSession(key + "Metadata", "units", unitsInStorage);
-    
-                // update the data in the variableMetadata value field
-                addToSession(key + "Metadata", metadataString);
+
+                VariableStorageHandler.storeComplianceLevelVariableData(key, "units", units,"required");
 
                 // update units display in dialog to show new value
-                $("#dialog #requiredMetadataAssignment input[name=\"units\"]").prop("value", unitsInStorage);
+                $("#dialog #requiredMetadataAssignment input[name=\"units\"]").prop("value", units);
     
     
             } else { // Removing from units
-                var index = unitsInStorage.lastIndexOf(unitString);
+                var index = units.lastIndexOf(units);
                 if (index >= 0) {
                     // lame
-                    var pre = unitsInStorage.substring(0, index);
-                    var post = unitsInStorage.substring(index + unitString.length);
+                    var pre = units.substring(0, index);
+                    var post = units.substring(index + units.length);
 
-                    storeComplianceLevelVariableData(key, "units", pre + post,"required");
+                    VariableStorageHandler.storeComplianceLevelVariableData(key, "units", pre + post,"required");
 
                     // update units display in dialog to show new value
                     $("#dialog #requiredMetadataAssignment input[name=\"units\"]").prop("value", pre + post);
 
                 } else {
-                    $("#dialog #requiredMetadataAssignment #unitBuilder").find("label.error").text("'" + unitString
+                    $("#dialog #requiredMetadataAssignment #unitBuilder").find("label.error").text("'" + units
                     + "' has NOT been detected in the current units and therefore cannot be removed.");
                 }
             }

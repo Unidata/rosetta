@@ -98,6 +98,8 @@ public class JdbcGlobalMetadataDao extends JdbcDaoSupport implements GlobalMetad
      * @throws DataRetrievalFailureException If unable to update persisted GlobalMetadata object.
      */
     public void updatePersistedGlobalMetadata(String wizardDataId, GlobalMetadata globalMetadata) throws DataRetrievalFailureException {
+        // Set the wizard Id.
+        globalMetadata.setWizardDataId(wizardDataId);
 
         // Delete the existing globalMetadata metadata.
         deletePersistedGlobalMetadata(globalMetadata);
@@ -126,7 +128,7 @@ public class JdbcGlobalMetadataDao extends JdbcDaoSupport implements GlobalMetad
      */
     public void deletePersistedGlobalMetadata(GlobalMetadata globalMetadata) throws DataRetrievalFailureException {
         String sql = "DELETE FROM globalMetadata WHERE wizardDataId = ?";
-        int rowsAffected = getJdbcTemplate().update(sql, globalMetadata);
+        int rowsAffected = getJdbcTemplate().update(sql, globalMetadata.getWizardDataId());
         if (rowsAffected <= 0) {
             String message =
                     "Unable to delete global metadata corresponding to id " + globalMetadata.getWizardDataId();

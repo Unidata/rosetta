@@ -122,7 +122,7 @@ public class JdbcWizardDataDao extends JdbcDaoSupport implements WizardDataDao {
     }
 
     /**
-     * Data mapper class for CF Type and related data.
+     * Data mapper class for Wizard data.
      */
     private static class WizardDataDataMapper implements RowMapper<WizardData> {
 

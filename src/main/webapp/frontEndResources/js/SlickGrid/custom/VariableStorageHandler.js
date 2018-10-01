@@ -331,7 +331,14 @@ var VariableStorageHandler = (function () {
                     // Do we have the required metadata?
 
                     // Get the list of required metadata items.
-                    var required = getStoredData("_v" + key.replace("variableName", "")).split(/,/g);
+                    var required = getStoredData("_v" + key.replace("variableName", ""));
+                    if (required === null) {
+                        console.log("here");
+                        ComplianceLevelDataHandler.getRequired(key);
+                        required = getStoredData("_v" + key.replace("variableName", ""));
+                    }
+                    var required = required.split(/,/g);
+
           
                     // Get the stored required data.
                     var storedRequired = getRequiredVariableData(key);

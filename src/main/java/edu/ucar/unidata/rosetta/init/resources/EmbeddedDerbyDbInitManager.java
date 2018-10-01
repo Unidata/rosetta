@@ -173,6 +173,33 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                     ")";
             createTable(createGlobalMetadataTable, props);
 
+            String createMpsMetadataProfileTable = "CREATE TABLE mpsMetadataProfiles " +
+                "(" +
+                "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                "attributeName VARCHAR(100), " +
+                "complianceLevel VARCHAR(12), " +
+                "description CLOB(64000), " +
+                "displayName VARCHAR(255), " +
+                "exampleValues CLOB(64000), " +
+                "metadataGroup VARCHAR(255), " +
+                "metadataProfileName VARCHAR(20), " +
+                "metadataProfileVersion VARCHAR(20), " +
+                "metadataType VARCHAR(255), " +
+                "metadataTypeStructureName VARCHAR(255), " +
+                "metadataValueType VARCHAR(255)" +
+                ")";
+            createTable(createMpsMetadataProfileTable, props);
+
+            String createIgnoreListTable = "CREATE TABLE ignoreList " +
+                    "(" +
+                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                    "metadataType VARCHAR(255), " +
+                    "attributeName VARCHAR(100)" +
+                    ")";
+            createTable(createIgnoreListTable, props);
+
+            insertMetadataProfiles(props);
+
             String createPlatformTable = "CREATE TABLE platforms " +
                     "(" +
                     "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
@@ -307,6 +334,82 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
         if (connection != null) {
             connection.close();
+        }
+    }
+
+    private void insertMetadataProfiles(Properties props) throws SQLException, RosettaDataException {
+        Connection connection;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            Class.forName(props.getProperty("jdbc.driverClassName"));
+        } catch (ClassNotFoundException e) {
+            throw new NonTransientDataAccessResourceException(
+                "Unable to find database drive class: " + e);
+        }
+
+        String username = StringUtils.stripToNull(props.getProperty("jdbc.username"));
+        String password = StringUtils.stripToNull(props.getProperty("jdbc.password"));
+        String url = props.getProperty("jdbc.url");
+        if (username != null && password != null) {
+            connection = DriverManager.getConnection(url, username, password);
+        } else {
+            connection = DriverManager.getConnection(url);
+        }
+
+        String insertStatement = "INSERT INTO mpsMetadataProfiles ("
+            + "attributeName, complianceLevel, description, exampleValues, "
+            + "metadataGroup, metadataProfileName, metadataProfileVersion, "
+            + "metadataType, metadataTypeStructureName, metadataValueType) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        MetadataProfileLoader metadataProfileLoader = new MetadataProfileLoader();
+        List<edu.ucar.unidata.rosetta.domain.MetadataProfile> metadataProfiles = metadataProfileLoader.loadMetadataProfiles();
+        for (edu.ucar.unidata.rosetta.domain.MetadataProfile metadataProfile : metadataProfiles) {
+            preparedStatement = connection.prepareStatement(insertStatement);
+            preparedStatement.setString(1, metadataProfile.getAttributeName());
+            preparedStatement.setString(2, metadataProfile.getComplianceLevel());
+            preparedStatement.setString(3, metadataProfile.getDescription());
+            preparedStatement.setString(4, metadataProfile.getExampleValues());
+            preparedStatement.setString(5, metadataProfile.getMetadataGroup());
+            preparedStatement.setString(6, metadataProfile.getMetadataProfileName());
+            preparedStatement.setString(7, metadataProfile.getMetadataProfileVersion());
+            preparedStatement.setString(8, metadataProfile.getMetadataType());
+            preparedStatement.setString(9, metadataProfile.getMetadataTypeStructureName());
+            preparedStatement.setString(10, metadataProfile.getMetadataValueType());
+
+            preparedStatement.executeUpdate();
+        }
+
+        String[] ignoreListValues = {
+                "CoordinateVariable=axis",
+                "CoordinateVariable=coverage_content_type",
+                "CoordinateVariable=_FillValue",
+                "CoordinateVariable=valid_min",
+                "CoordinateVariable=valid_max",
+                "DataVariable=_FillValue",
+                "DataVariable=coordinates",
+                "DataVariable=coverage_content_type",
+                "DataVariable=valid_min",
+                "DataVariable=valid_max",
+                "Global=featureType",
+                "Global=conventions",
+                "MetadataGroup=geospatial_lat_start",
+                "MetadataGroup=geospatial_lon_start",
+                "MetadataGroup=time_coverage_start",
+                "MetadataGroup=geospatial_lat_end",
+                "MetadataGroup=geospatial_lon_end",
+                "MetadataGroup=time_coverage_end"
+        };
+
+
+        insertStatement = "INSERT INTO ignoreList (metadataType, attributeName) VALUES (?, ?)";
+        for (int i = 0; i < ignoreListValues.length; i++) {
+            preparedStatement = connection.prepareStatement(insertStatement);
+            String[] ignore = ignoreListValues[i].split("=");
+            preparedStatement.setString(1, ignore[0]);
+            preparedStatement.setString(2, ignore[1]);
+            preparedStatement.executeUpdate();
         }
     }
 

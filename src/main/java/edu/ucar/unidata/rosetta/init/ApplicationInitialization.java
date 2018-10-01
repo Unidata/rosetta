@@ -44,8 +44,7 @@ public class ApplicationInitialization implements ServletContextListener {
   private static final String ROSETTA_HOME = System
       .getProperty("rosetta.content.root.path");  // set in $JAVA_OPTS
   private static final String CONFIG_FILE = "application.properties";
-  private static final String DOWNLOAD_DIR = "downloads";
-  private static final String UPLOAD_DIR = "uploads";
+  private static final String USER_FILES_DIR = "user_files";
   private static final int DEFAULT_MAX_UPLOAD_SIZE = 52430000;
 
   /**
@@ -102,7 +101,7 @@ public class ApplicationInitialization implements ServletContextListener {
    * Information from the application.properties file and JAVA_OPTS is read and used to create the
    * following resources needed by rosetta if they do not already exit:
    *
-   * - ROSETTA_HOME - uploads & downloads directory - rosetta database
+   * - ROSETTA_HOME - user_files directory - rosetta database
    *
    * @param servletContextEvent Event notifications regarding changes to the ServletContext
    * lifecycle.
@@ -133,11 +132,8 @@ public class ApplicationInitialization implements ServletContextListener {
         props.setProperty("rosetta.maxUpload", String.valueOf(DEFAULT_MAX_UPLOAD_SIZE));
       }
 
-      // Create directory where downloads are stashed.
-      props.setProperty("rosetta.downloadDir", createDownloadsDirectory());
-
-      // Create directory where uploads are stashed.
-      props.setProperty("rosetta.uploadDir", createUploadDirectory());
+      // Create directory where user files are stashed.
+      props.setProperty("rosetta.userFilesDir", createUserFilesDirectory());
 
       // Compare properties between
       Properties missingProperties = comparePropertiesBetweenVersions(props);
@@ -201,28 +197,28 @@ public class ApplicationInitialization implements ServletContextListener {
   }
 
   /**
-   * Create directory where rosetta stashes files that will be downloaded by users.
+   * Create directory where rosetta stashes files uploaded/downloaded by users.
    *
-   * @return The full path to the downloads directory.
-   * @throws IOException If unable to create the downloads directory.
+   * @return The full path to the user_files directory.
+   * @throws IOException If unable to create the user_files directory.
    */
-  private String createDownloadsDirectory() throws IOException {
-    File downloadDir = new File(FilenameUtils.concat(ROSETTA_HOME, DOWNLOAD_DIR));
+  private String createUserFilesDirectory() throws IOException {
+    File userFilesDir = new File(FilenameUtils.concat(ROSETTA_HOME, USER_FILES_DIR));
 
     // If this directory doesn't exist, create it.
-    if (!downloadDir.exists()) {
-      logger.info("Creating downloads directory at " + downloadDir.getPath());
-      if (!downloadDir.mkdirs()) {
-        throw new IOException("Unable to create downloads directory.");
+    if (!userFilesDir.exists()) {
+      logger.info("Creating user_files directory at " + userFilesDir.getPath());
+      if (!userFilesDir.mkdirs()) {
+        throw new IOException("Unable to create user_files directory.");
       }
     }
-    return String.valueOf(downloadDir);
+    return String.valueOf(userFilesDir);
   }
 
   /**
    * Create the very important ROSETTA_HOME directory, in which data is stored.
    *
-   * @throws IOException If unable to create the downloads directory.
+   * @throws IOException If unable to create the ROSETTA_HOME directory.
    */
   private void createRosettaHomeDirectory() throws IOException {
     File rosettaHome = new File(ROSETTA_HOME);
@@ -237,24 +233,6 @@ public class ApplicationInitialization implements ServletContextListener {
     }
   }
 
-  /**
-   * Create directory where rosetta stashes files uploaded by users.
-   *
-   * @return The full path to the uploads directory.
-   * @throws IOException If unable to create the uploads directory.
-   */
-  private String createUploadDirectory() throws IOException {
-    File uploadDir = new File(FilenameUtils.concat(ROSETTA_HOME, UPLOAD_DIR));
-
-    // If this directory doesn't exist, create it.
-    if (!uploadDir.exists()) {
-      logger.info("Creating uploads directory at " + uploadDir.getPath());
-      if (!uploadDir.mkdirs()) {
-        throw new IOException("Unable to create uploads directory.");
-      }
-    }
-    return String.valueOf(uploadDir);
-  }
 
   /**
    * Loads and returns all the properties listed in the DEFAULT application.properties configuration

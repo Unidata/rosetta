@@ -155,10 +155,7 @@
     </bean>
 
     <!-- Declaration for resource use -->
-
-
     <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileManager"/>
-    <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileParserManager"/>
     <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.CFTypeValidator"
           id="cfTypeValidator"/>
     <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.FileValidator"
@@ -201,10 +198,6 @@
     <bean class="edu.ucar.unidata.rosetta.service.wizard.TemplateManagerImpl" id="templateManager">
         <property name="variableDao" ref="variableDao"/>
         <property name="globalMetadataDao" ref="globalMetadataDao"/>
-    </bean>
-
-    <bean class="edu.ucar.unidata.rosetta.service.wizard.DataManagerImpl" id="dataManager">
-        <property name="dataDao" ref="dataDao"/>
     </bean>
 
     <bean class="edu.ucar.unidata.rosetta.service.wizard.MetadataManagerImpl" id="metadataManager">
@@ -271,20 +264,17 @@
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcWizardDataDao" id="wizardDataDao">
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcMetadataProfileDao" id="metadataProfileDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
-    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcDataDao" id="dataDao">
+    <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcWizardDataDao" id="wizardDataDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
     <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcVariableDao" id="variableDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
-
-    <bean class="edu.ucar.unidata.rosetta.repository.wizard.XmlMetadataProfileDao"
-          id="metadataProfileDao"/>
 
     <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcUploadedFileDao"
           id="uploadedFileDao">

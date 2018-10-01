@@ -11,6 +11,8 @@ import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.wizard.UploadedFileDao;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
@@ -25,6 +27,20 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
 
     @Resource(name = "fileManager")
     private FileManager fileManager;
+
+    /**
+     * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
+     *
+     * @param id The unique id associated with the file (a subdir in the uploads directory).
+     * @param dataFileName The file to parse.
+     * @return A JSON String of the file data parsed by line.
+     * @throws RosettaFileException For any file I/O or JSON conversions problems.
+     */
+    @Override
+    public String parseDataFileByLine(String id, String dataFileName) throws RosettaFileException {
+        String filePath = FilenameUtils.concat(FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id), dataFileName);
+        return fileManager.parseByLine(filePath);
+    }
 
     /**
      * Returns the data file corresponding to the given ID as an UploadedFile object.
@@ -122,7 +138,7 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
                         if (!uploadedFile.getFileName().equals(persistedFile.getFileName())) {
                             int index = uploadedFiles.indexOf(uploadedFile);
                             // Write data file to disk.
-                            String fileName = fileManager.writeUploadedFileToDisk(PropertyUtils.getUploadDir(),
+                            String fileName = fileManager.writeUploadedFileToDisk(PropertyUtils.getUserFilesDir(),
                                     id, uploadedFile.getFileName(), uploadedFile.getFile());
                             // Update file name with CSV version.
                             uploadedFile.setFileName(fileName);

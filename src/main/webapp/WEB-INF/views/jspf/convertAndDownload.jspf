@@ -1,15 +1,6 @@
 <h3>Download Converted File</h3>
 
 <ul id="download">
-    <%--
-<c:choose>
-    <c:when test="${not empty data.zip}">
-    --%>
-    <%-- Show the zip file. --%>
-    <%--   <li>Converted file and template: <a href="${baseUrl}/download/${data.id}/${data.zip}">${data.zip}</a></li>
-</c:when>
-<c:otherwise>
---%>
     <%-- List individual files. --%>
     <c:if test="${not empty netCDF}">
         <li>NetCDF File: <a
@@ -20,12 +11,9 @@
                 href="${baseUrl}/download/${template}">template</a>
         </li>
     </c:if>
-    <%--
-</c:otherwise>
-</c:choose>
---%>
 </ul>
 
 
-<%-- Show the previous button. --%>
-<input type="submit" name="submit" value="Previous" class="button"/>
+<%-- Show the finished button. --%>
+<input type="submit" name="submit" value="Finish*" class="button">
+<p><small>* Click this button after you have downloaded your converted files.</small></p>

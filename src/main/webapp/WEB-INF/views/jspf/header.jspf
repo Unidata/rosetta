@@ -6,6 +6,7 @@
     </a>
     <%-- future login & account links will go here --%>
     <ul class="nav">
+        <%--
         <c:choose>
             <c:when test="${loggedIn}">
                 <sec:authorize access="hasRole('ROLE_ADMIN')">
@@ -42,6 +43,7 @@
                     Information</a></li>
             </ul>
         </li>
+        --%>
     </ul>
 
 

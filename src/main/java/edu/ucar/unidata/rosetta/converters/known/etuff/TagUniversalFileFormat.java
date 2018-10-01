@@ -5,10 +5,10 @@
 
 package edu.ucar.unidata.rosetta.converters.known.etuff;
 
+import edu.ucar.unidata.rosetta.repository.wizard.XmlMetadataProfileDao;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,16 +30,10 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import edu.ucar.unidata.rosetta.domain.MetadataProfile;
-import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
 import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
 import edu.ucar.unidata.rosetta.domain.Template;
-import edu.ucar.unidata.rosetta.repository.wizard.XmlMetadataProfileDao;
 import edu.ucar.unidata.rosetta.util.PathUtils;
-import edu.ucar.unidata.rosetta.util.RosettaAttributeUtils;
 import edu.ucar.unidata.rosetta.util.RosettaGlobalAttributeUtils;
-import edu.ucar.unidata.rosetta.converters.known.etuff.Ob;
-import edu.ucar.unidata.rosetta.converters.known.etuff.HistBin;
-import edu.ucar.unidata.rosetta.util.VariableInfoUtils;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayFloat;
@@ -102,7 +96,7 @@ public class TagUniversalFileFormat {
         useNetcdf4 = Nc4Iosp.isClibraryPresent();
 
         XmlMetadataProfileDao metadataProfileDao = new XmlMetadataProfileDao();
-        List<MetadataProfile> etuffProfile = metadataProfileDao.getMetadataProfileByType("eTUFF");
+        List<MetadataProfile> etuffProfile =  metadataProfileDao.getMetadataProfileByType("eTUFF");
         etuffMap = etuffProfile.stream()
                 .collect(Collectors.toMap(
                         MetadataProfile::getAttributeName,

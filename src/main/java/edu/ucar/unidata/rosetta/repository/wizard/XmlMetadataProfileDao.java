@@ -63,7 +63,7 @@ public class XmlMetadataProfileDao implements MetadataProfileDao {
         List<MetadataProfile> profiles = new ArrayList<>();
         try {
             // Get the metadata profile file.
-            Resource r = new ClassPathResource(FilenameUtils.concat("resources/MpsProfilesRosetta/", fileName + ".xml"));
+            Resource r = new ClassPathResource(FilenameUtils.concat("resources/MpsProfilesRosetta", "MpsProfileOutput_" + fileName + ".xml"));
             File file = r.getFile();
 
             // Need a DocumentBuilder to work with XML files.

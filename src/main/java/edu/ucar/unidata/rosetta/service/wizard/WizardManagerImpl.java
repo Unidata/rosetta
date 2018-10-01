@@ -78,31 +78,31 @@ public class WizardManagerImpl implements WizardManager {
         String netcdfFile = null;
 
         Template template = templateManager.createTemplate(id);
-        String downloadDirPath = FilenameUtils.concat(PropertyUtils.getDownloadDir(), id);
-        File downloadDir = new File(downloadDirPath);
-        if (!downloadDir.exists()) {
-            logger.info("Creating downloads directory at " + downloadDir.getPath());
-            if (!downloadDir.mkdirs()) {
-                throw new RosettaFileException("Unable to create downloads directory for " + id);
-            }
+        logger.info(template);
+
+        String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
+        File userFilesDir = new File(userFilesDirPath);
+        if (!userFilesDir.exists()) {
+            // This should exist by now.
+            throw new RosettaFileException("Unable to locate user files directory for " + id);
         }
 
-        String templateFilePath = FilenameUtils.concat(downloadDirPath, "rosetta.template");
-        String uploadDirPath = FilenameUtils.concat(PropertyUtils.getUploadDir(), id);
-        String dataFilePath = FilenameUtils.concat(uploadDirPath, uploadedFileManager.getDataFile(id).getFileName());
+        String templateFilePath = FilenameUtils.concat(userFilesDirPath, "rosetta.template");
+        String dataFilePath = FilenameUtils.concat(userFilesDirPath, uploadedFileManager.getDataFile(id).getFileName());
 
-        String dest = null;
         // Load main template.
         try {
             Template baseTemplate = TemplateFactory.makeTemplateFromJsonFile(Paths.get(templateFilePath));
+            logger.info("basetemplate: " + baseTemplate);
             String format = baseTemplate.getFormat();
+            logger.info("format: " + format);
             baseTemplate.setFormat(format.toLowerCase());
-            baseTemplate.setCfType(baseTemplate.getCfType().toLowerCase());
-            template.setCfType(template.getCfType().toLowerCase());
             template.setFormat(template.getFormat().toLowerCase());
 
             // If custom.
             if (format.equals("custom")) {
+                baseTemplate.setCfType(baseTemplate.getCfType().toLowerCase());
+                template.setCfType(template.getCfType().toLowerCase());
                 logger.info("Creating netCDF file for custom data file " + dataFilePath);
                 // now find the proper converter
                 NetcdfFileManager dsgWriter = null;
@@ -113,29 +113,23 @@ public class WizardManagerImpl implements WizardManager {
                     }
                 }
                 netcdfFile = dsgWriter.createNetcdfFile(Paths.get(dataFilePath), template);
-                logger.info(netcdfFile);
-
-                dest = netcdfFile.replace("uploads", "downloads");
-                logger.info(dest);
-                FileUtils.copyFile(new File(netcdfFile), new File(dest));
+                //dest = netcdfFile.replace("uploads", "downloads");
+                //FileUtils.copyFile(new File(netcdfFile), new File(dest));
 
             }
 
-            // If eTuff.
+            // If eTUFF.
             if (template.getFormat().equals("etuff")) {
-                logger.info("Creating netCDF file for eTuff file " + dataFilePath);
+                logger.info("Creating netCDF file for eTUFF file " + dataFilePath);
                 TagUniversalFileFormat tuff = new TagUniversalFileFormat();
                 tuff.parse(dataFilePath);
                 String fullFileNameExt = FilenameUtils.getExtension(dataFilePath);
                 String ncfile = dataFilePath.replace(fullFileNameExt, "nc");
-                ncfile = FilenameUtils.concat(PropertyUtils.getDownloadDir(), ncfile);
+                ncfile = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), ncfile);
                 netcdfFile = tuff.convert(ncfile, template);
 
-                logger.info(netcdfFile);
-
-                dest = netcdfFile.replace("uploads", "downloads");
-                logger.info(dest);
-                FileUtils.copyFile(new File(netcdfFile), new File(dest));
+                //dest = netcdfFile.replace("uploads", "downloads");
+                //FileUtils.copyFile(new File(netcdfFile), new File(dest));
             }
 
 
@@ -147,23 +141,30 @@ public class WizardManagerImpl implements WizardManager {
         }
 
 
-        return dest;
+        return netcdfFile;
     }
 
     public String getTemplateFile(String id) {
-        String downloadDirPath = FilenameUtils.concat(PropertyUtils.getDownloadDir(), id);
-        return FilenameUtils.concat(downloadDirPath, "rosetta.template");
+        String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
+        return FilenameUtils.concat(userFilesDirPath, "rosetta.template");
     }
 
+    /**
+     * Returns a map of global metadata gleaned from the uploaded data file.
+     *
+     * @param id The ID corresponding to the transaction.
+     * @return  A map of global metadata.
+     */
+    private HashMap<String, String> getGlobalMetadataFromDataFile(String id) {
+        // Get the path to the user_files directory corresponding to the given ID.
+        String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
+        // Get the path to the uploaded data file.
+        String dataFilePath = FilenameUtils.concat(userFilesDirPath, uploadedFileManager.getDataFile(id).getFileName());
 
-    public HashMap<String, String> getGlobalMetadataFromTuffFile(String id) {
-        String uploadDirPath = FilenameUtils.concat(PropertyUtils.getUploadDir(), id);
-        String dataFilePath = FilenameUtils.concat(uploadDirPath, uploadedFileManager.getDataFile(id).getFileName());
-
+        // Right now eTUFF is the only cf Type we are going this for.
         TagUniversalFileFormat tuff = new TagUniversalFileFormat();
         tuff.parse(dataFilePath);
         return tuff.getGlobalMetadata();
-
     }
 
     /**
@@ -239,7 +240,6 @@ public class WizardManagerImpl implements WizardManager {
      */
     @Override
     public WizardData lookupPersistedWizardDataById(String id) {
-        logger.info("here");
         // Get the persisted wizard data.
         WizardData wizardData = wizardDataDao.lookupWizardDataById(id);
 
@@ -257,29 +257,35 @@ public class WizardManagerImpl implements WizardManager {
         // Get persisted global metadata if it exists.
         List<GlobalMetadata> persisted = globalMetadataDao.lookupGlobalMetadata(id);
 
+        // Get any global metadata that may exist in the data file.
         HashMap<String, String> fileGlobals = null;
         if (wizardData.getDataFileType() != null) {
-            if (wizardData.getDataFileType().equals("eTuff")) {
-                fileGlobals = getGlobalMetadataFromTuffFile(id);
+            if (wizardData.getDataFileType().equals("eTUFF")) {
+                fileGlobals = getGlobalMetadataFromDataFile(id);
             }
         }
-        StringBuilder globalMetadata = new StringBuilder("{");
+        // Build the json string to the global metadata to the client.
+        StringBuilder globalMetadata = new StringBuilder();
         if (persisted.size() > 0) {
+            // We have persisted global metadata.
             for (GlobalMetadata item : persisted) {
-               String jsonGlobalMetadataString = JsonUtil.convertGlobalDataToJson(item, fileGlobals);
+                String jsonGlobalMetadataString = convertGlobalDataToJson(item, fileGlobals);
                 globalMetadata.append(jsonGlobalMetadataString).append(",");
             }
-
         } else {
+            // No persisted global metadata.
 
             if (fileGlobals != null) {
-                List<edu.ucar.unidata.rosetta.domain.MetadataProfile> eTuff = metadataManager.getETuffProfile();
+                // Kludge to get the corresponding metadata group from the eTuff profile (as it is not included
+                // in the global metadata we glean from the data file.
+                List<edu.ucar.unidata.rosetta.domain.MetadataProfile> eTUFF = metadataManager.getMetadataProfile("eTUFF");
 
+                // Iterate through the file globals and add the metadataGroup information.
                 Iterator it = fileGlobals.entrySet().iterator();
                 while (it.hasNext()) {
                     String group = null;
                     Map.Entry pair = (Map.Entry) it.next();
-                    for (edu.ucar.unidata.rosetta.domain.MetadataProfile profile : eTuff) {
+                    for (edu.ucar.unidata.rosetta.domain.MetadataProfile profile : eTUFF) {
 
                         if (profile.getAttributeName().equals(pair.getKey())) {
                              group = profile.getMetadataGroup();
@@ -287,25 +293,39 @@ public class WizardManagerImpl implements WizardManager {
                     }
                     if (group != null) {
                         String jsonString =
-                                "\"" +
-                                        pair.getKey() + "__" +
-                                        group + "\":" +
-                                        "\"" + pair.getValue() + "\"";
-                        it.remove(); // avoids a ConcurrentModificationException
+                                "\"" + pair.getKey() + "__" + group + "\":" + "\"" + pair.getValue() + "\"";
+                        it.remove(); // Avoids a ConcurrentModificationException.
                         globalMetadata.append(jsonString).append(",");
                     }
                 }
             }
-
         }
-        globalMetadata = new StringBuilder(globalMetadata.substring(0, globalMetadata.length() - 1) + "}");
-        String g = globalMetadata.toString();
-        if (g.equals("}")) {
-            g = "";
+        String jsonString = globalMetadata.toString();
+        if (!jsonString.equals("")) {
+            jsonString = jsonString.substring(0, jsonString.length() - 1);
+            jsonString = "{" + jsonString + "}";
         }
-        wizardData.setGlobalMetadata(g);
+        wizardData.setGlobalMetadata(jsonString);
         return wizardData;
     }
+
+
+    public static String convertGlobalDataToJson(GlobalMetadata globalMetadata, HashMap<String, String> fileGlobals) {
+
+        String value = globalMetadata.getMetadataValue();
+
+        // We have globals from a file.
+        if (fileGlobals != null) {
+            if (value.equals("")) {
+                value = fileGlobals.get(globalMetadata.getMetadataKey());
+            }
+        }
+        return "\"" +
+                globalMetadata.getMetadataKey() + "__" +
+                globalMetadata.getMetadataGroup() + "\":" +
+                "\"" + value + "\"";
+    }
+
 
     /**
      * Examines the given MetadataProfile object to see if one of its communities matches the provided community name.
@@ -331,7 +351,7 @@ public class WizardManagerImpl implements WizardManager {
      * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
      * Used in the wizard for header line selection.
      *
-     * @param id The unique id associated with the file (a sub directory in the uploads directory).
+     * @param id The unique id associated with the file (a sub directory in the user_files directory).
      * @return A JSON string of the file data parsed by line.
      * @throws RosettaFileException For any file I/O or JSON conversions problems.
      */
@@ -339,7 +359,7 @@ public class WizardManagerImpl implements WizardManager {
     public String parseDataFileByLine(String id) throws RosettaFileException {
         UploadedFile dataFile = uploadedFileDao.lookupDataFileById(id);
         String filePath = FilenameUtils
-                .concat(FilenameUtils.concat(PropertyUtils.getUploadDir(), id), dataFile.getFileName());
+                .concat(FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id), dataFile.getFileName());
         return fileManager.parseByLine(filePath);
     }
 

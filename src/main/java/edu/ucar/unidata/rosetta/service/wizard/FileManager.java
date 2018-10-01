@@ -9,6 +9,7 @@ import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import java.io.File;
 import java.util.List;
+
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 
@@ -20,37 +21,17 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 public interface FileManager {
 
   /**
-   * Compresses the contents of a directory.
-   *
-   * @param directoryToCompress The path to the directory to compress.
-   * @param fileName The name of the compressed file.
-   * @throws RosettaFileException If unable to compress the contents of the directory.
-   */
-  public void compress(String directoryToCompress, String fileName) throws RosettaFileException;
-
-  /**
-   * Creates a subdirectory in the Rosetta download directory with the name of the provided unique
+   * Creates a subdirectory in the Rosetta user_files directory with the name of the provided unique
    * ID, into which converted data files and Rosetta templates will be stashed and made available
    * for download by the user.
    *
-   * @param downloadDir The path to the Rosetta download directory.
+   * @param userFilesDir The path to the Rosetta user files directory.
    * @param id The unique ID that will become the name of the subdirectory.
-   * @return The full path name to the created download subdirectory.
-   * @throws RosettaFileException If unable to create download subdirectory.
+   * @return The full path name to the created user files subdirectory.
+   * @throws RosettaFileException If unable to create user files subdirectory.
    */
-  public String createDownloadSubDirectory(String downloadDir, String id)
-      throws RosettaFileException;
-
-  /**
-   * Creates a subdirectory in the Rosetta upload directory with the name of the provided unique ID,
-   * into which uploaded files with be stashed.
-   *
-   * @param uploadDir The path to the Rosetta upload directory.
-   * @param id The unique ID that will become the name of the subdirectory.
-   * @return The full path name to the created upload subdirectory.
-   * @throws RosettaFileException If unable to create upload subdirectory.
-   */
-  public String createUploadSubDirectory(String uploadDir, String id) throws RosettaFileException;
+  public String createUserFilesSubDirectory(String userFilesDir, String id)
+          throws RosettaFileException;
 
   /**
    * A simple method that reads each line of a file, and looks for blank lines. Blank line = empty,
@@ -118,17 +99,6 @@ public interface FileManager {
   public Data readDataObject(String filePathUploadDir) throws RosettaFileException;
 
   /**
-   * Uncompresses the provided file into the given directory.
-   *
-   * @param uploadDirPath The path to the uploads directory.
-   * @param id The unique id associated with the file (a subdirectory in the uploads directory).
-   * @param fileName The data file to uncompress.
-   * @throws RosettaFileException If unable to uncompress data file.
-   */
-  public void uncompress(String uploadDirPath, String id, String fileName)
-      throws RosettaFileException;
-
-  /**
    * Writes a serializable Data object to disk in the template file.
    *
    * @param filePathDownloadDir The path to the download sub directory in which to write the
@@ -139,18 +109,21 @@ public interface FileManager {
   public void writeDataObject(String filePathDownloadDir, Data data) throws RosettaFileException;
 
   /**
-   * Creates a subdirectory in the designated uploads directory using the (unique) id and writes the
-   * given file to the uploads subdirectory.
+   * Creates a subdirectory in the designated user files directory using the (unique) id and writes the
+   * given file to the user files subdirectory.
    *
-   * @param uploadDirPath The path to the uploads directory.
-   * @param id The unique id associated with the file (a subdirectory in the uploads directory).
+   * @param userFilesDirPath The path to the user files directory.
+   * @param id The unique id associated with the file (a subdirectory in the user files directory).
    * @param fileName The name of the file to save to disk.
    * @param file The CommonsMultipartFile to save to disk.
    * @return The name of the saved file on disk (can be different than the downloaded file).
+   * @throws SecurityException If unable to write file to disk because of a JVM security manager
+   * violation.
    * @throws RosettaFileException If unable to write file to disk.
+   * @throws RosettaFileException If a file conversion exception occurred.
    */
-  public String writeUploadedFileToDisk(String uploadDirPath, String id, String fileName,
-      CommonsMultipartFile file) throws RosettaFileException;
+  public String writeUploadedFileToDisk(String userFilesDirPath, String id, String fileName,
+                                        CommonsMultipartFile file) throws RosettaFileException;
 }
 
 

@@ -355,7 +355,7 @@ function bindDialogEvents(key) {
 
 
     // variable name
-    //$("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").autocomplete({ source: cfStandards, delay: 0});
+    $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").autocomplete({ source: cfStandards, delay: 1});
 
     // Variable name assignment.
     $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").focusout(function () {
