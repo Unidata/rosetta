@@ -155,15 +155,22 @@ public class WizardManagerImpl implements WizardManager {
         return FilenameUtils.concat(downloadDirPath, "rosetta.template");
     }
 
-
-    public HashMap<String, String> getGlobalMetadataFromTuffFile(String id) {
+    /**
+     * Returns a map of global metadata gleaned from the uploaded data file.
+     *
+     * @param id The ID corresponding to the transaction.
+     * @return  A map of global metadata.
+     */
+    private HashMap<String, String> getGlobalMetadataFromDataFile(String id) {
+        // Get the path to the upload directory corresponding to the given ID.
         String uploadDirPath = FilenameUtils.concat(PropertyUtils.getUploadDir(), id);
+        // Get the path to the uploaded data file.
         String dataFilePath = FilenameUtils.concat(uploadDirPath, uploadedFileManager.getDataFile(id).getFileName());
 
+        // Right now eTUFF is the only cf Type we are going this for.
         TagUniversalFileFormat tuff = new TagUniversalFileFormat();
         tuff.parse(dataFilePath);
         return tuff.getGlobalMetadata();
-
     }
 
     /**
@@ -256,24 +263,30 @@ public class WizardManagerImpl implements WizardManager {
         // Get persisted global metadata if it exists.
         List<GlobalMetadata> persisted = globalMetadataDao.lookupGlobalMetadata(id);
 
+        // Get any global metadata that may exist in the data file.
         HashMap<String, String> fileGlobals = null;
         if (wizardData.getDataFileType() != null) {
             if (wizardData.getDataFileType().equals("eTUFF")) {
-                fileGlobals = getGlobalMetadataFromTuffFile(id);
+                fileGlobals = getGlobalMetadataFromDataFile(id);
             }
         }
-        StringBuilder globalMetadata = new StringBuilder("{");
+        // Build the json string to the global metadata to the client.
+        StringBuilder globalMetadata = new StringBuilder();
         if (persisted.size() > 0) {
+            // We have persisted global metadata.
             for (GlobalMetadata item : persisted) {
-               String jsonGlobalMetadataString = JsonUtil.convertGlobalDataToJson(item, fileGlobals);
+                String jsonGlobalMetadataString = convertGlobalDataToJson(item, fileGlobals);
                 globalMetadata.append(jsonGlobalMetadataString).append(",");
             }
-
         } else {
+            // No persisted global metadata.
 
             if (fileGlobals != null) {
+                // Kludge to get the corresponding metadata group from the eTuff profile (as it is not included
+                // in the global metadata we glean from the data file.
                 List<edu.ucar.unidata.rosetta.domain.MetadataProfile> eTUFF = metadataManager.getETUFFProfile();
 
+                // Iterate through the file globals and add the metadataGroup information.
                 Iterator it = fileGlobals.entrySet().iterator();
                 while (it.hasNext()) {
                     String group = null;
@@ -286,25 +299,39 @@ public class WizardManagerImpl implements WizardManager {
                     }
                     if (group != null) {
                         String jsonString =
-                                "\"" +
-                                        pair.getKey() + "__" +
-                                        group + "\":" +
-                                        "\"" + pair.getValue() + "\"";
-                        it.remove(); // avoids a ConcurrentModificationException
+                                "\"" + pair.getKey() + "__" + group + "\":" + "\"" + pair.getValue() + "\"";
+                        it.remove(); // Avoids a ConcurrentModificationException.
                         globalMetadata.append(jsonString).append(",");
                     }
                 }
             }
-
         }
-        globalMetadata = new StringBuilder(globalMetadata.substring(0, globalMetadata.length() - 1) + "}");
-        String g = globalMetadata.toString();
-        if (g.equals("}")) {
-            g = "";
+        String jsonString = globalMetadata.toString();
+        if (!jsonString.equals("")) {
+            jsonString = jsonString.substring(0, jsonString.length() - 1);
+            jsonString = "{" + jsonString + "}";
         }
-        wizardData.setGlobalMetadata(g);
+        wizardData.setGlobalMetadata(jsonString);
         return wizardData;
     }
+
+
+    public static String convertGlobalDataToJson(GlobalMetadata globalMetadata, HashMap<String, String> fileGlobals) {
+
+        String value = globalMetadata.getMetadataValue();
+
+        // We have globals from a file.
+        if (fileGlobals != null) {
+            if (value.equals("")) {
+                value = fileGlobals.get(globalMetadata.getMetadataKey());
+            }
+        }
+        return "\"" +
+                globalMetadata.getMetadataKey() + "__" +
+                globalMetadata.getMetadataGroup() + "\":" +
+                "\"" + value + "\"";
+    }
+
 
     /**
      * Examines the given MetadataProfile object to see if one of its communities matches the provided community name.
