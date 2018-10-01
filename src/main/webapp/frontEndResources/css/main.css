@@ -23,7 +23,7 @@ h3 {
   margin: 8px 0 10px 0;
 }
 
-h4 {
+h4, h5 {
   margin: 0 0 10px 0;
   padding: 0;
   color: #666666;
@@ -324,7 +324,7 @@ ul#delimiterList li {
   bottom: 0;
 }
 
-#customFileTypeAttributes .buttonNav {
+.buttonNav {
   display: block;
   float: left;
   width: 100%;
@@ -542,6 +542,23 @@ ul#delimiterList li {
   padding: 0;
   text-align: left;
 }
+
+#generalMetadata ul#additional,
+#generalMetadata ul#recommended,
+#generalMetadata ul#required {
+  margin:0 0 10px 0;
+  float:left;
+}
+
+#generalMetadata p {
+  width:100%;
+  float:left;
+}
+
+#generalMetadata ul#required li .required{
+  border: 1px solid #FF0000;
+}
+
 
 /**
  * Download step
