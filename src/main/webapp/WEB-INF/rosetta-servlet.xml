@@ -34,7 +34,7 @@
          These are front end resources (css, etc.) and xml files -->
     <mvc:resources location="/frontEndResources/, /WEB-INF/classes/resources/"
                    mapping="/resources/**"/>
-    <mvc:resources location="file:#{systemProperties['rosetta.content.root.path']}/downloads/"
+    <mvc:resources location="file:#{systemProperties['rosetta.content.root.path']}/user_files/"
                    mapping="/download/**"/>
     <mvc:resources location="/batch/"
                    mapping="/batch/**"/>
