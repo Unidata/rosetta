@@ -31,9 +31,6 @@ var UnitBuilder = (function () {
             }
 
             var units = prefixSelected + unitSelected
-            console.log("prefix" + prefixSelected);
-            console.log("units" + unitSelected);
-
 
             if ($(this).attr("alt") === "Add To Units") { // Adding to units
     

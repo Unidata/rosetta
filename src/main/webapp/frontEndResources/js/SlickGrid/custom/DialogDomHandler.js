@@ -37,6 +37,7 @@ var DialogDomHandler = (function () {
     function enableDiv(dialogDomSection) {
         // enable this section of the dialog content
         $("#dialog #" + dialogDomSection).removeClass("inactive");
+        $("#dialog #" + dialogDomSection).removeClass("hideMe");
         $("#dialog #" + dialogDomSection).find("input").each(function () {
             $(this).prop("disabled", false);
         });
@@ -101,7 +102,7 @@ var DialogDomHandler = (function () {
             "    <input type=\"text\" name=\"variableName\" value=\"\"/>\n" +
             "   </label>\n" +
             "   <label class=\"metadataImporter hideMe\">\n" +
-            "     use metadata from another column?  \n" +
+            "     Use metadata from another column?  \n" +
             "    <input type=\"checkbox\" name=\"metadataImporter\" value=\"true\"/> \n" +
             "   </label>\n" +
             "   <div id=\"metadataImporter\" class=\"hideMe\">\n" +

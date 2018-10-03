@@ -13,11 +13,11 @@ var MetadataImporter = (function () {
     function bindImportMetadataEvents(key) {
         // Metadata import selection.
         $("#dialog #metadataImporter select[name=\"metadataChoice\"]").on("change", function () {
-            if ($(this).val() !== "") {
-                var name = getFromSession($(this).val());
-                addToSession(key, name);
-                var metadata = getFromSession($(this).val() + "Metadata");
-                addToSession(key + "Metadata", metadata);
+            var columnNumber = $(this).val();
+            if (columnNumber !== "") {
+                // Get all of the chosen column's data and add to the new column's data in storage.
+                VariableStorageHandler.populateColumnDataWithAnotherColumn("variableName" + columnNumber, key);
+
                 populateDataFromStorage(key);
             }
         });
@@ -35,10 +35,10 @@ var MetadataImporter = (function () {
         // get variables with metadata
         var variablesWithMetadata = VariableStorageHandler.getVariablesWithMetadata();
         for (var i = 0; i < variablesWithMetadata.length; i++) {
-            if (VariableStorageHandler.testVariableCompleteness(variablesWithMetadata[i], getFromSession(variablesWithMetadata[i]))) {
+            if (VariableStorageHandler.testVariableCompleteness("variableName" + i, variablesWithMetadata[i])) {
                 optionTags = optionTags +
-                    "<option value=\"" + variablesWithMetadata[i] + "\">" + getFromSession(variablesWithMetadata[i]) +
-                    " from column " + variablesWithMetadata[i].replace("variableName", "") +
+                    "<option value=\"" + i + "\">" + variablesWithMetadata[i] +
+                    " from column " + i +
                     "</option>\n";
             }
         }
@@ -58,11 +58,11 @@ var MetadataImporter = (function () {
      *      2) if all the required metadata for that variable is present and not incomplete.
      */
     function isImportPossible() {
-        // see if any metadata has been entered for other variables
+        // See if any metadata has been entered for other variables.
         var variablesWithMetadata = VariableStorageHandler.getVariablesWithMetadata();
         if (variablesWithMetadata.length > 0) {
             for (var i = 0; i < variablesWithMetadata.length; i++) {
-                if (VariableStorageHandler.testVariableCompleteness(variablesWithMetadata[i], getFromSession(variablesWithMetadata[i]))) {
+                if (VariableStorageHandler.testVariableCompleteness("variableName" + i, variablesWithMetadata[i])) {
                     return true;
                 } else {
                     if (i = (variablesWithMetadata.length - 1)) {

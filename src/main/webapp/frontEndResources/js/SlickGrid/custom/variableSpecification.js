@@ -316,46 +316,44 @@ function bindDialogEvents(key) {
     // Assign the variable name or "do_not_use" to column data.
     $("#dialog #variableNameTypeAssignment input[name=\"variableNameType\"]").bind("click", function () {
 
-            // Get rid of any prior error messages.
-            $("#dialog #variableNameTypeAssignment").find("label.error").text("");
+        // Get rid of any prior error messages.
+        $("#dialog #variableNameTypeAssignment").find("label.error").text("");
 
-             // Assign the user's selection to the useColumnData variable.
-            var useColumnData = $(this).val();
+        // Assign the user's selection to the useColumnData variable.
+        var useColumnData = $(this).val();
 
-            // What was selected?
-            if (useColumnData === "do_not_use") {
-                // User has elected to not use this variable; save info to variableMetadata & disable rest of dialog.
+        // What was selected?
+        if (useColumnData === "do_not_use") {
+            // User has elected to not use this variable; save info to variableMetadata & disable rest of dialog.
 
-                // Update the stored variable data with the "do_not_use" for a variable name.
-                VariableStorageHandler.storeVariableData(key, "name", useColumnData);
+            // Update the stored variable data with the "do_not_use" for a variable name.
+            VariableStorageHandler.storeVariableData(key, "name", useColumnData);
 
-                // Hide & remove any existing user entry for variable name input tag.
-                $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").prop("value", "");
-                $("label#variableNameAssignment").addClass("hideMe");
+            // Hide & remove any existing user entry for variable name input tag.
+            $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").prop("value", "");
+            $("label#variableNameAssignment").addClass("hideMe");
 
-                // Hide the import metadata option.
-                $("#dialog label.metadataImporter").addClass("hideMe");
+            // Hide the import metadata option.
+            $("#dialog label.metadataImporter").addClass("hideMe");
 
-                // Disable the rest of the dialog DOM content.
-                DialogDomHandler.disableVariableAttributes(key);
+            // Disable the rest of the dialog DOM content.
+            DialogDomHandler.disableVariableAttributes(key);
 
-            } else { 
-                // User has elected to use the column's data.
-
-                // Reveal the input tag to collect the variable name.
-                DialogDomHandler.enableDiv("variableNameAssignment");
-
-                // Can we offer them the option of importing data from another column?
-                if (MetadataImporter.isImportPossible()) {
-                    // Metadata for another column exists; so show option to import it.
-                    DialogDomHandler.enableDiv("metadataImporter");
-                }
+        } else {
+            // User has elected to use the column's data.
+            // Reveal the input tag to collect the variable name.
+            DialogDomHandler.enableDiv("variableNameAssignment");
+            // Can we offer them the option of importing data from another column?
+            if (MetadataImporter.isImportPossible()) {
+                // Metadata for another column exists; so show option to import it.
+                $("#dialog label.metadataImporter").removeClass("inactive").removeClass("hideMe");
             }
-        });
+        }
+    });
 
 
     // variable name
-    $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").autocomplete({ source: cfStandards, delay: 1});
+    //$("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").autocomplete({ source: cfStandards, delay: 1});
 
     // Variable name assignment.
     $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").focusout(function () {

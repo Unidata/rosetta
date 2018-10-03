@@ -84,7 +84,37 @@ var VariableStorageHandler = (function () {
         return variable[key];
     }
 
-    function getAllVariableData(columnNumber) {
+
+    /**
+     * Used by the metadat importer.  Copies the data from the donor column to the recipient column.
+     *
+     * @param donorColumnNumber The column number of the column to take the data from.
+     * @param recipientColumnNumber The column number to copy the data to.
+     */
+    function populateColumnDataWithAnotherColumn(donorColumnNumber, recipientColumnNumber) {
+        // Get the stored variable data.
+        var variableMetadata = getStoredVariableMetadata();
+
+        // Get the donor object.
+        var donorVariable = getVariable(donorColumnNumber, variableMetadata);
+        // Clone the donor variable.
+        var recipientVariable = JSON.parse(JSON.stringify(donorVariable));
+        // Change the ColumnName.
+        recipientColumnNumber = recipientColumnNumber.replace("variableName", "");
+        recipientVariable["column"] = parseInt(recipientColumnNumber);
+
+        // Update the stored data with updated variable.
+        updateStoredVariableData(variableMetadata, recipientVariable, recipientColumnNumber.replace("variableName", ""));
+    }
+
+
+
+    /**
+     * Returns all the variable data in storage (all columns).
+     *
+     * @returns {*|void} All the varibale data in storage.
+     */
+    function getAllVariableData() {
         // Get the stored variable data.
         return getStoredVariableMetadata();
     }
@@ -99,7 +129,7 @@ var VariableStorageHandler = (function () {
                 "required": {},
                 "recommended": {},
                 "additional": {}
-            }; 
+        };
 
         // Update the stored data with updated variable.
         updateStoredVariableData(variableMetadata, variable, columnNumber);
@@ -273,7 +303,7 @@ var VariableStorageHandler = (function () {
         var variableMetadata = getStoredVariableMetadata();
         for (var i = 0; i < variableMetadata.length; i++) {
             var variable = variableMetadata[i];
-            var variableName = variable[name];
+            var variableName = variable.name;
             if (variableName !== undefined  && variableName !== "do_not_use" ) {
                 candidateColumns.push(variableName);
             }
@@ -304,7 +334,6 @@ var VariableStorageHandler = (function () {
                     var metadataTypeStructure = getVariableData(key, "metadataTypeStructure");
 
                     if (metadataTypeStructure !== undefined) {
-
                         // If metadataTypeStructure is vertical.
                         if (metadataTypeStructure === "vertical") {
 
@@ -327,30 +356,24 @@ var VariableStorageHandler = (function () {
                 var metadataValueType = getVariableData(key, "metadataValueType");
 
                 if (metadataValueType !== undefined) {
-
                     // Do we have the required metadata?
 
                     // Get the list of required metadata items.
                     var required = getStoredData("_v" + key.replace("variableName", ""));
                     if (required === null) {
-                        console.log("here");
                         ComplianceLevelDataHandler.getRequired(key);
                         required = getStoredData("_v" + key.replace("variableName", ""));
                     }
                     var required = required.split(/,/g);
-
           
                     // Get the stored required data.
                     var storedRequired = getRequiredVariableData(key);
 
                     // If the required metadata object is empty.
                     if ($.isEmptyObject(storedRequired)) {
-    
                         // ALL required metadata is missing.
                         return false;
-
                     } else {
-
                         // Some required metadata has been stored; compare to required list.
                         
                         // Create map from the stored required entries.
@@ -363,16 +386,13 @@ var VariableStorageHandler = (function () {
                         //      1) matches what is in the required list; and
                         //      2) has a value associated with it.
                         for (var i = 0; i < required.length; i++) {
-
                             if (requiredStoredMap.has(required[i])){
                                 // Get the value of the stored entry.
                                 var storedValue = requiredStoredMap.get(required[i]);
-
                                 if (storedValue === "") {
                                     // No value associated with stored entry.
                                     return false;
                                 }
-
                             } else {
                                 // Missing a required metadata item.
                                 return false;
@@ -416,6 +436,7 @@ var VariableStorageHandler = (function () {
      * @param columnNumber      The index of the variable to update.
      */
     function updateStoredVariableData(variableMetadata, variable, columnNumber) {
+
         // Update the variableMetadataArray with the new object.
         variableMetadata[columnNumber] = variable;
 
@@ -479,10 +500,11 @@ var VariableStorageHandler = (function () {
         testVariableCompleteness: testVariableCompleteness,
         resetVariableData: resetVariableData,
         getAllVariableData:  getAllVariableData,
-        variableDataExists, variableDataExists,
+        variableDataExists: variableDataExists,
         getRequiredVariableData: getRequiredVariableData,
         getRecommendedVariableData: getRecommendedVariableData,
-        getAdditionalVariableData: getAdditionalVariableData
+        getAdditionalVariableData: getAdditionalVariableData,
+        populateColumnDataWithAnotherColumn: populateColumnDataWithAnotherColumn
 
 
     };
