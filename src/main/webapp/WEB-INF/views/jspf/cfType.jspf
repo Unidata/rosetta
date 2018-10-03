@@ -1,5 +1,8 @@
 <h3>Basic Information</h3>
 
+<c:if test="${not empty message}">
+  <p class="error">Sorry, your session has expired.</p>
+</c:if>
 <p>To determine the most appropriate CF type, please select your community:</p>
 <c:choose>
   <%-- Need the communities to load platforms by community. --%>
