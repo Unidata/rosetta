@@ -108,7 +108,7 @@
     </bean>
   -->
     <!-- Taming the pesky derby.log file -->
-    <!--
+
     <bean id="setDerbyLog" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass"><value>java.lang.System</value></property>
         <property name="targetMethod"><value>setProperty</value></property>
@@ -119,7 +119,7 @@
             </list>
         </property>
     </bean>
-  -->
+
 
     <!-- File upload multipart resolver -->
     <bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
@@ -128,18 +128,11 @@
     </bean>
 
     <!-- Map exceptions to the proper views -->
-    <!--
-    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <property name="exceptionMappings">
-            <props>
-                <prop key="org.springframework.dao.DataRetrievalFailureException">
-                    fatalError
-                </prop>
-            </props>
-        </property>
-        <property name="defaultErrorView" value="fatalError"/>
+
+    <bean class="edu.ucar.unidata.rosetta.exceptions.RosettaMappingExceptionResolver">
+        <property name="defaultErrorView" value="error"/>
     </bean>
-    -->
+
 
     <!-- Message source resolver to use messages.properties file in the 'war/WEB-INF/classes' directory -->
     <bean class="org.springframework.context.support.ResourceBundleMessageSource"
@@ -208,9 +201,6 @@
           id="uploadedFileManager">
         <property name="uploadedFileDao" ref="uploadedFileDao"/>
     </bean>
-
-
-
 
 
     <!-- Data Access Object (DAO) injection into utility-layer classes. -->
