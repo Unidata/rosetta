@@ -6,70 +6,52 @@
 package edu.ucar.unidata.rosetta.controller.wizard;
 
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
+import edu.ucar.unidata.rosetta.util.CookieUtils;
+import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import javax.annotation.Resource;
-import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.WebUtils;
-
-import edu.ucar.unidata.rosetta.util.CookieUtils;
-import edu.ucar.unidata.rosetta.util.PropertyUtils;
-import ucar.ma2.InvalidRangeException;
 
 /**
  * Main controller for Rosetta application.
  */
 @Controller
-public class ConvertAndDownloadController implements HandlerExceptionResolver {
-
-    private static final Logger logger = Logger.getLogger(ConvertAndDownloadController.class);
-
-    private final ServletContext servletContext;
+public class ConvertAndDownloadController {
 
     @Resource(name = "wizardManager")
     private WizardManager wizardManager;
 
-    @Autowired
-    public ConvertAndDownloadController(ServletContext servletContext) {
-        this.servletContext = servletContext;
-    }
-
     /**
      * Accepts a GET request for access to convert and download step of the wizard.
+     * Displays the converted data file and rosetta template for download.
      *
      * @param model The Model object to be populated.
+     * @param redirectAttrs  A specialization of the model to pass along message if redirected back to starting step.
+     * @param request The HttpServletRequest used to retrieve the cookie.
      * @return View and the Model for the wizard to process.
-     * @throws InvalidRangeException If unable to convert the data file to netCDF.
      * @throws RosettaFileException If unable to create the template file from the Data object.
      */
     @RequestMapping(value = "/convertAndDownload", method = RequestMethod.GET)
-    public ModelAndView displayConvertedFileDownloadPage(Model model, HttpServletRequest request)
-            throws InvalidRangeException, RosettaFileException {
+    public ModelAndView displayConvertedFileDownloadPage(Model model, RedirectAttributes redirectAttrs, HttpServletRequest request)
+            throws RosettaFileException {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
         if (rosettaCookie == null) {
-            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-            throw new IllegalStateException(
-                    "No persisted data available for file upload step.  Check the database & the cookie.");
+            // No cookie.  Take user back to first step.
+            redirectAttrs.addFlashAttribute("message", "session expired");
+            return new ModelAndView(new RedirectView("/cfType", true));
         }
 
         // Convert the uploaded file to netCDF & create a template for future conversions.
@@ -90,9 +72,12 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
 
     /**
      * Accepts a POST request from convert and download step of the wizard. The only purpose of this
-     * method is to capture if the user clicked the previous button, in which case they are redirected
-     * back to general metadata collection step.
+     * method is to capture if the user clicked the 'finished' button, in which case the user's cookie
+     * is invalidated (if the client side hasn't already done so). The use is then redirected back to
+     * to the starting step of the wizard.
      *
+     * @param request The HttpServletRequest used to retrieve the cookie.
+     * @param response The HttpServletResponse used to invalidate the cookie.
      * @return Redirect to previous step.
      */
     @RequestMapping(value = "/convertAndDownload", method = RequestMethod.POST)
@@ -107,41 +92,4 @@ public class ConvertAndDownloadController implements HandlerExceptionResolver {
         // Take user back to first step.
         return new ModelAndView(new RedirectView("/cfType", true));
     }
-
-    /**
-     * This method gracefully handles any uncaught exception that are fatal in nature and unresolvable
-     * by the user.
-     *
-     * @param request The current HttpServletRequest request.
-     * @param response The current HttpServletRequest response.
-     * @param handler The executed handler, or null if none chosen at the time of the exception.
-     * @param exception The exception that got thrown during handler execution.
-     * @return The error page containing the appropriate message to the user.
-     */
-    @Override
-    public ModelAndView resolveException(HttpServletRequest request,
-            HttpServletResponse response,
-            java.lang.Object handler,
-            Exception exception) {
-        String message;
-        if (exception instanceof MaxUploadSizeExceededException) {
-            // this value is declared in the /WEB-INF/rosetta-servlet.xml file
-            // (we can move it elsewhere for convenience)
-            message = "File size should be less than "
-                    + ((MaxUploadSizeExceededException) exception)
-                    .getMaxUploadSize() + " byte.";
-        } else {
-            StringWriter errors = new StringWriter();
-            exception.printStackTrace(new PrintWriter(errors));
-            message = "An error has occurred: "
-                    + exception.getClass().getName() + ":"
-                    + errors;
-        }
-        // Log it!
-        logger.error(message);
-        Map<String, Object> model = new HashMap<>();
-        model.put("message", message);
-        return new ModelAndView("error", model);
-    }
-
 }

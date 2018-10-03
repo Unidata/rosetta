@@ -11,48 +11,29 @@ import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import edu.ucar.unidata.rosetta.util.CookieUtils;
 import javax.annotation.Resource;
-import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.WebUtils;
-
 
 /**
  * Controller for collecting CF Type information.
  */
 @Controller
-public class CfTypeController implements HandlerExceptionResolver {
-
-    private static final Logger logger = Logger.getLogger(CfTypeController.class);
-
-    private final ServletContext servletContext;
+public class CfTypeController {
 
     @Resource(name = "wizardManager")
     private WizardManager wizardManager;
 
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
-
-    @Autowired
-    public CfTypeController(ServletContext servletContext) {
-        this.servletContext = servletContext;
-    }
 
     /**
      * Accepts a GET request for access to CF type selection step of the wizard.
@@ -104,14 +85,13 @@ public class CfTypeController implements HandlerExceptionResolver {
      *
      * @param wizardData The form-backing object.
      * @param result     The BindingResult for error handling.
-     * @param model      The Model object to be populated.
      * @param request    HttpServletRequest needed to pass to the resourceManager to get client IP.
      * @param response   HttpServletResponse needed for setting cookie.
      * @return Redirect to next step.
      * @throws RosettaDataException If unable to process the CF type data.
      */
     @RequestMapping(value = "/cfType", method = RequestMethod.POST)
-    public ModelAndView processCFType(WizardData wizardData, BindingResult result, Model model,
+    public ModelAndView processCFType(WizardData wizardData, BindingResult result,
                                       HttpServletRequest request, HttpServletResponse response) throws RosettaDataException {
 
         // Have we visited this page before during this session?
@@ -126,41 +106,5 @@ public class CfTypeController implements HandlerExceptionResolver {
             response.addCookie(CookieUtils.createCookie(wizardData.getId(), request));
         }
         return new ModelAndView(new RedirectView("/fileUpload", true));
-    }
-
-    /**
-     * This method gracefully handles any uncaught exception that are fatal in nature and unresolvable
-     * by the user.
-     *
-     * @param request   The current HttpServletRequest request.
-     * @param response  The current HttpServletRequest response.
-     * @param handler   The executed handler, or null if none chosen at the time of the exception.
-     * @param exception The exception that got thrown during handler execution.
-     * @return The error page containing the appropriate message to the user.
-     */
-    @Override
-    public ModelAndView resolveException(HttpServletRequest request,
-                                         HttpServletResponse response,
-                                         java.lang.Object handler,
-                                         Exception exception) {
-        String message;
-        if (exception instanceof MaxUploadSizeExceededException) {
-            // this value is declared in the /WEB-INF/rosetta-servlet.xml file
-            // (we can move it elsewhere for convenience)
-            message = "File size should be less than "
-                    + ((MaxUploadSizeExceededException) exception)
-                    .getMaxUploadSize() + " byte.";
-        } else {
-            StringWriter errors = new StringWriter();
-            exception.printStackTrace(new PrintWriter(errors));
-            message = "An error has occurred: "
-                    + exception.getClass().getName() + ":"
-                    + errors;
-        }
-        // Log it!
-        logger.error(message);
-        Map<String, Object> model = new HashMap<>();
-        model.put("message", message);
-        return new ModelAndView("error", model);
     }
 }
