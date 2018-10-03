@@ -16,7 +16,6 @@ import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 public class RosettaMappingExceptionResolver extends SimpleMappingExceptionResolver  {
 
     private static final Logger logger = Logger.getLogger(RosettaMappingExceptionResolver.class);
-   // private static Log log = LogFactory.getLog(LoggingExceptionResolver.class);
 
     public RosettaMappingExceptionResolver() {
         super();
