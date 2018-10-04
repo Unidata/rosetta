@@ -61,8 +61,14 @@
 
 /* UI dialog widget title bar close button */
 .ui-dialog-titlebar-close {
-  background: transparent url(../../img/ui-icons_222222_256x240.png) -94px -128px no-repeat !important;
-  border: none;
+  border: 1px solid #c5c5c5;
+}
+
+.ui-button .ui-icon {
+  background-image: url("images/ui-icons_444444_256x240.png");
+  background-position: -97px -129px;
+  width: 15px;
+  height: 15px;
 }
 
 /* UI dialog widget buttons */

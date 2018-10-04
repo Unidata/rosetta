@@ -1,0 +1,25 @@
+<!-- jQuery CSS -->
+<link type="text/css" rel="stylesheet"
+      href="${baseUrl}/resources/css/jQuery/jquery-ui-1.12.1.min.css"/>
+<link type="text/css" rel="stylesheet"
+      href="${baseUrl}/resources/css/jQuery/jquery-ui.theme.min.css"/>
+
+<!-- SlickGrid CSS -->
+<link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/SlickGrid/custom.css"/>
+<link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/SlickGrid/slick.grid.css"/>
+<link type="text/css" rel="stylesheet"
+      href="${baseUrl}/resources/css/SlickGrid/slick.headerbuttons.css"/>
+<link type="text/css" rel="stylesheet"
+      href="${baseUrl}/resources/css/SlickGrid/slick-default-theme.css"/>
+
+<!-- DropIt CSS-->
+<link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/plugins/dropit.css"/>
+
+<!-- TableSorter CSS -->
+<link type="text/css" rel="stylesheet"
+      href="${baseUrl}/resources/css/plugins/tablesorter/jquery.tablesorter.pager.css"/>
+<link type="text/css" rel="stylesheet"
+      href="${baseUrl}/resources/css/plugins/tablesorter/themes/blue/style.css"/>
+
+<!-- Custom CSS-->
+<link type="text/css" rel="stylesheet" href="${baseUrl}/resources/css/main.css"/>

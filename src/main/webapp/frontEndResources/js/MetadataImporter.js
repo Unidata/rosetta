@@ -1,11 +1,12 @@
 /**
- * SlickGrid/custom/MetadataImporter.js
+ * MetadataImporter.js
  *
- * Module for the creation of & event handling for the metadata importer.
+ * Metadata Importer for variable metadata collection step.
  */
 var MetadataImporter = (function () {
 
     /**
+     * Private, utility function (not exported).
      * This function binds events associated with the metadata import feature added to the dialog DOM.
      *
      * @param key  The key used to store the data in the variableMetadata value field.
@@ -17,22 +18,22 @@ var MetadataImporter = (function () {
             if (columnNumber !== "") {
                 // Get all of the chosen column's data and add to the new column's data in storage.
                 VariableStorageHandler.populateColumnDataWithAnotherColumn("variableName" + columnNumber, key);
-
-                populateDataFromStorage(key);
+                // Populate the dialog with the imported data.
+                DialogDomHandler.populateVariableDataFromStorage(key);
             }
         });
     }
 
     /**
      * Creates the initial HTML input tags for the metadata importer which will import
-     * another column's metadat into the selected column.
+     * another column's metadata into the selected column.
      *
      * @param key  The key used to store the data in the variableMetadata value field.
      */
     function create(key) {
         var optionTags = "<option value=\"\">---- select one ----</option>";
 
-        // get variables with metadata
+        // Get variables with metadata.
         var variablesWithMetadata = VariableStorageHandler.getVariablesWithMetadata();
         for (var i = 0; i < variablesWithMetadata.length; i++) {
             if (VariableStorageHandler.testVariableCompleteness("variableName" + i, variablesWithMetadata[i])) {
@@ -43,12 +44,11 @@ var MetadataImporter = (function () {
             }
         }
 
-        // add to the DOM
+        // Add to the DOM.
         $("#dialog #metadataImporter select[name=\"metadataChoice\"]").append(optionTags);
 
-        // bind events
+        // Bind events.
         bindImportMetadataEvents(key);
-
     }
 
     /**
@@ -56,6 +56,8 @@ var MetadataImporter = (function () {
      * Looks to see if:
      *      1) there is stored variable metadata for another column; and 
      *      2) if all the required metadata for that variable is present and not incomplete.
+     *
+     * @return true if a metadata import is possible for this column; otherwise false.
      */
     function isImportPossible() {
         // See if any metadata has been entered for other variables.
@@ -73,15 +75,11 @@ var MetadataImporter = (function () {
         } else {
             return false;
         }
-
     }
-
 
     // Expose these functions.
     return {
         create: create,
         isImportPossible: isImportPossible
     };
-    
-
 })();

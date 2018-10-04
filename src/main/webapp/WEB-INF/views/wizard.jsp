@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ include file="/WEB-INF/views/jspf/taglibs.jspf" %>
+<%@ include file="/WEB-INF/views/jspf/common/taglibs.jspf" %>
 <%--
 View handling user-related tasks. Loads jspf according to provided action value.
 The default index page gets redirected to here.
@@ -11,7 +11,8 @@ The default index page gets redirected to here.
       <link rel="shortcut icon" href="<c:out value="${baseUrl}" />/resources/img/logo/favicon.ico"
       type="image/x-icon"/>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-      <%@ include file="/WEB-INF/views/jspf/resources.jspf" %>
+      <%@ include file="/WEB-INF/views/jspf/common/javascript.jspf" %>
+      <%@ include file="/WEB-INF/views/jspf/common/css.jspf" %>
       <script type="text/javascript">
         var platformMetadata = [];
         var generalMetadata = [];
@@ -19,7 +20,7 @@ The default index page gets redirected to here.
       </script>
     </head>
     <body>
-      <%@ include file="/WEB-INF/views/jspf/header.jspf" %>
+      <%@ include file="/WEB-INF/views/jspf/common/header.jspf" %>
 
       <c:choose>
         <c:when test="${not empty currentStep}">
@@ -92,6 +93,6 @@ The default index page gets redirected to here.
           </p>
         </c:otherwise>
       </c:choose>
-      <%@ include file="/WEB-INF/views/jspf/footer.jspf" %>
+      <%@ include file="/WEB-INF/views/jspf/common/footer.jspf" %>
     </body>
   </html>

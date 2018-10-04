@@ -55,13 +55,13 @@ var GlobalMetadata = (function () {
                 "   <label for=\"" + attributeName + "\" class=\"error\"></label>\n" +
                 "</li>\n";
 
-
+            var complianceLevelsMap;
             // Assign to the correct map entry.
             if (metadataGroupsMap.has(metadataGroup)) {
                 // Already exists.
     
                 // get the compliance level map.
-                var complianceLevelsMap =  metadataGroupsMap.get(metadataGroup);
+                complianceLevelsMap =  metadataGroupsMap.get(metadataGroup);
         
                 if (complianceLevelsMap.has(complianceLevel)) {
                     // Already exists.
@@ -84,7 +84,7 @@ var GlobalMetadata = (function () {
                 // Doesn't exist in the metadata group map yet.
             
                 // Create compliance levels map and add the tag string to the inner array.
-                var complianceLevelsMap = new Map();
+                complianceLevelsMap = new Map();
                 complianceLevelsMap.set(complianceLevel, [tag]);
     
                 // Add the compliance levels map to the metadata group map.
@@ -93,7 +93,7 @@ var GlobalMetadata = (function () {
         }
         
         // Store required globals.
-        storeData("_g", required);
+        WebStorage.storeData("_g", required);
 
         // Attach tags to the DOM.
         attachToDom(metadataGroupsMap);
@@ -105,7 +105,7 @@ var GlobalMetadata = (function () {
 
 
     /**
-     *
+     * Attaches the tags in the provided map to the DOM (key = category).
      *
      * @param metadataGroupsMap   The map of tags organized by group.
      */
@@ -208,7 +208,7 @@ var GlobalMetadata = (function () {
      * @returns {boolean}   true if all required items are provided; otherwise false.
      */
     function testCompleteness() {
-        var required = getStoredData("_g").split(/,/g);
+        var required = WebStorage.getStoredData("_g").split(/,/g);
 
         // Get the stored global data.
         var globalMetadata = getStoredGlobalMetadata();
@@ -240,7 +240,7 @@ var GlobalMetadata = (function () {
     }
 
     /**
-     *
+     *  Toggles the categories (expand/collapse).
      */
     function toggleCategories() {
         // Check each input field.
@@ -288,42 +288,13 @@ var GlobalMetadata = (function () {
     }
 
     /**
-     * Removes the entry corresponding to the provided key from storage.
-     *
-     * @param key   The key of the entry to remove.
-     */
-    function removeGlobaMetadataEntry(key) {
-        // Get the stored global data.
-        var globalMetadata =getStoredGlobalMetadata();
-
-        // Delete the entry using the provided object key.
-        delete globalMetadata[key];
-
-        // Update the stored global data.
-        updateStoredGlobalMetadata(globalMetadata);
-    }
-
-    /**
-     * Retrieves the stored entry corresponding to the provided key.
-     *
-     * @param key    The key of the item to retrieve.
-     * @returns {*}  The stored entry.
-     */
-   function getGlobalDataMetadataEntry(key) {
-        // Get the stored global data.
-        var globalMetadata = getStoredGlobalMetadata();
-
-        return globalMetadata[key];
-    }
-
-    /**
      * Retrieves ALL stored global metadata entries.
      *
-     * @returns {any} The global metadata.
+     * @returns All fo the global metadata.
      */
     function getStoredGlobalMetadata() {
         // Get the stored global data.
-        var globalMetadata = getStoredData("globalMetadata");
+        var globalMetadata = WebStorage.getStoredData("globalMetadata");
 
         if (globalMetadata === null) {
             // This shouldn't happen; if we are here then something has gone very wrong (this info should be in the stored).
@@ -341,7 +312,7 @@ var GlobalMetadata = (function () {
      */
     function updateStoredGlobalMetadata(globalMetadata) {
         // Stringify and stored data.
-        storeData("globalMetadata", JSON.stringify(globalMetadata));
+        WebStorage.storeData("globalMetadata", JSON.stringify(globalMetadata));
     }
 
     // Expose these functions.

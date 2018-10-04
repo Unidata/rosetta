@@ -21,10 +21,12 @@
  */
 function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter) {
 
-    // load global resources used for this step
-    loadCFStandards();
-    loadUnitBuilderData();
-    loadCFStandardUnits();
+    // Load standard names for variable name input.
+    DialogDomHandler.loadCFStandards();
+    // Load the Unit Builder data.
+    UnitBuilder.loadUnitBuilderData();
+    // Load CF standard units (will automatically add units if standard name is inputted by user).
+    DialogDomHandler.loadCFStandardUnits();
 
     // SlickGrid options.
     var options = {
@@ -45,7 +47,7 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
     // line. If a data line, parse the data using the delimiter.
     $(function () {
         // get the header line numbers so we can identify the line type in the fileData array and format accordingly
-        var headerLines = sessionStorage.getItem("headerLineNumbers").split(/,/g);
+        var headerLines = WebStorage.getStoredData("headerLineNumbers").split(/,/g);
 
         // denote which is the first or "parent" header line that will be shown when the rest of
         // the header lines are collapsed
@@ -57,7 +59,7 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
             var parent = null;
             if (fileData[i] !== "") { // sanity check to make sure the line isn't blank
 
-                // an unglamerous way to keep track of where we are in the loop
+                // an unglamorous way to keep track of where we are in the loop
                 if (i === 0) {
                     bool = 1;
                 }
@@ -96,7 +98,7 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
                             };
 
                             // check to see if variable input has already been entered by user.
-                            var variableName = getFromSession("variableName" + x);
+                            var variableName = WebStorage.getStoredData("variableName" + x);
                             if (variableName != null) { // data exists
                                 // update the column name to be that of the assigned variable name
                                 colObject.name = variableName;
@@ -166,7 +168,7 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
         dataView = new Slick.Data.DataView({inlineFilters: true});
         dataView.beginUpdate();
         dataView.setItems(rows);
-        dataView.setFilter(headerLineFilter);
+        dataView.setFilter(CommonSlickGridEvents.headerLineFilter);
         dataView.setFilterArgs(rows);
         dataView.endUpdate();
 
@@ -201,11 +203,11 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
         }
 
         // bind header line toggle events to the grid
-        bindGridHeaderLineToggleEvent(grid, dataView, colNumber, headerLines,
+        CommonSlickGridEvents.bindGridHeaderLineToggleEvent(grid, dataView, colNumber, headerLines,
             firstHeaderLine);
 
-        // bind generic scroll events to the grid
-        bindGridScrollEvent(colNumber, grid);
+        // Bind generic scroll events to the grid.
+        CommonSlickGridEvents.bindGridScrollEvent(colNumber, grid);
 
         // load the HeaderButtons Plugin to custom buttons to column headers
         var headerButtonsPlugin = new Slick.Plugins.HeaderButtons();
@@ -306,226 +308,6 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid) {
     });
 }
 
-/**
- * This function listens and binds variable input events for the dialog box.
- *
- * @param key  The key used to store the data in the variableMetadata value field.
- */
-function bindDialogEvents(key) {
-
-    // Assign the variable name or "do_not_use" to column data.
-    $("#dialog #variableNameTypeAssignment input[name=\"variableNameType\"]").bind("click", function () {
-
-        // Get rid of any prior error messages.
-        $("#dialog #variableNameTypeAssignment").find("label.error").text("");
-
-        // Assign the user's selection to the useColumnData variable.
-        var useColumnData = $(this).val();
-
-        // What was selected?
-        if (useColumnData === "do_not_use") {
-            // User has elected to not use this variable; save info to variableMetadata & disable rest of dialog.
-
-            // Update the stored variable data with the "do_not_use" for a variable name.
-            VariableStorageHandler.storeVariableData(key, "name", useColumnData);
-
-            // Hide & remove any existing user entry for variable name input tag.
-            $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").prop("value", "");
-            $("label#variableNameAssignment").addClass("hideMe");
-
-            // Hide the import metadata option.
-            $("#dialog label.metadataImporter").addClass("hideMe");
-
-            // Disable the rest of the dialog DOM content.
-            DialogDomHandler.disableVariableAttributes(key);
-
-        } else {
-            // User has elected to use the column's data.
-            // Reveal the input tag to collect the variable name.
-            DialogDomHandler.enableDiv("variableNameAssignment");
-            // Can we offer them the option of importing data from another column?
-            if (MetadataImporter.isImportPossible()) {
-                // Metadata for another column exists; so show option to import it.
-                $("#dialog label.metadataImporter").removeClass("inactive").removeClass("hideMe");
-            }
-        }
-    });
-
-
-    // variable name
-    //$("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").autocomplete({ source: cfStandards, delay: 1});
-
-    // Variable name assignment.
-    $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").focusout(function () {
-
-        // Get rid of any prior error messages.
-        $("#dialog #variableNameTypeAssignment").find("label.error").text("");
-
-        // Assign the variable name (variableName) to the user input.
-        var variableName = $(this).val();
-
-        // Update the stored variable data with the variable name.
-        VariableStorageHandler.storeVariableData(key, "name", variableName);
-
-        // If the user entered a standard name for the variable, then we can use this value here.
-        if (isCFStandardName(variableName)) {
-             // Update the stored variable data with the standard name.
-            VariableStorageHandler.storeComplianceLevelVariableData(key, "standard_name", variableName, "required");
-
-            // Automatically add any corrsponding units.
-            var units = cfStandardUnits[variableName];
-            if (units !== "") {
-                if (units !== undefined) {
-                    // Update the stored variable data with the units.
-                    VariableStorageHandler.storeComplianceLevelVariableData(key, "units", units, "required");
-                }
-            }
-        }
-
-        // validate user input
-        //validateVariableData(key);
-
-        // If there are no validation errors, we can proceed.
-        if ($("#dialog #variableNameTypeAssignment").find("label.error").text() === "") {
-            DialogDomHandler.enableDiv("metadataTypeAssignment");
-        }
-    });
-
-    // existing metadata importer activation: toggle existing metadata importer box
-    $("#dialog #variableNameTypeAssignment input[type=\"checkbox\"]").bind("click", function () {
-            $("#dialog #variableNameTypeAssignment #metadataImporter").toggleClass("hideMe");
-            MetadataImporter.create(key);
-    });
-
-
-    // Coordinate or data variable selection (metadataType).
-    $("#dialog #metadataTypeAssignment input[name=\"metadataType\"]").bind("click", function () {
-
-        // Get rid of any prior error messages.
-        $("#dialog #metadataTypeAssignment").find("label.error").text("");
-
-        // Assign the metadata type (metadataType) to the user input.
-        var metadataType = $(this).val();
-
-        // Update the stored variable data with the chosen metadata type (coordinate or data variable).  
-        VariableStorageHandler.storeVariableData(key, "metadataType", metadataType);
-
-        // Remove any prior collected entries from variable that does not pertain to the metadata type.
-        // (This is needed if the user goes back to change the metadata type selection... we don't want to keep mismatched metadata.)
-        VariableStorageHandler.removeNonMetadataTypeEntriesFromVariableData(key);
-
-        // Remove any prior metadata type structure entries.
-        DialogDomHandler.disableDiv("metadataTypeStructureAssignment");
-        // Remove any prior vertical direction entries.
-        DialogDomHandler.disableDiv("verticalDirectionAssignment");
-        // Remove any prior metadata type value entries.
-        DialogDomHandler.disableDiv("metadataValueTypeAssignment");
-        // Remove the prior required, recommended, or additional areas; need to repopulate them with different metadata profile data.
-        DialogDomHandler.disableDiv("requiredMetadataAssignment");
-        $("#dialog #requiredMetadataAssignment ul").empty();
-        DialogDomHandler.disableDiv("recommendedMetadataAssignment");
-        $("#dialog #recommendedMetadataAssignment ul").empty();
-        DialogDomHandler.disableDiv("additionalMetadataAssignment");
-        $("#dialog #additionalMetadataAssignment select").empty();
-
-        // validate user input
-        //validateVariableData(key);
-
-        // If there are no validation errors, we can proceed.
-        if ($("#dialog #metadataTypeAssignment").find("label.error").text() === "") {
-
-            // Enable DOM attribute collection based on the metadata type selected.
-            if (metadataType === "coordinate") {
-                // Coordinate variable selected.
-                DialogDomHandler.enableDiv("metadataTypeStructureAssignment");
-            } else {
-                // Data variable selected.
-                DialogDomHandler.enableDiv("metadataValueTypeAssignment");
-            }
-        }
-    });
-
-    // Coordinate variable "flavor" (metadataTypeStructure).
-    $("#dialog #metadataTypeStructureAssignment select[name=\"metadataTypeStructure\"]").bind("change", function () {
-
-        // Get rid of any prior error messages.
-        $("#dialog #metadataTypeStructureAssignment").find("label.error").text("");
-
-        // Assign the metadata type structure (metadataTypeStructure) to the user input.
-        var metadataTypeStructure = $(this).val();
-
-        // Update the stored variable data with the chosen metadata type structure.  
-        VariableStorageHandler.storeVariableData(key, "metadataTypeStructure", metadataTypeStructure);
-
-        // Validate user input.
-        var coordVarTypeError = lookForBlankSelection($(this).val(), "Coordinate Variable Type");
-        if (coordVarTypeError != null) {
-            $("#dialog #metadataTypeStructureAssignment").find("label.error").text("Please specify the coordinate variable type.");
-        }
-
-        // If there are no validation errors, we can proceed.
-        if ($("#dialog #metadataTypeStructureAssignment").find("label.error").text() === "") {
-
-            // Determine if 'vertical' was selected for the metadata type structure.  
-            if (metadataTypeStructure === "vertical") {
-                // Vertical selected; enable DOM section that determines direction of vertical.
-                DialogDomHandler.enableDiv("verticalDirectionAssignment");
-            } else {
-                // Vertical not chosen; undo any prior vertical direction selection options
-                DialogDomHandler.disableDiv("verticalDirectionAssignment");
-
-                // If it hasn't been enabled aready, show the metadataValueType assignment DOM section.
-                DialogDomHandler.enableDiv("metadataValueTypeAssignment");
-            }
-        }
-    });
-
-    // Vertical direction selection (only used if metadataTypeStructure=vertical was selected).
-    $("#dialog #verticalDirectionAssignment input[name=\"verticalDirection\"]").bind("click", function () {
-
-        // Get rid of any prior error messages.
-        $("#dialog #verticalDirection").find("label.error").text("");
-
-        // Assign the vertical direction (verticalDirection) to the user input.
-        var verticalDirection = $(this).val();
-
-        // Update the stored variable data with the chosen vertical direction.  
-        VariableStorageHandler.storeVariableData(key, "verticalDirection", verticalDirection);
-
-        // validate user input
-        //validateVariableData(key);
-
-        // if there are no validation errors, we can proceed
-        if ($("#dialog #metadataValueTypeAssignment").find("label.error").text() === "") {
-             // If it hasn't been enabled aready, show the metadataValueType assignment DOM section.
-            DialogDomHandler.enableDiv("metadataValueTypeAssignment");
-        }
-    });
-
-
-    // Metadata type value (metadataValueType).
-    $("#dialog #metadataValueTypeAssignment input[name=\"metadataValueType\"]").bind("click", function () {
-
-        // Get rid of any prior error messages.
-        $("#dialog #metadataValueTypeAssignment").find("label.error").text("");
-
-        // Assign the metadata type value (metadataValueType) to the user input.
-        var metadataValueType = $(this).val();
-
-        // Update the stored variable data with the chosen metadata type value.  
-        VariableStorageHandler.storeVariableData(key, "metadataValueType", metadataValueType);
-
-        // validate user input
-        //validateVariableData(key);
-
-        // If there are no validation errors, we can proceed
-        if ($("#dialog #metadataValueTypeAssignment").find("label.error").text() === "") {
-
-            // Populate the required, recommended, & additional metadata areas with metadata profile info & reveal the metadata sections.
-            ComplianceLevelDataHandler.addComplainceLevelDataToDialog(key);
-        }
-    });
-}
 
 
 /**
@@ -543,7 +325,7 @@ function checkIfColumnIsDisabled(colNumber, grid) {
         var assignedVariableName = VariableStorageHandler.getVariableData("variableName" + i, "name");
         // If we have data for this column
         if (assignedVariableName) {
-            var headerLines = getStoredData("headerLineNumbers").split(/,/g);
+            var headerLines = WebStorage.getStoredData("headerLineNumbers").split(/,/g);
             var firstHeaderLine = headerLines[0];
             var item = grid.getDataItem(0);
             if (item) {
@@ -633,110 +415,7 @@ function populateCmd(key) {
     $("input#variableMetadata").val(storedVariableData);
 }
 
-    /**
-     * This function gets any of the variable data stored in the variableMetadata value field and populates the dialog box with those values.
-     *
-     * @param key  The key that will be used to store the variable name value in the variableMetadata value field.
-     */
-    function populateDataFromStorage(key) {
-        // Get the variable name from storage.
-        var variableName = VariableStorageHandler.getVariableData(key, "name");
 
-        if (variableName) {  
-            // The user has provided something for the variable name or opted not to use the column of data.
-    
-            if (variableName !== "do_not_use") { 
-                // Variable name provided.
-    
-                // Check the 'Assign a variable name' radio button
-                var inputTag = $("#dialog #variableNameTypeAssignment input[name=\"variableNameType\"][value=\"assign\"]");
-                $(inputTag).prop("checked", true);
-    
-    
-                // Add variable name to input tag.
-                $("#dialog #variableNameAssignment").removeClass("inactive").removeClass("hideMe");
-                $("#dialog #variableNameAssignment input").removeAttr("disabled");
-                $("#dialog #variableNameAssignment input[name=\"variableName\"]").val(variableName);
-    
-                if (MetadataImporter.isImportPossible()) {
-                    // Metadata exists for other metadata so show option to import it.
-                    $("#dialog label.metadataImporter").removeClass("inactive").removeClass("hideMe");
-                }
-    
-                // If they've provided a variable name, then enable the coordinate variable section
-                DialogDomHandler.enableDiv("metadataTypeAssignment");
-    
-                // Get the metadataType from storage.
-                var metadataType = VariableStorageHandler.getVariableData(key, "metadataType");
-
-                // Check the metadata type radio button using the metadataType information from storage.
-                $("#dialog #metadataTypeAssignment input").each(function () {  
-                    var inputValue = $(this).val();
-                    if (inputValue === metadataType) {
-                        $(this).prop("checked", true);
-                    }
-                });
-
-                // If the metadataType was coordinate, enable & populate the metadataTypeStructureAssignment section.
-                if (metadataType === "coordinate") {
-                    
-                    // Get the metadataTypeStructure from storage.
-                    var metadataTypeStructure =  VariableStorageHandler.getVariableData(key, "metadataTypeStructure");
-                    
-                    // Enable.
-                    DialogDomHandler.enableDiv("metadataTypeStructureAssignment");
-
-                    $("#dialog #metadataTypeStructureAssignment select[name=\"metadataTypeStructure\"]").val(metadataTypeStructure);
-                    
-                    // If metadataTypeStructure is vertical, enable & populate the vertical direction section.
-                    if (metadataTypeStructure === "vertical") {
-
-                        // Get the verticalDirection from storage.
-                        var verticalDirection = VariableStorageHandler.getVariableData(key, "verticalDirection");
-
-                        // Enable.
-                        DialogDomHandler.enableDiv("verticalDirectionAssignment");
-                    
-                        // Check the metadata type radio button using the metadataType information from storage.
-                        $("#dialog #verticalDirectionAssignment input").each(function () {  
-                            var inputValue = $(this).val();
-                            if (inputValue === verticalDirection) {
-                                $(this).prop("checked", true);
-                            }
-                        });
-
-                    }
-
-                }
-
-                // Get the metadataValueType from storage.
-                var metadataValueType = VariableStorageHandler.getVariableData(key, "metadataValueType");
-
-                // Enable metadata value type section.
-                DialogDomHandler.enableDiv("metadataValueTypeAssignment");
-
-                // Check the metadata value type radio button using the metadataType information from storage.
-                $("#dialog #metadataValueTypeAssignment input").each(function () {  
-                    var inputValue = $(this).val();
-                    if (inputValue === metadataValueType) {
-                        $(this).prop("checked", true);
-                    }
-                });
-
-                // Enable and populate compliance-level data.
-                DialogDomHandler.enableDiv("requiredMetadataAssignment");
-                DialogDomHandler.enableDiv("recommendedMetadataAssignment");
-                DialogDomHandler.enableDiv("additionalMetadataAssignment");
-                ComplianceLevelDataHandler.addComplainceLevelDataToDialog(key);
-
-            } else { 
-                // Do not use column data selected; check the 'do not use this column' radio button.
-                $("#dialog #variableNameTypeAssignment input[name=\"variableNameType\"][value=\"do_not_use\"]").prop("checked", true);
-            }
-
-        }
-
-    }
 
 
 
