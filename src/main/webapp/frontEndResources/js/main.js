@@ -154,14 +154,6 @@ $(document).ready(function ($) {
     $("input[type=submit]#Next").removeClass("disabled");
   });
 
-  /**
-   * STEP 3: Custom file attribute step.
-   * delimiter selected, so show next button.
-   * header line js handled in js/SlickGrid/custom/headerLineSelection.js
-   */
-  $("input#delimiter").change(function () {
-    manageCustomFileButtonNav(); // This method lives in js/SlickGrid/custom/headerLineSelection.js
-  });
 
   /**
    * STEP 5: general metadata.
@@ -197,7 +189,7 @@ $(document).ready(function ($) {
           document.cookie = 'rosetta=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       }
       // Remove everything from storage.
-      removeAllFromStorage();
+      WebStorage.removeAllFromStorage();
   });
 
 

@@ -7,42 +7,15 @@
 /**
  * Global vars needed in various places
  */
-var cfStandards = [];
-var cfStandardUnits = {};
+
+
 var metadata = [];
-var metadataProfileVariableData = [];
-var unitBuilderData = [];
+
 var platform = null;
 
-/**
- * Populates the cfStandards array with data from the cf-standard-name-table.xml file.
- */
-function loadCFStandards() {
-  $.get("resources/cf-standard-name-table.xml",
-      function (data) {
-        var s = [];
-        $(data).find("entry").each(function () {
-          s.push($(this).attr("id"));
-        });
-        cfStandards = s;
-      },
-      "xml");
-}
 
-/**
- * Populates the cfStandardsUnits object with data from the cf-standard-name-table.xml file.
- */
-function loadCFStandardUnits() {
-  $.get("resources/cf-standard-name-table.xml",
-      function (data) {
-        var u = {};
-        $(data).find("entry").each(function () {
-          u[$(this).attr("id")] = $(this).find("canonical_units").text();
-        });
-        cfStandardUnits = u;
-      },
-      "xml");
-}
+
+
 
 /**
  * Populates the metadata array with data from the metadata.xml file.
@@ -65,28 +38,7 @@ function loadMetadata() {
       "xml");
 }
 
-/**
- * Populates the unitBuilderData array with data from the unitBuilderData.xml file.
- */
-function loadUnitBuilderData() {
-  $.get("resources/unitBuilderData.xml",
-      function (data) {
-        var d = [];
-        $(data).find("entry").each(function () {
-          var e = {};
-          var u = [];
-          e["entry"] = $(this).attr("id");
-          e["use_prefix"] = $(this).find("use_prefix").text();
-          $(this).find("unit").each(function () {
-            u.push($(this).text());
-          });
-          e["unit"] = u;
-          d.push(e);
-        });
-        unitBuilderData = d;
-      },
-      "xml");
-}
+
 
 /**
  * This function accepts a metadata id or entry and looks up the
@@ -254,23 +206,7 @@ function isAdditionalMetadata(variableType, metadataItemToTest) {
   }
 }
 
-/**
- * Uses the array of cfStandard names gleaned from the cf-standard-name-table.xml file.
- * Loop through the array and if we have a match, return true.  If no match, return false.
- *
- * @param variableName  The name of the variable we are testing to see if it is a standard_name.
- */
-function isCFStandardName(variableName) {
-  for (var i = 0; i < cfStandards.length; i++) {
-    if (variableName == cfStandards[i]) {
-      return true;
-    } else {
-      if (i == (cfStandards.length - 1)) {
-        return false;
-      }
-    }
-  }
-}
+
 
 /**
  * Finds the platformType, currently based on the cfType variable set in the session.

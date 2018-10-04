@@ -11,8 +11,9 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.wizard.UploadedFileManager;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,33 +21,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.WebUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Controller for handling file uploads.
- *
- * @author oxelson@ucar.edu
  */
 @Controller
-public class FileUploadController implements HandlerExceptionResolver {
-
-    private static final Logger logger = Logger.getLogger(FileUploadController.class);
-
-    private final ServletContext servletContext;
+public class FileUploadController {
 
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
@@ -57,29 +41,24 @@ public class FileUploadController implements HandlerExceptionResolver {
     @Resource(name = "wizardManager")
     private WizardManager wizardManager;
 
-    @Autowired
-    public FileUploadController(ServletContext servletContext) {
-        this.servletContext = servletContext;
-    }
-
     /**
      * Accepts a GET request for access to file upload step of the wizard.
      *
      * @param model   The Model object to be populated.
-     * @param request HttpServletRequest needed to get the cookie.
+     * @param redirectAttrs  A specialization of the model to pass along message if redirected back to starting step.
+     * @param request The HttpServletRequest used to retrieve the cookie.
      * @return View and the Model for the wizard to process.
-     * @throws IllegalStateException If cookie is null.
      */
     @RequestMapping(value = "/fileUpload", method = RequestMethod.GET)
-    public ModelAndView displayFileUploadForm(Model model, HttpServletRequest request) {
+    public ModelAndView displayFileUploadForm(Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
         if (rosettaCookie == null) {
-            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-            throw new IllegalStateException(
-                    "No persisted data available for file upload step.  Check the database & the cookie.");
+            // No cookie.  Take user back to first step.
+            redirectAttrs.addFlashAttribute("message", "session expired");
+            return new ModelAndView(new RedirectView("/cfType", true));
         }
 
         // Look up CF type data entered in prior wizard step & add to model. (Needed for display logic in wizard step).
@@ -123,15 +102,14 @@ public class FileUploadController implements HandlerExceptionResolver {
      * @param submit          The value sent via the submit button.
      * @param result          The BindingResult for error handling.
      * @param model           The Model object to be populated by file upload data in the next step.
-     * @param request         HttpServletRequest needed to get the cookie.
+     * @param redirectAttrs  A specialization of the model to pass along message if redirected back to starting step.
+     * @param request The HttpServletRequest used to retrieve the cookie.
      * @return Redirect to next step.
-     * @throws IllegalStateException If cookie is null.
-     * @throws RosettaFileException  If unable to write file(s) to disk or a file conversion exception
-     *                               occurred.
+     * @throws RosettaFileException  If unable to write file(s) to disk or a file conversion exception occurred.
      */
     @RequestMapping(value = "/fileUpload", method = RequestMethod.POST)
     public ModelAndView processFileUpload(@ModelAttribute("uploadedFileCmd") UploadedFileCmd uploadedFileCmd,
-                                          @RequestParam("submit") String submit, BindingResult result, Model model, HttpServletRequest request) throws RosettaFileException {
+                                          @RequestParam("submit") String submit, BindingResult result, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) throws RosettaFileException {
 
         // Take user back to the CF type selection step (and don't save any data to this step).
         if (submit != null && submit.equals("Previous")) {
@@ -141,9 +119,9 @@ public class FileUploadController implements HandlerExceptionResolver {
         // Get the cookie so we can get the persisted data.
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
         if (rosettaCookie == null) {
-            // Something has gone wrong.  We shouldn't be at this step without having persisted data.
-            throw new IllegalStateException(
-                    "No persisted data available for file upload step.  Check the database & the cookie.");
+            // No cookie.  Take user back to first step.
+            redirectAttrs.addFlashAttribute("message", "session expired");
+            return new ModelAndView(new RedirectView("/cfType", true));
         }
 
         // Persist the file upload data.
@@ -155,41 +133,5 @@ public class FileUploadController implements HandlerExceptionResolver {
 
         // Send user to the next view.
         return new ModelAndView(new RedirectView(nextStep, true));
-    }
-
-    /**
-     * This method gracefully handles any uncaught exception that are fatal in nature and unresolvable
-     * by the user.
-     *
-     * @param request   The current HttpServletRequest request.
-     * @param response  The current HttpServletRequest response.
-     * @param handler   The executed handler, or null if none chosen at the time of the exception.
-     * @param exception The exception that got thrown during handler execution.
-     * @return The error page containing the appropriate message to the user.
-     */
-    @Override
-    public ModelAndView resolveException(HttpServletRequest request,
-                                         HttpServletResponse response,
-                                         java.lang.Object handler,
-                                         Exception exception) {
-        String message;
-        if (exception instanceof MaxUploadSizeExceededException) {
-            // this value is declared in the /WEB-INF/rosetta-servlet.xml file
-            // (we can move it elsewhere for convenience)
-            message = "File size should be less than "
-                    + ((MaxUploadSizeExceededException) exception)
-                    .getMaxUploadSize() + " byte.";
-        } else {
-            StringWriter errors = new StringWriter();
-            exception.printStackTrace(new PrintWriter(errors));
-            message = "An error has occurred: "
-                    + exception.getClass().getName() + ":"
-                    + errors;
-        }
-        // Log it!
-        logger.error(message);
-        Map<String, Object> model = new HashMap<>();
-        model.put("message", message);
-        return new ModelAndView("error", model);
     }
 }

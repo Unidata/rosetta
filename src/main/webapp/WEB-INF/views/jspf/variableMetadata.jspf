@@ -18,78 +18,77 @@
                 disabled
             </c:if>
            class="button"
-            <c:if test="${empty data.variableMetadata}">
-                disabled
-            </c:if>
-        "/>
+    <c:if test="${empty data.variableMetadata}">
+           disabled
+    </c:if>
+    "/>
 </div>
 
 <script>
-  var grid;
-  var columns = [
-    {
-      id: "line_number",
-      name: "#",
-      field: "line_number",
-      width: 45,
-      cssClass: "lineNumber",
-      headerCssClass: "lineNumber",
-      resizable: false
-    }
-  ];
-
-  // SlickGrid options.
-  var options = {
-    editable: false,
-    enableAddRow: false,
-    enableColumnReorder: false,
-    forceFitColumns: true,
-  };
-
-  var rows = [];
-
-  // A custom formatter (see slick.formatters.js) to format the lines for the header line toggle functionality
-  var LineNumberFormatter = function (row, cell, value, columnDef, dataContext) {
-    if (dataContext.parent !== null) { // header row: a parent row is present
-      if (dataContext.id === dataContext.parent) { // header row that is the parent row
-        // return the appropriate item depending on the current state of the parent
-        // (expanded or collapsed)
-        if (dataContext._collapsed) {
-          return " <span class='toggle expand'></span>" + value;
-        } else {
-          return " <span class='toggle collapse'></span>" + value;
+    var grid;
+    var columns = [
+        {
+            id: "line_number",
+            name: "#",
+            field: "line_number",
+            width: 45,
+            cssClass: "lineNumber",
+            headerCssClass: "lineNumber",
+            resizable: false
         }
-      } else { // header row but not the parent row: do nothing
-        return value;
-      }
-    } else { // no "parent" assigned to the row (it's a data row)
-      return value;
-    }
-  };
+    ];
 
+    // SlickGrid options.
+    var options = {
+        editable: false,
+        enableAddRow: false,
+        enableColumnReorder: false,
+        forceFitColumns: true,
+    };
 
-  // Parsed file data.
-  var fileData = ${parsedData};
-  var delimiter = '${delimiterSymbol}';
-  // Store for later use.
-  storeData("headerLineNumbers", '${headerLineNumbers}');
-  <c:if test="${not empty data.variableMetadata}">
-    storeData("variableMetadata", '${data.variableMetadata}');
-  </c:if> 
+    var rows = [];
 
-  <%-- populate global metadata profile variable data array with metadata profile info passed from the server-side --%>
-  <c:forEach items="${metadataProfileVariableData}" var="profile">
+    // A custom formatter (see slick.formatters.js) to format the lines for the header line toggle functionality
+    var LineNumberFormatter = function (row, cell, value, columnDef, dataContext) {
+        if (dataContext.parent !== null) { // header row: a parent row is present
+            if (dataContext.id === dataContext.parent) { // header row that is the parent row
+                // return the appropriate item depending on the current state of the parent
+                // (expanded or collapsed)
+                if (dataContext._collapsed) {
+                    return " <span class='toggle expand'></span>" + value;
+                } else {
+                    return " <span class='toggle collapse'></span>" + value;
+                }
+            } else { // header row but not the parent row: do nothing
+                return value;
+            }
+        } else { // no "parent" assigned to the row (it's a data row)
+            return value;
+        }
+    };
+
+    // Parsed file data.
+    var fileData = ${parsedData};
+    var delimiter = '${delimiterSymbol}';
+    // Store for later use.
+    WebStorage.storeData("headerLineNumbers", '${headerLineNumbers}');
+    <c:if test="${not empty data.variableMetadata}">
+    WebStorage.storeData("variableMetadata", '${data.variableMetadata}');
+    </c:if>
+
+    <%-- populate global metadata profile variable data array with metadata profile info passed from the server-side --%>
+    <c:forEach items="${metadataProfileVariableData}" var="profile">
     var profile = {};
-    profile["attributeName"] =  '${fn:escapeXml(profile.attributeName)}';
-    profile["complianceLevel"]  = '${fn:escapeXml(profile.complianceLevel)}';
+    profile["attributeName"] = '${fn:escapeXml(profile.attributeName)}';
+    profile["complianceLevel"] = '${fn:escapeXml(profile.complianceLevel)}';
     profile["description"] = '${fn:escapeXml(profile.description)}';
     profile["displayName"] = '${fn:escapeXml(profile.displayName)}';
     profile["exampleValues"] = '${fn:escapeXml(profile.exampleValues)}';
     profile["metadataType"] = '${fn:escapeXml(profile.metadataType)}';
     profile["metadataTypeStructureName"] = '${fn:escapeXml(profile.metadataTypeStructureName)}';
-    metadataProfileVariableData.push(profile);
-  </c:forEach>
+    VariableComplianceLevelDataHandler.addToMetadataProfileVariableData(profile);
+    </c:forEach>
 
-  gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter);
+    gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter, delimiter);
 
 </script>

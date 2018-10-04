@@ -23,11 +23,11 @@
 <script>
     <c:choose>
         <c:when test="${not empty data.globalMetadata}">
-            storeData("globalMetadata", '${data.globalMetadata}');
+            WebStorage.storeData("globalMetadata", '${data.globalMetadata}');
         </c:when>
         <c:otherwise>
             // Initialize storage.
-            storeData("globalMetadata", "{}");
+            WebStorage.storeData("globalMetadata", "{}");
         </c:otherwise>
     </c:choose>
     

@@ -1,20 +1,31 @@
 /**
- * SlickGrid/custom/ComplianceLevelDataHandler.js
+ * VariableComplianceLevelDataHandler.js
  *
- * Module to handle compliance level data.
+ * Module to handle compliance level data (required, recommended, and additional) for variable metadata.
  */
-var ComplianceLevelDataHandler = (function () {
+var VariableComplianceLevelDataHandler = (function () {
+
+    var metadataProfileVariableData = [];
 
     /**
-    * Uses the array of compliance level metadata attributes gleaned from server-side metadata profiles.
-    * Creates a list of form tags for these items corresponding to the metadataType (coordinate or non-coordinate).
-    *
-    * @param key  The key used to access the stored variable data.
-    * @param complianceLevel  Whether the attribute is required, recommended or additional.
-    */
+     * Pushes a metadata profile object onto the metadataProfileVariableData array.
+     *
+     * @param profile   The metadata profile object to add to the array.
+     */
+    function addToMetadataProfileVariableData(profile) {
+        metadataProfileVariableData.push(profile);
+    }
+
+    /**
+     * Private, utility function (not exported).
+     * Uses the array of compliance level metadata attributes gleaned from server-side metadata profiles.
+     * Creates a list of form tags for these items corresponding to the metadataType (coordinate or non-coordinate).
+     *
+     * @param key  The key used to access the stored variable data.
+     * @param complianceLevel  Whether the attribute is required, recommended or additional.
+     */
     function populateComplianceLevelInputTags(key, complianceLevel) {        
 
-        var metadataType = VariableStorageHandler.getVariableData(key, "metadataType");
         var metadataTypeStructure = VariableStorageHandler.getVariableData(key, "metadataTypeStructure");
 
         // We will stash our created tags here.
@@ -54,8 +65,6 @@ var ComplianceLevelDataHandler = (function () {
                     }
                 }
 
-
-
                 if (!used.includes(metadataProfile.attributeName)) {
                     used.push(metadataProfile.attributeName);
                     var tag = createComplianceLevelTagElement(key, metadataProfile);
@@ -71,9 +80,8 @@ var ComplianceLevelDataHandler = (function () {
         
         // If compliance level is required, add list to storage.
         if (complianceLevel === "required") {
-            storeData("_v" + key.replace("variableName", ""), required);
+            WebStorage.storeData("_v" + key.replace("variableName", ""), required);
         }
-        
 
         // Sort the array.
         metadataTags.sort();
@@ -84,6 +92,12 @@ var ComplianceLevelDataHandler = (function () {
         return metadataTagsAsAString;
     }
 
+    /**
+     * Determines the required metadata needed for the column of the given key.
+     * Adds the required metadata for that column to storage.
+     *
+     * @param key  The key used to access the stored variable data.
+     */
     function getRequired(key) {
         var used = [];
         var required = [];
@@ -97,16 +111,19 @@ var ComplianceLevelDataHandler = (function () {
                 }
             }
         }
-        storeData("_v" + key.replace("variableName", ""), required);
+        WebStorage.storeData("_v" + key.replace("variableName", ""), required);
     }
 
 
     /**
+     * Creates and returns the compliance-level data tag for the dialog for the given column
+     * and metadata item.
      *
-     * @param key
+     * @param key  The key used to access the stored variable data.
      * @param metadataItem  The metadata attribute item taken from the metadata profile.
+     * @return  The compliance level tag.
      */
-    function createComplianceLevelTagElement(key, metadataItem, variableValue) {
+    function createComplianceLevelTagElement(key, metadataItem) {
         // Pull out the relevant data items for the metadataItem object and assign to variables.
         var tagName = metadataItem.attributeName;
         var displayName = metadataItem.attributeName.replace(/_/g, " ");
@@ -144,22 +161,6 @@ var ComplianceLevelDataHandler = (function () {
         if (helpTip !== "") {
             helpTipElement = "<img src=\"resources/img/help.png\" alt=\"" + helpTip + "\" />";
         }
-    
-
-        //   older additional metadata chooser 
-        //   tag = "<option id=\"" + tagName + "__" + metadataTypeStructure + "\" value=\"" + tagName + "\">" + displayName + "</option>\n";
-
-
-        // This may be a hold-over from a prior version of rosetta when users could possibly see the compliance level data if the metadataType
-        // (coordinate or non-coordinate) and metadataTypeValue (string, int, etc.) were not specified by the user yet.  Just in case, I'm
-        // keeping this here to disable the tag if those elements aren't available. 
-        /*var isDisabled = "disabled";
-        if (VariableStorageHandler.getVariableData(key, "metadataType") !== undefined) {
-            if (VariableStorageHandler.getVariableData(key, "metadataTypeValue") !== undefined) {
-                isDisabled = "";
-            }
-        }
-        */
 
         // Create the tag!
         var tag = 
@@ -180,7 +181,7 @@ var ComplianceLevelDataHandler = (function () {
      *
      * @param key  The key used to access the stored variable data.
      */
-    function addComplainceLevelDataToDialog(key) {
+    function addComplianceLevelDataToDialog(key) {
 
         // Add required attribute tags to DOM and bind events.
         $("#dialog #requiredMetadataAssignment ul").empty();
@@ -200,7 +201,7 @@ var ComplianceLevelDataHandler = (function () {
             bindRecommendedMetadataEvents(key);
         }
         
-        // Add addtional attribute tags to DOM and bind events.
+        // Add additional attribute tags to DOM and bind events.
         $("#dialog #additionalMetadataAssignment select").empty();
         var additionalMetadata = populateComplianceLevelInputTags(key, "additional");
         $("#dialog #additionalMetadataAssignment select").append(additionalMetadata);
@@ -212,10 +213,10 @@ var ComplianceLevelDataHandler = (function () {
 
         // Bind unit builder events.
         UnitBuilder.bindUnitBuilderEvent(key);
-
     }
 
     /**
+     * Private, utility function (not exported).
      * This function binds events associated with required compliance-level metadata entries added to the dialog DOM.
      *
      * @param key  The key used to access the stored variable data.
@@ -238,8 +239,8 @@ var ComplianceLevelDataHandler = (function () {
         });
     }
 
-
     /**
+     * Private, utility function (not exported).
      * This function binds events associated with recommended compliance-level metadata entries added to the dialog DOM.
      *
      * @param key  The key used to access the stored variable data.
@@ -261,8 +262,8 @@ var ComplianceLevelDataHandler = (function () {
         });
     }
 
-
     /**
+     * * Private, utility function (not exported).
      * This function binds events associated with additional compliance-level metadata entries added to the dialog DOM.
      *
      * @param key  The key used to access the stored variable data.
@@ -285,14 +286,12 @@ var ComplianceLevelDataHandler = (function () {
         });
     }
 
-    
     // Expose these functions.
     return {
-        addComplainceLevelDataToDialog: addComplainceLevelDataToDialog,
+        addToMetadataProfileVariableData:  addToMetadataProfileVariableData,
+        addComplianceLevelDataToDialog: addComplianceLevelDataToDialog,
         getRequired: getRequired
     };
-    
-
 })();
 
 

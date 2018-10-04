@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ include file="/WEB-INF/views/jspf/taglibs.jspf" %>
+<%@ include file="/WEB-INF/views/jspf/common/taglibs.jspf" %>
 <%-- View handling user-related tasks. Loads jspf according to provided action value.  --%>
 <!DOCTYPE HTML>
 <html>
@@ -33,10 +33,11 @@
     <link rel="shortcut icon" href="<c:out value="${baseUrl}" />/resources/img/logo/favicon.ico"
           type="image/x-icon"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <%@ include file="/WEB-INF/views/jspf/resources.jspf" %>
+    <%@ include file="/WEB-INF/views/jspf/common/javascript.jspf" %>
+    <%@ include file="/WEB-INF/views/jspf/common/css.jspf" %>
 </head>
 <body>
-<%@ include file="/WEB-INF/views/jspf/header.jspf" %>
+<%@ include file="/WEB-INF/views/jspf/common/header.jspf" %>
 <section class="user">
     <c:choose>
         <c:when test="${not empty action}">
@@ -73,6 +74,6 @@
         </c:otherwise>
     </c:choose>
 </section>
-<%@ include file="/WEB-INF/views/jspf/footer.jspf" %>
+<%@ include file="/WEB-INF/views/jspf/common/footer.jspf" %>
 </body>
 </html>

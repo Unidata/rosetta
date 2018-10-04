@@ -1,24 +1,51 @@
 /**
- * SlickGrid/custom/UnitBuilder.js
+ * UnitBuilder.js
  *
- * Module to handle the creation of event handling for the unit builder.
+ *Unit Builder used in variable metadata collection step.
  */
 var UnitBuilder = (function () {
 
+    var unitBuilderData = [];
+
     /**
+     * Populates the unitBuilderData array with data from the unitBuilderData.xml file.
+     */
+    function loadUnitBuilderData() {
+        $.get("resources/unitBuilderData.xml",
+              function (data) {
+                  var d = [];
+                  $(data).find("entry").each(function () {
+                      var e = {};
+                      var u = [];
+                      e["entry"] = $(this).attr("id");
+                      e["use_prefix"] = $(this).find("use_prefix").text();
+                      $(this).find("unit").each(function () {
+                          u.push($(this).text());
+                      });
+                      e["unit"] = u;
+                      d.push(e);
+                  });
+                  unitBuilderData = d;
+              },
+              "xml");
+    }
+
+
+    /**
+     * Private, utility function (not exported).
      * This function binds events associated with the unit builder added to the dialog DOM.
      *
      * @param key  The key used to store the data in the variableMetadata value field.
      */
     function bindUnitBuildEvents(key) {
-        // unit builder data type selection
+        // Unit builder data type selection.
         $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitBuilderDataType\"]").on("change", function () {
             if ($(this).val() !== "") {
                 addUnitBuilderOptionsToDom($(this).val());
             }
         });
 
-        // unit builder chooser
+        // Unit builder chooser.
         $("#dialog #unitBuilder img#unitBuilderChooser").bind("click", function () {
             var unitString;
     
@@ -30,19 +57,16 @@ var UnitBuilder = (function () {
                 prefixSelected = "";
             }
 
-            var units = prefixSelected + unitSelected
-            console.log("prefix" + prefixSelected);
-            console.log("units" + unitSelected);
+            var units = prefixSelected + unitSelected;
 
-
-            if ($(this).attr("alt") === "Add To Units") { // Adding to units
+            if ($(this).attr("alt") === "Add To Units") { // Adding to units.
     
-                // Get rid of any error messages
+                // Get rid of any error messages.
                 $(this).parents("li").find("label[for=\"units\"].error").text("");
 
                 VariableStorageHandler.storeComplianceLevelVariableData(key, "units", units,"required");
 
-                // update units display in dialog to show new value
+                // Update units display in dialog to show new value.
                 $("#dialog #requiredMetadataAssignment input[name=\"units\"]").prop("value", units);
     
     
@@ -63,18 +87,27 @@ var UnitBuilder = (function () {
                     + "' has NOT been detected in the current units and therefore cannot be removed.");
                 }
             }
-
         });
     }
 
+    /**
+     * Creates and returns the checkbox option to show the Unit Builder.
+     *
+     * @returns  The Unit Builder checkbox option to attach to the DOM.
+     */
     function createShowUnitBuilderSelector() {
         return  "    <label class=\"unitBuilder\">\n" +
-                "     show unit builder \n" +
+                "     Show unit builder \n" +
                 "     <input type=\"checkbox\" name=\"unitBuilder\" value=\"true\"/> \n" +
                 "    </label>\n";
 
     }
 
+    /**
+     * Creates and returns the dropdown selection to specify the type of units in the Unit Builder.
+     *
+     * @returns The dropdown selection to specify the type of units in the Unit Builder.
+     */
     function createUnitBuilderTypeSelector() {
         return  "    <div id=\"unitBuilder\" class=\"hideMe\">\n" +
                 "     <label for=\"unitBuilderDataType\" class=\"hideMe whole\">\n" +
@@ -87,13 +120,14 @@ var UnitBuilder = (function () {
 
 
     /**
+     * Private, utility function (not exported).
      * Creates the initial HTML input tags for the unit builder.
      *
      * @param key  The key used to store the data in the variableMetadata value field.
      */
     function createUnitBuilder(key) {
         var optionTags = "<option value=\"\">---- select one ----</option>";
-        // loop through unitBuilderData
+        // Loop through unitBuilderData array.
         for (var i = 0; i < unitBuilderData.length; i++) {
             var unitItem = unitBuilderData[i];
             if (unitItem.entry !== "prefix") {
@@ -102,7 +136,7 @@ var UnitBuilder = (function () {
             }
         }
 
-        // add option tags to selection menu and show to user.
+        // Add option tags to selection menu and show to user.
         $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitBuilderDataType\"]").append(optionTags);
         $("#dialog #requiredMetadataAssignment #unitBuilder label[for=\"unitBuilderDataType\"]").removeClass("hideMe");
 
@@ -120,14 +154,15 @@ var UnitBuilder = (function () {
             "     <img src=\"resources/img/remove.png\" id=\"unitBuilderChooser\" alt=\"Remove From Units\" class=\"hideMe\"/> \n" +
             "     <label class=\"error\"></label>";
 
-        // add the additional selection menu tags but hide until activated
+        // Add the additional selection menu tags but hide until activated
         $("#dialog #requiredMetadataAssignment #unitBuilder").append(selectionTags);
 
-        // bind events
+        // Bind Unit Builder events.
         bindUnitBuildEvents(key);
     }
 
     /**
+     * Private, utility function (not exported).
      * Creates the initial HTML input tags for the unit builder.
      *
      * @param dataTypeSelected  The type of data we are building units for.
@@ -139,7 +174,7 @@ var UnitBuilder = (function () {
 
         var showPrefixList = true;
 
-        // loop through known unitBuilderData
+        // Loop through known unitBuilderData.
         for (var i = 0; i < unitBuilderData.length; i++) {
             var unitItem = unitBuilderData[i];
             if (unitItem.entry === dataTypeSelected) {
@@ -161,7 +196,7 @@ var UnitBuilder = (function () {
 
         }
 
-        // prefixes
+        // Prefixes.
         $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitPrefix\"] option").remove();
         if (showPrefixList) {
             $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitPrefix\"]").append(prefixTags);
@@ -170,19 +205,19 @@ var UnitBuilder = (function () {
             $("#dialog #requiredMetadataAssignment #unitBuilder label[for=\"unitPrefix\"]").addClass("hideMe");
         }
 
-        // units
+        // Units.
         $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitSelected\"] option").remove();
         $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitSelected\"]").append(unitTags);
         $("#dialog #requiredMetadataAssignment #unitBuilder label[for=\"unitSelected\"]").removeClass("hideMe");
 
-        // add/remove buttons
+        // Add/remove buttons.
         $("#dialog #requiredMetadataAssignment #unitBuilder").find("img").each(function () {
             $(this).removeClass("hideMe");
         });
     }
 
     /**
-     * This function binds general events associated with unit builder entries added to the dialog DOM.
+     * This function binds general events aheaderLineSelectionssociated with unit builder entries added to the dialog DOM.
      *
      * @param key  The key used to access the stores data.
      */
@@ -198,13 +233,10 @@ var UnitBuilder = (function () {
     
     // Expose these functions.
     return {
+        loadUnitBuilderData: loadUnitBuilderData,
         createShowUnitBuilderSelector: createShowUnitBuilderSelector,
-        createUnitBuilder: createUnitBuilder,
         createUnitBuilderTypeSelector: createUnitBuilderTypeSelector,
-        bindUnitBuildEvents: bindUnitBuildEvents,
-        bindUnitBuilderEvent: bindUnitBuilderEvent,
-        addUnitBuilderOptionsToDom: addUnitBuilderOptionsToDom
+        bindUnitBuilderEvent: bindUnitBuilderEvent
     };
-    
 
 })();

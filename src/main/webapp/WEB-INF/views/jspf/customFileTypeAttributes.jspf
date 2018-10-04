@@ -124,10 +124,10 @@
   // hide the checkbox in the grid column header on initial grid load (for aesthetics reasons)
   $(".slick-column-name :checkbox").addClass("hideMe");
 
-  // bind header line selection events to the grid
-  bindGridHeaderLineSelectionEvent(grid, 3);
+  // Bind header line selection events to the grid.
+  HeaderLineSelection.bindGridHeaderLineSelectionEvent(grid, 3);
 
-  // Uncheck the 'no header lines available in this file' checkbox if it's been previously checked.
-  bindNoHeaderLinesAvailableSelectionEvent(grid, 3);
+  // Uncheck the 'no header lines available in this file' checkbox if it's been previously unchecked.
+  HeaderLineSelection.bindNoHeaderLinesAvailableSelectionEvent(grid, 3);
 
 </script>
