@@ -195,7 +195,7 @@ public class TemplateManagerImpl implements TemplateManager {
         }
 
         String templateFilePath = FilenameUtils.concat(userFilesDirPath, "rosetta.template");
-        String jsonString = JsonUtil.mapObjectToJSON(template);
+        String jsonString = JsonUtil.mapObjectToJson(template);
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(
             new FileWriter(new File(templateFilePath)))) {

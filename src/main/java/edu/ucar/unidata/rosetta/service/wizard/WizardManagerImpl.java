@@ -44,7 +44,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.nio.file.Paths;
-import org.apache.commons.io.FileUtils;
 
 /**
  * Implements wizard manager functionality.
@@ -479,7 +478,7 @@ public class WizardManagerImpl implements WizardManager {
     @Override
     public void processGeneralMetadata(String id, WizardData wizardData) throws RosettaDataException {
         // Parse the JSON to get GlobalMetadata objects.
-        List<GlobalMetadata> globalMetadata = JsonUtil.convertGlobalDataFromJSON(wizardData.getGlobalMetadata());
+        List<GlobalMetadata> globalMetadata = JsonUtil.convertGlobalDataFromJson(wizardData.getGlobalMetadata());
 
         // Look up any persisted data corresponding to the id.
         List<GlobalMetadata> persisted = globalMetadataDao.lookupGlobalMetadata(id);
@@ -548,7 +547,7 @@ public class WizardManagerImpl implements WizardManager {
     @Override
     public void processVariableMetadata(String id, WizardData wizardData) {
         // Parse the JSON to get Variable objects.
-        List<Variable> variables = JsonUtil.convertVariableDataFromJSON(wizardData.getVariableMetadata());
+        List<Variable> variables = JsonUtil.convertVariableDataFromJson(wizardData.getVariableMetadata());
 
         // Look up any persisted data corresponding to the id.
         List<Variable> persisted = variableDao.lookupVariables(id);
