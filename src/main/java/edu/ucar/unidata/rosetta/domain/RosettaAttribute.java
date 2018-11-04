@@ -7,6 +7,9 @@ package edu.ucar.unidata.rosetta.domain;
 
 import java.util.Objects;
 
+/**
+ * Class representing a Rosetta Attribute (as per https://github.com/Unidata/rosetta/wiki/Rosetta-Template-Attributes#variableinfo-object-information)
+ */
 public class RosettaAttribute {
 
     private String name;
