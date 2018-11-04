@@ -4,24 +4,30 @@
  */
 
 package edu.ucar.unidata.rosetta.service.wizard;
-
+import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile.FileType;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.wizard.UploadedFileDao;
+import edu.ucar.unidata.rosetta.util.JsonUtil;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Implements uploaded file manager functionality.
  */
 public class UploadedFileManagerImpl implements UploadedFileManager {
+
+
+    private static final Logger logger = Logger.getLogger(UploadedFileManagerImpl.class);
 
     private UploadedFileDao uploadedFileDao;
 
@@ -144,6 +150,11 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
                             uploadedFile.setFileName(fileName);
                             // Update the uploaded files list.
                             uploadedFiles.set(index, uploadedFile);
+
+                            // If uploaded file is a rosetta TEMPLATE file, parse and persist the data.
+                            if (uploadedFile.getFileType().equals(FileType.TEMPLATE)) {
+                                persistTemplateData(id, uploadedFile);
+                            }
                         }
                     }
                 }
@@ -159,6 +170,15 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
         } else {
             // No persisted uploaded file data.  Add it.
             uploadedFileDao.persistData(id, uploadedFileCmd);
+        }
+    }
+
+    private void persistTemplateData(String id, UploadedFile templateFile) throws RosettaFileException {
+        String jsonString = this.fileManager.getJsonStringFromTemplateFile(PropertyUtils.getUserFilesDir(), id, templateFile.getFileName());
+        try {
+            Template templateData = JsonUtil.mapJsonToTemplateObject(jsonString);
+        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            throw new RosettaFileException("Unable to convert template file data to Template object: " + e);
         }
     }
 
