@@ -23,6 +23,22 @@ public class JdbcMetadataProfileDao extends JdbcDaoSupport implements MetadataPr
     private static final Logger logger = Logger.getLogger(JdbcMetadataProfileDao.class);
 
     /**
+     * Retrieves the compliance level for the give attribute.
+     *
+     * @param attributeName  The name of the attribute.
+     * @param profile        The metadata profile.
+     * @return  The compliance level of the attribute.
+     */
+    public String getComplianceLevelForAttribute(String attributeName, String profile) {
+        String sql = "SELECT * FROM mpsMetadataProfiles WHERE attributeName = ? AND metadataProfileName = ?";
+        List<MetadataProfile> metadataProfile = getJdbcTemplate().query(sql, new JdbcMetadataProfileDao.MetadataProfileMapper(), attributeName, profile);
+        if (metadataProfile.isEmpty()) {
+            return null;
+        }
+        return metadataProfile.get(0).getComplianceLevel();
+    }
+
+    /**
      * Retrieves the metadata profile attributes to ignore in the wizard interface.
      *
      * @return  A list of MetadataProfile objects containing the attributes to ignore.
@@ -57,8 +73,9 @@ public class JdbcMetadataProfileDao extends JdbcDaoSupport implements MetadataPr
             throw new DataRetrievalFailureException(message);
         }
         return metadataProfile;
-
     }
+
+
 
     /**
      * Data mapper class for MetadataProfile data.
