@@ -12,8 +12,6 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 
 /**
  * Service for handling files and parsing file data.
- *
- * @author oxelson@ucar.edu
  */
 public interface FileManager {
 
@@ -30,6 +28,17 @@ public interface FileManager {
     public String createUserFilesSubDirectory(String userFilesDir, String id)
             throws RosettaFileException;
 
+    /**
+     * Opens the given template file on disk and returns the contents as a string.
+     *
+     * @param userFilesDirPath  The location of the user files directory on disk.
+     * @param id    The unique ID corresponding to the location of the file on disk.
+     * @param fileName  The name of the template file.
+     * @return  The template data in JSON string format.
+     * @throws RosettaFileException If unable to read JSON data from template file.
+     */
+    public String getJsonStringFromTemplateFile(String userFilesDirPath, String id, String fileName) throws RosettaFileException;
+
 
     /**
      * A simple method that reads each line of a file, appends a new line character & adds to a
@@ -41,9 +50,6 @@ public interface FileManager {
      * @throws RosettaFileException For any file I/O or JSON conversions problems.
      */
     public String parseByLine(String filePath) throws RosettaFileException;
-
-    public String getJsonStringFromTemplateFile(String userFilesDirPath, String id, String fileName) throws RosettaFileException;
-
 
     /**
      * Creates a subdirectory in the designated user files directory using the (unique) id and

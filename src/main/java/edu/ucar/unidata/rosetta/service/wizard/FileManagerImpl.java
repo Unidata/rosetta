@@ -96,6 +96,31 @@ public class FileManagerImpl implements FileManager {
     }
 
     /**
+     * Opens the given template file on disk and returns the contents as a string.
+     *
+     * @param userFilesDirPath  The location of the user files directory on disk.
+     * @param id    The unique ID corresponding to the location of the file on disk.
+     * @param fileName  The name of the template file.
+     * @return  The template data in JSON string format.
+     * @throws RosettaFileException If unable to read JSON data from template file.
+     */
+    public String getJsonStringFromTemplateFile(String userFilesDirPath, String id, String fileName) throws RosettaFileException {
+        String jsonString;
+
+        String filePath = FilenameUtils.concat(userFilesDirPath, id);
+        filePath = FilenameUtils.concat(filePath, fileName);
+        try {
+            byte[] encodedData = Files.readAllBytes(Paths.get(filePath));
+            jsonString = new String(encodedData, StandardCharsets.UTF_8);
+            //return Template;
+        } catch (IOException e) {
+            throw new RosettaFileException(
+                    "Unable to read JSON data from template file: " + e);
+        }
+        return jsonString;
+    }
+
+    /**
      * A simple method that reads each line of a file, appends a new line character & adds to a
      * List. The list is then turned into a JSON string.  This method is used to format the file
      * data for display in the client-side wizard.
@@ -123,21 +148,6 @@ public class FileManagerImpl implements FileManager {
         return jsonFileData;
     }
 
-    public String getJsonStringFromTemplateFile(String userFilesDirPath, String id, String fileName) throws RosettaFileException {
-        String jsonString;
-
-        String filePath = FilenameUtils.concat(userFilesDirPath, id);
-        filePath = FilenameUtils.concat(filePath, fileName);
-        try {
-            byte[] encodedData = Files.readAllBytes(Paths.get(filePath));
-            jsonString = new String(encodedData, StandardCharsets.UTF_8);
-            //return Template;
-        } catch (IOException e) {
-            throw new RosettaFileException(
-                    "Unable to read JSON data from template file: " + e);
-        }
-        return jsonString;
-    }
 
 
     /**
