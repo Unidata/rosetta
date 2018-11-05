@@ -14,15 +14,6 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
  */
 public interface UploadedFileManager {
 
-    /**
-     * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
-     *
-     * @param id The unique id associated with the file (a subdir in the uploads directory).
-     * @param dataFileName The file to parse.
-     * @return A JSON String of the file data parsed by line.
-     * @throws RosettaFileException For any file I/O or JSON conversions problems.
-     */
-    public String parseDataFileByLine(String id, String dataFileName) throws RosettaFileException;
 
     /**
      * Returns the data file corresponding to the given ID as an UploadedFile object.
@@ -55,6 +46,16 @@ public interface UploadedFileManager {
      * @return The persisted uploaded file data.
      */
     public UploadedFileCmd lookupPersistedDataById(String id);
+
+    /**
+     * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
+     *
+     * @param id The unique id associated with the file (a subdir in the uploads directory).
+     * @param dataFileName The file to parse.
+     * @return A JSON String of the file data parsed by line.
+     * @throws RosettaFileException For any file I/O or JSON conversions problems.
+     */
+    public String parseDataFileByLine(String id, String dataFileName) throws RosettaFileException;
 
     /**
      * Processes the data submitted by the user containing uploaded file information. Writes the
