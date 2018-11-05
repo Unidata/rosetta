@@ -7,6 +7,7 @@ package edu.ucar.unidata.rosetta.util;
 
 import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
 import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
+import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
 import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.Variable;
 import edu.ucar.unidata.rosetta.domain.VariableInfo;
@@ -36,11 +37,6 @@ public class JsonUtil {
 
     protected static final Logger logger = Logger.getLogger(JsonUtil.class);
 
-
-
-
-
-
     /**
      * Converts the data held in a list of VariableMetadata objects into a string of JSON data.
      *
@@ -58,7 +54,42 @@ public class JsonUtil {
     }
 
     /**
-     * Converts the global metadata held in a string of JSON data into a list of GlobalMetadata objects.
+     * Converts the provided JSON data into a list of RosettaGlobalAttribute objects.
+     *
+     * @param node  The JSON data containing the global attribute data.
+     * @return  A list of RosettaGlobalAttribute objects created from the JSON data.
+     */
+    private static List<RosettaGlobalAttribute> convertGlobalAttributeFromJson(JsonNode node) {
+        List<RosettaGlobalAttribute> globalAttributeObjects = new ArrayList<>();
+
+        // Get an iterator of the nodes.
+        for (Iterator<JsonNode> jsonNodeIterator = node.elements(); jsonNodeIterator.hasNext();) {
+            RosettaGlobalAttribute rosettaGlobalAttribute = new RosettaGlobalAttribute();
+            // Get the elements.
+            for (Iterator<Map.Entry<String, JsonNode>> iterator = jsonNodeIterator.next().fields(); iterator.hasNext();) {
+                Map.Entry<String, JsonNode> field = iterator.next();
+                String key = field.getKey().replaceAll("\"", "");
+                JsonNode value = field.getValue();
+                if (key.equals("name") && !value.isNull()) {
+                    rosettaGlobalAttribute.setName(value.textValue().replaceAll("\"", ""));
+                }
+                if (key.equals("value") && !value.isNull()) {
+                    rosettaGlobalAttribute.setValue(value.textValue().replaceAll("\"", ""));
+                }
+                if (key.equals("type") && !value.isNull()) {
+                    rosettaGlobalAttribute.setType(value.textValue().replaceAll("\"", ""));
+                }
+                if (key.equals("group") && !value.isNull()) {
+                    rosettaGlobalAttribute.setGroup(value.textValue().replaceAll("\"", ""));
+                }
+            }
+            globalAttributeObjects.add(rosettaGlobalAttribute);
+        }
+        return globalAttributeObjects;
+    }
+
+    /**
+     * Converts the global metadata held in a JSON string into a list of GlobalMetadata objects.
      *
      * @param jsonString  The string of JSON data containing the global metadata data.
      * @return  A list of GlobalMetadata objects created from the JSON string.
@@ -215,48 +246,42 @@ public class JsonUtil {
     }
 
     /**
-     * Converts the data in the provided JSON string into a list of VariableInfo objects.
+     * Converts the provided JSON data into a list of VariableInfo objects.
      *
-     * @param jsonString    The JSOn string.
+     * @param node    The JSON data
      * @return  A list of VariableInfo objects.
-     * @throws IllegalAccessException If unable to invoke the setter method on the RosettaAttribute object.
-     * @throws NoSuchMethodException If the RosettaAttribute object doesn't contain the required setter method.
-     * @throws InvocationTargetException  If unable to locate the target method to invoke.
      */
-    private static List<VariableInfo> convertVariableInfoDataFromJson(String jsonString) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private static List<VariableInfo> convertVariableInfoDataFromJson(JsonNode node) {
         List<VariableInfo> variableInfoObjects = new ArrayList<>();
-        if (jsonString != null) {
-            // Convert string to JSON object.
-            JsonNode jsonVariables = mapStringToJson(jsonString);
-            // If there is something to work with.
-            if (jsonVariables != null) {
-                // Get the elements.
-                for (Iterator<Map.Entry<String, JsonNode>> iterator = jsonVariables.fields(); iterator.hasNext(); ) {
-                    VariableInfo variableInfo = new VariableInfo();
-                    Map.Entry<String, JsonNode> field = iterator.next();
-                    String key = field.getKey().replaceAll("\"", "");
-                    JsonNode value = field.getValue();
-                    // Set the column Id if not null.
-                    if (key.equals("columnId") && !value.isNull()) {
-                        variableInfo.setColumnId(value.intValue());
-                    }
-                    // Set the name is not null.
-                    if (key.equals("name") && !value.isNull()) {
-                        variableInfo.setName(value.textValue());
-                    }
-                    // If the rosetta control metadata is not null.
-                    if (key.equals("rosettaControlMetadata") && !value.isNull()) {
-                        List<RosettaAttribute> rosettaControlMetadata = populateRosettaAttributeDataFromJson(value.textValue());
-                        variableInfo.setRosettaControlMetadata(rosettaControlMetadata);
-                    }
-                    // If the variableMetadata is not null.
-                    if (key.equals("variableMetadata") && !value.isNull()) {
-                        List<RosettaAttribute> variableMetadata = populateRosettaAttributeDataFromJson(value.textValue());
-                        variableInfo.setRosettaControlMetadata(variableMetadata);
-                    }
-                    variableInfoObjects.add(variableInfo);
+
+        // Get an iterator of the nodes.
+        for (Iterator<JsonNode> jsonNodeIterator = node.elements(); jsonNodeIterator.hasNext();) {
+            VariableInfo variableInfo = new VariableInfo();
+            // Get the elements.
+            for (Iterator<Map.Entry<String, JsonNode>> iterator = jsonNodeIterator.next().fields(); iterator.hasNext();) {
+                Map.Entry<String, JsonNode> field = iterator.next();
+                String key = field.getKey().replaceAll("\"", "");
+                JsonNode value = field.getValue();
+                // Set the column Id if not null.
+                if (key.equals("columnId") && !value.isNull()) {
+                    variableInfo.setColumnId(value.intValue());
+                }
+                // Set the name is not null.
+                if (key.equals("name") && !value.isNull()) {
+                    variableInfo.setName(value.textValue());
+                }
+                // If the rosetta control metadata is not null.
+                if (key.equals("rosettaControlMetadata") && !value.isNull()) {
+                    List<RosettaAttribute> rosettaControlMetadata = populateRosettaAttributeDataFromJson(value);
+                    variableInfo.setRosettaControlMetadata(rosettaControlMetadata);
+                }
+                // If the variableMetadata is not null.
+                if (key.equals("variableMetadata") && !value.isNull()) {
+                    List<RosettaAttribute> variableMetadata = populateRosettaAttributeDataFromJson(value);
+                    variableInfo.setVariableMetadata(variableMetadata);
                 }
             }
+            variableInfoObjects.add(variableInfo);
         }
         return variableInfoObjects;
     }
@@ -286,39 +311,37 @@ public class JsonUtil {
                     // Get the key.
                     String key = field.getKey().replaceAll("\"", "");
 
-                    // Using reflection to populate the Template object.
-
-                    // The setter method.
-                    String setterMethodName = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
-
-                    // Get the setter method.
-                    Method setter = (Method) template.getClass().getMethod(setterMethodName, String.class);
-
                     // Get the data value.
                     JsonNode value = field.getValue();
 
-                    // Set the params that contain actual data.
-                    if (value.isTextual()) {
-                        setter.invoke(template, value.textValue().replaceAll("\"", ""));
-                    } else {                    logger.info(field);
+                    // One of the more complex data types.
+                    if (key.equals("globalMetadata") && !value.isNull()) {
+                        List<RosettaGlobalAttribute> globalAttributes = convertGlobalAttributeFromJson(value);
+                        if (!globalAttributes.isEmpty()) {
+                            template.setGlobalMetadata(globalAttributes);
+                        }
+                    } else if (key.equals("headerLineNumbers") && !value.isNull()) {
+                        List<Integer> headerLineNumbers = new ArrayList<>();
+                        for (Iterator<JsonNode> headerLineNumberIterator = value.elements(); headerLineNumberIterator.hasNext();) {
+                            headerLineNumbers.add(headerLineNumberIterator.next().asInt());
+                        }
+                        template.setHeaderLineNumbers(headerLineNumbers);
+                    } else if (key.equals("variableInfoList") && !value.isNull()) {
+                        List<VariableInfo> variableInfo = convertVariableInfoDataFromJson(value);
+                        if (!variableInfo.isEmpty()) {
+                            template.setVariableInfoList(variableInfo);
+                        }
+                    } else {
+                        // Set the params that contain actual data (ignore null values).
+                        if (!value.isNull()) {
+                            // Using reflection to populate the Template object.
 
-                        // Either value is null or one of the more complex data types.
-                        if (key.equals("globalMetadataData") && !value.isNull()) {
-                            List<GlobalMetadata> globalMetadata = convertGlobalDataFromJson(value.textValue());
-                            if (!globalMetadata.isEmpty()) {
-                                setter.invoke(template, globalMetadata);
-                            }
-                        }
-                        if (key.equals("headerLineNumbers") && !value.isNull()) {
-                            int [] headerLineNumbersAsInts = Stream.of(value.textValue().replaceAll("\"", "").split(",")).mapToInt(Integer::parseInt).toArray();
-                            List<Integer> headerLineNumbers = Arrays.stream(headerLineNumbersAsInts).boxed().collect(Collectors.toList());
-                            setter.invoke(template, headerLineNumbers);
-                        }
-                        if (key.equals("variableInfoList") && !value.isNull()) {
-                            List<VariableInfo> variableInfo = convertVariableInfoDataFromJson(value.textValue());
-                            if (!variableInfo.isEmpty()) {
-                                setter.invoke(template, variableInfo);
-                            }
+                            // The setter method.
+                            String setterMethodName = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
+
+                            // Get the setter method.
+                            Method setter = template.getClass().getMethod(setterMethodName, String.class);
+                            setter.invoke(template, value.textValue().replaceAll("\"", ""));
                         }
                     }
                 }
@@ -332,9 +355,8 @@ public class JsonUtil {
      *
      * @param obj The object to convert.
      * @return The Object as a JSOn string.
-     * @throws JsonProcessingException If unable to map Object to JSON string.
      */
-    public static String mapObjectToJson(Object obj) throws JsonProcessingException {
+    public static String mapObjectToJson(Object obj){
         String jsonString = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -385,45 +407,33 @@ public class JsonUtil {
     }
 
     /**
-     * Converts the data in the provided JSON string to a list of RosettaAttribute objects.
+     * Converts the provided JSON data into a list of RosettaAttribute objects.
      *
-     * @param jsonString  The JSON string.
+     * @param node  The JSON data.
      * @return  A list of RosettaAttribute objects.
-     * @throws IllegalAccessException If unable to invoke the setter method on the RosettaAttribute object.
-     * @throws NoSuchMethodException If the RosettaAttribute object doesn't contain the required setter method.
-     * @throws InvocationTargetException  If unable to locate the target method to invoke.
      */
-    private static List<RosettaAttribute> populateRosettaAttributeDataFromJson(String jsonString) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException  {
+    private static List<RosettaAttribute> populateRosettaAttributeDataFromJson(JsonNode node)  {
         List<RosettaAttribute> rosettaAttributeObjects = new ArrayList<>();
 
-        if (jsonString != null) {
-            // Convert string to JSON object.
-            JsonNode jsonVariables = mapStringToJson(jsonString);
-
-            // If there is something to work with.
-            if (jsonVariables != null) {
-                // Get the elements (variables).
-                for (Iterator<Map.Entry<String, JsonNode>> iterator = jsonVariables.fields(); iterator.hasNext(); ) {
-                    RosettaAttribute rosettaAttribute = new RosettaAttribute();
-                    Map.Entry<String, JsonNode> field = iterator.next();
-                    String key = field.getKey().replaceAll("\"", "");
-                    JsonNode value = field.getValue();
-
-                    // Using reflection to populate the Template object.
-
-                    // The setter method.
-                    String setterMethodName = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
-
-                    // Get the setter method.
-                    Method setter = (Method) rosettaAttribute.getClass().getMethod(setterMethodName, String.class);
-
-                    if (value.isTextual()) {
-                        // A well-formed template will always have a value to add here...
-                        setter.invoke(rosettaAttribute, value.textValue().replaceAll("\"", ""));
-                    }
-                    rosettaAttributeObjects.add(rosettaAttribute);
+        // Get an iterator of the nodes.
+        for (Iterator<JsonNode> jsonNodeIterator = node.elements(); jsonNodeIterator.hasNext();) {
+            RosettaAttribute rosettaAttribute = new RosettaAttribute();
+            // Get the elements.
+            for (Iterator<Map.Entry<String, JsonNode>> iterator = jsonNodeIterator.next().fields(); iterator.hasNext(); ) {
+                Map.Entry<String, JsonNode> field = iterator.next();
+                String key = field.getKey().replaceAll("\"", "");
+                JsonNode value = field.getValue();
+                if (key.equals("name") && !value.isNull()) {
+                    rosettaAttribute.setName(value.textValue().replaceAll("\"", ""));
+                }
+                if (key.equals("value") && !value.isNull()) {
+                    rosettaAttribute.setValue(value.textValue().replaceAll("\"", ""));
+                }
+                if (key.equals("type") && !value.isNull()) {
+                    rosettaAttribute.setType(value.textValue().replaceAll("\"", ""));
                 }
             }
+            rosettaAttributeObjects.add(rosettaAttribute);
         }
         return rosettaAttributeObjects;
     }
