@@ -5,6 +5,8 @@
 
 package edu.ucar.unidata.rosetta.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Objects;
 
 /**
@@ -115,6 +117,17 @@ public class RosettaAttribute {
     @Override
     public int hashCode() {
         return Objects.hash(name, value, type);
+    }
+
+
+    /**
+     * String representation of this object.
+     *
+     * @return The string representation.
+     */
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }
