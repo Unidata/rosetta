@@ -15,6 +15,14 @@ import java.util.List;
 public interface MetadataManager {
 
     /**
+     * Retrieves the compliance level for the give attribute.
+     *
+     * @param attributeName  The name of the attribute.
+     * @return  The compliance level of the attribute.
+     */
+    public String getComplianceLevelForAttribute(String id, String attributeName);
+
+    /**
      * Returns all eTUFF metadata profiles.
      *
      * @return  All eTUFF metadata profiles.
