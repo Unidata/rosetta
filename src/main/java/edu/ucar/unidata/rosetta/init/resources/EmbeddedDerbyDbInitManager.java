@@ -227,7 +227,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
             createTable(createCfTypeTable, props);
 
             String createMetadataProfileTable = "CREATE TABLE metadataProfiles " +
-                    "(" + "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                    "(" +
+                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
                     + "name VARCHAR(10), " +
                     "community INTEGER"
                     + ")";
