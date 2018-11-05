@@ -39,6 +39,8 @@ import org.apache.log4j.Logger;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -52,16 +54,16 @@ public class WizardManagerImpl implements WizardManager {
 
     private static final Logger logger = Logger.getLogger(WizardManagerImpl.class);
 
+    private GlobalMetadataDao globalMetadataDao;
     private UploadedFileDao uploadedFileDao;
     private VariableDao variableDao;
     private WizardDataDao wizardDataDao;
-    private GlobalMetadataDao globalMetadataDao;
 
     @Resource(name = "fileManager")
     private FileManager fileManager;
 
-    @Resource(name = "uploadedFileManager")
-    private UploadedFileManager uploadedFileManager;
+    @Resource(name = "metadataManager")
+    private MetadataManager metadataManager;
 
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
@@ -69,9 +71,8 @@ public class WizardManagerImpl implements WizardManager {
     @Resource(name = "templateManager")
     private TemplateManager templateManager;
 
-    @Resource(name = "metadataManager")
-    private MetadataManager metadataManager;
-
+    @Resource(name = "uploadedFileManager")
+    private UploadedFileManager uploadedFileManager;
 
     public String convertToNetcdf(String id) throws RosettaFileException {
         String netcdfFile = null;
@@ -92,9 +93,7 @@ public class WizardManagerImpl implements WizardManager {
         // Load main template.
         try {
             Template baseTemplate = TemplateFactory.makeTemplateFromJsonFile(Paths.get(templateFilePath));
-            logger.info("basetemplate: " + baseTemplate);
             String format = baseTemplate.getFormat();
-            logger.info("format: " + format);
             baseTemplate.setFormat(format.toLowerCase());
             template.setFormat(template.getFormat().toLowerCase());
 
@@ -309,13 +308,14 @@ public class WizardManagerImpl implements WizardManager {
     }
 
 
-    public static String convertGlobalDataToJson(GlobalMetadata globalMetadata, HashMap<String, String> fileGlobals) {
-
+    private static String convertGlobalDataToJson(GlobalMetadata globalMetadata, HashMap<String, String> fileGlobals) {
+        // Get the persisted metadata value.
         String value = globalMetadata.getMetadataValue();
-
+        //logger.info(globalMetadata);
         // We have globals from a file.
         if (fileGlobals != null) {
-            if (value.equals("")) {
+            // If there is no persisted value.
+            if (value == null || value.equals("")) {
                 value = fileGlobals.get(globalMetadata.getMetadataKey());
             }
         }
@@ -574,6 +574,14 @@ public class WizardManagerImpl implements WizardManager {
         }
     }
 
+    /**
+     * Sets the data access object (DAO) for the GlobalMetadata object.
+     *
+     * @param globalMetadataDao The service DAO representing a GlobalMetadata object.
+     */
+    public void setGlobalMetadataDao(GlobalMetadataDao globalMetadataDao) {
+        this.globalMetadataDao = globalMetadataDao;
+    }
 
     /**
      * Sets the data access object (DAO) for the UploadedFile object.
@@ -592,16 +600,6 @@ public class WizardManagerImpl implements WizardManager {
     public void setVariableDao(VariableDao variableDao) {
         this.variableDao = variableDao;
     }
-
-    /**
-     * Sets the data access object (DAO) for the GlobalMetadata object.
-     *
-     * @param globalMetadataDao The service DAO representing a GlobalMetadata object.
-     */
-    public void setGlobalMetadataDao(GlobalMetadataDao globalMetadataDao) {
-        this.globalMetadataDao = globalMetadataDao;
-    }
-
 
     /**
      * Sets the data access object (DAO) for the WizardData object.
