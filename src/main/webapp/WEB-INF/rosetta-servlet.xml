@@ -199,7 +199,10 @@
 
     <bean class="edu.ucar.unidata.rosetta.service.wizard.UploadedFileManagerImpl"
           id="uploadedFileManager">
+        <property name="globalMetadataDao" ref="globalMetadataDao"/>
         <property name="uploadedFileDao" ref="uploadedFileDao"/>
+        <property name="variableDao" ref="variableDao"/>
+        <property name="wizardDataDao" ref="wizardDataDao"/>
     </bean>
 
 
