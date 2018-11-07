@@ -162,11 +162,7 @@ public class JsonUtil {
                             variable.setVerticalDirection(value.textValue());
                         }
                         if (key.equals("metadataValueType")) {
-                            String type = value.textValue().toLowerCase();
-                            type = type.substring(0, 1).toUpperCase() + type.substring(1);
-                            if (type.equals("Double")) {
-                                type = "Float";
-                            }
+                            String type = value.textValue();
                             variable.setMetadataValueType(type);
                         }
 
