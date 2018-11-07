@@ -90,10 +90,7 @@ public class TemplateManagerImpl implements TemplateManager {
                 cfType = resourceManager.getCFTypeFromPlatform(platform);
             }
             template.setCfType(cfType);
-            String delimiter = resourceManager.getDelimiterSymbol(wizardData.getDelimiter());
-            if (delimiter.equals("")) {
-                delimiter = " ";
-            }
+            String delimiter = wizardData.getDelimiter();
             template.setDelimiter(delimiter);
 
             List<String> headerLineNumbers = Arrays.asList(wizardData.getHeaderLineNumbers().split(","));

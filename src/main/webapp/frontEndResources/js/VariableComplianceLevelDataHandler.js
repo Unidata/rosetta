@@ -80,7 +80,7 @@ var VariableComplianceLevelDataHandler = (function () {
         
         // If compliance level is required, add list to storage.
         if (complianceLevel === "required") {
-            WebStorage.storeData("_v" + key.replace("variableName", ""), required);
+            WebStorage.storeData("_v" + key, required);
         }
 
         // Sort the array.
@@ -111,7 +111,7 @@ var VariableComplianceLevelDataHandler = (function () {
                 }
             }
         }
-        WebStorage.storeData("_v" + key.replace("variableName", ""), required);
+        WebStorage.storeData("_v" + key, required);
     }
 
 

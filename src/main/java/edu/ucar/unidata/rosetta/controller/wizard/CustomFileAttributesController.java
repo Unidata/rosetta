@@ -70,7 +70,7 @@ public class CustomFileAttributesController {
         model.addAttribute("customFileAttributesStep",  wizardManager.customFileAttributesStep(rosettaCookie.getValue()));
         // Add delimiters to Model.
         model.addAttribute("delimiters", resourceManager.getDelimiters());
-        // Add parsed file data in JSON string format (to sho win the SlickGrid).
+        // Add parsed file data in JSON string format (to show in the SlickGrid).
         model.addAttribute("parsedData",
                 wizardManager.parseDataFileByLine(rosettaCookie.getValue()));
 

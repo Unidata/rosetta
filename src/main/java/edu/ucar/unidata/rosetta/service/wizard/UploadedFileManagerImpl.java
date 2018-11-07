@@ -314,7 +314,8 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
     @Override
     public void processFileUpload(String id, UploadedFileCmd uploadedFileCmd) throws RosettaFileException {
 
-        // Get the persisted data corresponding to this ID.
+        // Get the persisted data corresponding to this ID
+        // (This object is created even if there is not any persisted data.)
         UploadedFileCmd persistedData = lookupPersistedDataById(id);
 
         // Save uploaded files to disk.
@@ -323,12 +324,15 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
             // One bother with saving files that actually exist.
             if (StringUtils.trimToNull(uploadedFile.getFileName()) != null) {
 
-                // Save file only if name is NOT the same as the one that is persisted.
-                // (If the user visits the prior step in the wizard and doesn't update
-                // the uploaded file data, we don't need to process that resubmitted data.)
+                // Examine the UploadedFile objects (can be "empty") to determine if data
+                // has been persisted prior (in which case the object will not be 'empty").
                 for (UploadedFile persistedFile : persistedData.getUploadedFiles()) {
                     // Get the matching file type.
                     if (uploadedFile.getFileType().equals(persistedFile.getFileType())) {
+
+                        // Save file only if name is NOT the same as the one that is persisted.
+                        // (If the user visits the prior step in the wizard and doesn't update
+                        // the uploaded file data, we don't need to process that resubmitted data.)
                         if (!uploadedFile.getFileName().equals(persistedFile.getFileName())) {
                             int index = uploadedFiles.indexOf(uploadedFile);
                             // Write data file to disk.
@@ -339,6 +343,9 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
                             // Update the uploaded files list.
                             uploadedFiles.set(index, uploadedFile);
 
+                            // Persist file data.
+                            uploadedFileDao.persistData(id, uploadedFileCmd);
+
                             // If uploaded file is a rosetta TEMPLATE file, parse and persist the data.
                             if (uploadedFile.getFileType().equals(FileType.TEMPLATE)) {
                                 persistTemplateData(id, uploadedFile);
@@ -348,7 +355,7 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
                 }
             }
         }
-
+/*
         // Do we have persisted data to update?
         if (!persistedData.getUploadedFiles().isEmpty() && persistedData.getDataFileType() != null) {
             // Persisted uploaded file data exists.
@@ -359,6 +366,7 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
             // No persisted uploaded file data.  Add it.
             uploadedFileDao.persistData(id, uploadedFileCmd);
         }
+        */
     }
 
     /**

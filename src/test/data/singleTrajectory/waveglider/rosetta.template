@@ -1,5 +1,5 @@
 {
-    "delimiter": " ",
+    "delimiter": "Whitespace",
     "cfType": "trajectory",
     "community": "Physical Ocean Sciences",
     "creationDate": "20180809T163000MDT",

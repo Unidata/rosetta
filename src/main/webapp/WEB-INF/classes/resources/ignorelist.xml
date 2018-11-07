@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<IGNOREDATA>
+    <IGNORE metadataType="CoordinateVariable" attributeName="axis"/>
+    <IGNORE metadataType="CoordinateVariable" attributeName="coverage_content_type"/>
+    <IGNORE metadataType="CoordinateVariable" attributeName="_FillValue"/>
+    <IGNORE metadataType="CoordinateVariable" attributeName="valid_min"/>
+    <IGNORE metadataType="CoordinateVariable" attributeName="valid_max"/>
+    <IGNORE metadataType="DataVariable" attributeName="_FillValue"/>
+    <IGNORE metadataType="DataVariable" attributeName="coordinates"/>
+    <IGNORE metadataType="DataVariable" attributeName="valid_min"/>
+    <IGNORE metadataType="DataVariable" attributeName="valid_max"/>
+    <IGNORE metadataType="DataVariable" attributeName="coverage_content_type"/>
+    <IGNORE metadataType="Global" attributeName="featureType"/>
+    <IGNORE metadataType="Global" attributeName="conventions"/>
+    <IGNORE metadataType="MetadataGroup" attributeName="geospatial_lat_start"/>
+    <IGNORE metadataType="MetadataGroup" attributeName="geospatial_lon_start"/>
+    <IGNORE metadataType="MetadataGroup" attributeName="time_coverage_start"/>
+    <IGNORE metadataType="MetadataGroup" attributeName="geospatial_lat_end"/>
+    <IGNORE metadataType="MetadataGroup" attributeName="geospatial_lon_end"/>
+    <IGNORE metadataType="MetadataGroup" attributeName="time_coverage_end"/>
+</IGNOREDATA>

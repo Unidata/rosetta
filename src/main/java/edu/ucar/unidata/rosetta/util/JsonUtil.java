@@ -163,7 +163,12 @@ public class JsonUtil {
                             variable.setVerticalDirection(value.textValue());
                         }
                         if (key.equals("metadataValueType")) {
-                            variable.setMetadataValueType(value.textValue());
+                            String type = value.textValue().toLowerCase();
+                            type = type.substring(0, 1).toUpperCase() + type.substring(1);
+                            if (type.equals("Double")) {
+                                type = "Float";
+                            }
+                            variable.setMetadataValueType(type);
                         }
 
                         if (key.equals("required")) {
