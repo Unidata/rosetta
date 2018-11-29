@@ -198,6 +198,11 @@ var GlobalMetadata = (function () {
             $("input[type=submit]#Next").removeAttr("disabled");
             // remove disabled class for submit button.
             $("input[type=submit]#Next").removeClass("disabled");
+        } else {
+            // add disabled status for submit button.
+            $("input[type=submit]#Next").attr("disabled");
+            // add disabled class for submit button.
+            $("input[type=submit]#Next").addClass("disabled");
         }
     }
 
@@ -216,7 +221,6 @@ var GlobalMetadata = (function () {
         Object.keys(globalMetadata).forEach(function(key) {
             stored.push(key);
         });
-        
         for (var i = 0; i < required.length; i++) {
             if (!stored.includes(required[i])) {
                 return false;
@@ -237,6 +241,9 @@ var GlobalMetadata = (function () {
         });
         // Expand/collapse relevant categories.
         toggleCategories();
+
+        // Test if complete (relevant when restoring template).
+        isComplete();
     }
 
     /**
