@@ -143,7 +143,6 @@ public class JsonUtil {
                         Map.Entry<String, JsonNode> field = it.next();
                         String key = field.getKey().replaceAll("\"", "");
                         JsonNode value = field.getValue();
-
                         if (key.equals("column")) {
                             variable.setColumnNumber(value.intValue());
                         }
@@ -292,9 +291,9 @@ public class JsonUtil {
     }
 
     /**
-     * Converts a JSON string of template data into a Template object.
+     * Converts a JSON string from template file into a Template object.
      *
-     * @param jsonString  The JSON string containing the template data.
+     * @param jsonString  The JSON string containing the template data from the JSOn file.
      * @return  The Template object.
      * @throws IllegalAccessException If unable to invoke the setter method on the Template object.
      * @throws NoSuchMethodException If the Template object doesn't contain the required setter method.
@@ -423,16 +422,75 @@ public class JsonUtil {
         // Get an iterator of the nodes.
         for (Iterator<JsonNode> jsonNodeIterator = node.elements(); jsonNodeIterator.hasNext();) {
             RosettaAttribute rosettaAttribute = new RosettaAttribute();
+
+            // Toggle these values when we are dealing with metadataType or metadataValueType.
+            boolean isMetadataType = false;
+            boolean isMetadataValueType = false;
+            boolean isCoordinateVariableType = false;
+
             // Get the elements.
             for (Iterator<Map.Entry<String, JsonNode>> iterator = jsonNodeIterator.next().fields(); iterator.hasNext(); ) {
                 Map.Entry<String, JsonNode> field = iterator.next();
                 String key = field.getKey().replaceAll("\"", "");
                 JsonNode value = field.getValue();
+
                 if (key.equals("name") && !value.isNull()) {
+                    // If metadataType.
+                    if (value.textValue().equals("coordinateVariable")) {
+                        isMetadataType = true;
+                    }
+                    // If metadataValueType.
+                    if (value.textValue().equals("type")) {
+                        isMetadataValueType = true;
+                    }
+                    // If coordinateVariableType.
+                    if (value.textValue().equals("coordinateVariableType")) {
+                        isCoordinateVariableType = true;
+                    }
+
                     rosettaAttribute.setName(value.textValue().replaceAll("\"", ""));
                 }
                 if (key.equals("value") && !value.isNull()) {
-                    rosettaAttribute.setValue(value.textValue().replaceAll("\"", ""));
+                    String attributeValue = value.textValue().replaceAll("\"", "");
+
+                    attributeValue = attributeValue.toLowerCase(); // Just in case we get non-standard template data.
+                    // The metadataType value being set.  Change to appropriate value for wizard.
+                    if (isMetadataType)  {
+                        if (attributeValue.equals("true")) {
+                            attributeValue = "coordinate";
+                        } else {
+                            attributeValue = "non-coordinate";
+                        }
+                    }
+
+                    // The metadataValueType value being set.  Change to appropriate value for wizard.
+                    if (isMetadataValueType)  {
+                        if (attributeValue.equals("string")) {
+                            attributeValue = "Text";
+                        } else if (attributeValue.equals("integer")) {
+                            attributeValue = "Integer";
+                        } else {
+                            attributeValue = "Float";
+                        }
+                    }
+
+                    // The coordinateVariableType value being set.  Change to appropriate value for wizard.
+                    if (isCoordinateVariableType)  {
+                        if (attributeValue.equals("dateonly")) {
+                            attributeValue = "dateOnly";
+                        }
+                        if (attributeValue.equals("timeonly")) {
+                            attributeValue = "timeOnly";
+                        }
+                        if (attributeValue.equals("relativedate")) {
+                            attributeValue = "relativeDate";
+                        }
+                        if (attributeValue.equals("fulldatetime")) {
+                            attributeValue = "fullDateTime";
+                        };
+                    }
+
+                    rosettaAttribute.setValue(attributeValue);
                 }
                 if (key.equals("type") && !value.isNull()) {
                     rosettaAttribute.setType(value.textValue().replaceAll("\"", ""));

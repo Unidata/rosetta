@@ -145,9 +145,10 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
     private void persistTemplateData(String id, UploadedFile templateFile) throws RosettaFileException {
         String jsonString = this.fileManager.getJsonStringFromTemplateFile(PropertyUtils.getUserFilesDir(), id, templateFile.getFileName());
         try {
+            // Get the template data in the form of a Template object.
             Template templateData = JsonUtil.mapJsonToTemplateObject(jsonString);
 
-            // Persist wizard data from the template.
+            // Get persisted wizard data from the template.
             WizardData wizardData = wizardDataDao.lookupWizardDataById(id);
             // Delimiter.
             String delimiter = templateData.getDelimiter();
@@ -162,10 +163,11 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
                         .collect(Collectors.joining(","));
                 wizardData.setHeaderLineNumbers(headerLineNumbers);
             }
+            // Persist data updated with template info.
             wizardDataDao.updatePersistedWizardData(wizardData);
 
 
-            // Persist any global metadata from the template.
+            /* PERSIST GLOBAL METADATA FROM TEMPLATE */
 
             // Need to convert the list of RosettaGlobalAttribute objects to a list of GlobalMetadata objects.
             List<RosettaGlobalAttribute> rosettaGlobalAttributes = templateData.getGlobalMetadata();
@@ -193,7 +195,7 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
                 }
             }
 
-            // Persist any variable metadata from the template.
+            /* PERSIST VARIABLE METADATA FROM TEMPLATE */
 
             // Need to convert the list of VariableInfo objects to a list of Variable objects.
             List<VariableInfo> variableInfoObjects = templateData.getVariableInfoList();
@@ -204,10 +206,7 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
                     variable.setWizardDataId(id);
                     variable.setColumnNumber(variableInfo.getColumnId());
                     variable.setVariableName(variableInfo.getName());
-                    if (variableInfo.getName().equals("DO_NOT_USE")) {
-                        // No need to collect the other data if this variable isn't being used.
-                        continue;
-                    }
+
                     // Get rosetta control metadata.
                     List<RosettaAttribute> rosettaControlMetadata = variableInfo.getRosettaControlMetadata();
                     if (rosettaControlMetadata != null) {
