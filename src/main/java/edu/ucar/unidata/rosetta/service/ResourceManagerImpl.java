@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class ResourceManagerImpl implements ResourceManager {
 
-  // Resource DAOS.
+  // Resource DAOs.
   private CfTypeResourceDao cfTypeResourceDao;
   private CommunityResourceDao communityResourceDao;
   private DelimiterResourceDao delimiterResourceDao;
