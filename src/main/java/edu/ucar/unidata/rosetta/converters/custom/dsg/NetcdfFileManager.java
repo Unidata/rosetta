@@ -19,6 +19,8 @@ import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
 import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
 import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.VariableInfo;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.repository.resources.DelimiterResourceDao;
 import edu.ucar.unidata.rosetta.util.PathUtils;
 import edu.ucar.unidata.rosetta.util.RosettaGlobalAttributeUtils;
 import edu.ucar.unidata.rosetta.util.TemplateUtils;
@@ -455,15 +457,16 @@ public abstract class NetcdfFileManager {
      * the metadata contained within a template
      *
      * @param dataFile file containing observed data
-     * @param template template assocated with dataFile
+     * @param template template associated with dataFile
+     * @param delimiter the delimiter used to parse the file.
      * @return location of the created netCDF file
      */
-    public String createNetcdfFile(Path dataFile, Template template) throws IOException {
+    public String createNetcdfFile(Path dataFile, Template template, String delimiter) throws IOException, RosettaDataException {
 
         Path netcdfFile = PathUtils.replaceExtension(dataFile, ".nc");
         String netcdfFilePath = netcdfFile.toString();
 
-        ParsedFile parsedFile = new ParsedFile(dataFile, template);
+        ParsedFile parsedFile = new ParsedFile(dataFile, template, delimiter);
         arrayData = parsedFile.getArrayData();
         stringData = parsedFile.getStringData();
         // TODO: add check to see if netCDF-4 is enabled
@@ -577,4 +580,5 @@ public abstract class NetcdfFileManager {
 
         return netcdfFilePath;
     }
+
 }

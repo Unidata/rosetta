@@ -6,6 +6,7 @@
 package edu.ucar.unidata.rosetta.controller.batch;
 
 import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.service.batch.BatchFileManagerImpl;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import java.io.File;
@@ -40,10 +41,12 @@ public class BatchProcessController {
      * @param batchZipFile The batchZipFile form backing object containing the file.
      * @param request      The HttpServletRequest with which to glean the client IP address.
      * @return A String of the local file name for the ASCII file (or null for an error).
+     * @throws IOException If unable to access template file.
+     * @throws RosettaDataException  If unable to parse data file with given delimiter.
      */
     @RequestMapping(value = "/batchProcess", method = RequestMethod.POST, produces = "application/zip")
     @ResponseBody
-    public Resource batchProcess(BatchProcessZip batchZipFile, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public Resource batchProcess(BatchProcessZip batchZipFile, HttpServletRequest request, HttpServletResponse response) throws IOException, RosettaDataException {
         String id = PropertyUtils.createUniqueDataId(request);
         batchZipFile.setId(id);
         String processedZipFile;

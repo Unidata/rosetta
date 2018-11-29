@@ -109,7 +109,7 @@ public class TemplateManagerImpl implements TemplateManager {
                 variableInfo.setColumnId(variable.getColumnNumber());
                 // Common to all.
                 String name = variable.getVariableName();
-                if (name.equals("do_not_use")) {
+                if (name.equals("do_not_use") || name.equals("DO_NOT_USE")) {
                     variableInfo.setName(name.toUpperCase());
                     variableInfoList.add(variableInfo);
                 } else {
@@ -123,7 +123,6 @@ public class TemplateManagerImpl implements TemplateManager {
                     variableMetadata.addAll(
                             populateVariableData(variable.getAdditionalMetadata(), metadataProfiles));
                     variableInfo.setVariableMetadata(variableMetadata);
-
 
                     // rosettaControlMetadata
                     List<RosettaAttribute> rosettaControlMetadata = populateRosettaControlMetadata(

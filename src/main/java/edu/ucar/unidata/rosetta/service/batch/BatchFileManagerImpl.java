@@ -8,6 +8,7 @@ package edu.ucar.unidata.rosetta.service.batch;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataRetrievalFailureException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +31,9 @@ import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.converters.custom.dsg.NetcdfFileManager;
 import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
+import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.repository.resources.DelimiterResourceDao;
 import edu.ucar.unidata.rosetta.util.PathUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import edu.ucar.unidata.rosetta.util.TemplateFactory;
@@ -39,6 +43,8 @@ import ucar.ma2.InvalidRangeException;
 public class BatchFileManagerImpl implements BatchFileManager {
 
     private static final Logger logger = Logger.getLogger(BatchFileManagerImpl.class);
+
+    private DelimiterResourceDao delimiterResourceDao;
 
 
     private static ArrayList<String> unzipAndInventory(File inputZipFile, File uncompressed_dir) {
@@ -136,7 +142,15 @@ public class BatchFileManagerImpl implements BatchFileManager {
         }
     }
 
-    public String batchProcess(BatchProcessZip batchZipFile) throws IOException {
+    /**
+     * processes the uploaded data file and converts all data files within to netCDF.
+     *
+     * @param batchZipFile The batchZipFile object representing the uploaded zip file to process.
+     * @return The path to the zip file containing all converted files.
+     * @throws IOException If unable to access template file.
+     * @throws RosettaDataException  If unable to parse data file with given delimiter.
+     */
+    public String batchProcess(BatchProcessZip batchZipFile) throws IOException, RosettaDataException {
         String uniqueId = batchZipFile.getId();
         String userFilesDir = PropertyUtils.getUserFilesDir();
 
@@ -219,7 +233,18 @@ public class BatchFileManagerImpl implements BatchFileManager {
                         }
                     }
 
-                    String netcdfFile = dsgWriter.createNetcdfFile(dataFile, template);
+                    // Get the delimiter symbol.
+                    String delimiter;
+                    try {
+                        // Try using the delimiter (standard) passed from the db.
+                        Delimiter delimiterName = delimiterResourceDao.lookupDelimiterByName(template.getDelimiter());
+                        delimiter = delimiterName.getCharacterSymbol();
+                    } catch (DataRetrievalFailureException e) {
+                        // Delimiter is not standard. Try parsing using the delimiter provided by the user.
+                        delimiter = template.getDelimiter();
+                    }
+
+                    String netcdfFile = dsgWriter.createNetcdfFile(dataFile, template, delimiter);
                     convertedFiles.add(netcdfFile);
                 }
             }
@@ -248,6 +273,16 @@ public class BatchFileManagerImpl implements BatchFileManager {
 
 
         return zipFileName;
+    }
+
+
+    /**
+     * Sets the data access object (DAO) for the Delimiter object.
+     *
+     * @param delimiterResourceDao The service DAO representing a Delimiter object.
+     */
+    public void setDelimiterResourceDao(DelimiterResourceDao delimiterResourceDao) {
+        this.delimiterResourceDao = delimiterResourceDao;
     }
 
 }
