@@ -171,7 +171,9 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
 
             // Need to convert the list of RosettaGlobalAttribute objects to a list of GlobalMetadata objects.
             List<RosettaGlobalAttribute> rosettaGlobalAttributes = templateData.getGlobalMetadata();
+
             if (rosettaGlobalAttributes != null) {
+
                 List<GlobalMetadata> globalMetadataObjects = new ArrayList<>(rosettaGlobalAttributes.size());
                 for (RosettaGlobalAttribute rosettaGlobalAttribute : templateData.getGlobalMetadata()) {
                     GlobalMetadata globalMetadata = new GlobalMetadata();
@@ -354,18 +356,7 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
                 }
             }
         }
-/*
-        // Do we have persisted data to update?
-        if (!persistedData.getUploadedFiles().isEmpty() && persistedData.getDataFileType() != null) {
-            // Persisted uploaded file data exists.
-            // Update persisted data.
-            uploadedFileDao.updatePersistedData(id, uploadedFileCmd);
 
-        } else {
-            // No persisted uploaded file data.  Add it.
-            uploadedFileDao.persistData(id, uploadedFileCmd);
-        }
-        */
     }
 
     /**
