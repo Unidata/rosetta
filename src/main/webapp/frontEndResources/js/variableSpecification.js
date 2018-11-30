@@ -393,31 +393,42 @@ function testIfComplete(colNumber) {
         // Get the variable name assigned by the user for the column
         var assignedVariableName = VariableStorageHandler.getVariableData(i, "name");
 
-        // Have an assigned name.
+        // If column has an assigned name.
         if (assignedVariableName) {
-            if (VariableStorageHandler.testVariableCompleteness(i, assignedVariableName)) {
+            // If variable has all the required metadata populated OR we are opting not to use the variable.
+            if (VariableStorageHandler.testVariableCompleteness(i, assignedVariableName) || assignedVariableName === "DO_NOT_USE") {
+
+                // If we've reached the last column.
                 if (i === (colNumber - 1)) {
                     populateCmd();
-                    // remove disabled status for submit button.
+                    // Remove disabled status for submit button.
                     $("input[type=submit]#Next").removeAttr("disabled");
-                    // remove disabled class for submit button.
+                    // Remove disabled class for submit button.
                     $("input[type=submit]#Next").removeClass("disabled");
                 }
 
             } else { // not all metadata is present: break
+                // Add disabled status for submit button.
+                $("input[type=submit]#Next").attr("disabled");
+                // Add disabled class for submit button.
+                $("input[type=submit]#Next").addClass("disabled");
                 break;
             }
         } else { // no value stored, not done yet: break
+            // Add disabled status for submit button.
+            $("input[type=submit]#Next").attr("disabled");
+            // Add disabled class for submit button.
+            $("input[type=submit]#Next").addClass("disabled");
             break;
         }
     }
 }
 
-function populateCmd(key) {
-    // Get the object from storage.
-    var storedVariableData = JSON.stringify(VariableStorageHandler.getAllVariableData());
-    $("input#variableMetadata").val(storedVariableData);
-}
+    function populateCmd(key) {
+        // Get the object from storage.
+        var storedVariableData = JSON.stringify(VariableStorageHandler.getAllVariableData());
+        $("input#variableMetadata").val(storedVariableData);
+    }
 
 
 
