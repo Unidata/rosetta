@@ -132,7 +132,7 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
                 logger.error(message);
                 throw new DataRetrievalFailureException(message);
             } else {
-                logger.info("Persisted variable metadata corresponding to variable " + variableId);
+                logger.info("Persisted variable metadata value for " + variableMetadata.getMetadataKey() + " corresponding to variable " + variableId);
             }
         }
     }
