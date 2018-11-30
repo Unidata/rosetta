@@ -52,7 +52,7 @@ public class TemplateManagerImpl implements TemplateManager {
 
     private static final String  TEMPLATE_VERSION = "1.0";
 
-    private static final Logger logger = Logger.getLogger(WizardManagerImpl.class);
+    private static final Logger logger = Logger.getLogger(TemplateManagerImpl.class);
 
     @Resource(name = "uploadedFileManager")
     private UploadedFileManager uploadedFileManager;
