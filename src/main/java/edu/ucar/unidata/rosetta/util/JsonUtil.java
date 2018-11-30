@@ -449,9 +449,9 @@ public class JsonUtil {
                 if (key.equals("value") && !value.isNull()) {
                     String attributeValue = value.textValue().replaceAll("\"", "");
 
-                    attributeValue = attributeValue.toLowerCase(); // Just in case we get non-standard template data.
                     // The metadataType value being set.  Change to appropriate value for wizard.
                     if (isMetadataType)  {
+                        attributeValue = attributeValue.toLowerCase(); // Just in case we get non-standard template data.
                         if (attributeValue.equals("true")) {
                             attributeValue = "coordinate";
                         } else {
@@ -461,17 +461,21 @@ public class JsonUtil {
 
                     // The metadataValueType value being set.  Change to appropriate value for wizard.
                     if (isMetadataValueType)  {
+                        attributeValue = attributeValue.toLowerCase(); // Just in case we get non-standard template data.
                         if (attributeValue.equals("string")) {
-                            attributeValue = "Text";
-                        } else if (attributeValue.equals("integer")) {
-                            attributeValue = "Integer";
-                        } else {
-                            attributeValue = "Float";
+                            attributeValue = "STRING";
+                        }
+                        if (attributeValue.equals("integer")) {
+                            attributeValue = "INTEGER";
+                        }
+                        if (attributeValue.equals("float")) {
+                            attributeValue = "DOUBLE";
                         }
                     }
 
                     // The coordinateVariableType value being set.  Change to appropriate value for wizard.
                     if (isCoordinateVariableType)  {
+                        attributeValue = attributeValue.toLowerCase(); // Just in case we get non-standard template data.
                         if (attributeValue.equals("dateonly")) {
                             attributeValue = "dateOnly";
                         }
