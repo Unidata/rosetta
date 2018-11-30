@@ -81,7 +81,7 @@ public class WizardManagerImpl implements WizardManager {
     private static String convertGlobalDataToJson(GlobalMetadata globalMetadata, HashMap<String, String> fileGlobals) {
         // Get the persisted metadata value.
         String value = globalMetadata.getMetadataValue();
-        //logger.info(globalMetadata);
+
         // We have globals from a file.
         if (fileGlobals != null) {
             // If there is no persisted value.
@@ -96,10 +96,10 @@ public class WizardManagerImpl implements WizardManager {
     }
 
     /**
+     * Processes all of the provided data and creates a netCDF file.
      *
-     *
-     * @param id
-     * @return
+     * @param id  The unique ID corresponding to this transaction.
+     * @return  The location of the created netCDF file.
      * @throws RosettaFileException If unable to create the template file from the Data object.
      * @throws RosettaDataException If unable to parse data file with delimiter.
      */
@@ -107,7 +107,6 @@ public class WizardManagerImpl implements WizardManager {
         String netcdfFile = null;
 
         Template template = templateManager.createTemplate(id);
-        logger.info(template);
 
         String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
         File userFilesDir = new File(userFilesDirPath);
@@ -149,9 +148,7 @@ public class WizardManagerImpl implements WizardManager {
                     // Delimiter is not standard. Try parsing using the delimiter provided by the user.
                     delimiter = template.getDelimiter();
                 }
-
                 netcdfFile = dsgWriter.createNetcdfFile(Paths.get(dataFilePath), template, delimiter);
-
             }
 
             // If eTUFF.
@@ -163,9 +160,6 @@ public class WizardManagerImpl implements WizardManager {
                 String ncfile = dataFilePath.replace(fullFileNameExt, "nc");
                 ncfile = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), ncfile);
                 netcdfFile = tuff.convert(ncfile, template);
-
-                //dest = netcdfFile.replace("uploads", "downloads");
-                //FileUtils.copyFile(new File(netcdfFile), new File(dest));
             }
 
 
@@ -573,12 +567,11 @@ public class WizardManagerImpl implements WizardManager {
     @Override
     public void processVariableMetadata(String id, WizardData wizardData) {
         // Parse the JSON to get Variable objects.
-
         List<Variable> variables = JsonUtil.convertVariableDataFromJson(wizardData.getVariableMetadata());
-        logger.info(variables.size());
+
         // Look up any persisted data corresponding to the id.
+        // (If we are restoring from a template, or using the back button, there will be persisted data.)
         List<Variable> persisted = variableDao.lookupVariables(id);
-        logger.info(persisted.size());
 
         // Get the variable IDs and columns numbers from persisted data.
         Map<Integer, Integer> variableMap = new HashMap<>(persisted.size());

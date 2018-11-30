@@ -5,7 +5,6 @@
 
 package edu.ucar.unidata.rosetta.service.wizard;
 
-import edu.ucar.unidata.rosetta.domain.Data;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
@@ -17,10 +16,16 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface WizardManager {
 
-
     String getTemplateFile(String id);
 
-
+    /**
+     * Processes all of the provided data and creates a netCDF file.
+     *
+     * @param id  The unique ID corresponding to this transaction.
+     * @return  The location of the created netCDF file.
+     * @throws RosettaFileException If unable to create the template file from the Data object.
+     * @throws RosettaDataException If unable to parse data file with delimiter.
+     */
     public String convertToNetcdf(String id) throws RosettaFileException, RosettaDataException;
 
     /**
