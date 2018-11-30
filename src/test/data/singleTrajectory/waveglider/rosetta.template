@@ -146,11 +146,6 @@
                     "type": "STRING"
                 },
                 {
-                    "name": "name",
-                    "value": "date",
-                    "type": "STRING"
-                },
-                {
                     "name": "long_name",
                     "value": "calendar date of observation",
                     "type": "STRING"
@@ -181,11 +176,6 @@
                 {
                     "name": "units",
                     "value": "HH:mm:ss",
-                    "type": "STRING"
-                },
-                {
-                    "name": "name",
-                    "value": "time",
                     "type": "STRING"
                 },
                 {
@@ -222,11 +212,6 @@
                     "type": "STRING"
                 },
                 {
-                    "name": "name",
-                    "value": "longitude",
-                    "type": "STRING"
-                },
-                {
                     "name": "long_name",
                     "value": "longitude of observation",
                     "type": "STRING"
@@ -257,11 +242,6 @@
                 {
                     "name": "units",
                     "value": "degrees_north",
-                    "type": "STRING"
-                },
-                {
-                    "name": "name",
-                    "value": "latitude",
                     "type": "STRING"
                 },
                 {
