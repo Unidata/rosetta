@@ -295,7 +295,7 @@ public class MetadataProfile {
     }
 
     /**
-     * String representation of this Data object.
+     * String representation of this object.
      *
      * @return The string representation.
      */

@@ -13,11 +13,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class GlobalMetadata {
 
-    private String wizardDataId;
-    private String metadataValueType;
+
     private String metadataGroup;
     private String metadataKey;
     private String metadataValue;
+    private String metadataValueType; // STRING, INTEGER, etc.
+    private String wizardDataId;
 
     /**
      * Returns the id of the wizardData object with which this object is associated.

@@ -17,7 +17,7 @@ import java.util.function.Predicate;
  */
 public class VariableInfo {
 
-    private int columnId = -1; // -1 does not make sense, so check for this value to see if it has not been set
+    private int columnId = -1; // -1 does not make sense, so check for this value to see if it has not been set.
     private String name;
     private List<RosettaAttribute> rosettaControlMetadata;
     private List<RosettaAttribute> variableMetadata;

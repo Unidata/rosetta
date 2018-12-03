@@ -46,7 +46,7 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
     // format accordingly if the line is a header line or a data
     // line. If a data line, parse the data using the delimiter.
     $(function () {
-        // get the header line numbers so we can identify the line type in the fileData array and format accordingly
+        // Get the header line numbers so we can identify the line type in the fileData array and format accordingly.
         var headerLines = WebStorage.getStoredData("headerLineNumbers").split(/,/g);
 
         // denote which is the first or "parent" header line that will be shown when the rest of
@@ -71,14 +71,19 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
                 // test the data against the headerLines array
                 if (jQuery.inArray(i.toString(), headerLines) < 0) { // it's not a header line
                     var dataItems;
-                    // split the data line using the given delimiter
-                    if (delimiter !== "") {
-                        dataItems = fileData[i].split(delimiter);
-                    } else {
+                    // Split the data line using the given delimiter.
+                    if (delimiter === '\\s+') {
+                        // Whitespace.
                         dataItems = fileData[i].split(/\s+/);
                         if (dataItems[0] === "") {
                             dataItems.splice(0, 1);
                         }
+                    } else if (delimiter === '\"') {
+                        // Double quotes are handled differently in the slick grid,
+                        dataItems = fileData[i].split(/&quot;/);
+                    } else {
+                        // Everything else.
+                        dataItems = fileData[i].split(delimiter);
                     }
 
                     // find if this is the first iteration through the data lines in the loop and
@@ -98,12 +103,11 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
                             };
 
                             // check to see if variable input has already been entered by user.
-                            var variableName = WebStorage.getStoredData("variableName" + x);
+                            var variableName = WebStorage.getStoredData(x);
                             if (variableName != null) { // data exists
                                 // update the column name to be that of the assigned variable name
                                 colObject.name = variableName;
-                                if (VariableStorageHandler.testVariableCompleteness("variableName" + i,
-                                        variableName)) {
+                                if (VariableStorageHandler.testVariableCompleteness(i, variableName)) {
                                     colObject["header"] = { // "header" option is used with the HeaderButtons Plugin
                                         buttons: [
                                             {
@@ -186,19 +190,19 @@ function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberF
             }
         };
 
+        // Initialize storage to hold the correct amount of collected variable metadata.
+        // (If no data is being restored, adds blank objects for each column. if data is
+        // being restored, verifies an object exists in storage for all columns & creates
+        //  blank objects if needed.)
+        VariableStorageHandler.initialize((columns.length - 1));
 
-        // Initialize the storage to hold the collected variable metadata.
-        if (!VariableStorageHandler.variableDataExists()) {
-            VariableStorageHandler.initialize((columns.length - 1));
-        }
-       
-        // initialize the grid with the data model
+        // Initialize the grid with the data model
         grid = new Slick.Grid("#variableGrid", dataView, columns, options);
 
         
         // Get the variable name, assign to the column and update the header with the value.
         for (var n = 0; n < colNumber; n++) {
-            var variableName = VariableStorageHandler.getVariableData("variableName" + n, "name");
+            var variableName = VariableStorageHandler.getVariableData(n, "name");
             grid.updateColumnHeader(n, variableName, "column " + n + ": " + variableName);
         }
 
@@ -244,7 +248,7 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid) {
         var id = args.column.id;
 
         // construct the variable name key
-        var variableKey = "variableName" + id;
+        var variableKey = id;
 
         // When the specified command event is triggered, launch the jQuery dialog widget.
         if (args.command === "setVariable") {
@@ -322,7 +326,7 @@ function checkIfColumnIsDisabled(colNumber, grid) {
     // Loop through all of the data columns
     for (var i = 0; i < colNumber; i++) {
         // Get the variable name assigned by the user for the column
-        var assignedVariableName = VariableStorageHandler.getVariableData("variableName" + i, "name");
+        var assignedVariableName = VariableStorageHandler.getVariableData(i, "name");
         // If we have data for this column
         if (assignedVariableName) {
             var headerLines = WebStorage.getStoredData("headerLineNumbers").split(/,/g);
@@ -352,7 +356,7 @@ function checkIfColumnIsDisabled(colNumber, grid) {
                     }
                 }
             }
-            if (VariableStorageHandler.testVariableCompleteness("variableName" + i, assignedVariableName)) {
+            if (VariableStorageHandler.testVariableCompleteness(i, assignedVariableName)) {
                 hackGridButtonElement(i, assignedVariableName);
             }
         }
@@ -387,33 +391,44 @@ function testIfComplete(colNumber) {
     // Loop through all the data columns.
     for (var i = 0; i < colNumber; i++) {
         // Get the variable name assigned by the user for the column
-        var assignedVariableName = VariableStorageHandler.getVariableData("variableName" + i, "name");
+        var assignedVariableName = VariableStorageHandler.getVariableData(i, "name");
 
-        // Have an assigned name.
+        // If column has an assigned name.
         if (assignedVariableName) {
-            if (VariableStorageHandler.testVariableCompleteness("variableName" + i, assignedVariableName)) {                
+            // If variable has all the required metadata populated OR we are opting not to use the variable.
+            if (VariableStorageHandler.testVariableCompleteness(i, assignedVariableName) || assignedVariableName === "DO_NOT_USE") {
+
+                // If we've reached the last column.
                 if (i === (colNumber - 1)) {
                     populateCmd();
-                    // remove disabled status for submit button.
+                    // Remove disabled status for submit button.
                     $("input[type=submit]#Next").removeAttr("disabled");
-                    // remove disabled class for submit button.
+                    // Remove disabled class for submit button.
                     $("input[type=submit]#Next").removeClass("disabled");
                 }
 
             } else { // not all metadata is present: break
+                // Add disabled status for submit button.
+                $("input[type=submit]#Next").attr("disabled");
+                // Add disabled class for submit button.
+                $("input[type=submit]#Next").addClass("disabled");
                 break;
             }
         } else { // no value stored, not done yet: break
+            // Add disabled status for submit button.
+            $("input[type=submit]#Next").attr("disabled");
+            // Add disabled class for submit button.
+            $("input[type=submit]#Next").addClass("disabled");
             break;
         }
     }
 }
 
-function populateCmd(key) {
-    // Get the object from storage.
-    var storedVariableData = JSON.stringify(VariableStorageHandler.getAllVariableData());
-    $("input#variableMetadata").val(storedVariableData);
-}
+    function populateCmd(key) {
+        // Get the object from storage.
+        var storedVariableData = JSON.stringify(VariableStorageHandler.getAllVariableData());
+        $("input#variableMetadata").val(storedVariableData);
+    }
 
 
 

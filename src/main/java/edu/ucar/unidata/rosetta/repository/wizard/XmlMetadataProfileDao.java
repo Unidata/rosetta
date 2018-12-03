@@ -33,6 +33,17 @@ public class XmlMetadataProfileDao implements MetadataProfileDao {
     private static final Logger logger = Logger.getLogger(XmlMetadataProfileDao.class);
 
     /**
+     * Retrieves the compliance level for the give attribute.
+     *
+     * @param attributeName  The name of the attribute.
+     * @param profile        The metadata profile.
+     * @return  The compliance level of the attribute.
+     */
+    public String getComplianceLevelForAttribute(String attributeName, String profile) {
+        return  "";
+    }
+
+    /**
      * Retrieves the metadata profile attributes to ignore in the wizard interface.
      *
      * @return  A list of MetadataProfile objects containing the attributes to ignore.

@@ -52,7 +52,7 @@ public class TemplateManagerImpl implements TemplateManager {
 
     private static final String  TEMPLATE_VERSION = "1.0";
 
-    private static final Logger logger = Logger.getLogger(WizardManagerImpl.class);
+    private static final Logger logger = Logger.getLogger(TemplateManagerImpl.class);
 
     @Resource(name = "uploadedFileManager")
     private UploadedFileManager uploadedFileManager;
@@ -90,10 +90,7 @@ public class TemplateManagerImpl implements TemplateManager {
                 cfType = resourceManager.getCFTypeFromPlatform(platform);
             }
             template.setCfType(cfType);
-            String delimiter = resourceManager.getDelimiterSymbol(wizardData.getDelimiter());
-            if (delimiter.equals("")) {
-                delimiter = " ";
-            }
+            String delimiter = wizardData.getDelimiter();
             template.setDelimiter(delimiter);
 
             List<String> headerLineNumbers = Arrays.asList(wizardData.getHeaderLineNumbers().split(","));
@@ -112,7 +109,7 @@ public class TemplateManagerImpl implements TemplateManager {
                 variableInfo.setColumnId(variable.getColumnNumber());
                 // Common to all.
                 String name = variable.getVariableName();
-                if (name.equals("do_not_use")) {
+                if (name.equals("do_not_use") || name.equals("DO_NOT_USE")) {
                     variableInfo.setName(name.toUpperCase());
                     variableInfoList.add(variableInfo);
                 } else {
@@ -126,7 +123,6 @@ public class TemplateManagerImpl implements TemplateManager {
                     variableMetadata.addAll(
                             populateVariableData(variable.getAdditionalMetadata(), metadataProfiles));
                     variableInfo.setVariableMetadata(variableMetadata);
-
 
                     // rosettaControlMetadata
                     List<RosettaAttribute> rosettaControlMetadata = populateRosettaControlMetadata(
@@ -195,7 +191,7 @@ public class TemplateManagerImpl implements TemplateManager {
         }
 
         String templateFilePath = FilenameUtils.concat(userFilesDirPath, "rosetta.template");
-        String jsonString = JsonUtil.mapObjectToJSON(template);
+        String jsonString = JsonUtil.mapObjectToJson(template);
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(
             new FileWriter(new File(templateFilePath)))) {

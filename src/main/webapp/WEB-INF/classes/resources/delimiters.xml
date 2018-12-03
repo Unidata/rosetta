@@ -10,7 +10,7 @@
   </delimiter>
   <delimiter>
     <name>Whitespace</name>
-    <characterSymbol></characterSymbol>
+    <characterSymbol>\\s+</characterSymbol>
   </delimiter>
   <delimiter>
     <name>Colon</name>
@@ -22,10 +22,10 @@
   </delimiter>
   <delimiter>
     <name>Single Quote</name>
-    <characterSymbol>'</characterSymbol>
+    <characterSymbol>\'</characterSymbol>
   </delimiter>
   <delimiter>
     <name>Double Quote</name>
-    <characterSymbol>"</characterSymbol>
+    <characterSymbol>\"</characterSymbol>
   </delimiter>
 </delimiters>

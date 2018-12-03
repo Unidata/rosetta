@@ -81,9 +81,9 @@ public class RosettaGlobalAttribute extends RosettaAttribute {
         RosettaGlobalAttribute rga = (RosettaGlobalAttribute) obj;
 
         return Objects.equals(super.getName(), rga.getName()) &&
-                Objects.equals(super.getValue(), rga.getValue()) &&
-                Objects.equals(super.getType(), rga.getType()) &&
-                Objects.equals(this.group, rga.getGroup());
+               Objects.equals(super.getValue(), rga.getValue()) &&
+               Objects.equals(super.getType(), rga.getType()) &&
+               Objects.equals(this.group, rga.getGroup());
     }
 
     /**

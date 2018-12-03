@@ -79,12 +79,13 @@ public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileD
         // Verify entry doesn't already exist (it shouldn't).
         String sql = "SELECT * FROM uploadedFiles WHERE id = ?";
         List<UploadedFile> uploadedFiles = getJdbcTemplate().query(sql, new JdbcUploadedFileDao.UploadedFileMapper(), id);
-
+/*
         if (!uploadedFiles.isEmpty()) {
             // Data already exists.  :-(
             throw new DataRetrievalFailureException(
                     "Uploaded file data corresponding to id " + id + " already exists.");
         } else {
+        */
             // Persist the uploaded file data.
             for (UploadedFile uploadedFile : uploadedFileCmd.getUploadedFiles()) {
                 if (StringUtils.trimToNull(uploadedFile.getFileName()) != null) {
@@ -101,7 +102,7 @@ public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileD
                     }
                 }
             }
-        }
+        //}
         // NOTE: the dataType entry is inserted into the wizardData table, for which the corresponding ID should already
         // exist. Hence, the type of SQL for this entry switches from INSERT to UPDATE.
         sql = "SELECT * FROM wizardData WHERE id = ?";

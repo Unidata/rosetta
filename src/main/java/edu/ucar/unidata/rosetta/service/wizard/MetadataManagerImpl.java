@@ -33,9 +33,110 @@ public class MetadataManagerImpl implements MetadataManager {
     @Resource(name = "wizardManager")
     private WizardManager wizardManager;
 
-    // name
-    //profile
-    //metadataTypeStructureName
+    /**
+     * If the provided attribute name is NOT in the map, the profile is added to the map and returned.  If
+     * the attribute name IS in the map, the contents of the corresponding list is compared to the provided
+     * metadata profile.  If the metadata profile is unique, the profile is added to the map and returned;
+     * otherwise that particular profile is not added to the map.
+     *
+     * @param profileByName     The map containing metadata profile info with the key being the attribute name.
+     * @param attributeName     The attribute name of the profile to add to the map (or not).
+     * @param metadataProfile   Th profile to add to the map (or not).
+     * @return  The updated map of metadata profiles.
+     */
+    private Map<String, List<MetadataProfile>> addProfileToMap(Map<String, List<MetadataProfile>> profileByName, String attributeName, MetadataProfile metadataProfile) {
+        if (profileByName.containsKey(attributeName)) {
+            // Attribute name already in map; compare to what is already in map.
+            List<MetadataProfile> profiles = profileByName.get(attributeName);
+            if (!compareMapContents(profiles, metadataProfile)) {
+                // Attribute name already in map; append to list of metadata profile objects & update map.
+                List<MetadataProfile> updatedList = new ArrayList<>(profileByName.get(attributeName));
+                updatedList.add(metadataProfile);
+                profileByName.remove(attributeName);
+                profileByName.put(attributeName, updatedList);
+            }
+        } else {
+            // Attribute name is not a key in the map; add it for the first time.
+            List<MetadataProfile> profiles = new ArrayList<>();
+            profiles.add(metadataProfile);
+            profileByName.put(attributeName, profiles);
+        }
+
+        return profileByName;
+    }
+
+    /**
+     * Compares the provided metadata profile to those in the provided list.  Determines if key attributes
+     * of the profiles (compliance level, metadata type, and metadata type structure) match.
+     *
+     * @param profiles  A list of unique profiles.
+     * @param metadataProfile  The metadata profile to compare.
+     * @return  true if the provided metadata profile matches one in the list in key areas; otherwise false.
+     */
+    private boolean compareMapContents(List<MetadataProfile> profiles, MetadataProfile metadataProfile) {
+        boolean matches = false;
+        for (int i = 0; i < profiles.size(); i++) {
+            MetadataProfile profile = profiles.get(i);
+            if (metadataProfile.getComplianceLevel().equals(profile.getComplianceLevel()) &&
+                    metadataProfile.getMetadataType().equals(profile.getMetadataType()) &&
+                    metadataProfile.getMetadataTypeStructureName().equals(profile.getMetadataTypeStructureName())) {
+                matches = true;
+                break;
+            }
+        }
+        return matches;
+    }
+
+    /**
+     * Method to filter metadata attributes that will be auto-computed.  These attributes do not need
+     * to be displayed in the wizard.  As per
+     * https://github.com/Unidata/rosetta/wiki/Using-Metadata-Profiles-in-Rosetta#which-metadata-profiles-to-use
+     *
+     * @param profile   The MetadataProfile object to examine.
+     * @return  true if the MetadataProfile object matches an ignored attribute; otherwise false.
+     */
+    private boolean filterOutIgnored(MetadataProfile profile) {
+        for (MetadataProfile ignored : getIgnoredMetadataProfileAttributes()) {
+            if (profile.getMetadataType().equals(ignored.getMetadataType()) && profile.getAttributeName().equals(ignored.getAttributeName())) {
+                if (profile.getMetadataProfileName().equals("eTUFF")) {
+                    if (profile.getMetadataGroup().equals("deployment") || profile.getMetadataGroup().equals("end_of_mission")) {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Retrieves the compliance level for the give attribute.
+     *
+     * @param attributeName  The name of the attribute.
+     * @return  The compliance level of the attribute.
+     */
+    public String getComplianceLevelForAttribute(String id, String attributeName) {
+        String complianceLevel = null;
+        // Get the metadata profiles corresponding to the ID.
+        WizardData wizardData = wizardManager.lookupPersistedWizardDataById(id);
+        for (String metadataProfile : wizardData.getMetadataProfile().split(",")) {
+            complianceLevel = metadataProfileDao.getComplianceLevelForAttribute(attributeName, metadataProfile);
+            if (complianceLevel != null) {
+                break;
+            }
+        }
+        return complianceLevel;
+    }
+
+    /**
+     * Retrieves the persisted metadata profile attributes to ignore in the wizard interface.
+     *
+     * @return  A list of MetadataProfile objects containing the attributes to ignore.
+     */
+    private List<MetadataProfile> getIgnoredMetadataProfileAttributes() {
+        return metadataProfileDao.getIgnoredMetadataProfileAttributes();
+    }
 
     /**
      * Returns all eTUFF metadata profiles.
@@ -43,8 +144,7 @@ public class MetadataManagerImpl implements MetadataManager {
      * @return  All eTUFF metadata profiles.
      */
     public List<MetadataProfile> getMetadataProfile(String metadataProfile) {
-        List<MetadataProfile> metadataProfiles = metadataProfileDao.getMetadataProfileByType(metadataProfile);
-        return metadataProfiles;
+        return metadataProfileDao.getMetadataProfileByType(metadataProfile);
     }
 
     /**
@@ -145,94 +245,14 @@ public class MetadataManagerImpl implements MetadataManager {
         return unique;
     }
 
-    /**
-     * If the provided attribute name is NOT in the map, the profile is added to the map and returned.  If
-     * the attribute name IS in the map, the contents of the corresponding list is compared to the provided
-     * metadata profile.  If the metadata profile is unique, the profile is added to the map and returned;
-     * otherwise that particular profile is not added to the map.
-     *
-     * @param profileByName     The map containing metadata profile info with the key being the attribute name.
-     * @param attributeName     The attribute name of the profile to add to the map (or not).
-     * @param metadataProfile   Th profile to add to the map (or not).
-     * @return  The updated map of metadata profiles.
-     */
-    private Map<String, List<MetadataProfile>> addProfileToMap(Map<String, List<MetadataProfile>> profileByName, String attributeName, MetadataProfile metadataProfile) {
-        if (profileByName.containsKey(attributeName)) {
-            // Attribute name already in map; compare to what is already in map.
-            List<MetadataProfile> profiles = profileByName.get(attributeName);
-            if (!compareMapContents(profiles, metadataProfile)) {
-                // Attribute name already in map; append to list of metadata profile objects & update map.
-                List<MetadataProfile> updatedList = new ArrayList<>(profileByName.get(attributeName));
-                updatedList.add(metadataProfile);
-                profileByName.remove(attributeName);
-                profileByName.put(attributeName, updatedList);
-            }
-        } else {
-            // Attribute name is not a key in the map; add it for the first time.
-            List<MetadataProfile> profiles = new ArrayList<>();
-            profiles.add(metadataProfile);
-            profileByName.put(attributeName, profiles);
-        }
-
-        return profileByName;
-    }
-
-    /**
-     * Compares the provided metadata profile to those in the provided list.  Determines if key attributes
-     * of the profiles (compliance level, metadata type, and metadata type structure) match.
-     *
-     * @param profiles  A list of unique profiles.
-     * @param metadataProfile  The metadata profile to compare.
-     * @return  true if the provided metadata profile matches one in the list in key areas; otherwise false.
-     */
-    protected boolean compareMapContents(List<MetadataProfile> profiles, MetadataProfile metadataProfile) {
-        boolean matches = false;
-        for (int i = 0; i < profiles.size(); i++) {
-            MetadataProfile profile = profiles.get(i);
-            if (metadataProfile.getComplianceLevel().equals(profile.getComplianceLevel()) &&
-                    metadataProfile.getMetadataType().equals(profile.getMetadataType()) &&
-                    metadataProfile.getMetadataTypeStructureName().equals(profile.getMetadataTypeStructureName())) {
-                matches = true;
-                break;
-            }
-        }
-        return matches;
-    }
 
 
 
 
-    /**
-     * Method to filter metadata attributes that will be auto-computed.  These attributes do not need
-     * to be displayed in the wizard.  As per
-     * https://github.com/Unidata/rosetta/wiki/Using-Metadata-Profiles-in-Rosetta#which-metadata-profiles-to-use
-     *
-     * @param profile   The MetadataProfile object to examine.
-     * @return  true if the MetadataProfile object matches an ignored attribute; otherwise false.
-     */
-    private boolean filterOutIgnored(MetadataProfile profile) {
-        for (MetadataProfile ignored : getIgnoredMetadataProfileAttributes()) {
-            if (profile.getMetadataType().equals(ignored.getMetadataType()) && profile.getAttributeName().equals(ignored.getAttributeName())) {
-                if (profile.getMetadataProfileName().equals("eTUFF")) {
-                    if (profile.getMetadataGroup().equals("deployment") || profile.getMetadataGroup().equals("end_of_mission")) {
-                        return true;
-                    }
-                } else {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
-    /**
-     * Retrieves the persisted metadata profile attributes to ignore in the wizard interface.
-     *
-     * @return  A list of MetadataProfile objects containing the attributes to ignore.
-     */
-    private List<MetadataProfile> getIgnoredMetadataProfileAttributes() {
-        return metadataProfileDao.getIgnoredMetadataProfileAttributes();
-    }
+
+
+
 
     /**
      * Sets the data access object (DAO) for the MetadataProfile object.

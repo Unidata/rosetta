@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class ResourceManagerImpl implements ResourceManager {
 
-  // Resource DAOS.
+  // Resource DAOs.
   private CfTypeResourceDao cfTypeResourceDao;
   private CommunityResourceDao communityResourceDao;
   private DelimiterResourceDao delimiterResourceDao;
@@ -65,6 +65,7 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public String getCFTypeFromPlatform(String platform) {
+    platform = platform.replace("_", " ");
     Platform persistedPlatform = platformResourceDao.lookupPlatformByName(platform);
     return persistedPlatform.getCfType();
   }

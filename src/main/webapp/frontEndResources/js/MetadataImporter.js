@@ -17,7 +17,7 @@ var MetadataImporter = (function () {
             var columnNumber = $(this).val();
             if (columnNumber !== "") {
                 // Get all of the chosen column's data and add to the new column's data in storage.
-                VariableStorageHandler.populateColumnDataWithAnotherColumn("variableName" + columnNumber, key);
+                VariableStorageHandler.populateColumnDataWithAnotherColumn(columnNumber, key);
                 // Populate the dialog with the imported data.
                 DialogDomHandler.populateVariableDataFromStorage(key);
             }
@@ -36,7 +36,7 @@ var MetadataImporter = (function () {
         // Get variables with metadata.
         var variablesWithMetadata = VariableStorageHandler.getVariablesWithMetadata();
         for (var i = 0; i < variablesWithMetadata.length; i++) {
-            if (VariableStorageHandler.testVariableCompleteness("variableName" + i, variablesWithMetadata[i])) {
+            if (VariableStorageHandler.testVariableCompleteness(i, variablesWithMetadata[i])) {
                 optionTags = optionTags +
                     "<option value=\"" + i + "\">" + variablesWithMetadata[i] +
                     " from column " + i +
@@ -64,7 +64,7 @@ var MetadataImporter = (function () {
         var variablesWithMetadata = VariableStorageHandler.getVariablesWithMetadata();
         if (variablesWithMetadata.length > 0) {
             for (var i = 0; i < variablesWithMetadata.length; i++) {
-                if (VariableStorageHandler.testVariableCompleteness("variableName" + i, variablesWithMetadata[i])) {
+                if (VariableStorageHandler.testVariableCompleteness(i, variablesWithMetadata[i])) {
                     return true;
                 } else {
                     if (i = (variablesWithMetadata.length - 1)) {

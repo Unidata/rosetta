@@ -11,19 +11,57 @@ var VariableStorageHandler = (function () {
      * @param numberOfColumns   The number of columns in the grid.
      */
     function initialize (numberOfColumns) {
-        var variableMetadata = [];
-        // Create empty variable metadata objects for each column in the grid.
-        for (var i = 0; i < numberOfColumns; i++) {
-            variableMetadata.push(
-            { 
-                "column": i,
-                "required": {},
-                "recommended": {},
-                "additional": {}
-            }); 
+        // There could already be data in web storage
+        // (if we've visted this page before or if restoring data from a template).
+        var variableMetadata = WebStorage.getStoredData("variableMetadata");
+        if (variableMetadata !== null) {
+            // Something is already in web storage.
+            variableMetadata = JSON.parse(variableMetadata);
+            // If we're here, the restored data contains one or more 'do_not_use' entries.
+            for (var i = 0; i < numberOfColumns; i++) {
+                if (variableMetadata[i] === undefined) {
+                    variableMetadata.push(
+                        {
+                                "column": i,
+                                "name":"do_not_use",
+                                "required": {},
+                                "recommended": {},
+                                "additional": {}
+                            });
+                } else {
+                    // Restored data may be incomplete.
+                    if (variableMetadata[i].required === undefined) {
+                        variableMetadata[i].required = {};
+                    }
+                    if (variableMetadata[i].recommended === undefined) {
+                        variableMetadata[i].recommended = {};
+                    }
+                    if (variableMetadata[i].additional === undefined) {
+                        variableMetadata[i].additional = {};
+                    }
+                }
+            }
+            // Add updated objects to storage.
+            WebStorage.storeData("variableMetadata", JSON.stringify(variableMetadata));
+
+        } else {
+            // Nothing is storage yet.
+            variableMetadata = [];
+
+            // Create empty variable metadata objects for each column in the grid.
+            for (var i = 0; i < numberOfColumns; i++) {
+                variableMetadata.push(
+                {
+                    "column": i,
+                    "required": {},
+                    "recommended": {},
+                    "additional": {}
+                });
+            }
+            // Add the objects to storage.
+            WebStorage.storeData("variableMetadata", JSON.stringify(variableMetadata));
         }
-        // Add the objects to storage.
-        WebStorage.storeData("variableMetadata", JSON.stringify(variableMetadata));
+
     }
 
     /**
@@ -68,6 +106,7 @@ var VariableStorageHandler = (function () {
 
         // Get the desired object.
         var variable = getVariable(columnNumber, variableMetadata);
+
         return variable[key];
     }
 
@@ -93,14 +132,14 @@ var VariableStorageHandler = (function () {
 
         // Reset the object.
         var variable =  {
-                "column": columnNumber.replace("variableName", ""),
+                "column": columnNumber,
                 "required": {},
                 "recommended": {},
                 "additional": {}
         };
 
         // Update the stored data with updated variable.
-        updateStoredVariableData(variableMetadata, variable, columnNumber.replace("variableName", ""));
+        updateStoredVariableData(variableMetadata, variable, columnNumber);
     }
 
     /**
@@ -190,6 +229,10 @@ var VariableStorageHandler = (function () {
         // Get the compliance level inner object.
         var complianceLevelData = variable[complianceLevel];
 
+        // If restoring incomplete data, return undefined (caller will handle it).
+        if (complianceLevelData === undefined) {
+           return undefined;
+        }
         return complianceLevelData[key];
     }
 
@@ -317,10 +360,10 @@ var VariableStorageHandler = (function () {
                     // Do we have the required metadata?
 
                     // Get the list of required metadata items.
-                    var required = WebStorage.getStoredData("_v" + key.replace("variableName", ""));
+                    var required = WebStorage.getStoredData("_v" + key);
                     if (required === null) {
                         VariableComplianceLevelDataHandler.getRequired(key);
-                        required = WebStorage.getStoredData("_v" + key.replace("variableName", ""));
+                        required = WebStorage.getStoredData("_v" + key);
                     }
                     required = required.split(/,/g);
           
@@ -430,12 +473,16 @@ var VariableStorageHandler = (function () {
      * @return  The variable as a JSON object.
      */
     function getVariable(columnNumber, variableMetadata) {
-        // Get the index number for accessing the object in the array from the columnNumber variable.
-        columnNumber = parseInt(columnNumber.replace("variableName", ""));
-
         // Get the desired object.
         var variable = variableMetadata[columnNumber];
-
+        // Variable could be undefined in this scenario:
+        //      1) we are restoring data from a template; and
+        //      2) it is the first time we are visiting rosetta in a session; and
+        //      3) one or more of the template variables was specified as 'do_not_use'
+        //  hence we get a mismatch between the column number vs the number in wev
+        if (variable === undefined) {
+            variable = "gfdf";
+        }
         // Sanity check that we are operating on the correct object.
         sanityCheck(columnNumber, variable);
 
@@ -467,11 +514,11 @@ var VariableStorageHandler = (function () {
         // Clone the donor variable.
         var recipientVariable = JSON.parse(JSON.stringify(donorVariable));
         // Change the ColumnName.
-        recipientColumnNumber = recipientColumnNumber.replace("variableName", "");
+        recipientColumnNumber = recipientColumnNumber;
         recipientVariable["column"] = parseInt(recipientColumnNumber);
 
         // Update the stored data with updated variable.
-        updateStoredVariableData(variableMetadata, recipientVariable, recipientColumnNumber.replace("variableName", ""));
+        updateStoredVariableData(variableMetadata, recipientVariable, recipientColumnNumber);
     }
 
 

@@ -98,14 +98,44 @@ public class JdbcGlobalMetadataDao extends JdbcDaoSupport implements GlobalMetad
      * @throws DataRetrievalFailureException If unable to update persisted GlobalMetadata object.
      */
     public void updatePersistedGlobalMetadata(String wizardDataId, GlobalMetadata globalMetadata) throws DataRetrievalFailureException {
+
         // Set the wizard Id.
         globalMetadata.setWizardDataId(wizardDataId);
 
+        String sql = "UPDATE globalMetadata SET " +
+                "wizardDataId = ?, " +
+                "metadataGroup = ?, " +
+                "metadataValueType = ?, " +
+                "metadataKey = ?, " +
+                "metadataValue = ? " +
+                "WHERE wizardDataId = ? " +
+                "AND metadataGroup = ? " +
+                "AND metadataKey = ? ";
+
+        int rowsAffected = getJdbcTemplate().update(sql, new Object[]{
+                // order matters here
+                globalMetadata.getWizardDataId(),
+                globalMetadata.getMetadataGroup(),
+                globalMetadata.getMetadataValueType(),
+                globalMetadata.getMetadataKey(),
+                globalMetadata.getMetadataValue(),
+                globalMetadata.getWizardDataId(),
+                globalMetadata.getMetadataGroup(),
+                globalMetadata.getMetadataKey()
+        });
+        if (rowsAffected <= 0) {
+            // Metadata entry wasn't persisted prior. Add it.
+            // (This can happen in the case of template restoration.)
+            persistGlobalMetadata(wizardDataId, globalMetadata);
+        } else {
+            logger.info("Updated persisted GlobalMetadata  object " + globalMetadata.toString());
+        }
+
         // Delete the existing globalMetadata metadata.
-        deletePersistedGlobalMetadata(globalMetadata);
+        //deletePersistedGlobalMetadata(globalMetadata);
 
         // Persists the newer data.
-        persistGlobalMetadata(wizardDataId, globalMetadata);
+        //persistGlobalMetadata(wizardDataId, globalMetadata);
     }
 
     /**

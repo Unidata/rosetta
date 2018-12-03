@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.util.VariableInfoUtils;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -30,6 +32,8 @@ public class ParsedFile {
     private Map<Integer, List<String>> stringData;
     private Map<Integer, Array> arrayData;
     private Map<Integer, DataType> dataTypes;
+
+
 
     /**
      * Returns the headers of a data file.
@@ -60,16 +64,19 @@ public class ParsedFile {
         return arrayData;
     }
 
-    public ParsedFile(Path datafile, Template template) throws IOException {
+    /**
+     *
+     * @param datafile
+     * @param template
+     * @param delimiter
+     * @throws IOException
+     * @throws RosettaDataException  If unable to parse file with provided delimiter.
+     */
+    public ParsedFile(Path datafile, Template template, String delimiter) throws IOException, RosettaDataException {
 
         List<Integer> headerLineNumbers = template.getHeaderLineNumbers();
         headerLineNumbers.sort(Collections.reverseOrder());
 
-        String delimiter = template.getDelimiter();
-        // if delimiter is whitespace, capture all types of whitespace
-        if (delimiter.equals(" ")) {
-            delimiter = "\\s+";
-        }
         List<String> dataLines = Collections.emptyList();
         dataLines = Files.readAllLines(datafile);
 
@@ -104,12 +111,20 @@ public class ParsedFile {
             stringData.put(colNum, new ArrayList<String>());
         }
 
-        for (String line : dataLines) {
-            String[] splitLine = line.split(delimiter);
-            for (int colNum : columnsToRead) {
-                stringData.get(colNum).add(splitLine[colNum]);
+        try {
+            if (delimiter.equals("\\\\s+")) {
+                delimiter = "\\s+";
             }
+            for (String line : dataLines) {
+                String[] splitLine = line.split(delimiter);
+                for (int colNum : columnsToRead) {
+                    stringData.get(colNum).add(splitLine[colNum]);
+                }
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new RosettaDataException("Unable to parse data file with provided delimiter: " + e);
         }
+
 
         // convert string data to netCDF-Java Array
         arrayData = new HashMap<>();

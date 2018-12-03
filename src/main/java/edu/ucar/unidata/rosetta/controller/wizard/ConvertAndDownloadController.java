@@ -5,6 +5,7 @@
 
 package edu.ucar.unidata.rosetta.controller.wizard;
 
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.util.CookieUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
@@ -40,10 +41,11 @@ public class ConvertAndDownloadController {
      * @param request The HttpServletRequest used to retrieve the cookie.
      * @return View and the Model for the wizard to process.
      * @throws RosettaFileException If unable to create the template file from the Data object.
+     * @throws RosettaDataException If unable to parse data file with delimiter.
      */
     @RequestMapping(value = "/convertAndDownload", method = RequestMethod.GET)
     public ModelAndView displayConvertedFileDownloadPage(Model model, RedirectAttributes redirectAttrs, HttpServletRequest request)
-            throws RosettaFileException {
+            throws RosettaFileException, RosettaDataException {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
