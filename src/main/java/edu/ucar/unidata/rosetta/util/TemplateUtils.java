@@ -57,15 +57,21 @@ public class TemplateUtils {
      * @return a unique version of the input name
      */
     public static String findUniqueName(String name, Template template) {
-        boolean uniqueName = true;
+        boolean keepLooking = true; // assume it is found
         int pass = 0;
-        while (uniqueName) {
+        while (keepLooking) {
+            boolean uniqueNameFound = true; // assume we have a unique name
             for (VariableInfo vi : template.getVariableInfoList()) {
                 if (vi.getName().equals(name)) {
                     pass = pass + 1;
                     name = name + String.valueOf(pass);
-                    uniqueName = false;
+                    // well, heck, not a unique name
+                    uniqueNameFound = false;
                 }
+            }
+
+            if (uniqueNameFound) {
+                keepLooking = false;
             }
         }
         return name;
