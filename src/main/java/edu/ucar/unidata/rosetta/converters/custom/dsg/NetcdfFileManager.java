@@ -22,12 +22,14 @@ import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.VariableInfo;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.util.PathUtils;
+import edu.ucar.unidata.rosetta.util.RosettaAttributeUtils;
 import edu.ucar.unidata.rosetta.util.RosettaGlobalAttributeUtils;
 import edu.ucar.unidata.rosetta.util.TemplateUtils;
 import edu.ucar.unidata.rosetta.util.VariableInfoUtils;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayFloat;
+import ucar.ma2.ArrayInt;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
@@ -40,6 +42,7 @@ import ucar.nc2.time.CalendarDateFormatter;
 
 import static edu.ucar.unidata.rosetta.converters.utils.VariableAttributeUtils.getMaxMinAttrs;
 import static java.lang.Math.toIntExact;
+import static ucar.nc2.time.CalendarDate.parseISOformat;
 import static ucar.nc2.time.CalendarDate.parseUdunits;
 
 public abstract class NetcdfFileManager {
@@ -65,6 +68,8 @@ public abstract class NetcdfFileManager {
     private String timeCoordVarName;
     private Array verticalCoordVarArr;
     private String verticalCoordVarName;
+    private Array timeCoordVarDetailArr; // potentially for profile datasets
+    private String timeCoordVarDetailName; // potentially for profile datasets
 
     Dimension elementDimension;
 
@@ -129,6 +134,7 @@ public abstract class NetcdfFileManager {
      */
     private Array createLongTimeDataFromFullDateTime(List<String> data, String format) {
         // todo - support subsecond date/time strings
+        // todo - allow unit to be ISO, parse accordingly
         CalendarDateFormatter fmt = new CalendarDateFormatter(format);
         int numVals = data.size();
         long[] newTimeVals = new long[numVals];
@@ -216,13 +222,24 @@ public abstract class NetcdfFileManager {
             String name = TemplateUtils.findUniqueName("time", template);
             tvi.setName(name);
             tvi.setColumnId(-2);
-            // make rosetta controll metadata
+            // make rosetta control metadata
             List<RosettaAttribute> rosettaControlMetadata = new ArrayList<>();
             rosettaControlMetadata.add(new RosettaAttribute("type", "STRING", "STRING"));
             rosettaControlMetadata.add(new RosettaAttribute("coordinateVariable", "true", "BOOLEAN"));
             rosettaControlMetadata.add(new RosettaAttribute("coordinateVariableType", "fullDateTime", "STRING"));
-            rosettaControlMetadata.add(new RosettaAttribute("definedByAttribute", "time_coverage_start", "STRING"));
+            rosettaControlMetadata.add(new RosettaAttribute("globalAttributeName", "time_coverage_start", "STRING"));
+            tvi.setRosettaControlMetadata(rosettaControlMetadata);
+
+            // make rosetta control metadata
+            List<RosettaAttribute> rosettaVariableMetadata = new ArrayList<>();
+            rosettaVariableMetadata.add(new RosettaAttribute("units", "ISO", "STRING"));
+            tvi.setVariableMetadata(rosettaVariableMetadata);
+
+            template.getVariableInfoList().add(tvi);
+
+            makeTimeVarFromFullDateTime(template, tvi);
         }
+
     }
 
     /**
@@ -265,8 +282,10 @@ public abstract class NetcdfFileManager {
             List<Attribute> timeVarAttrs = getBaseTimeVarAttrs();
             timeVarAttrs.addAll(getMaxMinAttrs(timeCoordVarArr));
             timeVar.addAll(timeVarAttrs);
-
-            coordAttrValues.add(timeCoordVarName);
+            // not to be used as part of coordinate attribute for profile data
+            if (myDsgType != "profile") {
+                coordAttrValues.add(timeCoordVarName);
+            }
             success = true;
         } catch (ArithmeticException ae) {
             logger.error("Size of the dimension could not fit in an integer value");
@@ -289,32 +308,74 @@ public abstract class NetcdfFileManager {
         String dimName = TemplateUtils.findUniqueName("time", template);
 
         try {
-            List<String> fullDateTime = stringData.get(fullDateTimeVi.getColumnId());
-            int numTimeObs = toIntExact(fullDateTime.size());
-            String dateTimeFormat = VariableInfoUtils.getUnit(fullDateTimeVi);
-
+            List<String> fullDateTime = new ArrayList<>();
             DataType dataType = DataType.LONG;
-            if (hasNetcdf4) {
-                timeCoordVarArr = createLongTimeDataFromFullDateTime(fullDateTime, dateTimeFormat);
+            if (fullDateTimeVi.getColumnId() > 0) {
+                fullDateTime = stringData.get(fullDateTimeVi.getColumnId());
+                int numTimeObs = toIntExact(fullDateTime.size());
+                String dateTimeFormat = VariableInfoUtils.getUnit(fullDateTimeVi);
+
+                if (hasNetcdf4) {
+                    timeCoordVarArr = createLongTimeDataFromFullDateTime(fullDateTime, dateTimeFormat);
+                } else {
+                    timeCoordVarArr = createIntTimeDataFromFullDateTime(fullDateTime, dateTimeFormat);
+                }
+
+                // only create element dimension if time is the element dimension
+                if (myDsgType.toLowerCase().equals("trajectory") | myDsgType.toLowerCase().equals("timeseries")) {
+                    elementDimension = ncf.addDimension(dimName, toIntExact(numTimeObs));
+                }
+
+                // in this case, we are creating a totally new variable, so we need to check
+                // if the variable "time" already exists in data and coordinate variables
+                timeCoordVarName = dimName;
             } else {
-                timeCoordVarArr = createIntTimeDataFromFullDateTime(fullDateTime, dateTimeFormat);
+                // extract scalar value out of global attribute
+                for (RosettaAttribute ra : fullDateTimeVi.getRosettaControlMetadata()) {
+                    // if not netCDF4, use INT instead of LONG
+                    if (!hasNetcdf4) {
+                        dataType = DataType.INT;
+                    }
+
+                    String name = ra.getName();
+                    String attrDate = "";
+                    if (name.toLowerCase().equals("globalattributename")) {
+                        String attrName = ra.getValue();
+                        // find attribute in template
+                        Map<String, ArrayList<Attribute>> gam = TemplateUtils.getGlobalAttrsMap(template);
+                        for (String k : gam.keySet()) {
+                            ArrayList<Attribute> attrList = gam.get(k);
+                            for (Attribute attr : attrList) {
+                                if (attr.getFullName().equals(attrName)) {
+                                    attrDate = attr.getStringValue();
+                                }
+                            }
+                        }
+                        Array scalar = null;
+                        scalar = new ArrayInt.D0(false);
+                        CalendarDate cd = parseISOformat(null, attrDate);
+                        scalar.setFloat(0, cd.getMillis() / 1000L);
+                        timeCoordVarArr = scalar;
+                        timeCoordVarName = dimName;
+                    }
+                }
             }
 
-            // only create element dimension if time is the element dimension
-            if (myDsgType.toLowerCase().equals("trajectory") | myDsgType.toLowerCase().equals("timeseries")) {
-                elementDimension = ncf.addDimension(dimName, toIntExact(numTimeObs));
+            Variable timeVar = null;
+            if (fullDateTimeVi.getColumnId() > 0) {
+                timeVar = ncf.addVariable(group, timeCoordVarName, dataType, Collections.singletonList(elementDimension));
+            } else {
+                // created from globalAttr - scalar
+                timeVar = ncf.addVariable(group, timeCoordVarName, dataType, "");
             }
-
-            // in this case, we are creating a totally new variable, so we need to check
-            // if the variable "time" already exists in data and coordinate variables
-            timeCoordVarName = dimName;
-
-            Variable timeVar = ncf.addVariable(group, timeCoordVarName, dataType, Collections.singletonList(elementDimension));
             List<Attribute> timeVarAttrs = getBaseTimeVarAttrs();
             timeVarAttrs.addAll(getMaxMinAttrs(timeCoordVarArr));
             timeVar.addAll(timeVarAttrs);
-
-            coordAttrValues.add(timeCoordVarName);
+            // generally not to be used as part of coordinate attribute for profile data
+            // if profile, then check if this is created from global attribute
+            if ((myDsgType != "profile") | (fullDateTimeVi.getColumnId() == -2)) {
+                coordAttrValues.add(timeCoordVarName);
+            }
             success = true;
         } catch (ArithmeticException ae) {
             logger.error("Size of the dimension could not fit in an integer value");
@@ -359,27 +420,44 @@ public abstract class NetcdfFileManager {
             dateFormat = dateFormat + timeFormat;
         }
 
-        if (hasNetcdf4) {
-            timeCoordVarArr = createLongTimeDataFromFullDateTime(dateTimeVals, dateFormat);
+        if (myDsgType != "profile") {
+            if (hasNetcdf4) {
+                timeCoordVarArr = createLongTimeDataFromFullDateTime(dateTimeVals, dateFormat);
+            } else {
+                timeCoordVarArr = createIntTimeDataFromFullDateTime(dateTimeVals, dateFormat);
+            }
         } else {
-            timeCoordVarArr = createIntTimeDataFromFullDateTime(dateTimeVals, dateFormat);
+            if (hasNetcdf4) {
+                timeCoordVarDetailArr = createLongTimeDataFromFullDateTime(dateTimeVals, dateFormat);
+            } else {
+                timeCoordVarDetailArr = createIntTimeDataFromFullDateTime(dateTimeVals, dateFormat);
+            }
         }
 
         try {
+            String timeCoordVarNameLocal = "";
             // only create element dimension if time is the element dimension
             if (myDsgType.toLowerCase().equals("trajectory") | myDsgType.toLowerCase().equals("timeseries")) {
                 elementDimension = ncf.addDimension(dimName, toIntExact(numTimeObs));
+                // in this case, we are creating a totally new variabled, so we need to check
+                // if the variable "time" already exists in data and coordinate variables
+                timeCoordVarNameLocal = dimName;
+                timeCoordVarName = dimName;
+            } else {
+                timeCoordVarNameLocal = timeCoordVarName + "_detail";
+                timeCoordVarDetailName = timeCoordVarNameLocal;
             }
-            // in this case, we are creating a totally new variabled, so we need to check
-            // if the variable "time" already exists in data and coordinate variables
-            timeCoordVarName = dimName;
 
-            Variable timeVar = ncf.addVariable(group, timeCoordVarName, dataType, Collections.singletonList(elementDimension));
+
+            Variable timeVar = ncf.addVariable(group, timeCoordVarNameLocal, dataType, Collections.singletonList(elementDimension));
             List<Attribute> timeVarAttrs = getBaseTimeVarAttrs();
             timeVarAttrs.addAll(getMaxMinAttrs(timeCoordVarArr));
             timeVar.addAll(timeVarAttrs);
 
-            coordAttrValues.add(timeCoordVarName);
+            // not to be used as part of coordinate attribute for profile data
+            if (myDsgType != "profile") {
+                coordAttrValues.add(timeCoordVarName);
+            }
 
             success = true;
         } catch (ArithmeticException ae) {
@@ -621,11 +699,14 @@ public abstract class NetcdfFileManager {
         } else if (myDsgType.toLowerCase().equals("profile")) {
             // create vertical coordinate coord var
             elementDimCreated = createElementCoordVarVertical();
-            // create time coordinate variable. Although it is not the element coordinate in this case, we
+            // create time coordvar from global attr
+            createTimeVarInfoFromGlobalAttr(template);
+            // create time variable (non coord var). Although it is not the element coordinate in this case, we
             // will use the same functions as if it were. Inside these functions, the element dimension will
             // not be created, as we will use the element dimension created during the createElementCoordVarVertical()
             // call
             boolean timeVarCreated = createElementCoordVarTime(template);
+            // for profile, create time coord var from global attribute
             if (!timeVarCreated) {
                 // stop conversion as a time variable was not created - indicate to use that they
                 // need to check the log file
@@ -688,6 +769,13 @@ public abstract class NetcdfFileManager {
 
             // write time variable data
             ncf.write(timeCoordVarName, timeCoordVarArr);
+
+            // if profile, detailed time might exist
+            if (myDsgType == "profile") {
+                if (timeCoordVarDetailName != null){
+                    ncf.write(timeCoordVarDetailName, timeCoordVarDetailArr);
+                }
+            }
 
             // write data to featureId variable
             ncf.write(featureVarName, Array.makeFromJavaArray(featureId.toCharArray()));
