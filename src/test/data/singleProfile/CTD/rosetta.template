@@ -1,0 +1,295 @@
+{
+    "delimiter": ",",
+    "cfType": "profile",
+    "community": "Physical Ocean Sciences",
+    "creationDate": "20180919T171100MDT",
+    "platform": "CTD",
+    "serverId": "some kind of server id goes here",
+    "format": "custom",
+    "templateVersion": "2.0",
+    "rosettaVersion": "0.4",
+    "headerLineNumbers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+    ],
+    "globalMetadata": [
+        {
+            "name": "title",
+            "value": "JD206 AML CTD data",
+            "type": "STRING"
+        },
+        {
+            "name": "summary",
+            "value": "CTD Sample File",
+            "type": "STRING"
+        },
+        {
+            "name": "source",
+            "value": "spurs.jpl.nasa.gov",
+            "type": "STRING"
+        },
+        {
+            "name": "platform",
+            "value": "CTD",
+            "type": "STRING"
+        },
+        {
+            "name": "instrument",
+            "value": "AML CTD",
+            "type": "STRING"
+        },
+        {
+            "name": "depthinmeters",
+            "value": "false",
+            "type": "BOOLEAN"
+        },
+        {
+            "name": "seacast_version",
+            "value": "Version 4.0.3 B4",
+            "type": "STRING"
+        },
+        {
+            "name": "instrumentsn",
+            "value": "30436",
+            "type": "STRING"
+        },
+        {
+            "name": "pressureoffset",
+            "value": "0.70",
+            "type": "FLOAT"
+        },
+        {
+            "name": "usepressureoffset",
+            "value": "true",
+            "type": "BOOLEAN"
+        },
+        {
+            "name": "fixedpressure",
+            "value": "0.00",
+            "type": "FLOAT"
+        },
+        {
+            "name": "usefixedpressure",
+            "value": "false",
+            "type": "BOOLEAN"
+        },
+        {
+            "name": "slot1sensor1",
+            "value": "sv-c.xchange c.x sn 503421 07/02/15",
+            "type": "STRING"
+        },
+        {
+            "name": "slot3sensor1",
+            "value": "p-t-tu-do-uv.xchange p.x sn 304606 04/27/15 t.x sn 404074 10/29/14",
+            "type": "STRING"
+        },
+        {
+            "name": "time_coverage_start",
+            "value": "2015-07-25T22:08:36.90",
+            "type": "STRING"
+        },
+        {
+            "name": "geospatial_lat_start",
+            "value": "10.0937",
+            "type": "FLOAT"
+        },
+        {
+            "name": "geospatial_lon_start",
+            "value": "-125.0671",
+            "type": "FLOAT"
+        }
+    ],
+    "variableInfoList": [
+        {
+            "name": "date",
+            "columnId": 0,
+            "rosettaControlMetadata": [
+                {
+                    "name": "type",
+                    "value": "STRING",
+                    "type": "STRING"
+                },
+                {
+                    "name": "coordinateVariable",
+                    "value": "true",
+                    "type": "BOOLEAN"
+                },
+                {
+                    "name": "coordinateVariableType",
+                    "value": "dateOnly",
+                    "type": "STRING"
+                }
+            ],
+            "variableMetadata": [
+                {
+                    "name": "units",
+                    "value": "YYYY-MM-DD",
+                    "type": "STRING"
+                },
+                {
+                    "name": "long_name",
+                    "value": "calendar date of observation",
+                    "type": "STRING"
+                }
+            ]
+        },
+        {
+            "name": "time",
+            "columnId": 1,
+            "rosettaControlMetadata": [
+                {
+                    "name": "type",
+                    "value": "STRING",
+                    "type": "STRING"
+                },
+                {
+                    "name": "coordinateVariable",
+                    "value": "true",
+                    "type": "BOOLEAN"
+                },
+                {
+                    "name": "coordinateVariableType",
+                    "value": "timeOnly",
+                    "type": "STRING"
+                }
+            ],
+            "variableMetadata": [
+                {
+                    "name": "units",
+                    "value": "HH:mm:ss.SS",
+                    "type": "STRING"
+                },
+                {
+                    "name": "long_name",
+                    "value": "clock time of observation",
+                    "type": "STRING"
+                }
+            ]
+        },
+        {
+            "name": "conductivity",
+            "columnId": 2,
+            "rosettaControlMetadata": [
+                {
+                    "name": "type",
+                    "value": "DOUBLE",
+                    "type": "STRING"
+                },
+                {
+                    "name": "coordinateVariable",
+                    "value": "false",
+                    "type": "BOOLEAN"
+                }
+            ],
+            "variableMetadata": [
+                {
+                    "name": "units",
+                    "value": "S cm-1",
+                    "type": "STRING"
+                },
+                {
+                    "name": "standard_name",
+                    "value": "sea_water_electrical_conductivity",
+                    "type": "STRING"
+                },
+                {
+                    "name": "long_name",
+                    "value": "conductivity of sea water",
+                    "type": "STRING"
+                }
+            ]
+        },
+        {
+            "name": "pressure",
+            "columnId": 3,
+            "rosettaControlMetadata": [
+                {
+                    "name": "type",
+                    "value": "DOUBLE",
+                    "type": "STRING"
+                },
+                {
+                    "name": "coordinateVariable",
+                    "value": "true",
+                    "type": "BOOLEAN"
+                },
+                {
+                    "name": "coordinateVariableType",
+                    "value": "vertical",
+                    "type": "STRING"
+                }
+            ],
+            "variableMetadata": [
+                {
+                    "name": "units",
+                    "value": "dBar",
+                    "type": "STRING"
+                },
+                {
+                    "name": "standard_name",
+                    "value": "depth",
+                    "type": "STRING"
+                },
+                {
+                    "name": "long_name",
+                    "value": "pressure of observation",
+                    "type": "STRING"
+                },
+                {
+                    "name": "positive",
+                    "value": "down",
+                    "type": "STRING"
+                }
+            ]
+        },
+        {
+            "name": "battery_voltage",
+            "columnId": 4,
+            "rosettaControlMetadata": [
+                {
+                    "name": "type",
+                    "value": "DOUBLE",
+                    "type": "STRING"
+                },
+                {
+                    "name": "coordinateVariable",
+                    "value": "false",
+                    "type": "BOOLEAN"
+                }
+            ],
+            "variableMetadata": [
+                {
+                    "name": "units",
+                    "value": "V",
+                    "type": "STRING"
+                },
+                {
+                    "name": "long_name",
+                    "value": "voltage of the sensor battery",
+                    "type": "STRING"
+                }
+            ]
+        }
+    ]
+}

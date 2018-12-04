@@ -25,5 +25,4 @@ public class RosettaGlobalAttributeUtils {
         }
         return attr;
     }
-
 }

@@ -8,6 +8,7 @@ package edu.ucar.unidata.rosetta.converters.custom.dsg;
 import java.util.Collections;
 import java.util.List;
 
+import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.VariableInfo;
 import edu.ucar.unidata.rosetta.util.VariableInfoUtils;
 import ucar.ma2.DataType;
@@ -19,8 +20,7 @@ import ucar.nc2.Variable;
 public class SingleTrajectory extends NetcdfFileManager {
 
     SingleTrajectory() {
-        myDsgType = "trajectory";
-        featureVarName = "trajectory";
+        super("trajectory");
     }
 
     /**
@@ -49,7 +49,7 @@ public class SingleTrajectory extends NetcdfFileManager {
      */
     void makeDataVars(VariableInfo variableInfo) {
         // trajectory specific
-        List<Dimension> coordVarDimensions = Collections.singletonList(timeDim);
+        List<Dimension> coordVarDimensions = Collections.singletonList(elementDimension);
 
         Group group = null;
 
@@ -71,9 +71,9 @@ public class SingleTrajectory extends NetcdfFileManager {
      * Create a coordnate variable for a non-time related coordinate variable
      * @param variableInfo non-time related coordinate variable
      */
-    void makeNonTimeCoordVars(VariableInfo variableInfo) {
+    void makeNonElementCoordVars(VariableInfo variableInfo) {
         // for a trajectory, all coordinate variables will have a dimension of time
-        List<Dimension> coordVarDimensions = Collections.singletonList(timeDim);
+        List<Dimension> coordVarDimensions = Collections.singletonList(elementDimension);
 
         Group group = null;
 
@@ -93,4 +93,8 @@ public class SingleTrajectory extends NetcdfFileManager {
         coordAttrValues.add(varName);
     }
 
+    @Override
+    void createNonElementCoordVars(Template template) {
+        // no-op - all coordinate data should be defined in the time series data
+    }
 }
