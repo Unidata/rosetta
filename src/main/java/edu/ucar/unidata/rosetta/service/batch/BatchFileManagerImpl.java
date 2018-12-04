@@ -21,7 +21,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -46,6 +48,17 @@ public class BatchFileManagerImpl implements BatchFileManager {
 
     private DelimiterResourceDao delimiterResourceDao;
 
+    private static final Map<String, String> delimiterMap;
+    static {
+        delimiterMap = new HashMap<String, String>();
+        delimiterMap.put("Tab", "\t");
+        delimiterMap.put("Comma", ",");
+        delimiterMap.put("Whitespace", "\\s+");
+        delimiterMap.put("Colon", ":");
+        delimiterMap.put("Semicolon", ";");
+        delimiterMap.put("Single Quote", "\'");
+        delimiterMap.put("Double Quote", "\"");
+    }
 
     private static ArrayList<String> unzipAndInventory(File inputZipFile, File uncompressed_dir) {
         // http://www.avajava.com/tutorials/lessons/how-do-i-unzip-the-contents-of-a-zip-file.html
@@ -237,8 +250,13 @@ public class BatchFileManagerImpl implements BatchFileManager {
                     String delimiter;
                     try {
                         // Try using the delimiter (standard) passed from the db.
-                        Delimiter delimiterName = delimiterResourceDao.lookupDelimiterByName(template.getDelimiter());
-                        delimiter = delimiterName.getCharacterSymbol();
+                        if (delimiterMap.containsKey(template.getDelimiter())) {
+                            delimiter = delimiterMap.get(template.getDelimiter());
+                        } else {
+                            delimiter = template.getDelimiter();
+                        }
+                        //Delimiter delimiterName = delimiterResourceDao.lookupDelimiterByName(template.getDelimiter());
+                        //delimiter = delimiterName.getCharacterSymbol();
                     } catch (DataRetrievalFailureException e) {
                         // Delimiter is not standard. Try parsing using the delimiter provided by the user.
                         delimiter = template.getDelimiter();
