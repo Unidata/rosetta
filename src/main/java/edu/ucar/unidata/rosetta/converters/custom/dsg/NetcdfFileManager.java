@@ -120,6 +120,8 @@ public abstract class NetcdfFileManager {
         List<NetcdfFileManager> dsgWriters = new ArrayList<>();
 
         dsgWriters.add(new SingleTrajectory());
+        dsgWriters.add(new SingleProfile());
+        dsgWriters.add(new SingleTimeSeries());
 
         return dsgWriters;
     }

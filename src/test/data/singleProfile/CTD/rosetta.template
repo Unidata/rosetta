@@ -144,7 +144,7 @@
             "variableMetadata": [
                 {
                     "name": "units",
-                    "value": "YYYY-MM-DD",
+                    "value": "yyyy-MM-dd",
                     "type": "STRING"
                 },
                 {
