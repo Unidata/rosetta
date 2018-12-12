@@ -30,9 +30,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-    springVersion = "4.3.13.RELEASE"
-    springSecurityVersion = "4.2.3.RELEASE"
-    cdmVersion = "5.0.0-beta3"
+    springVersion = "4.3.21.RELEASE"
+    springSecurityVersion = "4.2.10.RELEASE"
+    cdmVersion = "5.0.0-beta6"
 
     source = file("src/main/jekyll/").absolutePath
     destination = file("build/_site").absolutePath
