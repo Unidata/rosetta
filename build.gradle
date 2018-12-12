@@ -90,7 +90,7 @@ dependencies {
     compile "org.apache.httpcomponents:httpclient:4.3.6"
     compile "org.apache.derby:derby:10.14.2.0"
 
-    compile "jstl:jstl:1.2"
+    compile "org.apache.taglibs:taglibs-standard-jstlel:1.2.5"
 
     compile "log4j:log4j:1.2.17"
 
