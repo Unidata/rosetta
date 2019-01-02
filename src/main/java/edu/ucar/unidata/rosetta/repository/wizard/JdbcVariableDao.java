@@ -82,9 +82,10 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
      *
      * @param wizardDataId The id of the corresponding WizardData object.
      * @param variable     The Variable object to persist.
+     * @return  The generated persisted ID.
      * @throws DataRetrievalFailureException If unable to persist the Variable object.
      */
-    public void persistVariable(String wizardDataId, Variable variable) throws DataRetrievalFailureException {
+    public int persistVariable(String wizardDataId, Variable variable) throws DataRetrievalFailureException {
         // Set wizard id value.
         variable.setWizardDataId(wizardDataId);
 
@@ -92,16 +93,6 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
         this.insertActor = new SimpleJdbcInsert(getDataSource()).withTableName("variables").usingGeneratedKeyColumns("variableId");
         SqlParameterSource parameters = new BeanPropertySqlParameterSource(variable);
         int generatedId = insertActor.executeAndReturnKey(parameters).intValue();
-        /*
-        if (rowsAffected <= 0) {
-            String message = "Unable to persist Variable object  " + variable.toString();
-            logger.error(message);
-            logger.error(message);
-            throw new DataRetrievalFailureException(message);
-        } else {
-            logger.info("Variable object persisted " + variable.toString());
-        }
-        */
         // Get the compliance level variable metadata and persist.
         List<VariableMetadata> required = variable.getRequiredMetadata();
         if (required.size() > 0) {
@@ -117,6 +108,7 @@ public class JdbcVariableDao extends JdbcDaoSupport implements VariableDao {
         if (additional.size() > 0) {
             persistVariableMetadata(generatedId, additional, "additional");
         }
+        return generatedId;
     }
 
 

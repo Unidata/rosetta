@@ -80,15 +80,15 @@ public interface WizardManager {
     public void processCustomFileTypeAttributes(String id, WizardData wizardData);
 
     /**
-     * Processes the data submitted by the user containing general metadata information.  Since this
+     * Processes the data submitted by the user containing global metadata information.  Since this
      * is the final step of collecting data in the wizard, the uploaded data file is converted to
      * netCDF format in preparation for user download.
      *
      * @param id The unique ID corresponding to already persisted data.
-     * @param wizardData The WizardData containing the general metadata.
+     * @param wizardData The WizardData containing the global metadata.
      * @throws RosettaDataException If unable to populate the metadata object.
      */
-    public void processGeneralMetadata(String id, WizardData wizardData) throws RosettaDataException;
+    public void processGlobalMetadata(String id, WizardData wizardData) throws RosettaDataException;
 
     /**
      * Determines the next step in the wizard based the user specified data file type. This method is called when there

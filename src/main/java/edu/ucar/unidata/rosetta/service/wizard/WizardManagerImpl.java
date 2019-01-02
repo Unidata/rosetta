@@ -7,6 +7,7 @@ package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.converters.custom.dsg.NetcdfFileManager;
 import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
+import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
 import edu.ucar.unidata.rosetta.domain.Variable;
 import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
@@ -16,6 +17,7 @@ import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
+import edu.ucar.unidata.rosetta.repository.resources.DelimiterResourceDao;
 import edu.ucar.unidata.rosetta.repository.wizard.GlobalMetadataDao;
 import edu.ucar.unidata.rosetta.repository.wizard.UploadedFileDao;
 import edu.ucar.unidata.rosetta.repository.wizard.VariableDao;
@@ -36,11 +38,11 @@ import java.io.StringWriter;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataRetrievalFailureException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -54,6 +56,7 @@ public class WizardManagerImpl implements WizardManager {
 
     private static final Logger logger = Logger.getLogger(WizardManagerImpl.class);
 
+    private DelimiterResourceDao delimiterResourceDao;
     private GlobalMetadataDao globalMetadataDao;
     private UploadedFileDao uploadedFileDao;
     private VariableDao variableDao;
@@ -74,11 +77,10 @@ public class WizardManagerImpl implements WizardManager {
     @Resource(name = "uploadedFileManager")
     private UploadedFileManager uploadedFileManager;
 
-
     private static String convertGlobalDataToJson(GlobalMetadata globalMetadata, HashMap<String, String> fileGlobals) {
         // Get the persisted metadata value.
         String value = globalMetadata.getMetadataValue();
-        //logger.info(globalMetadata);
+
         // We have globals from a file.
         if (fileGlobals != null) {
             // If there is no persisted value.
@@ -92,11 +94,18 @@ public class WizardManagerImpl implements WizardManager {
                 "\"" + value + "\"";
     }
 
-    public String convertToNetcdf(String id) throws RosettaFileException {
+    /**
+     * Processes all of the provided data and creates a netCDF file.
+     *
+     * @param id  The unique ID corresponding to this transaction.
+     * @return  The location of the created netCDF file.
+     * @throws RosettaFileException If unable to create the template file from the Data object.
+     * @throws RosettaDataException If unable to parse data file with delimiter.
+     */
+    public String convertToNetcdf(String id) throws RosettaFileException, RosettaDataException {
         String netcdfFile = null;
 
         Template template = templateManager.createTemplate(id);
-        logger.info(template);
 
         String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
         File userFilesDir = new File(userFilesDirPath);
@@ -128,10 +137,17 @@ public class WizardManagerImpl implements WizardManager {
                         break;
                     }
                 }
-                netcdfFile = dsgWriter.createNetcdfFile(Paths.get(dataFilePath), template);
-                //dest = netcdfFile.replace("uploads", "downloads");
-                //FileUtils.copyFile(new File(netcdfFile), new File(dest));
-
+                // Get the delimiter symbol.
+                String delimiter;
+                try {
+                    // Try using the delimiter (standard) passed from the db.
+                    Delimiter delimiterName = delimiterResourceDao.lookupDelimiterByName(template.getDelimiter());
+                    delimiter = delimiterName.getCharacterSymbol();
+                } catch (DataRetrievalFailureException e) {
+                    // Delimiter is not standard. Try parsing using the delimiter provided by the user.
+                    delimiter = template.getDelimiter();
+                }
+                netcdfFile = dsgWriter.createNetcdfFile(Paths.get(dataFilePath), template, delimiter);
             }
 
             // If eTUFF.
@@ -143,9 +159,6 @@ public class WizardManagerImpl implements WizardManager {
                 String ncfile = dataFilePath.replace(fullFileNameExt, "nc");
                 ncfile = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), ncfile);
                 netcdfFile = tuff.convert(ncfile, template);
-
-                //dest = netcdfFile.replace("uploads", "downloads");
-                //FileUtils.copyFile(new File(netcdfFile), new File(dest));
             }
 
 
@@ -159,6 +172,7 @@ public class WizardManagerImpl implements WizardManager {
 
         return netcdfFile;
     }
+
 
     /**
      * Determines whether the custom file attributes step needs to be visited in the wizard.
@@ -226,50 +240,6 @@ public class WizardManagerImpl implements WizardManager {
     }
 
     /**
-     * Returns a map of global metadata gleaned from the uploaded data file.
-     *
-     * @param id The ID corresponding to the transaction.
-     * @return  A map of global metadata.
-     */
-    private HashMap<String, String> getGlobalMetadataFromDataFile(String id) {
-        // Get the path to the user_files directory corresponding to the given ID.
-        String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
-        // Get the path to the uploaded data file.
-        String dataFilePath = FilenameUtils.concat(userFilesDirPath, uploadedFileManager.getDataFile(id).getFileName());
-
-        // Right now eTUFF is the only cf Type we are going this for.
-        TagUniversalFileFormat tuff = new TagUniversalFileFormat();
-        tuff.parse(dataFilePath);
-        return tuff.getGlobalMetadata();
-    }
-
-
-    /**
-     * Examines the given MetadataProfile object to see if one of its communities matches the provided community name.
-     *
-     * @param metadataProfileResource The MetadataProfile object to examine.
-     * @param communityName           The community name ot match.
-     * @return The name of the metadata profile if matches; otherwise null.
-     */
-    private String getMetadataProfileFromCommunity(MetadataProfile metadataProfileResource, String communityName) {
-        String metadataProfile = null;
-
-        List<Community> communities = metadataProfileResource.getCommunities();
-        for (Community community : communities) {
-            if (community.getName().equals(communityName)) {
-                metadataProfile = metadataProfileResource.getName();
-                break;
-            }
-        }
-        return metadataProfile;
-    }
-
-    public String getTemplateFile(String id) {
-        String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
-        return FilenameUtils.concat(userFilesDirPath, "rosetta.template");
-    }
-
-    /**
      * Looks up and retrieves persisted wizard data using the given ID.
      *
      * @param id The ID corresponding to the data to retemperaturetrieve.
@@ -325,7 +295,7 @@ public class WizardManagerImpl implements WizardManager {
                     for (edu.ucar.unidata.rosetta.domain.MetadataProfile profile : eTUFF) {
 
                         if (profile.getAttributeName().equals(pair.getKey())) {
-                            group = profile.getMetadataGroup();
+                             group = profile.getMetadataGroup();
                         }
                     }
                     if (group != null) {
@@ -345,6 +315,55 @@ public class WizardManagerImpl implements WizardManager {
         wizardData.setGlobalMetadata(jsonString);
         return wizardData;
     }
+
+
+
+
+    /**
+     * Returns a map of global metadata gleaned from the uploaded data file.
+     *
+     * @param id The ID corresponding to the transaction.
+     * @return  A map of global metadata.
+     */
+    private HashMap<String, String> getGlobalMetadataFromDataFile(String id) {
+        // Get the path to the user_files directory corresponding to the given ID.
+        String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
+        // Get the path to the uploaded data file.
+        String dataFilePath = FilenameUtils.concat(userFilesDirPath, uploadedFileManager.getDataFile(id).getFileName());
+
+        // Right now eTUFF is the only cf Type we are going this for.
+        TagUniversalFileFormat tuff = new TagUniversalFileFormat();
+        tuff.parse(dataFilePath);
+        return tuff.getGlobalMetadata();
+    }
+
+    /**
+     * Examines the given MetadataProfile object to see if one of its communities matches the provided community name.
+     *
+     * @param metadataProfileResource The MetadataProfile object to examine.
+     * @param communityName           The community name ot match.
+     * @return The name of the metadata profile if matches; otherwise null.
+     */
+    private String getMetadataProfileFromCommunity(MetadataProfile metadataProfileResource, String communityName) {
+        String metadataProfile = null;
+
+        List<Community> communities = metadataProfileResource.getCommunities();
+        for (Community community : communities) {
+            if (community.getName().equals(communityName)) {
+                metadataProfile = metadataProfileResource.getName();
+                break;
+            }
+        }
+        return metadataProfile;
+    }
+
+
+    public String getTemplateFile(String id) {
+        String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
+        return FilenameUtils.concat(userFilesDirPath, "rosetta.template");
+    }
+
+
 
     /**
      * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
@@ -467,16 +486,16 @@ public class WizardManagerImpl implements WizardManager {
     }
 
     /**
-     * Processes the data submitted by the user containing general metadata information.  Since this
+     * Processes the data submitted by the user containing global metadata information.  Since this
      * is the final step of collecting data in the wizard, the uploaded data file is converted to
      * netCDF format in preparation for user download.
      *
      * @param id The unique ID corresponding to already persisted data.
-     * @param wizardData The WizardData containing the general metadata.
+     * @param wizardData The WizardData containing the global metadata.
      * @throws RosettaDataException If unable to populate the metadata object.
      */
     @Override
-    public void processGeneralMetadata(String id, WizardData wizardData) throws RosettaDataException {
+    public void processGlobalMetadata(String id, WizardData wizardData) throws RosettaDataException {
         // Parse the JSON to get GlobalMetadata objects.
         List<GlobalMetadata> globalMetadata = JsonUtil.convertGlobalDataFromJson(wizardData.getGlobalMetadata());
 
@@ -509,7 +528,7 @@ public class WizardManagerImpl implements WizardManager {
         if (customFileAttributesStep(id)) {
             nextStep = "/customFileTypeAttributes";
         } else {
-            nextStep = "/generalMetadata";
+            nextStep = "/globalMetadata";
         }
         return nextStep;
     }
@@ -548,30 +567,60 @@ public class WizardManagerImpl implements WizardManager {
     public void processVariableMetadata(String id, WizardData wizardData) {
         // Parse the JSON to get Variable objects.
         List<Variable> variables = JsonUtil.convertVariableDataFromJson(wizardData.getVariableMetadata());
-
         // Look up any persisted data corresponding to the id.
+        // (If we are restoring from a template, or using the back button, there will be persisted data.)
         List<Variable> persisted = variableDao.lookupVariables(id);
 
         // Get the variable IDs and columns numbers from persisted data.
-        Map<Integer, Integer> variableMap = new HashMap<>(persisted.size());
+        Map<Integer, Integer> variableMap = new HashMap<>(variables.size());
+
         if (persisted.size() > 0) {
-            // Create map of column numbers to variable ids.
+
+            // Populate the variable Map with the variable ID (persisted ID) and column number (used below).
             for (Variable persistedVar : persisted) {
                 int variableId = persistedVar.getVariableId();
                 int columnNumber = persistedVar.getColumnNumber();
                 variableMap.put(columnNumber, variableId);
             }
-            // Update new variables with column numbers.
+
+            // Update new (submitted) variables with column numbers from the Map.
             for (Variable variable : variables) {
-                int variableId = variableMap.get(variable.getColumnNumber());
-                variable.setVariableId(variableId);
-                variable.setWizardDataId(id);
+
+                 // Determine if the variable is has been persisted.
+                if (variableMap.containsKey(variable.getColumnNumber())) {
+                    // The variable has been persisted.
+                    int variableId = variableMap.get(variable.getColumnNumber());
+                    variable.setVariableId(variableId);  // Set the persisted variable Id.
+                    variable.setWizardDataId(id);   // Set the wizard Id.
+                } else {
+                    // The variable has NOT been persisted yet.
+                    // This can happen if a restored template variable count is less than
+                    // (submitted) data file variable count.  This results in the persisted
+                    // variable data being incomplete.
+
+                    variable.setWizardDataId(id); // Set the wizard Id.
+                    // Persist the variable & get the ID.
+                    int variableId = variableDao.persistVariable(id, variable);
+                    variable.setVariableId(variableId);  // Set the persisted variable Id.
+                }
+
             }
             variableDao.updatePersistedVariables(variables);
         } else {
             // No persisted data; this is the first time we are persisting it.
             variableDao.persistVariables(id, variables);
         }
+    }
+
+
+
+    /**
+     * Sets the data access object (DAO) for the Delimiter object.
+     *
+     * @param delimiterResourceDao The service DAO representing a Delimiter object.
+     */
+    public void setDelimiterResourceDao(DelimiterResourceDao delimiterResourceDao) {
+        this.delimiterResourceDao = delimiterResourceDao;
     }
 
     /**
