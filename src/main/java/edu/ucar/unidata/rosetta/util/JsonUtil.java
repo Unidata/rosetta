@@ -148,7 +148,7 @@ public class JsonUtil {
                         }
                         if (key.equals("name")) {
                             variable.setVariableName(value.textValue());
-                            if (value.textValue().equals("do_not_use")) {
+                            if (value.textValue().equals("DO_NOT_USE")) {
                                 break;
                             }
                         }
@@ -204,7 +204,7 @@ public class JsonUtil {
                 "{" +
                         "\"column\":" + variable.getColumnNumber() +
                         ",\"name\":\"" + variable.getVariableName() + "\"";
-        if (variable.getVariableName().equals("do_not_use")) {
+        if (variable.getVariableName().equals("DO_NOT_USE")) {
             variableAsJsonString = variableAsJsonString +
                     ",\"required\":{}" +
                     ",\"recommended\":{}" +
@@ -463,13 +463,13 @@ public class JsonUtil {
                     if (isMetadataValueType)  {
                         attributeValue = attributeValue.toLowerCase(); // Just in case we get non-standard template data.
                         if (attributeValue.equals("string")) {
-                            attributeValue = "STRING";
+                            attributeValue = "Text";
                         }
-                        if (attributeValue.equals("integer")) {
-                            attributeValue = "INTEGER";
+                        if (attributeValue.equals("integer") || attributeValue.equals("int")) {
+                            attributeValue = "Integer";
                         }
-                        if (attributeValue.equals("float")) {
-                            attributeValue = "DOUBLE";
+                        if (attributeValue.equals("double")) {
+                            attributeValue = "Float";
                         }
                     }
 
