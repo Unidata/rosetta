@@ -22,8 +22,8 @@
   </step>
   <step>
     <id>5</id>
-    <title>Specify General Information</title>
-    <view>generalMetadata</view>
+    <title>Specify Global Attributes</title>
+    <view>globalMetadata</view>
   </step>
   <step>
     <id>6</id>

@@ -8,9 +8,9 @@ var GlobalMetadata = (function () {
     /**
      * Uses the server-sent metadata profile information to create the global variable tags.
      *
-     * @param metadataProfileGeneralData  The array of global variables.
+     * @param metadataProfileGlobalData  The array of global variables.
      */
-    function populateTags(metadataProfileGeneralData) {
+    function populateTags(metadataProfileGlobalData) {
 
         // We will stash our required variable names here.
         var required = [];
@@ -18,8 +18,8 @@ var GlobalMetadata = (function () {
         // We will stash our tags in here by group.
         var metadataGroupsMap = new Map();
 
-        for (var i = 0; i < metadataProfileGeneralData.length; i++) {
-            var variable = metadataProfileGeneralData[i];
+        for (var i = 0; i < metadataProfileGlobalData.length; i++) {
+            var variable = metadataProfileGlobalData[i];
             var metadataGroup = variable.metadataGroup;
             var complianceLevel = variable.complianceLevel;
             var attributeName = variable.attributeName;
@@ -98,8 +98,8 @@ var GlobalMetadata = (function () {
         // Attach tags to the DOM.
         attachToDom(metadataGroupsMap);
 
-        // Bind general metadata events.
-        bindGeneralMetadataEvents() 
+        // Bind global metadata events.
+        bindGlobalMetadataEvents()
     }
 
 
@@ -123,11 +123,11 @@ var GlobalMetadata = (function () {
             // Create a category title from the metadata group.
             var title = metadataGroup.replace(/_/g, ' ');
             if (title === "root") {
-                title = "general";
+                title = "General";
             }
             // Capitalize first character.
             title = title.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-            $("#generalMetadataAssignment").append(
+            $("#globalMetadataAssignment").append(
                 "<div class=\"category\" id =\"" + metadataGroup + "\">\n" +
                 "   <h5 id=\"" + metadataGroup + "Toggle\" class=\"toggle expand\">" + title + "</h5>\n" +
                 "   <div class=\"hideMe\" id=\"" + metadataGroup + "ToggleSection\"></div>\n" +
@@ -136,10 +136,10 @@ var GlobalMetadata = (function () {
 
             for (const [complianceLevel, tags] of complianceLevelsMap.entries()) {
                 var complianceLevelTitle = complianceLevel.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-                $("#generalMetadataAssignment #" + metadataGroup + " #"+ metadataGroup + "ToggleSection").append("<p><b>" + complianceLevelTitle + " Metadata:</b></p>");
-                $("#generalMetadataAssignment #" + metadataGroup + " #"+ metadataGroup + "ToggleSection").append("<ul id=\"" + complianceLevel + "\"></ul>");
+                $("#globalMetadataAssignment #" + metadataGroup + " #"+ metadataGroup + "ToggleSection").append("<p><b>" + complianceLevelTitle + " Metadata:</b></p>");
+                $("#globalMetadataAssignment #" + metadataGroup + " #"+ metadataGroup + "ToggleSection").append("<ul id=\"" + complianceLevel + "\"></ul>");
                  for (var i = 0; i < tags.length; i++) {
-                    $("#generalMetadataAssignment #" + metadataGroup + " ul#" + complianceLevel).append(tags[i]);
+                    $("#globalMetadataAssignment #" + metadataGroup + " ul#" + complianceLevel).append(tags[i]);
                  }
             }
         }
@@ -174,8 +174,8 @@ var GlobalMetadata = (function () {
     /**
      * Binds focus out events for the input tags added to the DOM. Stores the entered values.
      */
-    function bindGeneralMetadataEvents() {
-        $("#generalMetadataAssignment input").focusout(function () {
+    function bindGlobalMetadataEvents() {
+        $("#globalMetadataAssignment input").focusout(function () {
             if ($(this).val().match(/\w+/)) {
                 $(this).removeClass("required");
                 storeGlobalMetadataEntry($(this).attr("id"), $(this).val());
@@ -236,7 +236,7 @@ var GlobalMetadata = (function () {
         // Get the stored global data.
         var globalMetadata = getStoredGlobalMetadata();
         Object.keys(globalMetadata).forEach(function(key) {
-            var inputTag = $("#generalMetadataAssignment input#" + key);
+            var inputTag = $("#globalMetadataAssignment input#" + key);
             $(inputTag).val(globalMetadata[key]);
         });
         // Expand/collapse relevant categories.
@@ -251,7 +251,7 @@ var GlobalMetadata = (function () {
      */
     function toggleCategories() {
         // Check each input field.
-        $("#generalMetadataAssignment input").each(function () {  
+        $("#globalMetadataAssignment input").each(function () {
             var inputTag = $(this);
             // Look at only the required tags.
             var ulTags = $(inputTag).parents("ul");

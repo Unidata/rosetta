@@ -217,7 +217,7 @@ var UnitBuilder = (function () {
     }
 
     /**
-     * This function binds general events aheaderLineSelectionssociated with unit builder entries added to the dialog DOM.
+     * This function binds global events associated with unit builder entries added to the dialog DOM.
      *
      * @param key  The key used to access the stores data.
      */

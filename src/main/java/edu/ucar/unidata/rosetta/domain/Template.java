@@ -15,9 +15,6 @@ import java.util.function.Predicate;
 /**
  * An object representing a rosetta template. Used for both custom and known file types. As per:
  * https://github.com/Unidata/rosetta/wiki/Rosetta-Template-Attributes
- *
- * @author sarms@ucar.edu
- * @author oxelson@ucar.edu
  */
 public class Template {
 

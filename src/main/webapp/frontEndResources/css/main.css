@@ -1,7 +1,7 @@
 /**
  * main.css
  * 
- * General CSS that does not specifically override or apply to elements handled by
+ * CSS that does not specifically override or apply to elements handled by
  * jQuery or plugin CSS (e.g., uploader and SlickGrid).
  */
 @import url("header.css");
@@ -171,7 +171,7 @@ label.format {
   color: #0000FF !important;
 }
 
-/* general format for error messages */
+/* global format for error messages */
 .error {
   display: block;
   margin: 10px 0;
@@ -187,7 +187,7 @@ label.noHeaderLines {
   font-family: "Courier New", Courier, monospace;
 }
 
-/* list of radio buttons  for template selection */
+/* List of radio buttons  for template selection */
 ul.template {
   list-style: none;
   margin: 0 0 15px 0;
@@ -196,7 +196,7 @@ ul.template {
   width: 100%;
 }
 
-/* general image format (help icon)*/
+/* Image format (help icon)*/
 ul li label img {
   width: 10px;
   height: 10px;
@@ -424,7 +424,7 @@ ul#delimiterList li {
   margin: 0 0 20px 0;
 }
 
-/* dialog box unit builder formatting */
+/* Dialog box unit builder formatting */
 #dialog #unitBuilder,
 #dialog #existingMetadataImporter {
   width: 100%;
@@ -434,14 +434,14 @@ ul#delimiterList li {
   background-color: #EFEFEF;
 }
 
-/* dialog box unit builder label formatting (general) */
+/* Dialog box unit builder label formatting */
 #dialog #unitBuilder label,
 #dialog #existingMetadataImporter label {
   padding: 0;
   margin: 5px;
 }
 
-/* dialog box unit builder label formatting for show unit builder section */
+/* Dialog box unit builder label formatting for show unit builder section */
 #dialog label.unitBuilder,
 #dialog label.existingMetadataImporter {
   margin: 10px 0;
@@ -449,13 +449,13 @@ ul#delimiterList li {
   line-height: 10px;
 }
 
-/* dialog box unit builder label formatting for data type section */
+/* Dialog box unit builder label formatting for data type section */
 #dialog #unitBuilder label.whole,
 #dialog label.existingMetadataImporter label.whole {
   display: block;
 }
 
-/* dialog box unit builder input tag formatting */
+/* Dialog box unit builder input tag formatting */
 #dialog label.unitBuilder input,
 #dialog label.existingMetadataImporter input,
 #dialog #unitBuilder input
@@ -501,10 +501,10 @@ ul#delimiterList li {
 }
 
 /**
- * General metadata collection step of the wizard.
+ * Global metadata collection step of the wizard.
  */
 
-#generalMetadata h5.toggle {
+#globalMetadata h5.toggle {
   height: 25px !important;
   margin: 10px 0 0 0;
   padding: 0 0 0 20px;
@@ -514,7 +514,7 @@ ul#delimiterList li {
   border-bottom: 1px solid #CFCFCF;
 }
 
-#generalMetadata .category {
+#globalMetadata .category {
   width: 100%;
   list-style: none;
   margin: 0 0 10px 0;
@@ -527,7 +527,7 @@ ul#delimiterList li {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8F8F8', endColorstr='#ffffff', GradientType=0); /* IE6-9 */
 }
 
-#generalMetadata ul li {
+#globalMetadata ul li {
   width: 30%;
   display: inline;
   margin: 0 15px 10px 0;
@@ -537,32 +537,32 @@ ul#delimiterList li {
   bottom: 0;
 }
 
-#generalMetadata ul li label {
+#globalMetadata ul li label {
   margin: 0;
   padding: 0;
   text-align: left;
 }
 
-#generalMetadata ul#additional,
-#generalMetadata ul#recommended,
-#generalMetadata ul#required {
+#globalMetadata ul#additional,
+#globalMetadata ul#recommended,
+#globalMetadata ul#required {
   width:100%;
   margin:0 0 10px 0;
   float:left;
 }
 
-#generalMetadata p {
+#globalMetadata p {
   width:100%;
   float:left;
 }
 
-#generalMetadata ul#required li .required {
+#globalMetadata ul#required li .required {
   border: 1px solid #FF0000;
 }
 
 
 /**
- * Download step
+ * Convert * Download Step
  */
 ul#download {
   width: 100%;

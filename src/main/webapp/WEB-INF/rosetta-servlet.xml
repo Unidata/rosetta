@@ -71,7 +71,7 @@
         <security:intercept-url pattern="/convertAndDownload/**" access="permitAll" />
         <security:intercept-url pattern="/customFileTypeAttributes/**" access="permitAll" />
         <security:intercept-url pattern="/fileUpload/**" access="permitAll" />
-        <security:intercept-url pattern="/generalMetadata/**" access="permitAll" />
+        <security:intercept-url pattern="/globalMetadata/**" access="permitAll" />
         <security:intercept-url pattern="/variableMetadata/**" access="permitAll" />
         <security:intercept-url pattern="/**" access="isAuthenticated()" />
   -->
