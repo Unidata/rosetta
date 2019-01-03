@@ -11,8 +11,12 @@ To add a Resource to be used in the View:
    255 characters.
 2) Modify the edu.ucar.unidata.rosetta.service.resource.EmbeddedDerbyDbInitManager class in the to add database
    table creation and population of those tables.
-3) Document your new file in index.xml.  NOTE: Order matters here in the index.xml file! The resources in that file
+3) If adding a new METADATA PROFILE, either:
+       a) add is to one of the existing profile directories; OR
+       b) add a new profile directory and modify edu.ucar.unidata.rosetta.init.resources.MetadataProfileLoader to
+          read the data in that directory.
+4) Document your new file in index.xml.  NOTE: Order matters here in the index.xml file! The resources in that file
    will be loaded into the database in the order in which they appear. If a resource depends upon or references
    another, the dependency resource MUST be loaded first
-4) Create a corresponding domain object in edu.ucar.unidata.domain.resources for your resource.
-5) Add the appropriate JSTL in the corresponding View file.
+5) Create a corresponding domain object in edu.ucar.unidata.domain.resources for your resource.
+6) Add the appropriate JSTL in the corresponding View file.

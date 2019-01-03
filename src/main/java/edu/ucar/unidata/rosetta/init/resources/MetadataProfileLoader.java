@@ -1,23 +1,24 @@
+/*
+ * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * See LICENSE for license information.
+ */
 package edu.ucar.unidata.rosetta.init.resources;
 
 import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -29,45 +30,58 @@ import org.xml.sax.SAXException;
 public class MetadataProfileLoader {
 
     private static final Logger logger = Logger.getLogger(MetadataProfileLoader.class);
+    private static final ArrayList<String> PROFILE_DIRS = new ArrayList<>();
+
+    MetadataProfileLoader() {
+        // Load the available metadata profiles.
+        PROFILE_DIRS.add("resources/DsgProfiles/");
+        PROFILE_DIRS.add("resources/MpsProfilesRosetta/");
+    }
 
     public List<MetadataProfile> loadMetadataProfiles() throws RosettaDataException {
         List<MetadataProfile> metadataProfiles = new ArrayList<>();
         try {
-            // Get the index file to access a list of available resources.
-            Resource r = new ClassPathResource("resources/MpsProfilesRosetta");
-            File mpsMetadataProfiles = r.getFile();
-            List<String> profileFiles = Arrays.asList(mpsMetadataProfiles.list(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    if (name.contains("MpsProfileOutput_")) {
-                        return true;
+
+            List<String> profileFiles = new ArrayList<>();
+
+            // Access the available metadata profiles by directories.
+            for (String resourceDir: PROFILE_DIRS) {
+                Resource r = new ClassPathResource(resourceDir);
+                File profiles = r.getFile();
+                String[] files = profiles.list();
+                for (String f : files) {
+                    if (resourceDir.contains("Mps")) {
+                        // Ignore any files that are not metadata profile files (e.g., SQL files).
+                        if (f.contains("MpsProfileOutput_")) {
+                            profileFiles.add(FilenameUtils.concat(resourceDir, f));
+                        }
+                    } else {
+                        profileFiles.add(FilenameUtils.concat(resourceDir, f));
                     }
-                    return false;
                 }
-            }));
-            for (String profileFile : profileFiles) {
-                metadataProfiles.addAll(loadMetadataProfiles(profileFile, "ROW"));
             }
-        } catch (IOException e) {
+            // Load the metadata profiles
+            for (String profileFile : profileFiles) {
+                metadataProfiles.addAll(loadMetadataProfiles(profileFile));
+            }
+        } catch (IOException | NullPointerException e) {
             throw new RosettaDataException("Unable to load resources: " + e);
         }
         return metadataProfiles;
     }
 
     /**
-     * Cracks open the XML file corresponding to the given file name, parses the data found using the
-     * given tag name, and populates/returns a list of MetadataProfile objects using the data.
+     * Cracks open the XML file corresponding to the given file name, parses the data found using
+     * the ROW name, and populates/returns a list of MetadataProfile objects using the data.
      *
      * @param fileName The name of the XML file to use.
-     * @param tagName  The XML tag name from which to get the data.
      * @return A list of MetadataProfile objects created from the persisted metadata profile data.
      */
-    private List<MetadataProfile> loadMetadataProfiles(String fileName, String tagName) {
+    private List<MetadataProfile> loadMetadataProfiles(String fileName) {
         List<MetadataProfile> profiles = new ArrayList<>();
         try {
             // Get the metadata profile file.
-            Resource r = new ClassPathResource(
-                    FilenameUtils.concat("resources/MpsProfilesRosetta/", fileName));
+            Resource r = new ClassPathResource(fileName);
             File file = r.getFile();
 
             // Need a DocumentBuilder to work with XML files.
@@ -79,7 +93,7 @@ public class MetadataProfileLoader {
             doc.getDocumentElement().normalize();
 
             // Get all elements in document with a given tag name.
-            NodeList ignoreNodeList = doc.getElementsByTagName(tagName);
+            NodeList ignoreNodeList = doc.getElementsByTagName("ROW");
 
             // Process all the nodes.
             for (int i = 0; i < ignoreNodeList.getLength(); i++) {
