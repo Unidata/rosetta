@@ -238,15 +238,15 @@ function lookForBlankEntries(userInput, tagName) {
  * @param userInput  The user input data to test.
  * @param tagName  The name value of the input tag that collected the data.
  */
-/*
+
 function lookForBlankSelection(userInput, tagName) {
   if (userInput === "") {  // empty selection
-    return "Please select a value for " + getMetadataDisplayName(tagName);
+    return "Please select a value for " + tagName;
   } else {
     return null;
   }
 }
-*/
+
 
 /**
  * This function checks to see that all the required metadata values for the specified
