@@ -216,6 +216,7 @@ public class WizardManagerImpl implements WizardManager {
                         sb.append(",");
                     }
                 }
+
                 metadataProfile = sb.toString();
                 if (metadataProfile.substring(metadataProfile.length() - 1).equals(",")) {
                     metadataProfile = metadataProfile.substring(0, metadataProfile.length() - 1);
@@ -227,6 +228,7 @@ public class WizardManagerImpl implements WizardManager {
                         + wizardData.toString());
             }
         } else {
+
             // Everybody gets the CF metadata type profile.  Make sure it's there.
             if (metadataProfile == null) {
                 metadataProfile = "CF";
@@ -235,6 +237,18 @@ public class WizardManagerImpl implements WizardManager {
                     metadataProfile = metadataProfile + ",CF";
                 }
             }
+        }
+
+        // Get CF type to determine if the appropriate DSG metadata profiles need to be added.
+        String cfType = wizardData.getCfType();
+        if (cfType.equals("") || cfType == null) {
+            cfType = resourceManager.getCFTypeFromPlatform(wizardData.getPlatform());
+        }
+        if (cfType.equals("Profile")) {
+            metadataProfile = metadataProfile + ",RosettaProfileDsg";
+        }
+        if (cfType.equals("Time_Series")) {
+            metadataProfile = metadataProfile + ",RosettaTimeSeriesDsg";
         }
         return metadataProfile;
     }
@@ -440,8 +454,7 @@ public class WizardManagerImpl implements WizardManager {
             // Update persisted CF type data.
             updatePersistedWizardData(persistedData);
 
-        } else {
-            // No ID yet.  First time persisting CF type data.
+        } else {  // No ID yet.  First time persisting CF type data.
 
             // Create a unique ID for this object.
             wizardData.setId(PropertyUtils.createUniqueDataId(request));
