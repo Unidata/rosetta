@@ -39,9 +39,10 @@ public interface VariableDao {
      *
      * @param wizardDataId The id of the corresponding WizardData object.
      * @param variable The Variable object to persist.
+     * @return  The generated persisted ID.
      * @throws DataRetrievalFailureException If unable to persist the Variable object.
      */
-    public void persistVariable(String wizardDataId, Variable variable) throws DataRetrievalFailureException;
+    public int persistVariable(String wizardDataId, Variable variable) throws DataRetrievalFailureException;
 
     /**
      * Updated the information corresponding to the given list of variable objects.

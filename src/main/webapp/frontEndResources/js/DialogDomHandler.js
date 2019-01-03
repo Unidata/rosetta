@@ -142,7 +142,7 @@ var DialogDomHandler = (function () {
             "  </li>\n" +
             "  <li>\n" +
             "   <label>\n" +
-            "    <input type=\"radio\" name=\"variableNameType\" value=\"do_not_use\"/> Do not use this column of data\n" +
+            "    <input type=\"radio\" name=\"variableNameType\" value=\"DO_NOT_USE\"/> Do not use this column of data\n" +
             "   </label>\n" +
             "  </li>\n" +
             " </ul>\n" +
@@ -253,7 +253,7 @@ var DialogDomHandler = (function () {
      */
     function bindDialogEvents(key) {
 
-        // Assign the variable name or "do_not_use" to column data.
+        // Assign the variable name or "DO_NOT_USE" to column data.
         $("#dialog #variableNameTypeAssignment input[name=\"variableNameType\"]").bind("click", function () {
 
             // Get rid of any prior error messages.
@@ -263,13 +263,13 @@ var DialogDomHandler = (function () {
             var useColumnData = $(this).val();
 
             // What was selected?
-            if (useColumnData === "do_not_use") {
+            if (useColumnData === "DO_NOT_USE") {
                 // User has elected to not use this variable; save info to variableMetadata & disable rest of dialog.
 
                 // Disable the rest of the dialog DOM content.
                 disableVariableAttributes(key);
 
-                // Update the stored variable data with the "do_not_use" for a variable name.
+                // Update the stored variable data with the "DO_NOT_USE" for a variable name.
                 VariableStorageHandler.storeVariableData(key, "name", useColumnData);
 
                 // Hide & remove any existing user entry for variable name input tag.
@@ -480,7 +480,7 @@ var DialogDomHandler = (function () {
         if (variableName) {
             // The user has provided something for the variable name or opted not to use the column of data.
 
-            if (variableName !== "do_not_use") {
+            if (variableName !== "DO_NOT_USE") {
                 // Variable name provided.
 
                 // Check the 'Assign a variable name' radio button
@@ -566,7 +566,7 @@ var DialogDomHandler = (function () {
 
             } else {
                 // Do not use column data selected; check the 'do not use this column' radio button.
-                $("#dialog #variableNameTypeAssignment input[name=\"variableNameType\"][value=\"do_not_use\"]").prop("checked", true);
+                $("#dialog #variableNameTypeAssignment input[name=\"variableNameType\"][value=\"DO_NOT_USE\"]").prop("checked", true);
             }
         }
     }

@@ -30,7 +30,7 @@ public class JdbcMetadataProfileDao extends JdbcDaoSupport implements MetadataPr
      * @return  The compliance level of the attribute.
      */
     public String getComplianceLevelForAttribute(String attributeName, String profile) {
-        String sql = "SELECT * FROM mpsMetadataProfiles WHERE attributeName = ? AND metadataProfileName = ?";
+        String sql = "SELECT * FROM metadataProfileData WHERE attributeName = ? AND metadataProfileName = ?";
         List<MetadataProfile> metadataProfile = getJdbcTemplate().query(sql, new JdbcMetadataProfileDao.MetadataProfileMapper(), attributeName, profile);
         if (metadataProfile.isEmpty()) {
             return null;
@@ -65,7 +65,7 @@ public class JdbcMetadataProfileDao extends JdbcDaoSupport implements MetadataPr
      * @return  A list of MetadataProfile objects created from the persisted metadata profile data.
      */
     public List<MetadataProfile> getMetadataProfileByType(String metadataProfileType) {
-        String sql = "SELECT * FROM mpsMetadataProfiles WHERE metadataProfileName = ?";
+        String sql = "SELECT * FROM metadataProfileData WHERE metadataProfileName = ?";
         List<MetadataProfile> metadataProfile = getJdbcTemplate().query(sql, new JdbcMetadataProfileDao.MetadataProfileMapper(), metadataProfileType);
         if (metadataProfile.isEmpty()) {
             String message = "Unable to find persisted metadata profiles for metadataProfileType " + metadataProfileType;

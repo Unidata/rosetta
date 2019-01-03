@@ -187,28 +187,36 @@ var VariableComplianceLevelDataHandler = (function () {
         $("#dialog #requiredMetadataAssignment ul").empty();
         var requiredMetadata = populateComplianceLevelInputTags(key, "required");
         if (requiredMetadata !== "") {
+            $("#dialog #requiredMetadataAssignment").removeClass("hideMe");
             DialogDomHandler.enableDiv("requiredMetadataAssignment");
             $("#dialog #requiredMetadataAssignment ul").append(requiredMetadata);
             bindRequiredMetadataEvents(key);
+        } else {
+            $("#dialog #requiredMetadataAssignment").addClass("hideMe");
         }
 
         // Add recommended attribute tags to DOM and bind events.
         $("#dialog #recommendedMetadataAssignment ul").empty();
         var recommendedMetadata = populateComplianceLevelInputTags(key, "recommended");
         if (recommendedMetadata !== "") {
+            $("#dialog #recommendedMetadataAssignment").removeClass("hideMe");
             DialogDomHandler.enableDiv("recommendedMetadataAssignment");
             $("#dialog #recommendedMetadataAssignment ul").append(recommendedMetadata);
             bindRecommendedMetadataEvents(key);
+        } else {
+            $("#dialog #recommendedMetadataAssignment").addClass("hideMe");
         }
         
         // Add additional attribute tags to DOM and bind events.
-        $("#dialog #additionalMetadataAssignment select").empty();
+        $("#dialog #additionalMetadataAssignment ul").empty();
         var additionalMetadata = populateComplianceLevelInputTags(key, "additional");
-        $("#dialog #additionalMetadataAssignment select").append(additionalMetadata);
         if (additionalMetadata !== "") {
+            $("#dialog #additionalMetadataAssignment").removeClass("hideMe");
             DialogDomHandler.enableDiv("additionalMetadataAssignment");
             $("#dialog #additionalMetadataAssignment ul").append(additionalMetadata);
             bindAdditionalMetadataEvents(key);
+        } else {
+            $("#dialog #additionalMetadataAssignment").addClass("hideMe");
         }
 
         // Bind unit builder events.

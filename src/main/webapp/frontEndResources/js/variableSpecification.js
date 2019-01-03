@@ -424,33 +424,33 @@ function testIfComplete(colNumber) {
     }
 }
 
-    function populateCmd(key) {
-        // Get the object from storage.
-        var storedVariableData = JSON.stringify(VariableStorageHandler.getAllVariableData());
-        $("input#variableMetadata").val(storedVariableData);
-    }
+/**
+ * Populates the Spring command object (form-backing object) with the data in web storage.
+ */
+function populateCmd() {
+    // Get the object from storage.
+    var storedVariableData = JSON.stringify(VariableStorageHandler.getAllVariableData());
+    $("input#variableMetadata").val(storedVariableData);
+}
 
 
+/**
+ * Marks a column of data as disabled by changing the css info.
+ *
+ * @param node  The grid's cell node data.
+ */
+function disableColumn(node) {
+    $(node).addClass("columnDisabled");
+}
 
-
-
-    /**
-     * Marks a column of data as disabled by changing the css info.
-     *
-     * @param node  The grid's cell node data.
-     */
-    function disableColumn(node) {
-        $(node).addClass("columnDisabled");
-    }
-
-    /**
-     * Marks a column of data as enabled by changing the css info.
-     *
-     * @param node  The grid's cell node data.
-     */
-    function enableColumn(node) {
-        $(node).removeClass("columnDisabled");
-    }
+/**
+ * Marks a column of data as enabled by changing the css info.
+ *
+ * @param node  The grid's cell node data.
+ */
+function enableColumn(node) {
+    $(node).removeClass("columnDisabled");
+}
 
 
 

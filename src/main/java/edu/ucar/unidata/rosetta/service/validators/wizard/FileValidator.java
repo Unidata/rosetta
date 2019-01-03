@@ -5,7 +5,7 @@
 
 package edu.ucar.unidata.rosetta.service.validators.wizard;
 
-import edu.ucar.unidata.rosetta.domain.AsciiFile;
+import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
 import edu.ucar.unidata.rosetta.service.validators.CommonValidator;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ public class FileValidator extends CommonValidator implements Validator {
         private List<String> delimiterList = new ArrayList<String> ();
         private List<String> headerLineList = new ArrayList<String> ();
         private List<String> platformMetadataList = new ArrayList<String> ();
-        private List<String> generalMetadataList = new ArrayList<String> ();
+        private List<String> globalMetadataList = new ArrayList<String> ();
         private HashMap<String, String> variableNameMap = new HashMap<String, String> ();
         private HashMap<String, HashMap> variableMetadataMap = new HashMap<String, HashMap> ();
 
@@ -32,7 +32,7 @@ public class FileValidator extends CommonValidator implements Validator {
 
 
   public boolean supports(Class clazz) {
-    return AsciiFile.class.equals(clazz);
+    return UploadedFile.class.equals(clazz);
   }
 
   public void validate(Object obj, Errors errors) {

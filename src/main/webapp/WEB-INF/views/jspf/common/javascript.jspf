@@ -40,7 +40,6 @@
         src="${baseUrl}/resources/js/plugins/jquery.tablesorter.pager.js"></script>
 
 <!-- Custom JS-->
-<script type="text/javascript" src="${baseUrl}/resources/js/globalResources.js"></script>
 <script type="text/javascript" src="${baseUrl}/resources/js/WebStorage.js"></script>
 <script type="text/javascript"
         src="${baseUrl}/resources/js/VariableStorageHandler.js"></script>

@@ -220,6 +220,7 @@ function lookForBadChars(userInput, tagName) {
  * @param userInput  The user input data to test.
  * @param tagName  The name value of the input tag that collected the data.
  */
+/*
 function lookForBlankEntries(userInput, tagName) {
   if (userInput.trim() === "") {  // only whitespace entered
     return "Please enter a legitimate value for " + getMetadataDisplayName(
@@ -228,6 +229,7 @@ function lookForBlankEntries(userInput, tagName) {
     return null;
   }
 }
+*/
 
 /**
  * Similar to lookForBlankEnteries, but for a blank
@@ -236,13 +238,15 @@ function lookForBlankEntries(userInput, tagName) {
  * @param userInput  The user input data to test.
  * @param tagName  The name value of the input tag that collected the data.
  */
+
 function lookForBlankSelection(userInput, tagName) {
   if (userInput === "") {  // empty selection
-    return "Please select a value for " + getMetadataDisplayName(tagName);
+    return "Please select a value for " + tagName;
   } else {
     return null;
   }
 }
+
 
 /**
  * This function checks to see that all the required metadata values for the specified
@@ -270,6 +274,7 @@ function checkRequiredMetadataCompletion(variableType, metadataInSession) {
  * @param finalCheck  If the final validation being performed (when done button is clicked).
  *     Optional.
  */
+/*
 function validateVariableData(sessionKey, finalCheck) {
   // get the name of the variable supplied by the user 
   var variableValue = getFromSession(sessionKey);
@@ -418,3 +423,4 @@ function validateVariableData(sessionKey, finalCheck) {
     }
   }
 }
+*/

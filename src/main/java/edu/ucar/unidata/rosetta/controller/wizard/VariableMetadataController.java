@@ -130,7 +130,7 @@ public class VariableMetadataController {
         // Persist the custom data file information.
         wizardManager.processVariableMetadata(rosettaCookie.getValue(), wizardData);
 
-        // Send user to next step to collect general metadata.
-        return new ModelAndView(new RedirectView("/generalMetadata", true));
+        // Send user to next step to collect global metadata.
+        return new ModelAndView(new RedirectView("/globalMetadata", true));
     }
 }

@@ -38,7 +38,7 @@
   background: #E1E2ED !important;
 }
 
-/* header row toggle button (general) */
+/* header row toggle button */
 .toggle {
   width: 9px;
   height: 9px;
@@ -63,7 +63,7 @@
   background: #E6E6E6 !important;
 }
 
-/* column header button (HeaderButtonsPlugin) formatting (general) */
+/* column header button (HeaderButtonsPlugin) formatting */
 .slick-header-button {
   margin: 0 0 0 2px;
   padding: 0;

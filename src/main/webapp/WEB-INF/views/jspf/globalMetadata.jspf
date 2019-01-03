@@ -1,8 +1,8 @@
-<h3>Specify General Information</h3>
+<h3>Specify Global Attributes</h3>
 <p>Please provide the requested metadata:</p>
    <input type="hidden" name="globalMetadata" value="" id="globalMetadata"/>
 
-    <div id="generalMetadataAssignment">
+    <div id="globalMetadataAssignment">
     </div>
 
     <div class="buttonNav">
@@ -32,9 +32,9 @@
     </c:choose>
     
 
-    var metadataProfileGeneralData = [];
-    <%-- populate global metadata profile general data array with metadata profile info passed from the server-side --%>
-    <c:forEach items="${metadataProfileGeneralData}" var="profile">
+    var metadataProfileGlobalData = [];
+    <%-- populate global metadata profile global data array with metadata profile info passed from the server-side --%>
+    <c:forEach items="${metadataProfileGlobalData}" var="profile">
         
         var profile = {};
         profile["attributeName"] =  '${fn:escapeXml(profile.attributeName)}';
@@ -43,10 +43,10 @@
         profile["displayName"] = '${fn:escapeXml(profile.displayName)}';
         profile["exampleValues"] = '${fn:escapeXml(profile.exampleValues)}';
         profile["metadataGroup"] = '${fn:escapeXml(profile.metadataGroup)}';
-        metadataProfileGeneralData.push(profile);
+        metadataProfileGlobalData.push(profile);
     </c:forEach>
 
-    GlobalMetadata.populateTags(metadataProfileGeneralData);
+    GlobalMetadata.populateTags(metadataProfileGlobalData);
 
 </script>
 

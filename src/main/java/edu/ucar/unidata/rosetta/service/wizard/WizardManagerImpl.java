@@ -43,7 +43,6 @@ import org.springframework.dao.DataRetrievalFailureException;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -217,6 +216,7 @@ public class WizardManagerImpl implements WizardManager {
                         sb.append(",");
                     }
                 }
+
                 metadataProfile = sb.toString();
                 if (metadataProfile.substring(metadataProfile.length() - 1).equals(",")) {
                     metadataProfile = metadataProfile.substring(0, metadataProfile.length() - 1);
@@ -228,6 +228,7 @@ public class WizardManagerImpl implements WizardManager {
                         + wizardData.toString());
             }
         } else {
+
             // Everybody gets the CF metadata type profile.  Make sure it's there.
             if (metadataProfile == null) {
                 metadataProfile = "CF";
@@ -236,6 +237,18 @@ public class WizardManagerImpl implements WizardManager {
                     metadataProfile = metadataProfile + ",CF";
                 }
             }
+        }
+
+        // Get CF type to determine if the appropriate DSG metadata profiles need to be added.
+        String cfType = wizardData.getCfType();
+        if (cfType.equals("") || cfType == null) {
+            cfType = resourceManager.getCFTypeFromPlatform(wizardData.getPlatform());
+        }
+        if (cfType.equals("Profile")) {
+            metadataProfile = metadataProfile + ",RosettaProfileDsg";
+        }
+        if (cfType.equals("Time_Series")) {
+            metadataProfile = metadataProfile + ",RosettaTimeSeriesDsg";
         }
         return metadataProfile;
     }
@@ -441,8 +454,7 @@ public class WizardManagerImpl implements WizardManager {
             // Update persisted CF type data.
             updatePersistedWizardData(persistedData);
 
-        } else {
-            // No ID yet.  First time persisting CF type data.
+        } else {  // No ID yet.  First time persisting CF type data.
 
             // Create a unique ID for this object.
             wizardData.setId(PropertyUtils.createUniqueDataId(request));
@@ -487,16 +499,16 @@ public class WizardManagerImpl implements WizardManager {
     }
 
     /**
-     * Processes the data submitted by the user containing general metadata information.  Since this
+     * Processes the data submitted by the user containing global metadata information.  Since this
      * is the final step of collecting data in the wizard, the uploaded data file is converted to
      * netCDF format in preparation for user download.
      *
      * @param id The unique ID corresponding to already persisted data.
-     * @param wizardData The WizardData containing the general metadata.
+     * @param wizardData The WizardData containing the global metadata.
      * @throws RosettaDataException If unable to populate the metadata object.
      */
     @Override
-    public void processGeneralMetadata(String id, WizardData wizardData) throws RosettaDataException {
+    public void processGlobalMetadata(String id, WizardData wizardData) throws RosettaDataException {
         // Parse the JSON to get GlobalMetadata objects.
         List<GlobalMetadata> globalMetadata = JsonUtil.convertGlobalDataFromJson(wizardData.getGlobalMetadata());
 
@@ -529,7 +541,7 @@ public class WizardManagerImpl implements WizardManager {
         if (customFileAttributesStep(id)) {
             nextStep = "/customFileTypeAttributes";
         } else {
-            nextStep = "/generalMetadata";
+            nextStep = "/globalMetadata";
         }
         return nextStep;
     }
@@ -568,24 +580,43 @@ public class WizardManagerImpl implements WizardManager {
     public void processVariableMetadata(String id, WizardData wizardData) {
         // Parse the JSON to get Variable objects.
         List<Variable> variables = JsonUtil.convertVariableDataFromJson(wizardData.getVariableMetadata());
-
         // Look up any persisted data corresponding to the id.
         // (If we are restoring from a template, or using the back button, there will be persisted data.)
         List<Variable> persisted = variableDao.lookupVariables(id);
 
         // Get the variable IDs and columns numbers from persisted data.
-        Map<Integer, Integer> variableMap = new HashMap<>(persisted.size());
+        Map<Integer, Integer> variableMap = new HashMap<>(variables.size());
+
         if (persisted.size() > 0) {
+
+            // Populate the variable Map with the variable ID (persisted ID) and column number (used below).
             for (Variable persistedVar : persisted) {
                 int variableId = persistedVar.getVariableId();
                 int columnNumber = persistedVar.getColumnNumber();
                 variableMap.put(columnNumber, variableId);
             }
-            // Update new variables with column numbers.
+
+            // Update new (submitted) variables with column numbers from the Map.
             for (Variable variable : variables) {
-                int variableId = variableMap.get(variable.getColumnNumber());
-                variable.setVariableId(variableId);
-                variable.setWizardDataId(id);
+
+                 // Determine if the variable is has been persisted.
+                if (variableMap.containsKey(variable.getColumnNumber())) {
+                    // The variable has been persisted.
+                    int variableId = variableMap.get(variable.getColumnNumber());
+                    variable.setVariableId(variableId);  // Set the persisted variable Id.
+                    variable.setWizardDataId(id);   // Set the wizard Id.
+                } else {
+                    // The variable has NOT been persisted yet.
+                    // This can happen if a restored template variable count is less than
+                    // (submitted) data file variable count.  This results in the persisted
+                    // variable data being incomplete.
+
+                    variable.setWizardDataId(id); // Set the wizard Id.
+                    // Persist the variable & get the ID.
+                    int variableId = variableDao.persistVariable(id, variable);
+                    variable.setVariableId(variableId);  // Set the persisted variable Id.
+                }
+
             }
             variableDao.updatePersistedVariables(variables);
         } else {

@@ -86,7 +86,7 @@ public class CustomFileAttributesController {
      * <p>
      * This step is only accessed/processed when the user uploads a 'custom' data file type (specified
      * during prior step).  Otherwise, if they upload a known data type, they are taken directly to
-     * general metadata collection step.
+     * global metadata collection step.
      *
      * @param wizardData The form-backing object.
      * @param submit     The value sent via the submit button.

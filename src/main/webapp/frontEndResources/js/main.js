@@ -156,7 +156,7 @@ $(document).ready(function ($) {
 
 
   /**
-   * STEP 5: general metadata.
+   * STEP 5: global metadata.
    * toggle metadata sections
    */
   $("h5.toggle").click(function () {
@@ -179,11 +179,11 @@ $(document).ready(function ($) {
 
     /**
      * STEP 6: convert and download
-     * remove storage and cookie
+     * remove web storage and cookie
      */
   $("#convertAndDownload input").click(function () {
       var name = "rosetta="; //Create the cookie name variable with cookie name concatenate with = sign
-      // Invalidate tjhe cookie.
+      // Invalidate the cookie.
       var cookie = window.document.cookie;
       if (cookie.includes("rosetta")) {
           document.cookie = 'rosetta=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';

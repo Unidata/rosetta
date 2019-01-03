@@ -15,7 +15,7 @@ The default index page gets redirected to here.
       <%@ include file="/WEB-INF/views/jspf/common/css.jspf" %>
       <script type="text/javascript">
         var platformMetadata = [];
-        var generalMetadata = [];
+        var globalMetadata = [];
         var publisherInfo = [];
       </script>
     </head>
@@ -47,8 +47,8 @@ The default index page gets redirected to here.
                   </li>
                 </c:if>
                 <li id="${currentStep}"
-                  <c:if test="${currentStep eq 'generalMetadata'}">class="current"</c:if>>
-                    Specify General Information
+                  <c:if test="${currentStep eq 'globalMetadata'}">class="current"</c:if>>
+                    Specify Global Attributes
                 </li>
                 <li id="${currentStep}"
                   <c:if test="${currentStep eq 'convertAndDownload'}">class="current"</c:if>>
@@ -72,8 +72,8 @@ The default index page gets redirected to here.
                   <c:when test="${currentStep eq 'variableMetadata'}">
                     <%@ include file="/WEB-INF/views/jspf/variableMetadata.jspf" %>
                   </c:when>
-                  <c:when test="${currentStep eq 'generalMetadata'}">
-                    <%@ include file="/WEB-INF/views/jspf/generalMetadata.jspf" %>
+                  <c:when test="${currentStep eq 'globalMetadata'}">
+                    <%@ include file="/WEB-INF/views/jspf/globalMetadata.jspf" %>
                   </c:when>
                   <c:when test="${currentStep eq 'convertAndDownload'}">
                     <%@ include file="/WEB-INF/views/jspf/convertAndDownload.jspf" %>

@@ -6,28 +6,33 @@
 var VariableStorageHandler = (function () {
 
     /**
-     * Initializes storage for all the variables in the grid.
+     * Initializes storage to hold the correct amount of collected variable metadata:
+     *     1) If no data is being restored, adds blank objects for each column; OR
+     *     2) If data is being restored, verifies an object exists in storage for all
+     *        columns & creates blank objects if needed.
      *
      * @param numberOfColumns   The number of columns in the grid.
      */
     function initialize (numberOfColumns) {
-        // There could already be data in web storage
-        // (if we've visted this page before or if restoring data from a template).
+        // There could already be data in web storage if:
+        //     1) if we've visited this page before; OR
+        //     2) if restoring data from a template.
         var variableMetadata = WebStorage.getStoredData("variableMetadata");
         if (variableMetadata !== null) {
             // Something is already in web storage.
             variableMetadata = JSON.parse(variableMetadata);
-            // If we're here, the restored data contains one or more 'do_not_use' entries.
+            // If we're here, the restored data contains one or more 'DO_NOT_USE' entries.
             for (var i = 0; i < numberOfColumns; i++) {
                 if (variableMetadata[i] === undefined) {
+                    console.log("no column " + i);
                     variableMetadata.push(
                         {
-                                "column": i,
-                                "name":"do_not_use",
-                                "required": {},
-                                "recommended": {},
-                                "additional": {}
-                            });
+                            "column": i,
+                            "name":"DO_NOT_USE",
+                            "required": {},
+                            "recommended": {},
+                            "additional": {}
+                        });
                 } else {
                     // Restored data may be incomplete.
                     if (variableMetadata[i].required === undefined) {
@@ -73,7 +78,7 @@ var VariableStorageHandler = (function () {
     }
 
     /**
-     * Adds an entry in the stored variable.
+     * Adds a metadata to a stored variable.
      *
      * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
      * @param key           The key of the attribute to store.
@@ -183,7 +188,7 @@ var VariableStorageHandler = (function () {
 
 
     /**
-     * Adds an entry in the stored compliance-level (required, recommended, or additional)
+     * Adds metadata to the stored compliance-level (required, recommended, or additional)
      * inner object of the variable.
      *
      * @param columnNumber  The columnNumber corresponding to the the JSON object we are interested in.
@@ -214,10 +219,14 @@ var VariableStorageHandler = (function () {
     /**
      * Finds and returns the value for the given key in the stored compliance-level
      * (required, recommended, or additional) inner object of the variable.
+     * The difference between this method and the ones below is that this method returns a single
+     * metadata value for the requested compliance level, whereas the methods below return ALL
+     * metadata keys/values (the entired object) of the requested compliance metadata.
      *
      * @param columnNumber  The columnNumber corresponding to the JSON object we are interested in.
      * @param key               The object key to use to get the stored value data.
      * @param complianceLevel   The compliance level (required, recommended, or additional).
+     * @return  The specific metadata value for provided key.
      */
     function getComplianceLevelVariableData(columnNumber, key, complianceLevel) {
         // Get the stored variable data.
@@ -238,10 +247,10 @@ var VariableStorageHandler = (function () {
 
     /**
      * Private, utility function (not exported).
-     * Finds and returns the stored required metadata as an object.
+     * Finds and returns ALL of the stored required metadata as an object.
      *
      * @param columnNumber  The columnNumber corresponding to the variable we are interested in.
-     * @returns The required metadata as a jSOn object.
+     * @returns The ALL of the required metadata corresponding to the variable as a JSON object.
      */
     function getRequiredVariableData(columnNumber) {
         // Get the stored variable data.
@@ -256,10 +265,10 @@ var VariableStorageHandler = (function () {
 
     /**
      * Private, utility function (not exported).
-     * Finds and returns the stored recommended metadata as an object.
+     * Finds and returns ALL of the stored recommended metadata as an object.
      *
      * @param columnNumber  The columnNumber corresponding to the variable we are interested in.
-     * @returns The recommended metadata as a jSOn object.
+     * @returns The ALL of the recommended metadata corresponding to the variable as a JSON object.
      */
     function getRecommendedVariableData(columnNumber) {
         // Get the stored variable data.
@@ -274,10 +283,10 @@ var VariableStorageHandler = (function () {
 
     /**
      * Private, utility function (not exported).
-     * Finds and returns the stored additional metadata as an object.
+     * Finds and returns ALL of the stored additional metadata as an object.
      *
      * @param columnNumber  The columnNumber corresponding to the variable we are interested in.
-     * @returns The additional metadata as a jSOn object.
+     * @returns The ALL of the additional metadata corresponding to the variable as a JSON object.
      */
     function getAdditionalVariableData(columnNumber) {
         // Get the stored variable data.
@@ -292,9 +301,9 @@ var VariableStorageHandler = (function () {
 
     /**
      * Retrieves and returns an array of columns who have stored metadata.
-     * Note, those variables specified "Do Not Use" are ignored and not included.
+     * Note, those variables specified "DO_NOT_USE" are ignored and not included.
      *
-     * @return candidateColumns  ArraygetAllVariableData( of columns who have stored metadata.
+     * @return candidateColumns  Array of columns who have stored metadata.
      */
     function getVariablesWithMetadata() {
         // Place to stash candidate columns who can provided their metadata.
@@ -305,7 +314,7 @@ var VariableStorageHandler = (function () {
         for (var i = 0; i < variableMetadata.length; i++) {
             var variable = variableMetadata[i];
             var variableName = variable.name;
-            if (variableName !== undefined  && variableName !== "do_not_use" ) {
+            if (variableName !== undefined  && variableName !== "DO_NOT_USE" ) {
                 candidateColumns.push(variableName);
             }
         }
@@ -321,8 +330,7 @@ var VariableStorageHandler = (function () {
      * @return true if variable has all it's required data; otherwise false.
      */
     function testVariableCompleteness(key, variableName) {
-
-        if (variableName !== "do_not_use") {
+        if (variableName !== "DO_NOT_USE") {
 
             // Do we have the metadataType?
             var metadataType = getVariableData(key, "metadataType");
@@ -421,10 +429,14 @@ var VariableStorageHandler = (function () {
      * @param variable      The stored variable.
      */
     function sanityCheck(columnNumber, variable) {
+        // Just in case the columnNumber is passes as a string.
+        if (typeof columnNumber === "string") {
+            columnNumber = parseInt(columnNumber);
+        }
         // Sanity check that we are operating on the correct object.
         if (columnNumber !==  parseInt(variable.column)) {
             // These should match; if we are here then something has gone very wrong.
-            displayErrorMessage("Unable to access information for variable " + columnNumber + ".");
+            displayErrorMessage("Unable to access information for variable in column " + columnNumber + ".");
         }
     }
 
@@ -457,7 +469,7 @@ var VariableStorageHandler = (function () {
         var variableMetadata = WebStorage.getStoredData("variableMetadata");
         if (!variableMetadata) {
             // This shouldn't happen; if we are here then something has gone very wrong (this info should be in the stored).
-             displayErrorMessage("Unable to access stored variable matadata.");
+            displayErrorMessage("Unable to access stored variable matadata.");
         } else {
             // Un-stringify.
             return JSON.parse(variableMetadata);
@@ -473,16 +485,9 @@ var VariableStorageHandler = (function () {
      * @return  The variable as a JSON object.
      */
     function getVariable(columnNumber, variableMetadata) {
-        // Get the desired object.
+        // Get the desired variable object.
         var variable = variableMetadata[columnNumber];
-        // Variable could be undefined in this scenario:
-        //      1) we are restoring data from a template; and
-        //      2) it is the first time we are visiting rosetta in a session; and
-        //      3) one or more of the template variables was specified as 'do_not_use'
-        //  hence we get a mismatch between the column number vs the number in wev
-        if (variable === undefined) {
-            variable = "gfdf";
-        }
+
         // Sanity check that we are operating on the correct object.
         sanityCheck(columnNumber, variable);
 
@@ -506,15 +511,26 @@ var VariableStorageHandler = (function () {
      * @param recipientColumnNumber The column number to copy the data to.
      */
     function populateColumnDataWithAnotherColumn(donorColumnNumber, recipientColumnNumber) {
+
         // Get the stored variable data.
         var variableMetadata = getStoredVariableMetadata();
 
         // Get the donor object.
         var donorVariable = getVariable(donorColumnNumber, variableMetadata);
+
+        // Get the recipient object to see if a variable name was already entered.
+        var recipientVariable = getVariable(recipientColumnNumber, variableMetadata);
+        var variableName = recipientVariable.name;
+
         // Clone the donor variable.
-        var recipientVariable = JSON.parse(JSON.stringify(donorVariable));
-        // Change the ColumnName.
-        recipientColumnNumber = recipientColumnNumber;
+        recipientVariable = JSON.parse(JSON.stringify(donorVariable));
+
+        // Keep the assigned variable name.
+        if (variableName !== undefined) {
+            recipientVariable.name = variableName;
+        }
+
+        // Change the column number.
         recipientVariable["column"] = parseInt(recipientColumnNumber);
 
         // Update the stored data with updated variable.

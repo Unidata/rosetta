@@ -32,7 +32,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
      * @param props RosettaProperties from which the database username and password are glean.
      * @throws NonTransientDataAccessResourceException If unable to create instance of the database
      *                                                 driver.
-     * @throws SQLException                            If an SQL exceptions occurs during insert transaction.
+     * @throws SQLException  If an SQL exceptions occurs during insert transaction.
      */
     private void addDefaultAdminUser(Properties props)
             throws NonTransientDataAccessResourceException, SQLException {
@@ -120,60 +120,60 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
             // Table containing uploaded file data.
             String createUploadedFileTable = "CREATE TABLE uploadedFiles " +
-                    "(" +
-                    "id VARCHAR(255) not null, " +
-                    "fileName VARCHAR(255) not null, " +
-                    "fileType VARCHAR(50) not null" +
-                    ")";
+                "(" +
+                "id VARCHAR(255) not null, " +
+                "fileName VARCHAR(255) not null, " +
+                "fileType VARCHAR(50) not null" +
+                ")";
             createTable(createUploadedFileTable, props);
 
             String createWizardDataTable = "CREATE TABLE wizardData " +
-                    "(" +
-                    "id VARCHAR(255) primary key not null, " +
-                    "cfType VARCHAR(50), " +
-                    "community VARCHAR(100), " +
-                    "metadataProfile VARCHAR(20), " +
-                    "platform VARCHAR(100), " +
-                    "dataFileType VARCHAR(255), " +
-                    "headerLineNumbers VARCHAR(255), " +
-                    "delimiter VARCHAR(255)" +
-                    ")";
+                "(" +
+                "id VARCHAR(255) primary key not null, " +
+                "cfType VARCHAR(50), " +
+                "community VARCHAR(100), " +
+                "metadataProfile VARCHAR(255), " +
+                "platform VARCHAR(100), " +
+                "dataFileType VARCHAR(255), " +
+                "headerLineNumbers VARCHAR(255), " +
+                "delimiter VARCHAR(255)" +
+                ")";
             createTable(createWizardDataTable, props);
 
             String createVariablesTable = "CREATE TABLE variables " +
-                    "(" +
-                    "variableId INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
-                    "wizardDataId VARCHAR(255)," +
-                    "columnNumber INT, " +
-                    "variableName VARCHAR(255), " +
-                    "metadataType VARCHAR(14), " +
-                    "metadataTypeStructure VARCHAR(20), " +
-                    "verticalDirection VARCHAR(4), " +
-                    "metadataValueType VARCHAR(10)" +
-                    ")";
+                "(" +
+                "variableId INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                "wizardDataId VARCHAR(255)," +
+                "columnNumber INT, " +
+                "variableName VARCHAR(255), " +
+                "metadataType VARCHAR(14), " +
+                "metadataTypeStructure VARCHAR(20), " +
+                "verticalDirection VARCHAR(4), " +
+                "metadataValueType VARCHAR(10)" +
+                ")";
             createTable(createVariablesTable, props);
 
 
             String createVariableMetadataTable = "CREATE TABLE variableMetadata " +
-                    "(" +
-                    "variableId INT, " +
-                    "complianceLevel VARCHAR(255), " +
-                    "metadataKey VARCHAR(255), " +
-                    "metadataValue VARCHAR(255)" +
-                    ")";
+                "(" +
+                "variableId INT, " +
+                "complianceLevel VARCHAR(255), " +
+                "metadataKey VARCHAR(255), " +
+                "metadataValue VARCHAR(255)" +
+                ")";
             createTable(createVariableMetadataTable, props);
 
             String createGlobalMetadataTable = "CREATE TABLE globalMetadata " +
-                    "(" +
-                    "wizardDataId VARCHAR(255)," +
-                    "metadataGroup VARCHAR(255), " +
-                    "metadataValueType VARCHAR(255), " +
-                    "metadataKey VARCHAR(255), " +
-                    "metadataValue VARCHAR(255)" +
-                    ")";
+                "(" +
+                "wizardDataId VARCHAR(255)," +
+                "metadataGroup VARCHAR(255), " +
+                "metadataValueType VARCHAR(255), " +
+                "metadataKey VARCHAR(255), " +
+                "metadataValue VARCHAR(255)" +
+                ")";
             createTable(createGlobalMetadataTable, props);
 
-            String createMpsMetadataProfileTable = "CREATE TABLE mpsMetadataProfiles " +
+            String createMetadataProfileDataTable = "CREATE TABLE metadataProfileData " +
                 "(" +
                 "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
                 "attributeName VARCHAR(100), " +
@@ -188,85 +188,85 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                 "metadataTypeStructureName VARCHAR(255), " +
                 "metadataValueType VARCHAR(255)" +
                 ")";
-            createTable(createMpsMetadataProfileTable, props);
+            createTable(createMetadataProfileDataTable, props);
 
             String createIgnoreListTable = "CREATE TABLE ignoreList " +
-                    "(" +
-                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
-                    "metadataType VARCHAR(255), " +
-                    "attributeName VARCHAR(100)" +
-                    ")";
+                "(" +
+                "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                "metadataType VARCHAR(255), " +
+                "attributeName VARCHAR(100)" +
+                ")";
             createTable(createIgnoreListTable, props);
 
             insertMetadataProfiles(props);
 
             String createPlatformTable = "CREATE TABLE platforms " +
-                    "(" +
-                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
-                    "name VARCHAR(255), " +
-                    "imgPath VARCHAR(255), " +
-                    "cfType INTEGER, " +
-                    "community INTEGER" +
-                    ")";
+                "(" +
+                "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                "name VARCHAR(255), " +
+                "imgPath VARCHAR(255), " +
+                "cfType INTEGER, " +
+                "community INTEGER" +
+                ")";
             createTable(createPlatformTable, props);
 
             String createFileTypeTable = "CREATE TABLE fileTypes " +
-                    "(" +
-                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
-                    +
-                    "name VARCHAR(255)" +
-                    ")";
+                "(" +
+                "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                +
+                "name VARCHAR(255)" +
+                ")";
             createTable(createFileTypeTable, props);
 
             String createCfTypeTable = "CREATE TABLE cfTypes " +
-                    "(" +
-                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
-                    +
-                    "name VARCHAR(255)" +
-                    ")";
+                "(" +
+                "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                +
+                "name VARCHAR(255)" +
+                ")";
             createTable(createCfTypeTable, props);
 
             String createMetadataProfileTable = "CREATE TABLE metadataProfiles " +
-                    "(" +
-                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
-                    + "name VARCHAR(10), " +
-                    "community INTEGER"
-                    + ")";
+                "(" +
+                "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                + "name VARCHAR(10), " +
+                "community INTEGER"
+                + ")";
             createTable(createMetadataProfileTable, props);
 
             String createCommunityTable = "CREATE TABLE communities " +
-                    "(" +
-                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
-                    "name VARCHAR(255), " +
-                    "fileType INTEGER " +
-                    ")";
+                "(" +
+                "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                "name VARCHAR(255), " +
+                "fileType INTEGER " +
+                ")";
             createTable(createCommunityTable, props);
 
             String createDelimiterTable = "CREATE TABLE delimiters " +
-                    "(" +
-                    "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
-                    +
-                    "name VARCHAR(255), " +
-                    "characterSymbol VARCHAR(10)" +
-                    ")";
+                "(" +
+                "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                +
+                "name VARCHAR(255), " +
+                "characterSymbol VARCHAR(10)" +
+                ")";
             createTable(createDelimiterTable, props);
 
             // Insert the resources into the db.
             insertResources(props);
 
             String createUsersTable = "CREATE TABLE users" +
-                    "(" +
-                    "userId INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
-                    +
-                    "userName VARCHAR(50) not null, " +
-                    "password VARCHAR(80) not null, " +
-                    "accessLevel INTEGER not null, " +
-                    "accountStatus INTEGER not null, " +
-                    "emailAddress VARCHAR(75) not null, " +
-                    "fullName VARCHAR(100) not null, " +
-                    "dateCreated TIMESTAMP not null, " +
-                    "dateModified TIMESTAMP not null" +
-                    ")";
+                "(" +
+                "userId INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                +
+                "userName VARCHAR(50) not null, " +
+                "password VARCHAR(80) not null, " +
+                "accessLevel INTEGER not null, " +
+                "accountStatus INTEGER not null, " +
+                "emailAddress VARCHAR(75) not null, " +
+                "fullName VARCHAR(100) not null, " +
+                "dateCreated TIMESTAMP not null, " +
+                "dateModified TIMESTAMP not null" +
+                ")";
             createTable(createUsersTable, props);
 
             // Add default admin user to users table.
@@ -338,6 +338,12 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         }
     }
 
+    /**
+     *
+     * @param props
+     * @throws SQLException
+     * @throws RosettaDataException
+     */
     private void insertMetadataProfiles(Properties props) throws SQLException, RosettaDataException {
         Connection connection;
         PreparedStatement preparedStatement = null;
@@ -345,8 +351,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         try {
             Class.forName(props.getProperty("jdbc.driverClassName"));
         } catch (ClassNotFoundException e) {
-            throw new NonTransientDataAccessResourceException(
-                "Unable to find database drive class: " + e);
+            throw new NonTransientDataAccessResourceException("Unable to find database drive class: " + e);
         }
 
         String username = StringUtils.stripToNull(props.getProperty("jdbc.username"));
@@ -358,7 +363,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
             connection = DriverManager.getConnection(url);
         }
 
-        String insertStatement = "INSERT INTO mpsMetadataProfiles ("
+        String insertStatement = "INSERT INTO metadataProfileData ("
             + "attributeName, complianceLevel, description, exampleValues, "
             + "metadataGroup, metadataProfileName, metadataProfileVersion, "
             + "metadataType, metadataTypeStructureName, metadataValueType) "
@@ -386,6 +391,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                 "CoordinateVariable=axis",
                 "CoordinateVariable=coverage_content_type",
                 "CoordinateVariable=_FillValue",
+                "CoordinateVariable=valid_min",
                 "CoordinateVariable=valid_min",
                 "CoordinateVariable=valid_max",
                 "DataVariable=_FillValue",
