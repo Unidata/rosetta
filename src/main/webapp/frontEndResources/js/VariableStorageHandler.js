@@ -303,7 +303,7 @@ var VariableStorageHandler = (function () {
      * Retrieves and returns an array of columns who have stored metadata.
      * Note, those variables specified "DO_NOT_USE" are ignored and not included.
      *
-     * @return candidateColumns  ArraygetAllVariableData( of columns who have stored metadata.
+     * @return candidateColumns  Array of columns who have stored metadata.
      */
     function getVariablesWithMetadata() {
         // Place to stash candidate columns who can provided their metadata.
@@ -511,17 +511,26 @@ var VariableStorageHandler = (function () {
      * @param recipientColumnNumber The column number to copy the data to.
      */
     function populateColumnDataWithAnotherColumn(donorColumnNumber, recipientColumnNumber) {
+
         // Get the stored variable data.
         var variableMetadata = getStoredVariableMetadata();
 
         // Get the donor object.
         var donorVariable = getVariable(donorColumnNumber, variableMetadata);
 
-        // Clone the donor variable.
-        var recipientVariable = JSON.parse(JSON.stringify(donorVariable));
+        // Get the recipient object to see if a variable name was already entered.
+        var recipientVariable = getVariable(recipientColumnNumber, variableMetadata);
+        var variableName = recipientVariable.name;
 
-        // Change the ColumnName.
-        recipientColumnNumber = recipientColumnNumber;
+        // Clone the donor variable.
+        recipientVariable = JSON.parse(JSON.stringify(donorVariable));
+
+        // Keep the assigned variable name.
+        if (variableName !== undefined) {
+            recipientVariable.name = variableName;
+        }
+
+        // Change the column number.
         recipientVariable["column"] = parseInt(recipientColumnNumber);
 
         // Update the stored data with updated variable.
