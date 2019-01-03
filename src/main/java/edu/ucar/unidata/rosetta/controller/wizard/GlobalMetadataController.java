@@ -56,7 +56,6 @@ public class GlobalMetadataController {
             return new ModelAndView(new RedirectView("/cfType", true));
         }
 
-
         WizardData wizardData = wizardManager.lookupPersistedWizardDataById(rosettaCookie.getValue());
 
         // Add command object to Model.
