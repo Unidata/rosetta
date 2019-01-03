@@ -132,7 +132,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                 "id VARCHAR(255) primary key not null, " +
                 "cfType VARCHAR(50), " +
                 "community VARCHAR(100), " +
-                "metadataProfile VARCHAR(20), " +
+                "metadataProfile VARCHAR(255), " +
                 "platform VARCHAR(100), " +
                 "dataFileType VARCHAR(255), " +
                 "headerLineNumbers VARCHAR(255), " +
