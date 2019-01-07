@@ -1,6 +1,6 @@
 <h3>Specify Global Attributes</h3>
 <p>Please provide the requested metadata:</p>
-   <input type="hidden" name="globalMetadata" value="" id="globalMetadata"/>
+   <input type="hidden" name="globalMetadata" value="" id="globalMetadataCmd"/>
 
     <div id="globalMetadataAssignment">
     </div>

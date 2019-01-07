@@ -192,7 +192,7 @@ var GlobalMetadata = (function () {
     function isComplete() {
         if (testCompleteness()) {
             // Add stored global metadata info to input tag value.
-            $("#globalMetadata").val(JSON.stringify(getStoredGlobalMetadata()));
+            $("#globalMetadataCmd").val(JSON.stringify(getStoredGlobalMetadata()));
 
             // remove disabled status for submit button.
             $("input[type=submit]#Next").removeAttr("disabled");
