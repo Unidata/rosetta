@@ -126,8 +126,8 @@ public class WizardManagerImpl implements WizardManager {
 
             // If custom.
             if (format.equals("custom")) {
-                baseTemplate.setCfType(baseTemplate.getCfType().toLowerCase());
-                template.setCfType(template.getCfType().toLowerCase());
+                baseTemplate.setCfType(baseTemplate.getCfType().toLowerCase().replaceAll(" ", "").replaceAll("_", ""));
+                template.setCfType(template.getCfType());
                 logger.info("Creating netCDF file for custom data file " + dataFilePath);
                 // now find the proper converter
                 NetcdfFileManager dsgWriter = null;
