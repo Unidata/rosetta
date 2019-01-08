@@ -242,13 +242,14 @@ public class WizardManagerImpl implements WizardManager {
         // Get CF type to determine if the appropriate DSG metadata profiles need to be added.
         String cfType = wizardData.getCfType();
         if (cfType.equals("") || cfType == null) {
-            cfType = resourceManager.getCFTypeFromPlatform(wizardData.getPlatform());
+            cfType = resourceManager.getCFTypeFromPlatform(wizardData.getPlatform()).replaceAll("_", " ");
         }
         if (cfType.equals("Profile")) {
             metadataProfile = metadataProfile + ",RosettaProfileDsg";
         }
-        if (cfType.equals("Time_Series")) {
+        if (cfType.equals("Time Series")) {
             metadataProfile = metadataProfile + ",RosettaTimeSeriesDsg";
+            logger.info(metadataProfile);
         }
         return metadataProfile;
     }
