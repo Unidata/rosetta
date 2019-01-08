@@ -18,6 +18,11 @@ var GlobalMetadata = (function () {
         // We will stash our tags in here by group.
         var metadataGroupsMap = new Map();
 
+        // TEMP HACK
+        var requiredUsed = [];
+        var recommendedUsed = [];
+        var additionalUsed = [];
+
         for (var i = 0; i < metadataProfileGlobalData.length; i++) {
             var variable = metadataProfileGlobalData[i];
             var metadataGroup = variable.metadataGroup;
@@ -38,6 +43,34 @@ var GlobalMetadata = (function () {
             // We prefer the term additional to optional.
             if (complianceLevel === "optional") {
                 complianceLevel = "additional";
+            }
+
+            // HACK
+            if (complianceLevel === "required") {
+                if (!requiredUsed.includes(attributeName)) {
+                    requiredUsed.push(attributeName);
+                } else {
+                    continue;
+                }
+            }
+
+            // HACK
+            if (complianceLevel === "recommended") {
+                if (!recommendedUsed.includes(attributeName)) {
+                    recommendedUsed.push(attributeName);
+                } else {
+                    continue;
+                }
+            }
+
+
+            // HACK
+            if (complianceLevel === "additional") {
+                if (!additionalUsed.includes(attributeName)) {
+                    additionalUsed.push(attributeName);
+                } else {
+                    continue;
+                }
             }
 
             // Create the tag.
@@ -65,7 +98,7 @@ var GlobalMetadata = (function () {
         
                 if (complianceLevelsMap.has(complianceLevel)) {
                     // Already exists.
-                
+
                     // Get array of tags.
                     var tags =  complianceLevelsMap.get(complianceLevel);
                     tags.push(tag);
@@ -192,7 +225,7 @@ var GlobalMetadata = (function () {
     function isComplete() {
         if (testCompleteness()) {
             // Add stored global metadata info to input tag value.
-            $("#globalMetadata").val(JSON.stringify(getStoredGlobalMetadata()));
+            $("#globalMetadataCmd").val(JSON.stringify(getStoredGlobalMetadata()));
 
             // remove disabled status for submit button.
             $("input[type=submit]#Next").removeAttr("disabled");

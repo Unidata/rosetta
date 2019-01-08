@@ -126,8 +126,8 @@ public class WizardManagerImpl implements WizardManager {
 
             // If custom.
             if (format.equals("custom")) {
-                baseTemplate.setCfType(baseTemplate.getCfType().toLowerCase());
-                template.setCfType(template.getCfType().toLowerCase());
+                baseTemplate.setCfType(baseTemplate.getCfType().toLowerCase().replaceAll(" ", "").replaceAll("_", ""));
+                template.setCfType(template.getCfType());
                 logger.info("Creating netCDF file for custom data file " + dataFilePath);
                 // now find the proper converter
                 NetcdfFileManager dsgWriter = null;
@@ -242,13 +242,14 @@ public class WizardManagerImpl implements WizardManager {
         // Get CF type to determine if the appropriate DSG metadata profiles need to be added.
         String cfType = wizardData.getCfType();
         if (cfType.equals("") || cfType == null) {
-            cfType = resourceManager.getCFTypeFromPlatform(wizardData.getPlatform());
+            cfType = resourceManager.getCFTypeFromPlatform(wizardData.getPlatform()).replaceAll("_", " ");
         }
         if (cfType.equals("Profile")) {
             metadataProfile = metadataProfile + ",RosettaProfileDsg";
         }
-        if (cfType.equals("Time_Series")) {
+        if (cfType.equals("Time Series")) {
             metadataProfile = metadataProfile + ",RosettaTimeSeriesDsg";
+            logger.info(metadataProfile);
         }
         return metadataProfile;
     }

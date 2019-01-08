@@ -137,9 +137,7 @@ public class FileManagerImpl implements FileManager {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             String currentLine;
             while ((currentLine = bufferedReader.readLine()) != null) {
-                if (StringUtils.isNotBlank(currentLine)) {
-                    fileContents.add(StringEscapeUtils.escapeHtml4(currentLine));
-                }
+                fileContents.add(StringEscapeUtils.escapeHtml4(currentLine));
             }
             jsonFileData = JsonUtil.mapObjectToJson(fileContents);
         } catch (IOException e) {

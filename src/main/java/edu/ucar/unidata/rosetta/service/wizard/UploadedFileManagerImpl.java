@@ -356,7 +356,6 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
                 }
             }
         }
-
     }
 
     /**

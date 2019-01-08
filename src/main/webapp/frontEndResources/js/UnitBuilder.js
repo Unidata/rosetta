@@ -137,15 +137,16 @@ var UnitBuilder = (function () {
         }
 
         // Add option tags to selection menu and show to user.
+        $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitBuilderDataType\"]").empty();
         $("#dialog #requiredMetadataAssignment #unitBuilder select[name=\"unitBuilderDataType\"]").append(optionTags);
         $("#dialog #requiredMetadataAssignment #unitBuilder label[for=\"unitBuilderDataType\"]").removeClass("hideMe");
 
-        var selectionTags = "     <label for=\"unitPrefix\" class=\"hideMe\">\n" +
+        var selectionTags = "     <label id=\"unitPrefix\" for=\"unitPrefix\" class=\"hideMe\">\n" +
             "      unit prefix:\n" +
             "      <select name=\"unitPrefix\">\n" +
             "      </select>\n" +
             "     </label>\n" +
-            "     <label for=\"unitSelected\" class=\"hideMe\">\n" +
+            "     <label id=\"unitSelected\" for=\"unitSelected\" class=\"hideMe\">\n" +
             "      unit:\n" +
             "      <select name=\"unitSelected\">\n" +
             "      </select>\n" +
@@ -155,6 +156,11 @@ var UnitBuilder = (function () {
             "     <label class=\"error\"></label>";
 
         // Add the additional selection menu tags but hide until activated
+        $("#dialog #requiredMetadataAssignment #unitBuilder .error").remove();
+        $("#dialog #requiredMetadataAssignment #unitBuilder #unitPrefix").remove();
+        $("#dialog #requiredMetadataAssignment #unitBuilder #unitSelected").remove();
+        $("#dialog #requiredMetadataAssignment #unitBuilder #unitBuilderChooser").remove();
+        $("#dialog #requiredMetadataAssignment #unitBuilder #unitBuilderChooser").remove();
         $("#dialog #requiredMetadataAssignment #unitBuilder").append(selectionTags);
 
         // Bind Unit Builder events.
