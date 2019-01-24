@@ -121,7 +121,7 @@ public class SingleProfile extends NetcdfFileManager {
 
         if (!coordVarTypes.contains(VariableInfoUtils.latitude)) {
             for (Attribute attr : globalAttrsRoot) {
-                if (attr.getFullName().toLowerCase().equals("geospatial_lat_start")) {
+                if (attr.getFullName().equalsIgnoreCase("geospatial_lat_start")) {
                     VariableInfo latVi = new VariableInfo();
                     // will tell converter to look for data in global attribute
                     latVi.setColumnId(-2);
@@ -144,7 +144,7 @@ public class SingleProfile extends NetcdfFileManager {
                     latVi.setRosettaControlMetadata(latRosettaControlAttrs);
 
                     template.getVariableInfoList().add(latVi);
-                } else if (attr.getFullName().toLowerCase().equals("geospatial_lon_start")) {
+                } else if (attr.getFullName().equalsIgnoreCase("geospatial_lon_start")) {
                     VariableInfo lonVi = new VariableInfo();
                     // will tell converter to look for data in global attribute
                     lonVi.setColumnId(-2);

@@ -107,7 +107,7 @@ public abstract class NetcdfFileManager {
      */
     public boolean isMine(String reqType) {
         boolean mine = false;
-        if (getMyDsgType().equals(reqType)) {
+        if (getMyDsgType().equalsIgnoreCase(reqType)) {
             mine = true;
         }
         return mine;
@@ -193,8 +193,8 @@ public abstract class NetcdfFileManager {
                         if (VariableInfoUtils.isTimeCoordVar(varInfo)) {
                             elementCoordVarInfo.computeIfAbsent("time", k -> new ArrayList<>()).add(varInfo);
                             timeVarTypes.add(VariableInfoUtils.getCoordVarType(varInfo));
-                        } else if (VariableInfoUtils.getCoordVarType(varInfo).equals(VariableInfoUtils.vertical)) {
-                            if (myDsgType.toLowerCase().equals("profile")) {
+                        } else if (VariableInfoUtils.getCoordVarType(varInfo).equalsIgnoreCase(VariableInfoUtils.vertical)) {
+                            if (myDsgType.equalsIgnoreCase("profile")) {
                                 elementCoordVarInfo.computeIfAbsent("z", k -> new ArrayList<>()).add(varInfo);
                             } else {
                                 nonElementCoordVarInfo.add(varInfo);
@@ -214,7 +214,7 @@ public abstract class NetcdfFileManager {
         List<RosettaGlobalAttribute> rosettaGlobalAttributes = template.getGlobalMetadata();
         Attribute timeCoverageStart = null;
         for (RosettaGlobalAttribute rga : rosettaGlobalAttributes) {
-            if (rga.getName().toLowerCase().equals("time_coverage_start")) {
+            if (rga.getName().equalsIgnoreCase("time_coverage_start")) {
                 timeCoverageStart = RosettaGlobalAttributeUtils.getAttributeFromGlobalAttr(rga);
             }
         }
@@ -272,7 +272,7 @@ public abstract class NetcdfFileManager {
             timeCoordVarArr = arrayData.get(relativeTimeVi.getColumnId());
             int numTimeObs = toIntExact(timeCoordVarArr.getSize());
             // only create element dimension if time is the element dimension
-            if (myDsgType.toLowerCase().equals("trajectory") | myDsgType.toLowerCase().equals("timeseries")) {
+            if (myDsgType.equalsIgnoreCase("trajectory") | myDsgType.equalsIgnoreCase("timeseries")) {
                 elementDimension = ncf.addDimension(timeDimName, toIntExact(numTimeObs));
             }
             timeCoordVarName = relativeTimeVi.getName();
@@ -324,7 +324,7 @@ public abstract class NetcdfFileManager {
                 }
 
                 // only create element dimension if time is the element dimension
-                if (myDsgType.toLowerCase().equals("trajectory") | myDsgType.toLowerCase().equals("timeseries")) {
+                if (myDsgType.equalsIgnoreCase("trajectory") | myDsgType.equalsIgnoreCase("timeseries")) {
                     elementDimension = ncf.addDimension(dimName, toIntExact(numTimeObs));
                 }
 
@@ -341,14 +341,14 @@ public abstract class NetcdfFileManager {
 
                     String name = ra.getName();
                     String attrDate = "";
-                    if (name.toLowerCase().equals("globalattributename")) {
+                    if (name.equalsIgnoreCase("globalattributename")) {
                         String attrName = ra.getValue();
                         // find attribute in template
                         Map<String, ArrayList<Attribute>> gam = TemplateUtils.getGlobalAttrsMap(template);
                         for (String k : gam.keySet()) {
                             ArrayList<Attribute> attrList = gam.get(k);
                             for (Attribute attr : attrList) {
-                                if (attr.getFullName().equals(attrName)) {
+                                if (attr.getFullName().equalsIgnoreCase(attrName)) {
                                     attrDate = attr.getStringValue();
                                 }
                             }
@@ -439,7 +439,7 @@ public abstract class NetcdfFileManager {
         try {
             String timeCoordVarNameLocal = "";
             // only create element dimension if time is the element dimension
-            if (myDsgType.toLowerCase().equals("trajectory") | myDsgType.toLowerCase().equals("timeseries")) {
+            if (myDsgType.equalsIgnoreCase("trajectory") | myDsgType.equalsIgnoreCase("timeseries")) {
                 elementDimension = ncf.addDimension(dimName, toIntExact(numTimeObs));
                 // in this case, we are creating a totally new variabled, so we need to check
                 // if the variable "time" already exists in data and coordinate variables
@@ -494,7 +494,7 @@ public abstract class NetcdfFileManager {
             if ((timeVarTypes.contains(VariableInfoUtils.dateOnly)) && (timeVarTypes.contains(VariableInfoUtils.timeOnly))) {
                 // newTimeVarData = makeRelativeTime(elementCoordVarInfo.get(dateOnly), elementCoordVarInfo.get(timeOnly));
                 String coordVarType = VariableInfoUtils.getCoordVarType(timeCoordVarInfo.get(0));
-                if (coordVarType.equals(VariableInfoUtils.dateOnly)) {
+                if (coordVarType.equalsIgnoreCase(VariableInfoUtils.dateOnly)) {
                     timeVarHandled = makeTimeVarFromDateTimeOnly(template, timeCoordVarInfo.get(0), timeCoordVarInfo.get(1));
                 }
             } else {
@@ -563,11 +563,11 @@ public abstract class NetcdfFileManager {
         //CoordinateVariable	axis
         String type = VariableInfoUtils.getCoordVarType(variableInfo);
 
-        if (type.equals(VariableInfoUtils.longitude)) {
+        if (type.equalsIgnoreCase(VariableInfoUtils.longitude)) {
             calculatedCoordVarAttrs.add(new Attribute("axis", "X"));
-        } else if (type.equals(VariableInfoUtils.latitude)) {
+        } else if (type.equalsIgnoreCase(VariableInfoUtils.latitude)) {
             calculatedCoordVarAttrs.add(new Attribute("axis", "Y"));
-        } else if (type.equals(VariableInfoUtils.vertical)) {
+        } else if (type.equalsIgnoreCase(VariableInfoUtils.vertical)) {
             calculatedCoordVarAttrs.add(new Attribute("axis", "Z"));
             RosettaAttribute positive = VariableInfoUtils.findAttributeByName(VariableInfoUtils.positiveAttrName, variableInfo);
             if (positive != null) {
@@ -630,10 +630,10 @@ public abstract class NetcdfFileManager {
             String type = VariableInfoUtils.getCoordVarType(coordVar);
             Array data = arrayData.get(coordVar.getColumnId());
 
-            if (type.equals(VariableInfoUtils.longitude)) {
+            if (type.equalsIgnoreCase(VariableInfoUtils.longitude)) {
                 ncf.addGlobalAttribute(new Attribute("geospatial_lon_start", data.getDouble(0)));
                 ncf.addGlobalAttribute(new Attribute("geospatial_lon_end", data.getDouble(end)));
-            } else if (type.equals(VariableInfoUtils.latitude)) {
+            } else if (type.equalsIgnoreCase(VariableInfoUtils.latitude)) {
                 ncf.addGlobalAttribute(new Attribute("geospatial_lat_start", data.getDouble(0)));
                 ncf.addGlobalAttribute(new Attribute("geospatial_lat_end", data.getDouble(end)));
             }
@@ -696,9 +696,9 @@ public abstract class NetcdfFileManager {
         // create Element Coordinate Variable
         boolean elementDimCreated = false;
 
-        if (myDsgType.toLowerCase().equals("trajectory") | myDsgType.toLowerCase().equals("timeseries")) {
+        if (myDsgType.equalsIgnoreCase("trajectory") | myDsgType.equalsIgnoreCase("timeseries")) {
             elementDimCreated = createElementCoordVarTime(template);
-        } else if (myDsgType.toLowerCase().equals("profile")) {
+        } else if (myDsgType.equalsIgnoreCase("profile")) {
             // create vertical coordinate coord var
             elementDimCreated = createElementCoordVarVertical();
             // create time coordvar from global attr
@@ -797,7 +797,7 @@ public abstract class NetcdfFileManager {
                             if (var.getFullNameEscaped().contains(vi.getName())) {
                                 for (RosettaAttribute ra : vi.getRosettaControlMetadata()) {
                                     String name = ra.getName();
-                                    if (name.toLowerCase().equals("globalattributename")) {
+                                    if (name.equalsIgnoreCase("globalattributename")) {
                                         Attribute ga = ncf.findGlobalAttribute(ra.getValue());
                                         DataType dt = ga.getDataType();
                                         Number val = ga.getNumericValue();
@@ -807,6 +807,11 @@ public abstract class NetcdfFileManager {
                                             scalar = new ArrayFloat.D0();
                                             scalar.setFloat(0, val.floatValue());
                                         } else if (dt == DataType.DOUBLE) {
+                                            scalar = new ArrayDouble.D0();
+                                            scalar.setDouble(0, val.doubleValue());
+                                        } else if ((val != null) && (dt == DataType.STRING)) {
+                                            // ok, we were able to get a non-null Number out of the attribute, but
+                                            // the datatype on the attribute is string - let's store it as a double
                                             scalar = new ArrayDouble.D0();
                                             scalar.setDouble(0, val.doubleValue());
                                         }
