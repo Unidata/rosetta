@@ -19,10 +19,10 @@ import ucar.nc2.Attribute;
 public class VariableInfoUtils {
 
     // todo: move these to a constants class?
-    public static String relativeTime = "relativeTime";
-    public static String fullDateTime = "fullDateTime";
-    public static String timeOnly = "timeOnly";
-    public static String dateOnly = "dateOnly";
+    public static String relativeTime = "relativetime";
+    public static String fullDateTime = "fulldatetime";
+    public static String timeOnly = "timeonly";
+    public static String dateOnly = "dateonly";
     public static String latitude = "latitude";
     public static String longitude = "longitude";
     public static String vertical = "vertical";
@@ -30,7 +30,7 @@ public class VariableInfoUtils {
     public static String positiveAttrName = "positive";
 
     private static List<String> timeVarTypes =
-            Arrays.asList(timeOnly, dateOnly, fullDateTime);
+            Arrays.asList(relativeTime, timeOnly, dateOnly, fullDateTime);
 
     /**
      * Check if a VariableiInfo object contains information, or if it is to be ignored.
@@ -41,7 +41,7 @@ public class VariableInfoUtils {
     public static boolean isVarUsed(VariableInfo vi) {
         boolean used = false;
         if (vi.getName() != null) {
-            if (!vi.getName().toLowerCase().equals("do_not_use")) {
+            if (!vi.getName().equalsIgnoreCase("do_not_use")) {
                 used = true;
             }
         }
@@ -60,7 +60,7 @@ public class VariableInfoUtils {
         List<RosettaAttribute> rosettaControlMetadata = vi.getRosettaControlMetadata();
         if (rosettaControlMetadata != null) {
             for (RosettaAttribute attr : rosettaControlMetadata) {
-                if (attr.getName().equals("coordinateVariable")) {
+                if (attr.getName().equalsIgnoreCase("coordinateVariable")) {
                     coordVar = Boolean.parseBoolean(attr.getValue());
                 }
             }
@@ -81,8 +81,8 @@ public class VariableInfoUtils {
             List<RosettaAttribute> rosettaControlMetadata = vi.getRosettaControlMetadata();
             if (rosettaControlMetadata != null) {
                 for (RosettaAttribute attr : rosettaControlMetadata) {
-                    if (attr.getName().equals("coordinateVariableType")) {
-                        coordVarType = attr.getValue();
+                    if (attr.getName().equalsIgnoreCase("coordinateVariableType")) {
+                        coordVarType = attr.getValue().toLowerCase();
                     }
                 }
             }
@@ -103,7 +103,7 @@ public class VariableInfoUtils {
         String coordVarType = VariableInfoUtils.getCoordVarType(vi);
         if (coordVarType != null) {
             // is time related coord var?
-            if (timeVarTypes.contains(coordVarType)) {
+            if (timeVarTypes.contains(coordVarType.toLowerCase())) {
                 isTimeCoordVar = true;
             }
         }
@@ -122,11 +122,15 @@ public class VariableInfoUtils {
         List<RosettaAttribute> rosettaControlMetadata = vi.getRosettaControlMetadata();
         if (rosettaControlMetadata != null) {
             for (RosettaAttribute attr : rosettaControlMetadata) {
-                if (attr.getName().equals("type")) {
+                if (attr.getName().equalsIgnoreCase("type")) {
                     dtStr = attr.getValue();
                 }
             }
         }
+        if (dtStr.equalsIgnoreCase("integer")) {
+            dtStr = "int";
+        }
+
         dt = getDataType(dtStr);
         return dt;
     }
@@ -156,7 +160,7 @@ public class VariableInfoUtils {
         List<RosettaAttribute> variableMetadata = vi.getVariableMetadata();
         if (variableMetadata != null) {
             for (RosettaAttribute attr : variableMetadata) {
-                if (attr.getName().toLowerCase().equals("units")) {
+                if (attr.getName().equalsIgnoreCase("units")) {
                     unit = attr.getValue();
                 }
             }
@@ -180,7 +184,7 @@ public class VariableInfoUtils {
         List<RosettaAttribute> variableMetadata = vi.getVariableMetadata();
         if (variableMetadata != null) {
             for (RosettaAttribute ra : variableMetadata) {
-                if (ra.getName().equals(attrName)) {
+                if (ra.getName().equalsIgnoreCase(attrName)) {
                     attrWanted = ra;
                 }
             }

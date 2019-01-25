@@ -214,7 +214,7 @@ public class BatchFileManagerImpl implements BatchFileManager {
         // todo log errors and return that in the zip file, if errors occur
 
         // process data files based on convertTo type
-        if (format.equals("custom")) {
+        if (format.equalsIgnoreCase("custom")) {
             for (String file : inventory) {
                 if (!file.endsWith("template") && !file.endsWith("metadata")) {
                     // found a data file.
@@ -266,7 +266,7 @@ public class BatchFileManagerImpl implements BatchFileManager {
                     convertedFiles.add(netcdfFile);
                 }
             }
-        } else if (format.equals("eTuff")) {
+        } else if (format.equalsIgnoreCase("eTuff")) {
             for (String inventoryFile : inventory) {
                 if (!inventoryFile.endsWith("template") && !inventoryFile.endsWith("metadata")) {
                     TagUniversalFileFormat tuff = new TagUniversalFileFormat();

@@ -43,6 +43,9 @@ public class RosettaAttributeUtils {
             case "integer":
                 val = Integer.parseInt(ra.getValue());
                 break;
+            case "int":
+                val = Integer.parseInt(ra.getValue());
+                break;
             case "float":
                 val = Float.parseFloat(ra.getValue());
                 break;

@@ -1,0 +1,206 @@
+{
+  "cfType": "Time Series",
+  "community": "Atmospheric Sciences",
+  "creationDate": "2019-01-24T09:39:08.409-0700",
+  "delimiter": "Comma",
+  "format": "custom",
+  "globalMetadata": [
+    {
+      "name": "institution",
+      "value": "Geophysical Institute University of Alaska - Fairbanks",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "comment",
+      "value": "Data sampled near Ilu, Greenland",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "geospatial_lon_start",
+      "value": "-51.0623",
+      "type": "FLOAT",
+      "group": "root"
+    },
+    {
+      "name": "geospatial_lat_start",
+      "value": "69.2390",
+      "type": "FLOAT",
+      "group": "root"
+    },
+    {
+      "name": "title",
+      "value": "Soil temperatures near Ilu, Greenland",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "source",
+      "value": "soil temperature probes, manufacturer, model ###",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "references",
+      "value": "references go here.",
+      "type": "STRING",
+      "group": "root"
+    }
+  ],
+  "headerLineNumbers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "platform": "Single_Station",
+  "rosettaVersion": "0.3-SNAPSHOT",
+  "serverId": "micromsi",
+  "templateVersion": "1.0",
+  "variableInfoList": [
+    {
+      "columnId": 0,
+      "name": "DO_NOT_USE",
+      "rosettaControlMetadata": null,
+      "variableMetadata": null
+    },
+    {
+      "columnId": 1,
+      "name": "time",
+      "rosettaControlMetadata": [
+        {
+          "name": "coordinateVariable",
+          "value": "true",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "coordinateVariableType",
+          "value": "relativeTime",
+          "type": "STRING"
+        },
+        {
+          "name": "type",
+          "value": "Integer",
+          "type": "STRING"
+        }
+      ],
+      "variableMetadata": [
+        {
+          "name": "standard_name",
+          "value": "time",
+          "type": "STRING"
+        },
+        {
+          "name": "units",
+          "value": "seconds since 1970-01-01",
+          "type": "STRING"
+        },
+        {
+          "name": "comment",
+          "value": "time from logger",
+          "type": "STRING"
+        },
+        {
+          "name": "long_name",
+          "value": "time of observation",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "columnId": 2,
+      "name": "soil_temperature",
+      "rosettaControlMetadata": [
+        {
+          "name": "coordinateVariable",
+          "value": "false",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "coordinateVariableType",
+          "value": null,
+          "type": "STRING"
+        },
+        {
+          "name": "type",
+          "value": "Float",
+          "type": "STRING"
+        }
+      ],
+      "variableMetadata": [
+        {
+          "name": "standard_name",
+          "value": "soil_temperature",
+          "type": "STRING"
+        },
+        {
+          "name": "units",
+          "value": "K",
+          "type": "STRING"
+        },
+        {
+          "name": "comment",
+          "value": "covered with just a pinch of soil",
+          "type": "STRING"
+        },
+        {
+          "name": "long_name",
+          "value": "soil temperature just below the surface",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "columnId": 3,
+      "name": "soil_temperature_0p25",
+      "rosettaControlMetadata": [
+        {
+          "name": "coordinateVariable",
+          "value": "false",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "coordinateVariableType",
+          "value": null,
+          "type": "STRING"
+        },
+        {
+          "name": "type",
+          "value": "Float",
+          "type": "STRING"
+        }
+      ],
+      "variableMetadata": [
+        {
+          "name": "standard_name",
+          "value": "soil_temperature",
+          "type": "STRING"
+        },
+        {
+          "name": "units",
+          "value": "K",
+          "type": "STRING"
+        },
+        {
+          "name": "comment",
+          "value": "approximate depth is 0.25 cm",
+          "type": "STRING"
+        },
+        {
+          "name": "long_name",
+          "value": "soil temperature 0.25 cm below the surface",
+          "type": "STRING"
+        }
+      ]
+    }
+  ]
+}
