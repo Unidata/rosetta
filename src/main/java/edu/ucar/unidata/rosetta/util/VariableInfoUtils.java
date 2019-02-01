@@ -129,6 +129,8 @@ public class VariableInfoUtils {
         }
         if (dtStr.equalsIgnoreCase("integer")) {
             dtStr = "int";
+        } else if (dtStr.equalsIgnoreCase("text")) {
+            dtStr = "char";
         }
 
         dt = getDataType(dtStr);
