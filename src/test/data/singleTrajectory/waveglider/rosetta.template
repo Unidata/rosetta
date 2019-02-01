@@ -1,411 +1,500 @@
 {
-    "delimiter": "Whitespace",
-    "cfType": "trajectory",
-    "community": "Physical Ocean Sciences",
-    "creationDate": "20180809T163000MDT",
-    "platform": "Waveglider",
-    "serverId": "some kind of server id goes here",
-    "format": "custom",
-    "templateVersion": "2.0",
-    "rosettaVersion": "0.4",
-    "headerLineNumbers": [
-        0
-    ],
-    "globalMetadata": [
+  "cfType": "Trajectory",
+  "community": "Physical Ocean Sciences",
+  "creationDate": "2019-02-01T15:22:50.052-0700",
+  "delimiter": "Whitespace",
+  "format": "custom",
+  "globalMetadata": [
+    {
+      "name": "title",
+      "value": "Waveglider ASL32 data",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "summary",
+      "value": "Hour averaged measurements for waveglider ASL32 during the scope of SPURS",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "source",
+      "value": "spurs.jpl.nasa.gov",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "platform",
+      "value": "Waveglider",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "instrument",
+      "value": "Waveglider ASL32",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "uuid",
+      "value": "33d2a670-7bb8-446f-a938-e199ec105107",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "sea_name",
+      "value": "Atlantic",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "naming_authority",
+      "value": "gov.nasa.jpl.spurs",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "institution",
+      "value": "Autonomous Systems Lab, Woods Hole Oceanographic Institution, Woods Hole, MA",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "project",
+      "value": "Salinity Processes in the Upper Ocean Regional Study",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "processing_level",
+      "value": "Level 3",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "keywords_vocabulary",
+      "value": "SPURS Waveglider Keywords",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "keywords",
+      "value": "Salinity, Upper Ocean, SPURS, Waveglider, Atlantic Ocean",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "acknowledgment",
+      "value": "SPURS was funded by NASA with additional support from NOAA, NSF, ONR and other international agencies such as ESA.",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "date_created",
+      "value": "20131101",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "date_modified",
+      "value": "20140409",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "publisher_name",
+      "value": "Fred Bingham",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "publisher_email",
+      "value": "binghamf@uncw.edu",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "publisher_url",
+      "value": "http://people.uncw.edu/binghamf/",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "history",
+      "value": "Removed invalid salinity values",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "license",
+      "value": "SPURS data are considered experimental and not to be used for any purpose for which life or property is potentially at risk. Distributor assumes no responsibility for the manner in which the data are used.",
+      "type": "STRING",
+      "group": "root"
+    },
+    {
+      "name": "comment",
+      "value": "comment goes here.",
+      "type": "STRING",
+      "group": "root"
+    }
+  ],
+  "headerLineNumbers": [
+    0
+  ],
+  "platform": "Glider",
+  "rosettaVersion": null,
+  "serverId": "micromsi",
+  "templateVersion": "1.0",
+  "variableInfoList": [
+    {
+      "columnId": 0,
+      "name": "day",
+      "rosettaControlMetadata": [
         {
-            "name": "title",
-            "value": "Waveglider ASL32 data",
-            "type": "String"
+          "name": "coordinateVariable",
+          "value": "true",
+          "type": "BOOLEAN"
         },
         {
-            "name": "summary",
-            "value": "Hour averaged measurements for waveglider ASL32 during the scope of SPURS",
-            "type": "String"
+          "name": "coordinateVariableType",
+          "value": "dateOnly",
+          "type": "STRING"
         },
         {
-            "name": "source",
-            "value": "spurs.jpl.nasa.gov",
-            "type": "String"
-        },
-        {
-            "name": "platform",
-            "value": "Waveglider",
-            "type": "String"
-        },
-        {
-            "name": "instrument",
-            "value": "Waveglider ASL32",
-            "type": "String"
-        },
-        {
-            "name": "uuid",
-            "value": "33d2a670-7bb8-446f-a938-e199ec105107",
-            "type": "String"
-        },
-        {
-            "name": "sea_name",
-            "value": "Atlantic",
-            "type": "String"
-        },
-        {
-            "name": "naming_authority",
-            "value": "gov.nasa.jpl.spurs",
-            "type": "String"
-        },
-        {
-            "name": "institution",
-            "value": "Autonomous Systems Lab, Woods Hole Oceanographic Institution, Woods Hole, MA",
-            "type": "String"
-        },
-        {
-            "name": "project",
-            "value": "Salinity Processes in the Upper Ocean Regional Study",
-            "type": "String"
-        },
-        {
-            "name": "processing_level",
-            "value": "Level 3",
-            "type": "String"
-        },
-        {
-            "name": "keywords_vocabulary",
-            "value": "SPURS Waveglider Keywords",
-            "type": "String"
-        },
-        {
-            "name": "keywords",
-            "value": "Salinity, Upper Ocean, SPURS, Waveglider, Atlantic Ocean",
-            "type": "String"
-        },
-        {
-            "name": "acknowledgment",
-            "value": "SPURS was funded by NASA with additional support from NOAA, NSF, ONR and other international agencies such as ESA.",
-            "type": "String"
-        },
-        {
-            "name": "date_created",
-            "value": "20131101",
-            "type": "String"
-        },
-        {
-            "name": "date_modified",
-            "value": "20140409",
-            "type": "String"
-        },
-        {
-            "name": "publisher_name",
-            "value": "Fred Bingham",
-            "type": "String"
-        },
-        {
-            "name": "publisher_email",
-            "value": "binghamf@uncw.edu",
-            "type": "String"
-        },
-        {
-            "name": "publisher_url",
-            "value": "http://people.uncw.edu/binghamf/",
-            "type": "String"
-        },
-        {
-            "name": "history",
-            "value": "Removed invalid salinity values",
-            "type": "String"
-        },
-        {
-            "name": "license",
-            "value": "SPURS data are considered experimental and not to be used for any purpose for which life or property is potentially at risk. Distributor assumes no responsibility for the manner in which the data are used.",
-            "type": "String"
+          "name": "type",
+          "value": "Text",
+          "type": "STRING"
         }
-    ],
-    "variableInfoList": [
+      ],
+      "variableMetadata": [
         {
-            "name": "day",
-            "columnId": 0,
-            "rosettaControlMetadata": [
-                {
-                    "name": "type",
-                    "value": "STRING",
-                    "type": "STRING"
-                },
-                {
-                    "name": "coordinateVariable",
-                    "value": "true",
-                    "type": "BOOLEAN"
-                },
-                {
-                    "name": "coordinateVariableType",
-                    "value": "dateOnly",
-                    "type": "STRING"
-                }
-            ],
-            "variableMetadata": [
-                {
-                    "name": "units",
-                    "value": "yyyy-MM-dd",
-                    "type": "STRING"
-                },
-                {
-                    "name": "long_name",
-                    "value": "calendar date of observation",
-                    "type": "STRING"
-                }
-            ]
+          "name": "units",
+          "value": "yyyy-MM-dd",
+          "type": "STRING"
         },
         {
-            "name": "time",
-            "columnId": 1,
-            "rosettaControlMetadata": [
-                {
-                    "name": "type",
-                    "value": "STRING",
-                    "type": "STRING"
-                },
-                {
-                    "name": "coordinateVariable",
-                    "value": "true",
-                    "type": "BOOLEAN"
-                },
-                {
-                    "name": "coordinateVariableType",
-                    "value": "timeOnly",
-                    "type": "STRING"
-                }
-            ],
-            "variableMetadata": [
-                {
-                    "name": "units",
-                    "value": "HH:mm:ss",
-                    "type": "STRING"
-                },
-                {
-                    "name": "long_name",
-                    "value": "clock time of observation",
-                    "type": "STRING"
-                }
-            ]
+          "name": "long_name",
+          "value": "calendar date of observation",
+          "type": "STRING"
         },
         {
-            "name": "lon",
-            "columnId": 2,
-            "rosettaControlMetadata": [
-                {
-                    "name": "type",
-                    "value": "DOUBLE",
-                    "type": "STRING"
-                },
-                {
-                    "name": "coordinateVariable",
-                    "value": "true",
-                    "type": "BOOLEAN"
-                },
-                {
-                    "name": "coordinateVariableType",
-                    "value": "longitude",
-                    "type": "STRING"
-                }
-            ],
-            "variableMetadata": [
-                {
-                    "name": "units",
-                    "value": "degrees_east",
-                    "type": "STRING"
-                },
-                {
-                    "name": "long_name",
-                    "value": "longitude of observation",
-                    "type": "STRING"
-                }
-            ]
+          "name": "comment",
+          "value": "date only",
+          "type": "STRING"
         },
         {
-            "name": "lat",
-            "columnId": 3,
-            "rosettaControlMetadata": [
-                {
-                    "name": "type",
-                    "value": "DOUBLE",
-                    "type": "STRING"
-                },
-                {
-                    "name": "coordinateVariable",
-                    "value": "true",
-                    "type": "BOOLEAN"
-                },
-                {
-                    "name": "coordinateVariableType",
-                    "value": "latitude",
-                    "type": "STRING"
-                }
-            ],
-            "variableMetadata": [
-                {
-                    "name": "units",
-                    "value": "degrees_north",
-                    "type": "STRING"
-                },
-                {
-                    "name": "long_name",
-                    "value": "latitude of observation",
-                    "type": "STRING"
-                }
-            ]
-        },
-        {
-            "name": "salinity_1",
-            "columnId": 4,
-            "rosettaControlMetadata": [
-                {
-                    "name": "type",
-                    "value": "DOUBLE",
-                    "type": "STRING"
-                },
-                {
-                    "name": "coordinateVariable",
-                    "value": "false",
-                    "type": "BOOLEAN"
-                }
-            ],
-            "variableMetadata": [
-                {
-                    "name": "units",
-                    "value": "psu",
-                    "type": "STRING"
-                },
-                {
-                    "name": "standard_name",
-                    "value": "salinity",
-                    "type": "STRING"
-                },
-                {
-                    "name": "long_name",
-                    "value": "Salinity of Waveglider measurement",
-                    "type": "STRING"
-                },
-                {
-                    "name": "comment",
-                    "value": "Mean salinity from sensor 1 (upper) in averaging window",
-                    "type": "STRING"
-                }
-            ]
-        },
-        {
-            "name": "temperature_1",
-            "columnId": 5,
-            "rosettaControlMetadata": [
-                {
-                    "name": "type",
-                    "value": "DOUBLE",
-                    "type": "STRING"
-                },
-                {
-                    "name": "coordinateVariable",
-                    "value": "false",
-                    "type": "BOOLEAN"
-                }
-            ],
-            "variableMetadata": [
-                {
-                    "name": "units",
-                    "value": "degrees_C",
-                    "type": "STRING"
-                },
-                {
-                    "name": "standard_name",
-                    "value": "temperature",
-                    "type": "STRING"
-                },
-                {
-                    "name": "long_name",
-                    "value": "Temperature of Waveglider measurement",
-                    "type": "STRING"
-                },
-                {
-                    "name": "comment",
-                    "value": "Mean temperature from sensor 1 (upper) in averaging window",
-                    "type": "STRING"
-                }
-            ]
-        },
-        {
-            "name": "salinity_2",
-            "columnId": 6,
-            "rosettaControlMetadata": [
-                {
-                    "name": "type",
-                    "value": "DOUBLE",
-                    "type": "STRING"
-                },
-                {
-                    "name": "coordinateVariable",
-                    "value": "false",
-                    "type": "BOOLEAN"
-                }
-            ],
-            "variableMetadata": [
-                {
-                    "name": "units",
-                    "value": "psu",
-                    "type": "STRING"
-                },
-                {
-                    "name": "standard_name",
-                    "value": "salinity",
-                    "type": "STRING"
-                },
-                {
-                    "name": "long_name",
-                    "value": "Salinity of Waveglider measurement",
-                    "type": "STRING"
-                },
-                {
-                    "name": "comment",
-                    "value": "Mean salinity from sensor 2 (lower) in averaging window",
-                    "type": "STRING"
-                }
-            ]
-        },
-        {
-            "name": "temperature_2",
-            "columnId": 7,
-            "rosettaControlMetadata": [
-                {
-                    "name": "type",
-                    "value": "DOUBLE",
-                    "type": "STRING"
-                },
-                {
-                    "name": "coordinateVariable",
-                    "value": "false",
-                    "type": "BOOLEAN"
-                }
-            ],
-            "variableMetadata": [
-                {
-                    "name": "units",
-                    "value": "degrees_C",
-                    "type": "STRING"
-                },
-                {
-                    "name": "standard_name",
-                    "value": "temperature",
-                    "type": "STRING"
-                },
-                {
-                    "name": "long_name",
-                    "value": "Temperature of Waveglider measurement",
-                    "type": "STRING"
-                },
-                {
-                    "name": "comment",
-                    "value": "Mean temperature from sensor 2 (lower) in averaging window",
-                    "type": "STRING"
-                }
-            ]
-        },
-        {
-            "name": "DO_NOT_USE",
-            "columnId": 8
+          "name": "standard_name",
+          "value": "date",
+          "type": "STRING"
         }
-    ]
+      ]
+    },
+    {
+      "columnId": 1,
+      "name": "time",
+      "rosettaControlMetadata": [
+        {
+          "name": "coordinateVariable",
+          "value": "true",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "coordinateVariableType",
+          "value": "timeOnly",
+          "type": "STRING"
+        },
+        {
+          "name": "type",
+          "value": "Text",
+          "type": "STRING"
+        }
+      ],
+      "variableMetadata": [
+        {
+          "name": "units",
+          "value": "HH:mm:ss",
+          "type": "STRING"
+        },
+        {
+          "name": "long_name",
+          "value": "clock time of observation",
+          "type": "STRING"
+        },
+        {
+          "name": "comment",
+          "value": "time only",
+          "type": "STRING"
+        },
+        {
+          "name": "standard_name",
+          "value": "time",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "columnId": 2,
+      "name": "lon",
+      "rosettaControlMetadata": [
+        {
+          "name": "coordinateVariable",
+          "value": "true",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "coordinateVariableType",
+          "value": "longitude",
+          "type": "STRING"
+        },
+        {
+          "name": "type",
+          "value": "Float",
+          "type": "STRING"
+        }
+      ],
+      "variableMetadata": [
+        {
+          "name": "units",
+          "value": "degrees_east",
+          "type": "STRING"
+        },
+        {
+          "name": "long_name",
+          "value": "longitude of observation",
+          "type": "STRING"
+        },
+        {
+          "name": "comment",
+          "value": "longitude",
+          "type": "STRING"
+        },
+        {
+          "name": "standard_name",
+          "value": "longitude",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "columnId": 3,
+      "name": "lat",
+      "rosettaControlMetadata": [
+        {
+          "name": "coordinateVariable",
+          "value": "true",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "coordinateVariableType",
+          "value": "latitude",
+          "type": "STRING"
+        },
+        {
+          "name": "type",
+          "value": "Float",
+          "type": "STRING"
+        }
+      ],
+      "variableMetadata": [
+        {
+          "name": "units",
+          "value": "degrees_north",
+          "type": "STRING"
+        },
+        {
+          "name": "long_name",
+          "value": "latitude of observation",
+          "type": "STRING"
+        },
+        {
+          "name": "comment",
+          "value": "latitude",
+          "type": "STRING"
+        },
+        {
+          "name": "standard_name",
+          "value": "latitude",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "columnId": 4,
+      "name": "salinity_1",
+      "rosettaControlMetadata": [
+        {
+          "name": "coordinateVariable",
+          "value": "false",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "coordinateVariableType",
+          "value": null,
+          "type": "STRING"
+        },
+        {
+          "name": "type",
+          "value": "Float",
+          "type": "STRING"
+        }
+      ],
+      "variableMetadata": [
+        {
+          "name": "units",
+          "value": "psu",
+          "type": "STRING"
+        },
+        {
+          "name": "standard_name",
+          "value": "salinity",
+          "type": "STRING"
+        },
+        {
+          "name": "long_name",
+          "value": "Salinity of Waveglider measurement",
+          "type": "STRING"
+        },
+        {
+          "name": "comment",
+          "value": "Mean salinity from sensor 1 (upper) in averaging window",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "columnId": 5,
+      "name": "temperature_1",
+      "rosettaControlMetadata": [
+        {
+          "name": "coordinateVariable",
+          "value": "false",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "coordinateVariableType",
+          "value": null,
+          "type": "STRING"
+        },
+        {
+          "name": "type",
+          "value": "Float",
+          "type": "STRING"
+        }
+      ],
+      "variableMetadata": [
+        {
+          "name": "units",
+          "value": "degrees_C",
+          "type": "STRING"
+        },
+        {
+          "name": "standard_name",
+          "value": "temperature",
+          "type": "STRING"
+        },
+        {
+          "name": "long_name",
+          "value": "Temperature of Waveglider measurement",
+          "type": "STRING"
+        },
+        {
+          "name": "comment",
+          "value": "Mean temperature from sensor 1 (upper) in averaging window",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "columnId": 6,
+      "name": "salinity_2",
+      "rosettaControlMetadata": [
+        {
+          "name": "coordinateVariable",
+          "value": "false",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "coordinateVariableType",
+          "value": null,
+          "type": "STRING"
+        },
+        {
+          "name": "type",
+          "value": "Float",
+          "type": "STRING"
+        }
+      ],
+      "variableMetadata": [
+        {
+          "name": "units",
+          "value": "psu",
+          "type": "STRING"
+        },
+        {
+          "name": "standard_name",
+          "value": "salinity",
+          "type": "STRING"
+        },
+        {
+          "name": "long_name",
+          "value": "Salinity of Waveglider measurement",
+          "type": "STRING"
+        },
+        {
+          "name": "comment",
+          "value": "Mean salinity from sensor 2 (lower) in averaging window",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "columnId": 7,
+      "name": "temperature_2",
+      "rosettaControlMetadata": [
+        {
+          "name": "coordinateVariable",
+          "value": "false",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "coordinateVariableType",
+          "value": null,
+          "type": "STRING"
+        },
+        {
+          "name": "type",
+          "value": "Float",
+          "type": "STRING"
+        }
+      ],
+      "variableMetadata": [
+        {
+          "name": "units",
+          "value": "degrees_C",
+          "type": "STRING"
+        },
+        {
+          "name": "standard_name",
+          "value": "temperature",
+          "type": "STRING"
+        },
+        {
+          "name": "long_name",
+          "value": "Temperature of Waveglider measurement",
+          "type": "STRING"
+        },
+        {
+          "name": "comment",
+          "value": "Mean temperature from sensor 2 (lower) in averaging window",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "columnId": 8,
+      "name": "DO_NOT_USE",
+      "rosettaControlMetadata": null,
+      "variableMetadata": null
+    }
+  ]
 }

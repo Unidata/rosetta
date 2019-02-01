@@ -223,7 +223,7 @@ public class TemplateTest {
     @Test
     public void testWavegliderTemplate() {
         // check a few items to make sure things are there, as expected
-        Assert.assertEquals(wavegliderTemplate.getCfType(),"trajectory");
+        Assert.assertEquals(wavegliderTemplate.getCfType().toLowerCase(),"trajectory");
         Assert.assertEquals(wavegliderTemplate.getHeaderLineNumbers().size(), 1);
         int headerLine = wavegliderTemplate.getHeaderLineNumbers().get(0);
         Assert.assertNotNull(headerLine);
