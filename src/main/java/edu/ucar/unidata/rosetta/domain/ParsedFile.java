@@ -20,6 +20,7 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.util.VariableInfoUtils;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.nc2.jni.netcdf.Nc4Iosp;
 
 /**
  * An object to hold parsed data.
@@ -33,6 +34,7 @@ public class ParsedFile {
     private Map<Integer, Array> arrayData;
     private Map<Integer, DataType> dataTypes;
 
+    boolean useNetcdf4 = Nc4Iosp.isClibraryPresent();
 
 
     /**
@@ -137,7 +139,11 @@ public class ParsedFile {
             DataType dataType = null;
 
             if (type.toLowerCase().equals("string") || type.toLowerCase().equals("text")) {
-                dataType = DataType.STRING;
+                if (useNetcdf4) {
+                    dataType = DataType.STRING;
+                } else {
+                    dataType = DataType.CHAR;
+                }
             } else if (type.toLowerCase().equals("integer")) {
                 dataType = DataType.INT;
             } else if (type.toLowerCase().equals("float")) {
