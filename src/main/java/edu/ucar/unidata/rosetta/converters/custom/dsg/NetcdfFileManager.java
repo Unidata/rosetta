@@ -22,7 +22,6 @@ import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.VariableInfo;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.util.PathUtils;
-import edu.ucar.unidata.rosetta.util.RosettaAttributeUtils;
 import edu.ucar.unidata.rosetta.util.RosettaGlobalAttributeUtils;
 import edu.ucar.unidata.rosetta.util.TemplateUtils;
 import edu.ucar.unidata.rosetta.util.VariableInfoUtils;
@@ -76,7 +75,7 @@ public abstract class NetcdfFileManager {
     List<String> coordAttrValues = new ArrayList<>();
     List<String> coordVarTypes = new ArrayList<>();
 
-    private boolean hasNetcdf4 = false;
+    private boolean useNetcdf4 = false;
     private String timeUnits = "seconds since 1970-01-01T00:00:00";
     private static String colIdAttrName = "_Rosetta_columnId";
 
@@ -315,7 +314,7 @@ public abstract class NetcdfFileManager {
                 int numTimeObs = toIntExact(fullDateTime.size());
                 String dateTimeFormat = VariableInfoUtils.getUnit(fullDateTimeVi);
 
-                if (hasNetcdf4) {
+                if (useNetcdf4) {
                     timeCoordVarArr = createLongTimeDataFromFullDateTime(fullDateTime, dateTimeFormat);
                 } else {
                     timeCoordVarArr = createIntTimeDataFromFullDateTime(fullDateTime, dateTimeFormat);
@@ -333,7 +332,7 @@ public abstract class NetcdfFileManager {
                 // extract scalar value out of global attribute
                 for (RosettaAttribute ra : fullDateTimeVi.getRosettaControlMetadata()) {
                     // if not netCDF4, use INT instead of LONG
-                    if (!hasNetcdf4) {
+                    if (!useNetcdf4) {
                         dataType = DataType.INT;
                     }
 
@@ -405,7 +404,7 @@ public abstract class NetcdfFileManager {
         String dateFormat = VariableInfoUtils.getUnit(dateOnly);
 
         DataType dataType = DataType.INT;
-        if (hasNetcdf4) {
+        if (useNetcdf4) {
             dataType = DataType.LONG;
         }
 
@@ -421,13 +420,13 @@ public abstract class NetcdfFileManager {
         }
 
         if (myDsgType != "profile") {
-            if (hasNetcdf4) {
+            if (useNetcdf4) {
                 timeCoordVarArr = createLongTimeDataFromFullDateTime(dateTimeVals, dateFormat);
             } else {
                 timeCoordVarArr = createIntTimeDataFromFullDateTime(dateTimeVals, dateFormat);
             }
         } else {
-            if (hasNetcdf4) {
+            if (useNetcdf4) {
                 timeCoordVarDetailArr = createLongTimeDataFromFullDateTime(dateTimeVals, dateFormat);
             } else {
                 timeCoordVarDetailArr = createIntTimeDataFromFullDateTime(dateTimeVals, dateFormat);
@@ -848,7 +847,8 @@ public abstract class NetcdfFileManager {
                     // defined in columnar data block
                     if (colId > 0) {
                         Array thisData = arrayData.get(colId);
-                        if (thisData.getDataType() == DataType.CHAR) {
+                        if ((thisData.getDataType() == DataType.CHAR) ||
+                                (thisData.getDataType() == DataType.STRING && !useNetcdf4)){
                             // CHAR arrays are backed by a list of strings in the ParsedData object
                             // so need to handle special when writing
                             ncf.writeStringData(var, Array.makeArray(DataType.STRING, stringData.get(colId)));

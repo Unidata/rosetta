@@ -33,10 +33,7 @@ public class ParsedFile {
     private Map<Integer, List<String>> stringData;
     private Map<Integer, Array> arrayData;
     private Map<Integer, DataType> dataTypes;
-
-    boolean useNetcdf4 = Nc4Iosp.isClibraryPresent();
-
-
+    
     /**
      * Returns the headers of a data file.
      *
@@ -139,11 +136,7 @@ public class ParsedFile {
             DataType dataType = null;
 
             if (type.toLowerCase().equals("string") || type.toLowerCase().equals("text")) {
-                if (useNetcdf4) {
-                    dataType = DataType.STRING;
-                } else {
-                    dataType = DataType.CHAR;
-                }
+                dataType = DataType.STRING;
             } else if (type.toLowerCase().equals("integer")) {
                 dataType = DataType.INT;
             } else if (type.toLowerCase().equals("float")) {
