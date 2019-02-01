@@ -57,7 +57,7 @@ public abstract class NetcdfFileManager {
 
     private List<String> timeVarTypes = new ArrayList<>();
     private Map<Integer, Array> arrayData;
-    private Map<Integer, List<String>> stringData;
+    Map<Integer, List<String>> stringData;
     String featureId;
     final String myDsgType;
     final String featureVarName;
@@ -79,8 +79,6 @@ public abstract class NetcdfFileManager {
     private boolean hasNetcdf4 = false;
     private String timeUnits = "seconds since 1970-01-01T00:00:00";
     private static String colIdAttrName = "_Rosetta_columnId";
-
-    abstract void makeDataVars(VariableInfo variableInfo);
 
     abstract void makeNonElementCoordVars(VariableInfo variableInfo);
 
@@ -608,7 +606,10 @@ public abstract class NetcdfFileManager {
         // no good way to guess this - will need to come from the template
 
         Array data = arrayData.get(variableInfo.getColumnId());
-        calculatedDataVarAttrs.addAll(getMaxMinAttrs(data));
+
+        if (data.getDataType() != DataType.CHAR && data.getDataType() != DataType.STRING) {
+            calculatedDataVarAttrs.addAll(getMaxMinAttrs(data));
+        }
 
         // add columnId if it was initilized in attribute
         int colId = variableInfo.getColumnId();
@@ -663,6 +664,59 @@ public abstract class NetcdfFileManager {
 
         return featureSpecificAttrs;
 
+    }
+
+    /**
+     * Add new dimension for character data
+     *
+     * @param variableInfo variable's variableInfo object created from template
+     * @param dimensionList list of dimensions to augment
+     * @return new dimension list with new char length dimension
+     */
+    List<Dimension> augmentCharDimension(VariableInfo variableInfo, List<Dimension> dimensionList) {
+        int maxLen = 1;
+        for (String sd: stringData.get(variableInfo.getColumnId())) {
+            int len = sd.length();
+            maxLen = len > maxLen ? len : maxLen;
+        }
+        Dimension strDim = ncf.addDimension(variableInfo.getName() + "_len", maxLen);
+        List<Dimension> newDimensionList = new ArrayList<Dimension>();
+        newDimensionList.addAll(dimensionList);
+        newDimensionList.add(strDim);
+
+        return newDimensionList;
+    }
+
+    /**
+     * Create a data variable
+     * @param variableInfo Variable to create
+     */
+    void makeDataVars(VariableInfo variableInfo) {
+
+        List<Dimension> coordVarDimensions = Collections.singletonList(elementDimension);
+
+        Group group = null;
+
+        String dataVarName = variableInfo.getName();
+        DataType dataType = VariableInfoUtils.getDataType(variableInfo);
+
+        Variable var;
+        if (dataType == DataType.CHAR || dataType == DataType.STRING) {
+            // make sure to add extra dimension for the max length of characters
+            coordVarDimensions = augmentCharDimension(variableInfo, coordVarDimensions);
+            var = ncf.addVariable(group, dataVarName, DataType.CHAR, coordVarDimensions);
+        } else {
+            var = ncf.addVariable(group, dataVarName, dataType, coordVarDimensions);
+        }
+
+        // add all attributes from the variableInfo object
+        List<Attribute> allVarAttrs = VariableInfoUtils.getAllVariableAttributes(variableInfo);
+
+        List<Attribute> computedAttrs = calculateDataVarAttrs(variableInfo);
+        // add new computedAttrs too the allVarAttrs list
+        allVarAttrs.addAll(computedAttrs);
+
+        var.addAll(allVarAttrs);
     }
 
     /**
@@ -774,9 +828,12 @@ public abstract class NetcdfFileManager {
 
             // if profile, detailed time might exist
             if (myDsgType == "profile") {
+                // if profile, detailed time might exist
                 if (timeCoordVarDetailName != null){
                     ncf.write(timeCoordVarDetailName, timeCoordVarDetailArr);
                 }
+                // write data for vertical coord variable
+                ncf.write(verticalCoordVarName, verticalCoordVarArr);
             }
 
             // write data to featureId variable
@@ -790,7 +847,14 @@ public abstract class NetcdfFileManager {
                     int colId = colIdNum.intValue();
                     // defined in columnar data block
                     if (colId > 0) {
-                        ncf.write(var, arrayData.get(colId));
+                        Array thisData = arrayData.get(colId);
+                        if (thisData.getDataType() == DataType.CHAR) {
+                            // CHAR arrays are backed by a list of strings in the ParsedData object
+                            // so need to handle special when writing
+                            ncf.writeStringData(var, Array.makeArray(DataType.STRING, stringData.get(colId)));
+                        } else {
+                            ncf.write(var, thisData);
+                        }
                     } else {
                         // write data to variables extracted from global metadata
                         for (VariableInfo vi : nonElementCoordVarInfo) {

@@ -52,29 +52,6 @@ public class SingleTimeSeries extends NetcdfFileManager {
         featureId.addAttribute(new Attribute("cf_role", "timeseries_id"));
     }
 
-    /**
-     * Create a data variable for a profile DSG
-     * @param variableInfo Variable to create
-     */
-    void makeDataVars(VariableInfo variableInfo) {
-        // trajectory specific
-        List<Dimension> coordVarDimensions = Collections.singletonList(elementDimension);
-
-        Group group = null;
-
-        String dataVarName = variableInfo.getName();
-        DataType dataType = VariableInfoUtils.getDataType(variableInfo);
-        Variable var = ncf.addVariable(group, dataVarName, dataType, coordVarDimensions);
-
-        // add all attributes from the variableInfo object
-        List<Attribute> allVarAttrs = VariableInfoUtils.getAllVariableAttributes(variableInfo);
-
-        List<Attribute> computedAttrs = calculateDataVarAttrs(variableInfo);
-        // add new computedAttrs too the allVarAttrs list
-        allVarAttrs.addAll(computedAttrs);
-
-        var.addAll(allVarAttrs);
-    }
 
     /**
      * Create a coordinate variable for a non-time related coordinate variable
