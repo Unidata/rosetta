@@ -3,11 +3,6 @@
  * See LICENSE for license information.
  */
 
-/*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
- * See LICENSE for license information.
- */
-
 package edu.ucar.unidata.rosetta.converters.custom.dsg;
 
 import org.junit.After;

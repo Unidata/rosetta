@@ -33,7 +33,7 @@ public class ParsedFile {
     private Map<Integer, List<String>> stringData;
     private Map<Integer, Array> arrayData;
     private Map<Integer, DataType> dataTypes;
-    
+
     /**
      * Returns the headers of a data file.
      *
