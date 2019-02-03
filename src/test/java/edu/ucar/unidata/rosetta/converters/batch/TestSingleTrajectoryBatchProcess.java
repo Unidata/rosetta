@@ -113,7 +113,7 @@ public class TestSingleTrajectoryBatchProcess {
 
             Header[] ctHeader = response.getHeaders("Content-Type");
             assert ctHeader.length == 1;
-            assertEquals(ctHeader[0].getValue(), "application/zip");
+            assertEquals("application/zip", ctHeader[0].getValue());
 
         } catch (ClientProtocolException e) {
             e.printStackTrace();

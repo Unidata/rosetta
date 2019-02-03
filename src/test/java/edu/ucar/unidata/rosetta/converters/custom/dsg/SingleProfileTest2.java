@@ -18,39 +18,32 @@ import java.util.List;
 import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
 import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.util.TemplateFactory;
-import edu.ucar.unidata.rosetta.util.XlsToCsvUtil;
 import edu.ucar.unidata.rosetta.util.test.util.TestUtils;
 import ucar.ma2.Array;
+import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
-public class SingleTimeSeriesTest {
-
-    private String tsNetcdfFile;
-    private Path tsCsvFile;
+public class SingleProfileTest2 {
+    private String ctdNetcdfFile;
 
     @Test
-    public void convertStationXls() throws IOException, RosettaDataException, RosettaFileException {
-        Path xlsfile = Paths.get(TestUtils.getTestDataDirStr(), "singleStationTimeSeries", "StationSoilTemp", "ilu01_07_10_small.xls");
-        tsCsvFile = Paths.get(TestUtils.getTestDataDirStr(), "singleStationTimeSeries", "StationSoilTemp", "ilu01_07_10_small.csv");
-        Path templatefile = Paths.get(TestUtils.getTestDataDirStr(), "singleStationTimeSeries", "StationSoilTemp", "rosetta.template");
-
-        // make datafile
-        Assert.assertTrue(XlsToCsvUtil.convert(xlsfile.toString(), null));
+    public void convertCtd() throws IOException, RosettaDataException, InvalidRangeException {
+        Path datafile = Paths.get(TestUtils.getTestDataDirStr(), "singleProfile", "axctd", "OMG_09132016160633_Ch12_333.edf");
+        Path templatefile = Paths.get(TestUtils.getTestDataDirStr(), "singleProfile", "axctd", "rosetta.template");
 
         // read template
         Template template = TemplateFactory.makeTemplateFromJsonFile(templatefile);
 
         // get converter
-        NetcdfFileManager dsgWriter = new SingleTimeSeries();
+        NetcdfFileManager dsgWriter = new SingleProfile();
 
         // hardcode delimiter as comma.
-        tsNetcdfFile = dsgWriter.createNetcdfFile(tsCsvFile, template, ",");
+        ctdNetcdfFile = dsgWriter.createNetcdfFile(datafile, template, "\\s+");
 
-        NetcdfFile ncf = NetcdfFile.open(tsNetcdfFile);
+        NetcdfFile ncf = NetcdfFile.open(ctdNetcdfFile);
         Assert.assertNotNull(ncf);
 
         List<RosettaGlobalAttribute> templateGlobalMetadata = template.getGlobalMetadata();
@@ -77,18 +70,26 @@ public class SingleTimeSeriesTest {
         expected = ncf.findGlobalAttributeIgnoreCase("geospatial_lon_start").getNumericValue();
         Assert.assertEquals(expected.doubleValue(), arr.getDouble(0), 0.0001);
 
+        // check that status variable was actually written (string / char check)
+        Variable status = ncf.findVariable("status");
+        int[] origin;
+        int[] shape = new int[] {1, 4};
+        int numVals = status.getShape()[0];
+        // all of the status values in this file are "good", or "0000"
+        for (int i = 0; i < numVals; i++) {
+            origin = new int[] {i,0};
+            String val = status.read(origin, shape).toString();
+            Assert.assertEquals("0000", val);
+        }
+
         ncf.close();
     }
 
     @After
     public void cleanup() {
-        File ncf = new File(tsNetcdfFile);
+        File ncf = new File(ctdNetcdfFile);
         if (ncf.exists()) {
             ncf.delete();
-        }
-        File csvFile = tsCsvFile.toFile();
-        if (csvFile.exists()) {
-            csvFile.delete();
         }
     }
 }

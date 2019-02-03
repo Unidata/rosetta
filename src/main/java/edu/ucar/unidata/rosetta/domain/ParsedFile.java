@@ -20,6 +20,7 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.util.VariableInfoUtils;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.nc2.jni.netcdf.Nc4Iosp;
 
 /**
  * An object to hold parsed data.
@@ -32,8 +33,6 @@ public class ParsedFile {
     private Map<Integer, List<String>> stringData;
     private Map<Integer, Array> arrayData;
     private Map<Integer, DataType> dataTypes;
-
-
 
     /**
      * Returns the headers of a data file.
