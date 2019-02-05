@@ -68,14 +68,12 @@ dependencies {
     compile "org.slf4j:slf4j-api:1.7.25"
     compile "org.slf4j:jcl-over-slf4j:1.7.25"
 
-    // JSON processing
-    compile "com.fasterxml.jackson.core:jackson-databind:2.9.6"
-    compile "com.fasterxml.jackson.core:jackson-core:2.9.6";
-
-
-    // xml processing
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.6"
-
+    // JSON / xml processing
+    compile "com.fasterxml.jackson.core:jackson-databind:2.9.8"
+    compile "com.fasterxml.jackson.core:jackson-core:2.9.8";
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.8"
+    compile "com.googlecode.json-simple:json-simple:1.1.1"
+    
     // takes the place of javax.activation package
     compile 'com.sun.activation:javax.activation:1.2.0'
 
@@ -103,10 +101,6 @@ dependencies {
     compile "javax.validation:validation-api:2.0.1.Final"
 
     compile "net.sourceforge.jexcelapi:jxl:2.6.12"
-
-    compile "com.googlecode.json-simple:json-simple:1.1.1"
-
-    compile "org.codehaus.jackson:jackson-mapper-asl:1.5.3"
 
     // Testing
     testCompile "de.bechte.junit:junit-hierarchicalcontextrunner:4.12.1"
@@ -187,8 +181,6 @@ task jekyllBuild(type: JRubyExec, group: 'Jekyll', description: 'Build your site
     // See https://jekyllrb.com/docs/configuration/#incremental-regeneration
     // scriptArgs "--incremental"
 }
-
-tasks.assemble.dependsOn tasks.jekyllBuild
 
 task jekyllServe(type: JRubyExec, group: 'Jekyll', description: 'Serve your site locally.') {
     // This task starts a server; it is never considered UP-TO-DATE.

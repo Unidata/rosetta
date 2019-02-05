@@ -5,7 +5,7 @@
 
 package edu.ucar.unidata.rosetta.util;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
