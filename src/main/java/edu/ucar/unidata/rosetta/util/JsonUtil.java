@@ -485,6 +485,9 @@ public class JsonUtil {
                         if (attributeValue.equals("relativedate")) {
                             attributeValue = "relativeDate";
                         }
+                        if (attributeValue.equals("relativetime")) {
+                            attributeValue = "relativeTime";
+                        }
                         if (attributeValue.equals("fulldatetime")) {
                             attributeValue = "fullDateTime";
                         };
