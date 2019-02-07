@@ -249,7 +249,6 @@ public class WizardManagerImpl implements WizardManager {
         }
         if (cfType.equals("Time Series")) {
             metadataProfile = metadataProfile + ",RosettaTimeSeriesDsg";
-            logger.info(metadataProfile);
         }
         return metadataProfile;
     }
@@ -397,16 +396,6 @@ public class WizardManagerImpl implements WizardManager {
     }
 
     /**
-     * Persists the provided wizard data for the first time.
-     *
-     * @param wizardData The wizard data to persist.
-     */
-    @Override
-    public void persistWizardData(WizardData wizardData) {
-        wizardDataDao.persistWizardData(wizardData);
-    }
-
-    /**
      * Processes the data collected from the wizard for the CF type step. If an ID already
      * exists, the persisted data corresponding to that ID is collected and updated with the newly
      * submitted data.  If no ID exists (is null), the data is persisted for the first time.
@@ -469,7 +458,7 @@ public class WizardManagerImpl implements WizardManager {
             wizardData.setMetadataProfile(determineMetadataProfile(wizardData));
 
             // Persist the Cf type data.
-            persistWizardData(wizardData);
+            wizardDataDao.persistWizardData(wizardData);
         }
     }
 

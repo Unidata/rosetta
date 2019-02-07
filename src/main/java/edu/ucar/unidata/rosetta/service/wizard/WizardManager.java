@@ -55,13 +55,6 @@ public interface WizardManager {
     public String parseDataFileByLine(String id) throws RosettaFileException;
 
     /**
-     * Persists the provided wizard data for the first time.
-     *
-     * @param wizardData The wizard data to persist.
-     */
-    public void persistWizardData(WizardData wizardData);
-
-    /**
      * Processes the data collected from the wizard for the CF type step.
      *
      * @param id         The unique ID corresponding to already persisted data (may be null).
