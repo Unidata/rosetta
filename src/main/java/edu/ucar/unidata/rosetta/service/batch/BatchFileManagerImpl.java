@@ -29,13 +29,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import javax.annotation.Resource;
+
 import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
 import edu.ucar.unidata.rosetta.converters.custom.dsg.NetcdfFileManager;
 import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
-import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-import edu.ucar.unidata.rosetta.repository.resources.DelimiterResourceDao;
+import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.util.PathUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import edu.ucar.unidata.rosetta.util.TemplateFactory;
@@ -46,19 +47,8 @@ public class BatchFileManagerImpl implements BatchFileManager {
 
     private static final Logger logger = Logger.getLogger(BatchFileManagerImpl.class);
 
-    private DelimiterResourceDao delimiterResourceDao;
-
-    private static final Map<String, String> delimiterMap;
-    static {
-        delimiterMap = new HashMap<String, String>();
-        delimiterMap.put("Tab", "\t");
-        delimiterMap.put("Comma", ",");
-        delimiterMap.put("Whitespace", "\\s+");
-        delimiterMap.put("Colon", ":");
-        delimiterMap.put("Semicolon", ";");
-        delimiterMap.put("Single Quote", "\'");
-        delimiterMap.put("Double Quote", "\"");
-    }
+    @Resource(name = "resourceManager")
+    private ResourceManager resourceManager;
 
     private static ArrayList<String> unzipAndInventory(File inputZipFile, File uncompressed_dir) {
         // http://www.avajava.com/tutorials/lessons/how-do-i-unzip-the-contents-of-a-zip-file.html
@@ -249,14 +239,15 @@ public class BatchFileManagerImpl implements BatchFileManager {
                     // Get the delimiter symbol.
                     String delimiter;
                     try {
-                        // Try using the delimiter (standard) passed from the db.
-                        if (delimiterMap.containsKey(template.getDelimiter())) {
-                            delimiter = delimiterMap.get(template.getDelimiter());
-                        } else {
-                            delimiter = template.getDelimiter();
-                        }
-                        //Delimiter delimiterName = delimiterResourceDao.lookupDelimiterByName(template.getDelimiter());
-                        //delimiter = delimiterName.getCharacterSymbol();
+                        delimiter = resourceManager.getDelimiterSymbol(template.getDelimiter());
+
+
+                        //// Try using the delimiter (standard) passed from the db.
+                        //if (delimiterMap.containsKey(template.getDelimiter())) {
+                        //    delimiter = delimiterMap.get(template.getDelimiter());
+                        //} else {
+                        //    delimiter = template.getDelimiter();
+                        //}
                     } catch (DataRetrievalFailureException e) {
                         // Delimiter is not standard. Try parsing using the delimiter provided by the user.
                         delimiter = template.getDelimiter();
@@ -292,15 +283,4 @@ public class BatchFileManagerImpl implements BatchFileManager {
 
         return zipFileName;
     }
-
-
-    /**
-     * Sets the data access object (DAO) for the Delimiter object.
-     *
-     * @param delimiterResourceDao The service DAO representing a Delimiter object.
-     */
-    public void setDelimiterResourceDao(DelimiterResourceDao delimiterResourceDao) {
-        this.delimiterResourceDao = delimiterResourceDao;
-    }
-
 }

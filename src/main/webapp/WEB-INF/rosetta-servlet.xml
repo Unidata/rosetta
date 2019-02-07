@@ -159,10 +159,6 @@
           id="dbInitManager"/>
 
     <!-- Data Access Object (DAO) injection into resource-related service-layer classes. -->
-    <bean class="edu.ucar.unidata.rosetta.service.batch.BatchFileManagerImpl" id="batchFileManager">
-        <property name="delimiterResourceDao" ref="delimiterResourceDao"/>
-    </bean>
-
     <bean class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl" id="resourceManager">
         <property name="cfTypeResourceDao" ref="cfTypeResourceDao"/>
         <property name="communityResourceDao" ref="communityResourceDao"/>
