@@ -2,9 +2,6 @@
 <!-- Modify the database data type if a text entry exceeds 255 characters. -->
 <cfTypes>
   <cfType>
-    <name>Point</name>
-  </cfType>
-  <cfType>
     <name>Trajectory</name>
   </cfType>
   <cfType>
