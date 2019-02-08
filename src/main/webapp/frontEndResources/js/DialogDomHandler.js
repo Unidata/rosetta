@@ -308,21 +308,61 @@ var DialogDomHandler = (function () {
             // Update the stored variable data with the variable name.
             VariableStorageHandler.storeVariableData(key, "name", variableName);
 
-            // If the user entered a standard name for the variable, then we can use this value here.
-            if (isCFStandardName(variableName)) {
-                // Update the stored variable data with the standard name.
-                VariableStorageHandler.storeComplianceLevelVariableData(key, "standard_name", variableName, "required");
+            // Get possible CF standard name matches for the variable.
+            var cfStandardInfo = getCFStandardInfo(variableName);
 
-                // Automatically add any corrsponding units.
-                var units = cfStandardUnits[variableName];
-                if (units !== "") {
-                    if (units !== undefined) {
-                        // Update the stored variable data with the units.
-                        VariableStorageHandler.storeComplianceLevelVariableData(key, "units", units, "required");
+            // If we have potential matching Cf standard names:
+            if (cfStandardInfo.length > 0) {
+
+                // If the matching cfStandardInfo array contains only one item, use that item for the standard_name & units.
+                if (cfStandardInfo.length === 1) {
+                    // Update the stored variable data with the standard name.
+                    VariableStorageHandler.storeComplianceLevelVariableData(key, "standard_name", cfStandardInfo[0], "required");
+                    // Automatically add any corrsponding units.
+                    var units = cfStandardUnits[cfStandardInfo[0]];
+                    if (units !== "") {
+                        if (units !== undefined) {
+                            // Update the stored variable data with the units.
+                            VariableStorageHandler.storeComplianceLevelVariableData(key, "units", units, "required");
+                        }
+                    }
+
+                    // Remove any prior match data from web storage.
+                    VariableStorageHandler.removeCfStandardMatches(variableName);
+                    
+                } else {  // Multiple options for the CF standard name exist.
+
+                    // If the matching cfStandardInfo array contains exactly the variableName (user inputted the standard name)
+                    // use that item for the standard_name & units.
+                    if (cfStandardInfo.includes(variableName)) {
+                        // Update the stored variable data with the standard name.
+                        VariableStorageHandler.storeComplianceLevelVariableData(key, "standard_name", variableName, "required");
+                        // Automatically add any corrsponding units.
+                        var units = cfStandardUnits[variableName];
+                        if (units !== "") {
+                            if (units !== undefined) {
+                                // Update the stored variable data with the units.
+                                VariableStorageHandler.storeComplianceLevelVariableData(key, "units", units, "required");
+                            }
+                        }
+
+                        // Remove any prior match data from web storage.
+                        VariableStorageHandler.removeCfStandardMatches(variableName);
+
+                    } else {
+                        // Store the possible values for user selection later.
+                        var standardNameMatches = {};
+                        for (var i = 0; i < cfStandardInfo.length; i++) {
+                            var standardName = cfStandardInfo[i];
+                            standardNameMatches[standardName] = cfStandardUnits[cfStandardInfo[i]];
+                        }
+                        VariableStorageHandler.storeCfStandardMatches(variableName, JSON.stringify(standardNameMatches));
                     }
                 }
+            } else {
+                // No matching CF standard information.  Remove any such prior entry from web storage.
+                VariableStorageHandler.removeCfStandardMatches(variableName);
             }
-
             // validate user input
             //validateVariableData(key);
 
@@ -573,24 +613,22 @@ var DialogDomHandler = (function () {
 
     /**
      * Uses the array of cfStandard names gleaned from the cf-standard-name-table.xml file.
-     * Loop through the array and if we have a match, return true.  If no match, return false.
+     * Loop through the array and looks for any entries that contain the provided variableName.
+     * Adds any such matches to an array for returning to the caller.
      *
      * @param variableName  The name of the variable we are testing to see if it is a standard_name.
+     * @return an array containing matching Cf Standard names. (Can be empty if no matches found).
      */
-    function isCFStandardName(variableName) {
+    function getCFStandardInfo(variableName) {
+        var cfStandardMatches = [];
         for (var i = 0; i < cfStandards.length; i++) {
-            if (variableName == cfStandards[i]) {
-                return true;
-            } else {
-                if (i == (cfStandards.length - 1)) {
-                    return false;
-                }
+            var namePieces = cfStandards[i].split("_");
+            if (namePieces.includes(variableName)) {
+                cfStandardMatches.push(cfStandards[i]);
             }
         }
+        return cfStandardMatches;
     }
-
-
-
 
     // Expose these functions.
     return {
