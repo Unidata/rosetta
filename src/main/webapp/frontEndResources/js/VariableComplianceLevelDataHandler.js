@@ -129,7 +129,7 @@ var VariableComplianceLevelDataHandler = (function () {
         var displayName = metadataItem.attributeName.replace(/_/g, " ");
         if (metadataItem.displayName) {
             displayName = metadataItem.displayName;
-        } 
+        }
         var helpTip = "";
         if (metadataItem.description) {
             helpTip = metadataItem.description;
@@ -145,7 +145,23 @@ var VariableComplianceLevelDataHandler = (function () {
         // Assign any matching stored compliance level data to the tagValue.
         var tagValue = VariableStorageHandler.getComplianceLevelVariableData(key, tagName, complianceLevel);
         if (tagValue === undefined) {
-            tagValue="";
+            tagValue = "";
+
+            // If tag being created is the standard_name, we can see if there
+            // are any possible matching standard name to use.
+            if (tagName === "standard_name") {
+                // Get the variable name inputted by the user from web storage.
+                var variableName = VariableStorageHandler.getVariableData(key, "name");
+                // Get the possible matches from web storage.
+                var cfStandardMatches = VariableStorageHandler.getCfStandardMatches(variableName);
+                if (cfStandardMatches !== null) {
+                    // Create a dropdown list for standard_name selection.
+                    var tag = "<select name=\"standard_name\">\n";
+
+                }
+
+            }
+
         }
     
         // If we are building the units tag, add in the unit builder.
