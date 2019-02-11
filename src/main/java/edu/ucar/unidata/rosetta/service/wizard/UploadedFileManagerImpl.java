@@ -322,11 +322,11 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
         // Save uploaded files to disk.
         List<UploadedFile> uploadedFiles = uploadedFileCmd.getUploadedFiles();
         for (UploadedFile uploadedFile : uploadedFiles) {
-            // One bother with saving files that actually exist.
+            // Only bother with saving files that actually exist.
             if (StringUtils.trimToNull(uploadedFile.getFileName()) != null) {
 
                 // Examine the UploadedFile objects (can be "empty") to determine if data
-                // has been persisted prior (in which case the object will not be 'empty").
+                // has been persisted prior (in which case the object will not be "empty").
                 for (UploadedFile persistedFile : persistedData.getUploadedFiles()) {
                     // Get the matching file type.
                     if (uploadedFile.getFileType().equals(persistedFile.getFileType())) {

@@ -15,8 +15,6 @@ import java.util.List;
 
 /**
  * Service for handling collected resource information.
- *
- * @author oxelson@ucar.edu
  */
 public interface ResourceManager {
 

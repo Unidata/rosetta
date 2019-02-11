@@ -4,17 +4,6 @@
  * Module for storing data in web storage.  Currently using session storage.
  */
 var WebStorage = (function () {
-   /**
-     * Adds a key/value pair to session storage.
-     *
-     * @param key  The key used to store the data in session storage.
-     * @param value  The data to be stored in session storage.
-     */
-    function storeData(key, value) {
-        if (typeof(Storage) !== "undefined") {
-            sessionStorage.setItem(key, value);
-        }
-    }
 
     /**
      * Retrieves a value from to session storage using the provided key.
@@ -26,7 +15,16 @@ var WebStorage = (function () {
         if (typeof(Storage) !== "undefined") {
             return sessionStorage.getItem(key);
         }
-     }
+    }
+
+    /**
+     * Removes all data from session storage.
+     */
+    function removeAllFromStorage() {
+        if (typeof(Storage) !== "undefined") {
+            sessionStorage.clear();
+        }
+    }
 
     /**
      * Removes a key/value pair from session storage.
@@ -40,20 +38,22 @@ var WebStorage = (function () {
     }
 
     /**
-     * Removes all data from session storage.
+     * Adds a key/value pair to session storage.
+     *
+     * @param key  The key used to store the data in session storage.
+     * @param value  The data to be stored in session storage.
      */
-    function removeAllFromStorage() {
+    function storeData(key, value) {
         if (typeof(Storage) !== "undefined") {
-            sessionStorage.clear();
+            sessionStorage.setItem(key, value);
         }
     }
 
     // Expose these functions.
     return {
-        storeData: storeData,
         getStoredData: getStoredData,
-        removeFromStorage: removeAllFromStorage,
-        removeAllFromStorage: removeAllFromStorage
+        removeAllFromStorage: removeAllFromStorage,
+        removeFromStorage: removeFromStorage,
+        storeData: storeData
     };
-
 })();

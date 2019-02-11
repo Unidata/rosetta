@@ -148,6 +148,7 @@
     </bean>
 
     <!-- Declaration for resource use -->
+    <bean class="edu.ucar.unidata.rosetta.service.batch.BatchFileManagerImpl" id="batchFileManager"/>
     <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileManager"/>
     <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.CFTypeValidator"
           id="cfTypeValidator"/>
@@ -159,10 +160,6 @@
           id="dbInitManager"/>
 
     <!-- Data Access Object (DAO) injection into resource-related service-layer classes. -->
-    <bean class="edu.ucar.unidata.rosetta.service.batch.BatchFileManagerImpl" id="batchFileManager">
-        <property name="delimiterResourceDao" ref="delimiterResourceDao"/>
-    </bean>
-
     <bean class="edu.ucar.unidata.rosetta.service.ResourceManagerImpl" id="resourceManager">
         <property name="cfTypeResourceDao" ref="cfTypeResourceDao"/>
         <property name="communityResourceDao" ref="communityResourceDao"/>
@@ -211,7 +208,6 @@
 
 
     <!-- Data Access Object (DAO) injection into utility-layer classes. -->
-
     <bean class="edu.ucar.unidata.rosetta.util.PropertyUtils" id="propertyUtils">
         <property name="propertiesDao" ref="propertiesDao"/>
     </bean>

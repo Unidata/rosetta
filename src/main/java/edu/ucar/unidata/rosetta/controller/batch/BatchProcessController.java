@@ -7,6 +7,8 @@ package edu.ucar.unidata.rosetta.controller.batch;
 
 import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.service.ResourceManager;
+import edu.ucar.unidata.rosetta.service.batch.BatchFileManager;
 import edu.ucar.unidata.rosetta.service.batch.BatchFileManagerImpl;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import java.io.File;
@@ -30,9 +32,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class BatchProcessController {
 
     protected static Logger logger = Logger.getLogger(BatchProcessController.class);
-    @Autowired
-    ServletContext servletContext;
-    private BatchFileManagerImpl batchFileManager = new BatchFileManagerImpl();
+
+    @javax.annotation.Resource(name = "batchFileManager")
+    private BatchFileManager batchFileManager;
+
+    //@Autowired
+    //ServletContext servletContext;
+    //private BatchFileManagerImpl batchFileManager = new BatchFileManagerImpl();
 
     /**
      * Accepts a POST request for an uploaded zip file to be batch processed. Calls out to batch

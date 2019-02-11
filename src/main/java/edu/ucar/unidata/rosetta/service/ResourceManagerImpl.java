@@ -22,8 +22,6 @@ import java.util.List;
 
 /**
  * Implements resource manager functionality.
- *
- * @author oxelson@ucar.edu
  */
 public class ResourceManagerImpl implements ResourceManager {
 
