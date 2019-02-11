@@ -9,104 +9,6 @@ var DialogDomHandler = (function () {
     var cfStandardUnits = {};
 
     /**
-     * Populates the cfStandards array with data from the cf-standard-name-table.xml file.
-     */
-    function loadCFStandards() {
-        $.get("resources/cf-standard-name-table.xml",
-              function (data) {
-                  var s = [];
-                  $(data).find("entry").each(function () {
-                      s.push($(this).attr("id"));
-                  });
-                  cfStandards = s;
-              },
-              "xml");
-    }
-
-    /**
-     * Populates the cfStandardsUnits object with data from the cf-standard-name-table.xml file.
-     */
-    function loadCFStandardUnits() {
-        $.get("resources/cf-standard-name-table.xml",
-              function (data) {
-                  var u = {};
-                  $(data).find("entry").each(function () {
-                      u[$(this).attr("id")] = $(this).find("canonical_units").text();
-                  });
-                  cfStandardUnits = u;
-              },
-              "xml");
-    }
-
-    /**
-     * Private, utility function (not exported).
-     * Disables the input tags and de-emphasizes the text of provided section in the dialog form.
-     *
-     * @param dialogDomSection The section of the dialog DOM to disable.
-     */
-    function disableDiv(dialogDomSection) {
-        // Disable this section of the dialog content.
-        $("#dialog #" + dialogDomSection).addClass("inactive");
-        var inputTags = $("#dialog #" + dialogDomSection).find("input");
-        if (inputTags.length > 0) {
-            $(inputTags).each(function () {                
-                $(this).prop("disabled", true);
-                if ($(this).attr("type") === "text") {
-                    $(this).prop("value", "");
-                } else { // radio or checkbox
-                    $(this).prop("checked", false);
-                }
-            });
-        }
-        var selectTags = $("#dialog #" + dialogDomSection).find("select");
-        $(selectTags).val("");
-
-    }
-
-    /**
-     * Enables the input tags and emphasizes the text of provided section in the dialog form.
-     *
-     * @param dialogDomSection  The section of the dialog DOM to enable.
-     */
-    function enableDiv(dialogDomSection) {
-        // Enable this section of the dialog content
-        $("#dialog #" + dialogDomSection).removeClass("inactive");
-        $("#dialog #" + dialogDomSection).removeClass("hideMe");
-        $("#dialog #" + dialogDomSection).find("input").each(function () {
-            $(this).prop("disabled", false);
-        });
-    }
-
-    /**
-     * Private, utility function (not exported).
-     * Disables ALL of the input tags, de-emphasizes the text in the #variableAttributes
-     * section of the dialog form, and removes any corresponding  stored data.
-     *
-     * @param key
-     */
-    function disableVariableAttributes(key) {
-        // Disable all parts of the dialog content except the first part.
-        $("#dialog #variableAttributes").find("div").each(function () {  
-            var divTag = $(this);          
-            $(divTag).addClass("inactive");
-            $(divTag).find("input").each(function () {
-                var inputTag = $(this);
-                $(inputTag).prop("disabled", true);
-                if ($(inputTag).attr("type") === "text") {
-                    $(inputTag).prop("value", "");
-                } else { // radio or checkbox
-                    $(inputTag).prop("checked", false);
-                }
-                var divTagId = $(divTag).attr("id").replace("MetadataAssignment", "");
-                // Remove any stored data associated with these sections.
-                if (key !== undefined) {
-                    VariableStorageHandler.resetVariableData(key);
-                }
-            });
-        });
-    }
-
-    /**
      * This function adds HTML input tags with which the user will provide the
      * data associated with the column. This HTML is added to the dialog DOM
      * and the event handlers for the inserted HTML are bound.
@@ -508,6 +410,134 @@ var DialogDomHandler = (function () {
         });
     }
 
+
+    /**
+     * Private, utility function (not exported).
+     * Disables the input tags and de-emphasizes the text of provided section in the dialog form.
+     *
+     * @param dialogDomSection The section of the dialog DOM to disable.
+     */
+    function disableDiv(dialogDomSection) {
+        // Disable this section of the dialog content.
+        $("#dialog #" + dialogDomSection).addClass("inactive");
+        var inputTags = $("#dialog #" + dialogDomSection).find("input");
+        if (inputTags.length > 0) {
+            $(inputTags).each(function () {
+                $(this).prop("disabled", true);
+                if ($(this).attr("type") === "text") {
+                    $(this).prop("value", "");
+                } else { // radio or checkbox
+                    $(this).prop("checked", false);
+                }
+            });
+        }
+        var selectTags = $("#dialog #" + dialogDomSection).find("select");
+        $(selectTags).val("");
+
+    }
+
+    /**
+     * Private, utility function (not exported).
+     * Disables ALL of the input tags, de-emphasizes the text in the #variableAttributes
+     * section of the dialog form, and removes any corresponding  stored data.
+     *
+     * @param key
+     */
+    function disableVariableAttributes(key) {
+        // Disable all parts of the dialog content except the first part.
+        $("#dialog #variableAttributes").find("div").each(function () {
+            var divTag = $(this);
+            $(divTag).addClass("inactive");
+            $(divTag).find("input").each(function () {
+                var inputTag = $(this);
+                $(inputTag).prop("disabled", true);
+                if ($(inputTag).attr("type") === "text") {
+                    $(inputTag).prop("value", "");
+                } else { // radio or checkbox
+                    $(inputTag).prop("checked", false);
+                }
+                var divTagId = $(divTag).attr("id").replace("MetadataAssignment", "");
+                // Remove any stored data associated with these sections.
+                if (key !== undefined) {
+                    VariableStorageHandler.resetVariableData(key);
+                }
+            });
+        });
+    }
+
+    /**
+     * Enables the input tags and emphasizes the text of provided section in the dialog form.
+     *
+     * @param dialogDomSection  The section of the dialog DOM to enable.
+     */
+    function enableDiv(dialogDomSection) {
+        // Enable this section of the dialog content
+        $("#dialog #" + dialogDomSection).removeClass("inactive");
+        $("#dialog #" + dialogDomSection).removeClass("hideMe");
+        $("#dialog #" + dialogDomSection).find("input").each(function () {
+            $(this).prop("disabled", false);
+        });
+    }
+
+    /**
+     * Uses the array of cfStandard names gleaned from the cf-standard-name-table.xml file.
+     * Loop through the array and looks for any entries that contain the provided variableName.
+     * Adds any such matches to an array for returning to the caller.
+     *
+     * @param variableName  The name of the variable we are testing to see if it is a standard_name.
+     * @return an array containing matching Cf Standard names. (Can be empty if no matches found).
+     */
+    function getCFStandardInfo(variableName) {
+        if (variableName === "*") {
+            return cfStandards;
+        }
+        var cfStandardMatches = [];
+
+        // Split the provided variable name.
+        var variableNamePieces = variableName.replace(/_/g, " ").split(" ");
+        for (var j = 0; j < variableNamePieces.length; j++) {
+            for (var i = 0; i < cfStandards.length; i++) {
+                var cfStandardNamePieces = cfStandards[i].split("_");
+                if (cfStandardNamePieces.includes(variableNamePieces[j])) {
+                    if (!cfStandardMatches.includes(cfStandards[i])) { // No duplicates.
+                        cfStandardMatches.push(cfStandards[i]);
+                    }
+                }
+            }
+        }
+        return cfStandardMatches;
+    }
+
+    /**
+     * Populates the cfStandards array with data from the cf-standard-name-table.xml file.
+     */
+    function loadCFStandards() {
+        $.get("resources/cf-standard-name-table.xml",
+              function (data) {
+                  var s = [];
+                  $(data).find("entry").each(function () {
+                      s.push($(this).attr("id"));
+                  });
+                  cfStandards = s;
+              },
+              "xml");
+    }
+
+    /**
+     * Populates the cfStandardsUnits object with data from the cf-standard-name-table.xml file.
+     */
+    function loadCFStandardUnits() {
+        $.get("resources/cf-standard-name-table.xml",
+              function (data) {
+                  var u = {};
+                  $(data).find("entry").each(function () {
+                      u[$(this).attr("id")] = $(this).find("canonical_units").text();
+                  });
+                  cfStandardUnits = u;
+              },
+              "xml");
+    }
+
     /**
      * This function gets any of the variable data stored in the variableMetadata value field and populates the dialog box with those values.
      *
@@ -611,31 +641,13 @@ var DialogDomHandler = (function () {
         }
     }
 
-    /**
-     * Uses the array of cfStandard names gleaned from the cf-standard-name-table.xml file.
-     * Loop through the array and looks for any entries that contain the provided variableName.
-     * Adds any such matches to an array for returning to the caller.
-     *
-     * @param variableName  The name of the variable we are testing to see if it is a standard_name.
-     * @return an array containing matching Cf Standard names. (Can be empty if no matches found).
-     */
-    function getCFStandardInfo(variableName) {
-        var cfStandardMatches = [];
-        for (var i = 0; i < cfStandards.length; i++) {
-            var namePieces = cfStandards[i].split("_");
-            if (namePieces.includes(variableName)) {
-                cfStandardMatches.push(cfStandards[i]);
-            }
-        }
-        return cfStandardMatches;
-    }
-
     // Expose these functions.
     return {
+        addContentToDialog: addContentToDialog,
+        enableDiv: enableDiv,
+        getCFStandardInfo: getCFStandardInfo,
         loadCFStandards: loadCFStandards,
         loadCFStandardUnits: loadCFStandardUnits,
-        enableDiv: enableDiv,
-        addContentToDialog: addContentToDialog,
         populateVariableDataFromStorage: populateVariableDataFromStorage
     };
 })();
