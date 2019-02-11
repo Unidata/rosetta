@@ -36,13 +36,9 @@ public class BatchProcessController {
     @javax.annotation.Resource(name = "batchFileManager")
     private BatchFileManager batchFileManager;
 
-    //@Autowired
-    //ServletContext servletContext;
-    //private BatchFileManagerImpl batchFileManager = new BatchFileManagerImpl();
-
     /**
      * Accepts a POST request for an uploaded zip file to be batch processed. Calls out to batch
-     * rocessing code Returns a zip file of the converted datasets.
+     * processing code Returns a zip file of the converted datasets.
      *
      * @param batchZipFile The batchZipFile form backing object containing the file.
      * @param request      The HttpServletRequest with which to glean the client IP address.
