@@ -21,13 +21,6 @@
 function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter,
                                       delimiter) {
 
-    // Load standard names for variable name input.
-    DialogDomHandler.loadCFStandards();
-    // Load the Unit Builder data.
-    UnitBuilder.loadUnitBuilderData();
-    // Load CF standard units (will automatically add units if standard name is inputted by user).
-    DialogDomHandler.loadCFStandardUnits();
-
     // SlickGrid options.
     var options = {
         editable: false,
@@ -257,7 +250,7 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid) {
                     .dialog({
                         closeOnEscape: false,
                         title: "Enter Variable Attributes",
-                        minWidth: 500,
+                        width: 900,
                         modal: true,
                         buttons: {
                             "done": function () {
@@ -451,5 +444,34 @@ function enableColumn(node) {
     $(node).removeClass("columnDisabled");
 }
 
+/**
+ * Populates the cfStandards array with data from the cf-standard-name-table.xml file.
+ */
+function loadCFStandards() {
+    $.get("resources/cf-standard-name-table.xml",
+          function (data) {
+              var s = [];
+              $(data).find("entry").each(function () {
+                  s.push($(this).attr("id"));
+              });
+              cfStandards = s;
+          },
+          "xml");
+}
+
+/**
+ * Populates the cfStandardsUnits object with data from the cf-standard-name-table.xml file.
+ */
+function loadCFStandardUnits() {
+    $.get("resources/cf-standard-name-table.xml",
+          function (data) {
+              var u = {};
+              $(data).find("entry").each(function () {
+                  u[$(this).attr("id")] = $(this).find("canonical_units").text();
+              });
+              cfStandardUnits = u;
+          },
+          "xml");
+}
 
 

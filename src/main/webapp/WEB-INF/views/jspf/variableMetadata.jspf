@@ -25,6 +25,17 @@
 </div>
 
 <script>
+
+    var cfStandards = [];
+    var cfStandardUnits = {};
+
+    // Load standard names for variable name input.
+    loadCFStandards();
+    // Load the Unit Builder data.
+    UnitBuilder.loadUnitBuilderData();
+    // Load CF standard units (will automatically add units if standard name is inputted by user).
+    loadCFStandardUnits();
+
     var grid;
     var columns = [
         {

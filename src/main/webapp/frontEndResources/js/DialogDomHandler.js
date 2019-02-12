@@ -5,9 +5,6 @@
  */
 var DialogDomHandler = (function () {
 
-    var cfStandards = [];
-    var cfStandardUnits = {};
-
     /**
      * This function adds HTML input tags with which the user will provide the
      * data associated with the column. This HTML is added to the dialog DOM
@@ -508,35 +505,7 @@ var DialogDomHandler = (function () {
         return cfStandardMatches;
     }
 
-    /**
-     * Populates the cfStandards array with data from the cf-standard-name-table.xml file.
-     */
-    function loadCFStandards() {
-        $.get("resources/cf-standard-name-table.xml",
-              function (data) {
-                  var s = [];
-                  $(data).find("entry").each(function () {
-                      s.push($(this).attr("id"));
-                  });
-                  cfStandards = s;
-              },
-              "xml");
-    }
 
-    /**
-     * Populates the cfStandardsUnits object with data from the cf-standard-name-table.xml file.
-     */
-    function loadCFStandardUnits() {
-        $.get("resources/cf-standard-name-table.xml",
-              function (data) {
-                  var u = {};
-                  $(data).find("entry").each(function () {
-                      u[$(this).attr("id")] = $(this).find("canonical_units").text();
-                  });
-                  cfStandardUnits = u;
-              },
-              "xml");
-    }
 
     /**
      * This function gets any of the variable data stored in the variableMetadata value field and populates the dialog box with those values.
@@ -646,8 +615,6 @@ var DialogDomHandler = (function () {
         addContentToDialog: addContentToDialog,
         enableDiv: enableDiv,
         getCFStandardInfo: getCFStandardInfo,
-        loadCFStandards: loadCFStandards,
-        loadCFStandardUnits: loadCFStandardUnits,
         populateVariableDataFromStorage: populateVariableDataFromStorage
     };
 })();

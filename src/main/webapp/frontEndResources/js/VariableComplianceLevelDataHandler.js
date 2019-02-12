@@ -187,9 +187,8 @@ var VariableComplianceLevelDataHandler = (function () {
                 } else {
                     // They need to selected the value from ALL cf standard names.
                     var cfStandards = DialogDomHandler.getCFStandardInfo("*");
-                    console.log(cfStandardMatches);
                     for (var key in cfStandards) {
-                        tag += "  <option value=\"" + key + "\">" + key + "</option>\n";
+                        tag += "  <option value=\"" + cfStandards[key] + "\">" + cfStandards[key] + "</option>\n";
                     }
                 }
                 tag +="      </select>\n";
@@ -204,13 +203,12 @@ var VariableComplianceLevelDataHandler = (function () {
                 // Standard name dropdown
                 tag += "       <select name=\"standard_name\">\n";
                 var cfStandards = DialogDomHandler.getCFStandardInfo("*");
-                console.log(cfStandardMatches);
                 for (var key in cfStandards) {
                     var selected = "";
                     if (key === tagValue) {
                         selected = "selected";
                     }
-                    tag += "  <option value=\"" + key + "\" selected>" + key + "</option>\n";
+                    tag += "  <option value=\"" + cfStandards[key] + "\" selected>" + cfStandards[key] + "</option>\n";
                 }
                 tag +="      </select>/n";
             } else {
