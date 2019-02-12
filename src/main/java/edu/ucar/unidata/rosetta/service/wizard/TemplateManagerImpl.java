@@ -19,17 +19,15 @@ import edu.ucar.unidata.rosetta.repository.wizard.VariableDao;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.ServerInfoBean;
 
-import edu.ucar.unidata.rosetta.util.JsonUtil;
-
+import edu.ucar.unidata.rosetta.util.JsonUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -158,15 +156,7 @@ public class TemplateManagerImpl implements TemplateManager {
         String date = dateFormat.format(new Date());
         template.setCreationDate(date);
 
-        InetAddress ip;
-        String hostname = null;
-        try {
-            ip = InetAddress.getLocalHost();
-            hostname = ip.getHostName();
-        } catch (UnknownHostException e) {
-            logger.error(e);
-        }
-        template.setServerId(hostname);
+        template.setServerId(PropertyUtils.getHostName());
 
         try {
             writeTemplateToFile(template, id);
@@ -191,7 +181,7 @@ public class TemplateManagerImpl implements TemplateManager {
         }
 
         String templateFilePath = FilenameUtils.concat(userFilesDirPath, "rosetta.template");
-        String jsonString = JsonUtil.mapObjectToJson(template);
+        String jsonString = JsonUtils.mapObjectToJson(template);
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(
             new FileWriter(new File(templateFilePath)))) {

@@ -62,7 +62,7 @@ public interface WizardManager {
      * @param request    HttpServletRequest used to make unique IDs for new data.
      * @throws RosettaDataException If unable to lookup the metadata profile.
      */
-    public void processCfType(String id, WizardData wizardData, HttpServletRequest request) throws RosettaDataException;
+    public void processCfType(String id, WizardData wizardData, HttpServletRequest request) throws RosettaDataException, RosettaFileException;
 
     /**
      * Processes the data submitted by the user containing custom data file attributes.
