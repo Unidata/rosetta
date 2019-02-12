@@ -6,7 +6,7 @@
 package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-import edu.ucar.unidata.rosetta.util.JsonUtil;
+import edu.ucar.unidata.rosetta.util.JsonUtils;
 import edu.ucar.unidata.rosetta.util.XlsToCsvUtil;
 
 import java.io.BufferedReader;
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -139,7 +138,7 @@ public class FileManagerImpl implements FileManager {
             while ((currentLine = bufferedReader.readLine()) != null) {
                 fileContents.add(StringEscapeUtils.escapeHtml4(currentLine));
             }
-            jsonFileData = JsonUtil.mapObjectToJson(fileContents);
+            jsonFileData = JsonUtils.mapObjectToJson(fileContents);
         } catch (IOException e) {
             throw new RosettaFileException("Unable to parse file by line: " + e);
         }
