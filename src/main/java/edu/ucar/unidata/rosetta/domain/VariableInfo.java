@@ -23,6 +23,33 @@ public class VariableInfo {
     private List<RosettaAttribute> variableMetadata;
 
     /**
+     * Override equals for VariableInfo.
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == this) return true;
+        if (!(obj instanceof VariableInfo)) {
+            return false;
+        }
+
+        VariableInfo vi = (VariableInfo) obj;
+
+        return columnId == vi.getColumnId() &&
+                Objects.equals(name, vi.getName()) &&
+                Objects.equals(rosettaControlMetadata, vi.getRosettaControlMetadata()) &&
+                Objects.equals(variableMetadata, vi.getVariableMetadata());
+    }
+
+    /**
+     * Override Object.hashCode() to implement equals.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(columnId, name, rosettaControlMetadata, variableMetadata);
+    }
+
+    /**
      * Returns ID of the column in the CSV file.
      *
      * @return The column ID.
@@ -32,30 +59,12 @@ public class VariableInfo {
     }
 
     /**
-     * Sets ID of the column in the CSV file.
-     *
-     * @param columnId The column ID.
-     */
-    public void setColumnId(int columnId) {
-        this.columnId = columnId;
-    }
-
-    /**
      * Returns the assigned name of the metadata item.
      *
      * @return The metadata name.
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Sets the assigned name of the metadata item.
-     *
-     * @param name The metadata name.
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
@@ -69,21 +78,39 @@ public class VariableInfo {
     }
 
     /**
-     * Sets the rosetta control metadata (used to determine/control the other metadata collected).
-     *
-     * @param rosettaControlMetadata The rosetta control metadata.
-     */
-    public void setRosettaControlMetadata(List<RosettaAttribute> rosettaControlMetadata) {
-        this.rosettaControlMetadata = rosettaControlMetadata;
-    }
-
-    /**
      * Returns the metadata specific to the variable.
      *
      * @return The variable metadata.
      */
     public List<RosettaAttribute> getVariableMetadata() {
         return variableMetadata;
+    }
+
+    /**
+     * Sets ID of the column in the CSV file.
+     *
+     * @param columnId The column ID.
+     */
+    public void setColumnId(int columnId) {
+        this.columnId = columnId;
+    }
+
+    /**
+     * Sets the assigned name of the metadata item.
+     *
+     * @param name The metadata name.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Sets the rosetta control metadata (used to determine/control the other metadata collected).
+     *
+     * @param rosettaControlMetadata The rosetta control metadata.
+     */
+    public void setRosettaControlMetadata(List<RosettaAttribute> rosettaControlMetadata) {
+        this.rosettaControlMetadata = rosettaControlMetadata;
     }
 
     /**
@@ -108,7 +135,7 @@ public class VariableInfo {
     /**
      * update this VariableInfo object with new values from another VariableInfo object.
      *
-     * @param updatedVariableInfo
+     * @param updatedVariableInfo The VariableInfo object.
      */
     public void updateVariableInfo(VariableInfo updatedVariableInfo) {
 
@@ -152,30 +179,33 @@ public class VariableInfo {
     }
 
     /**
-     * Override equals for VariableInfo.
+     * Created/returns a nicely formatted string representation of this object
+     * for printing in the transaction log.
+     *
+     * @return  Formatted string representation of this object.
      */
-    @Override
-    public boolean equals(Object obj) {
-
-        if (obj == this) return true;
-        if (!(obj instanceof VariableInfo)) {
-            return false;
+    public String transactionLogFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\tColumn ID: ").append(getColumnId()).append("\n");
+        if (getName() != null) {
+            sb.append("\tName: ").append(getName()).append("\n");
         }
-
-        VariableInfo vi = (VariableInfo) obj;
-
-        return columnId == vi.getColumnId() &&
-                Objects.equals(name, vi.getName()) &&
-                Objects.equals(rosettaControlMetadata, vi.getRosettaControlMetadata()) &&
-                Objects.equals(variableMetadata, vi.getVariableMetadata());
+        if (getRosettaControlMetadata() != null) {
+            if (!getRosettaControlMetadata().isEmpty()) {
+                sb.append("Rosetta Control Metadata: \n");
+                for (RosettaAttribute rosettaAttribute : getRosettaControlMetadata()) {
+                    sb.append(rosettaAttribute.transactionLogFormat()).append("\n");
+                }
+            }
+        }
+        if (getVariableMetadata() != null) {
+            if (!getVariableMetadata().isEmpty()) {
+                sb.append("Variable Metadata: \n");
+                for (RosettaAttribute rosettaAttribute : getVariableMetadata()) {
+                    sb.append(rosettaAttribute.transactionLogFormat()).append("\n");
+                }
+            }
+        }
+        return sb.toString();
     }
-
-    /**
-     * Override Object.hashCode() to implement equals.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(columnId, name, rosettaControlMetadata, variableMetadata);
-    }
-
 }

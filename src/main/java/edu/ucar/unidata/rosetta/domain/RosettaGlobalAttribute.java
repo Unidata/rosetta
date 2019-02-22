@@ -8,35 +8,19 @@ package edu.ucar.unidata.rosetta.domain;
 
 import java.util.Objects;
 
+/**
+ * Class representing a Rosetta Attribute for Global data
+ * (as per https://github.com/Unidata/rosetta/wiki/Rosetta-Template-Attributes#variableinfo-object-information)
+ */
 public class RosettaGlobalAttribute extends RosettaAttribute {
 
     private String group;
     private static String DEFAULT_GROUP = "root";
 
     /**
-     * Returns the group to which attribute belongs.
-     *
-     * @return The attribute name.
-     */
-    public String getGroup() {
-        // never return a null group - at least default to "root"
-        return (group != null) ? group : DEFAULT_GROUP;
-    }
-
-    /**
-     * Set the group to which attribute belongs (example: Meta_eTuff/device)
-     *
-     * @param group name of the attribute
-     */
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    /**
      * noop constructor
      */
-    public RosettaGlobalAttribute() {
-    }
+    public RosettaGlobalAttribute() {}
 
     /**
      * Hold information about a global attribute
@@ -68,7 +52,7 @@ public class RosettaGlobalAttribute extends RosettaAttribute {
     }
 
     /**
-     * Override equals() for RosettaAttribute.
+     * Override equals() for RosettaGlobalAttribute.
      */
     @Override
     public boolean equals(Object obj) {
@@ -81,9 +65,9 @@ public class RosettaGlobalAttribute extends RosettaAttribute {
         RosettaGlobalAttribute rga = (RosettaGlobalAttribute) obj;
 
         return Objects.equals(super.getName(), rga.getName()) &&
-               Objects.equals(super.getValue(), rga.getValue()) &&
-               Objects.equals(super.getType(), rga.getType()) &&
-               Objects.equals(this.group, rga.getGroup());
+                Objects.equals(super.getValue(), rga.getValue()) &&
+                Objects.equals(super.getType(), rga.getType()) &&
+                Objects.equals(this.group, rga.getGroup());
     }
 
     /**
@@ -95,4 +79,37 @@ public class RosettaGlobalAttribute extends RosettaAttribute {
         return Objects.hash(superHash, this.group);
     }
 
+    /**
+     * Returns the group to which attribute belongs.
+     *
+     * @return The attribute name.
+     */
+    public String getGroup() {
+        // never return a null group - at least default to "root"
+        return (group != null) ? group : DEFAULT_GROUP;
+    }
+
+    /**
+     * Set the group to which attribute belongs (example: Meta_eTuff/device)
+     *
+     * @param group name of the attribute
+     */
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    /**
+     * Created/returns a nicely formatted string representation of this object
+     * for printing in the transaction log.
+     *
+     * @return  Formatted string representation of this object.
+     */
+    public String transactionLogFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.transactionLogFormat());
+        if (getGroup() != null) {
+            sb.append("\tGroup: ").append(getGroup()).append("\n");
+        }
+        return sb.toString();
+    }
 }

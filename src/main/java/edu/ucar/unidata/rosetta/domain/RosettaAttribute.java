@@ -10,75 +10,19 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.Objects;
 
 /**
- * Class representing a Rosetta Attribute (as per https://github.com/Unidata/rosetta/wiki/Rosetta-Template-Attributes#variableinfo-object-information)
+ * Class representing a Rosetta Attribute
+ * (as per https://github.com/Unidata/rosetta/wiki/Rosetta-Template-Attributes#variableinfo-object-information)
  */
 public class RosettaAttribute {
 
     private String name;
-    private String value;
     private String type;
-
-    /**
-     * Returns the name of the attribute.
-     *
-     * @return The attribute name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Set the name of the attribute
-     *
-     * @param name name of the attribute
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Returns the value of the attribute. Value is always a string. See {@link #type} to determine
-     * the datatype of the #value
-     *
-     * @return The value as a string.
-     * @see #type
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Set the value of the attribute
-     *
-     * @param value value of the attribute, encoded as a string
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    /**
-     * Get the data type of the {@link #value} associated with the attribute
-     *
-     * @return type data type of the value
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Set the data type of the attribute value.
-     *
-     * @param type string representation of the data type of the attribute
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
+    private String value;
 
     /**
      * noop constructor
      */
-    public RosettaAttribute() {
-    }
+    public RosettaAttribute() { }
 
     /**
      * Hold information about an attribute
@@ -119,6 +63,61 @@ public class RosettaAttribute {
         return Objects.hash(name, value, type);
     }
 
+    /**
+     * Returns the name of the attribute.
+     *
+     * @return The attribute name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns the value of the attribute. Value is always a string. See {@link #type} to determine
+     * the datatype of the #value
+     *
+     * @return The value as a string.
+     * @see #type
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Get the data type of the {@link #value} associated with the attribute
+     *
+     * @return type data type of the value
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Set the name of the attribute
+     *
+     * @param name name of the attribute
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Set the data type of the attribute value.
+     *
+     * @param type string representation of the data type of the attribute
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * Set the value of the attribute
+     *
+     * @param value value of the attribute, encoded as a string
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
 
     /**
      * String representation of this object.
@@ -128,6 +127,26 @@ public class RosettaAttribute {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    /**
+     * Created/returns a nicely formatted string representation of this object
+     * for printing in the transaction log.
+     *
+     * @return  Formatted string representation of this object.
+     */
+    public String transactionLogFormat() {
+        StringBuilder sb = new StringBuilder();
+        if (getName() != null) {
+            sb.append("\tName: ").append(getName()).append("\n");
+        }
+        if (getType() != null) {
+            sb.append("\tType: ").append(getType()).append("\n");
+        }
+        if (getValue() != null) {
+            sb.append("\tValue: ").append(getValue()).append("\n");
+        }
+        return sb.toString();
     }
 
 }

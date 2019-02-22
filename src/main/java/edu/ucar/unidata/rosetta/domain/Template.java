@@ -32,298 +32,6 @@ public class Template {
     private List<VariableInfo> variableInfoList;
 
     /**
-     * Returns the CF type.
-     *
-     * @return The CF type.
-     */
-    public String getCfType() {
-        return cfType;
-    }
-
-    /**
-     * Sets the CF type.
-     *
-     * @param cfType The CF type.
-     */
-    public void setCfType(String cfType) {
-        this.cfType = cfType;
-    }
-
-    /**
-     * Returns the community.
-     *
-     * @return The community.
-     */
-    public String getCommunity() {
-        return community;
-    }
-
-    /**
-     * Sets the community.
-     *
-     * @param community The community.
-     */
-    public void setCommunity(String community) {
-        this.community = community;
-    }
-
-    /**
-     * Returns the creation date of the template in ISO 8601 Notation format (e.g.
-     * yyyy-mm-ddThh:mm:ss.ffffff)
-     *
-     * @return The creation date.
-     */
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    /**
-     * Sets the creation date of the template in ISO 8601 Notation format (e.g.
-     * yyyy-mm-ddThh:mm:ss.ffffff)
-     *
-     * @param creationDate The creation date.
-     */
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    /**
-     * Returns the data file delimiter.
-     *
-     * @return The delimiter.
-     */
-    public String getDelimiter() {
-        return delimiter;
-    }
-
-    /**
-     * Sets the data file delimiter.
-     *
-     * @param delimiter The delimiter.
-     */
-    public void setDelimiter(String delimiter) {
-        this.delimiter = delimiter;
-    }
-
-    /**
-     * Returns the data file format.
-     *
-     * @return The format.
-     */
-    public String getFormat() {
-        return format;
-    }
-
-    /**
-     * Sets  the data file format.
-     *
-     * @param format The format.
-     */
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    /**
-     * Returns the global metadata.
-     *
-     * @return The global metadata.
-     */
-    public List<RosettaGlobalAttribute> getGlobalMetadata() {
-        return globalMetadata;
-    }
-
-    /**
-     * Sets the global metadata.
-     *
-     * @param globalMetadata The global metadata.
-     */
-    public void setGlobalMetadata(List<RosettaGlobalAttribute> globalMetadata) {
-        this.globalMetadata = globalMetadata;
-    }
-
-    /**
-     * Returns the header line number of the data file.
-     *
-     * @return The header line numbers.
-     */
-    public List<Integer> getHeaderLineNumbers() {
-        return headerLineNumbers;
-    }
-
-    /**
-     * Sets the header line number of the data file.
-     *
-     * @param headerLineNumbers The header line numbers.
-     */
-    public void setHeaderLineNumbers(List<Integer> headerLineNumbers) {
-        this.headerLineNumbers = headerLineNumbers;
-    }
-
-    /**
-     * Returns the platform.
-     *
-     * @return The platform.
-     */
-    public String getPlatform() {
-        return platform;
-    }
-
-    /**
-     * Sets the platform.
-     *
-     * @param platform The platform.
-     */
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
-
-    /**
-     * Returns the version of rosetta to make the template.
-     *
-     * @return The version of rosetta.
-     */
-    public String getRosettaVersion() {
-        return rosettaVersion;
-    }
-
-    /**
-     * Sets the version of rosetta to make the template.
-     *
-     * @param rosettaVersion The version of rosetta.
-     */
-    public void setRosettaVersion(String rosettaVersion) {
-        this.rosettaVersion = rosettaVersion;
-    }
-
-    /**
-     * Returns the ID of the specific rosetta server to make the template.
-     *
-     * @return The server ID.
-     */
-    public String getServerId() {
-        return serverId;
-    }
-
-    /**
-     * Gets the ID of the specific rosetta server to make the template.
-     *
-     * @param serverId The server ID.
-     */
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
-    }
-
-    /**
-     * Returns the template version.
-     *
-     * @return The template version
-     */
-    public String getTemplateVersion() {
-        return templateVersion;
-    }
-
-    /**
-     * Sets the template version.
-     *
-     * @param templateVersion The template version
-     */
-    public void setTemplateVersion(String templateVersion) {
-        this.templateVersion = templateVersion;
-    }
-
-    /**
-     * Returns the variable information.
-     *
-     * @return The variable information.
-     */
-    public List<VariableInfo> getVariableInfoList() {
-        return variableInfoList;
-    }
-
-    /**
-     * Sets the variable information.
-     *
-     * @param variableInfoList The variable information.
-     */
-    public void setVariableInfoList(
-            List<VariableInfo> variableInfoList) {
-        this.variableInfoList = variableInfoList;
-    }
-
-    /**
-     * String representation of this object.
-     *
-     * @return The string representation.
-     */
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
-
-    /**
-     * Update a template with new values found in a second template. Generally, only metadata
-     * are updated. Used for overriding global and variable metadata during batch processing.
-     *
-     * @param updatedTemplate template containing new metadata
-     */
-    public void update(Template updatedTemplate) {
-
-        List<Integer> headerLineNumbersUpdate = updatedTemplate.getHeaderLineNumbers();
-        if (headerLineNumbersUpdate != null) {
-            // simple to update - just replace old list with new list
-            this.headerLineNumbers = headerLineNumbersUpdate;
-        }
-
-        List<RosettaGlobalAttribute> globalMetadataUpdates = updatedTemplate.getGlobalMetadata();
-        if (globalMetadataUpdates != null) {
-            // a little more complex. We need to go through each new piece of global metadata,
-            // search for it by name in the existing list of global metadata, and remove it if it
-            // exits. Then, we can merge the new and existing lists of global metadata.
-            for (RosettaGlobalAttribute globalMetadataUpdate : globalMetadataUpdates) {
-                Predicate<RosettaAttribute> attributePredicate = attr -> attr.getName().equals(globalMetadataUpdate.getName());
-                this.globalMetadata.removeIf(attributePredicate);
-            }
-            this.globalMetadata.addAll(globalMetadataUpdates);
-        }
-
-        List<VariableInfo> variableInfoListUpdates = updatedTemplate.getVariableInfoList();
-        if (variableInfoListUpdates != null) {
-            // there are two cases to handle here.
-            // for each piece of new variableInfo, check if the name mathces the name of a VariableInfo
-            // object in the list. If so, update it using VariableInfo.update(). If the name of the new
-            // piece of variableInfo is not in the list, then it is new and can be added to the list.
-
-            // let's get all of the names of the variableInfo currently held in variableInfoList
-            List<String> names = new ArrayList<>();
-            for (VariableInfo variableInfo : variableInfoList) {
-                names.add(variableInfo.getName());
-            }
-
-            // now, let's figure out what to do with each new piece of variableInfo
-            for (VariableInfo variableInfoUpdate : variableInfoListUpdates) {
-                String updateName = variableInfoUpdate.getName();
-                // for each updated variableInfo entry, check if the name already appears in
-                // this object's variableInfoList
-                if (names.contains(updateName)) {
-                    // name already in list, so update it where it is found
-                    int updateIndex = names.indexOf(updateName);
-                    VariableInfo oldVarInfo = variableInfoList.get(updateIndex);
-                    // if updated template has colNum set to -1, that means remove the variable
-                    if (variableInfoUpdate.getColumnId() == -9) {
-                        variableInfoList.remove(updateIndex);
-                    } else {
-                        oldVarInfo.updateVariableInfo(variableInfoUpdate);
-                        variableInfoList.set(updateIndex, oldVarInfo);
-                    }
-                } else {
-                    // this is a new addition - go ahead and add it to the list
-                    variableInfoList.add(variableInfoUpdate);
-                }
-            }
-        }
-    }
-
-    /**
      * Override equals() for Template.
      */
     @Override
@@ -359,5 +67,360 @@ public class Template {
                 format, globalMetadata, headerLineNumbers, platform, rosettaVersion,
                 serverId, templateVersion, variableInfoList);
     }
+
+    /**
+     * Returns the CF type.
+     *
+     * @return The CF type.
+     */
+    public String getCfType() {
+        return cfType;
+    }
+
+    /**
+     * Returns the community.
+     *
+     * @return The community.
+     */
+    public String getCommunity() {
+        return community;
+    }
+
+    /**
+     * Returns the creation date of the template in ISO 8601 Notation format (e.g.
+     * yyyy-mm-ddThh:mm:ss.ffffff)
+     *
+     * @return The creation date.
+     */
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * Returns the data file delimiter.
+     *
+     * @return The delimiter.
+     */
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    /**
+     * Returns the data file format.
+     *
+     * @return The format.
+     */
+    public String getFormat() {
+        return format;
+    }
+
+    /**
+     * Returns the global metadata.
+     *
+     * @return The global metadata.
+     */
+    public List<RosettaGlobalAttribute> getGlobalMetadata() {
+        return globalMetadata;
+    }
+
+    /**
+     * Returns the header line number of the data file.
+     *
+     * @return The header line numbers.
+     */
+    public List<Integer> getHeaderLineNumbers() {
+        return headerLineNumbers;
+    }
+
+    /**
+     * Returns the platform.
+     *
+     * @return The platform.
+     */
+    public String getPlatform() {
+        return platform;
+    }
+
+    /**
+     * Returns the version of rosetta to make the template.
+     *
+     * @return The version of rosetta.
+     */
+    public String getRosettaVersion() {
+        return rosettaVersion;
+    }
+
+    /**
+     * Returns the ID of the specific rosetta server to make the template.
+     *
+     * @return The server ID.
+     */
+    public String getServerId() {
+        return serverId;
+    }
+
+    /**
+     * Returns the template version.
+     *
+     * @return The template version
+     */
+    public String getTemplateVersion() {
+        return templateVersion;
+    }
+
+    /**
+     * Returns the variable information.
+     *
+     * @return The variable information.
+     */
+    public List<VariableInfo> getVariableInfoList() {
+        return variableInfoList;
+    }
+
+    /**
+     * Sets the CF type.
+     *
+     * @param cfType The CF type.
+     */
+    public void setCfType(String cfType) {
+        this.cfType = cfType;
+    }
+
+    /**
+     * Sets the community.
+     *
+     * @param community The community.
+     */
+    public void setCommunity(String community) {
+        this.community = community;
+    }
+
+    /**
+     * Sets the creation date of the template in ISO 8601 Notation format (e.g.
+     * yyyy-mm-ddThh:mm:ss.ffffff)
+     *
+     * @param creationDate The creation date.
+     */
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    /**
+     * Sets the data file delimiter.
+     *
+     * @param delimiter The delimiter.
+     */
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    /**
+     * Sets  the data file format.
+     *
+     * @param format The format.
+     */
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    /**
+     * Sets the global metadata.
+     *
+     * @param globalMetadata The global metadata.
+     */
+    public void setGlobalMetadata(List<RosettaGlobalAttribute> globalMetadata) {
+        this.globalMetadata = globalMetadata;
+    }
+
+    /**
+     * Sets the header line number of the data file.
+     *
+     * @param headerLineNumbers The header line numbers.
+     */
+    public void setHeaderLineNumbers(List<Integer> headerLineNumbers) {
+        this.headerLineNumbers = headerLineNumbers;
+    }
+
+    /**
+     * Sets the platform.
+     *
+     * @param platform The platform.
+     */
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
+    /**
+     * Sets the version of rosetta to make the template.
+     *
+     * @param rosettaVersion The version of rosetta.
+     */
+    public void setRosettaVersion(String rosettaVersion) {
+        this.rosettaVersion = rosettaVersion;
+    }
+
+    /**
+     * Gets the ID of the specific rosetta server to make the template.
+     *
+     * @param serverId The server ID.
+     */
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
+    }
+
+    /**
+     * Sets the template version.
+     *
+     * @param templateVersion The template version
+     */
+    public void setTemplateVersion(String templateVersion) {
+        this.templateVersion = templateVersion;
+    }
+
+    /**
+     * Sets the variable information.
+     *
+     * @param variableInfoList The variable information.
+     */
+    public void setVariableInfoList(List<VariableInfo> variableInfoList) {
+        this.variableInfoList = variableInfoList;
+    }
+
+    /**
+     * Created/returns a nicely formatted string representation of this object
+     * for printing in the transaction log.
+     *
+     * @return  Formatted string representation of this object.
+     */
+    public String transactionLogFormat() {
+        StringBuilder sb = new StringBuilder();
+        if (getCfType() != null) {
+            sb.append("\tCF Type: ").append(getCfType()).append("\n");
+        }
+        if (getCommunity() != null) {
+            sb.append("\tCommunity: ").append(getCommunity()).append("\n");
+        }
+        if (getCreationDate() != null) {
+            sb.append("\tCreation Date: ").append(getCreationDate()).append("\n");
+        }
+        if (getDelimiter() != null) {
+            sb.append("\tDelimiter: ").append(getDelimiter()).append("\n");
+        }
+        sb.append("\tFormat: ").append(getFormat()).append("\n");
+        if (getPlatform() != null) {
+            sb.append("\tPlatform: ").append(getPlatform()).append("\n");
+        }
+        if (getRosettaVersion() != null) {
+            sb.append("\tRosetta Version: ").append(getRosettaVersion()).append("\n");
+        }
+        if (getServerId() != null) {
+            sb.append("\tServer ID: ").append(getServerId()).append("\n");
+        }
+        if (getTemplateVersion() != null) {
+            sb.append("\tTemplate Version: ").append(getTemplateVersion()).append("\n");
+        }
+        if (getGlobalMetadata() != null) {
+            if (!getGlobalMetadata().isEmpty()) {
+                sb.append("\tRosettaGlobalAttributes: \n");
+                for (RosettaGlobalAttribute rosettaGlobalAttribute : getGlobalMetadata()) {
+                    sb.append(rosettaGlobalAttribute.transactionLogFormat()).append("\n");
+                }
+            }
+        }
+        if (getVariableInfoList() != null) {
+            if (!getVariableInfoList().isEmpty()) {
+                sb.append("\tVariable Info: \n");
+                for (VariableInfo variableInfo: getVariableInfoList()) {
+                    sb.append(variableInfo.transactionLogFormat()).append("\n");
+                }
+            }
+        }
+        if (getHeaderLineNumbers() != null) {
+            if (!getHeaderLineNumbers().isEmpty()) {
+                sb.append("\tHeader Line Numbers: \n");
+                for (Integer headerLineNumber: getHeaderLineNumbers()) {
+                    sb.append(headerLineNumber.toString()).append("\n");
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * String representation of this object.
+     *
+     * @return The string representation.
+     */
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    /**
+     * Update a template with new values found in a second template. Generally, only metadata
+     * are updated. Used for overriding global and variable metadata during batch processing.
+     *
+     * @param updatedTemplate template containing new metadata
+     */
+    public void update(Template updatedTemplate) {
+
+        List<Integer> headerLineNumbersUpdate = updatedTemplate.getHeaderLineNumbers();
+        if (headerLineNumbersUpdate != null) {
+            // simple to update - just replace old list with new list
+            this.headerLineNumbers = headerLineNumbersUpdate;
+        }
+
+        List<RosettaGlobalAttribute> globalMetadataUpdates = updatedTemplate.getGlobalMetadata();
+        if (globalMetadataUpdates != null) {
+            // A little more complex. We need to go through each new piece of global metadata,
+            // search for it by name in the existing list of global metadata, and remove it if it
+            // exits. Then, we can merge the new and existing lists of global metadata.
+            for (RosettaGlobalAttribute globalMetadataUpdate : globalMetadataUpdates) {
+                Predicate<RosettaAttribute> attributePredicate = attr -> attr.getName().equals(globalMetadataUpdate.getName());
+                this.globalMetadata.removeIf(attributePredicate);
+            }
+            this.globalMetadata.addAll(globalMetadataUpdates);
+        }
+
+        List<VariableInfo> variableInfoListUpdates = updatedTemplate.getVariableInfoList();
+        if (variableInfoListUpdates != null) {
+            // There are two cases to handle here:
+            // For each piece of new variableInfo, check if the name matches the name of a VariableInfo
+            // object in the list. If so, update it using VariableInfo.update(). If the name of the new
+            // piece of variableInfo is not in the list, then it is new and can be added to the list.
+
+            // Let's get all of the names of the variableInfo currently held in variableInfoList.
+            List<String> names = new ArrayList<>();
+            for (VariableInfo variableInfo : variableInfoList) {
+                names.add(variableInfo.getName());
+            }
+
+            // Now, let's figure out what to do with each new piece of variableInfo.
+            for (VariableInfo variableInfoUpdate : variableInfoListUpdates) {
+                String updateName = variableInfoUpdate.getName();
+                // For each updated variableInfo entry, check if the name already appears in
+                // this object's variableInfoList.
+                if (names.contains(updateName)) {
+                    // Name already in list, so update it where it is found.
+                    int updateIndex = names.indexOf(updateName);
+                    VariableInfo oldVarInfo = variableInfoList.get(updateIndex);
+                    // If updated template has colNum set to -1, that means remove the variable.
+                    if (variableInfoUpdate.getColumnId() == -9) {
+                        variableInfoList.remove(updateIndex);
+                    } else {
+                        oldVarInfo.updateVariableInfo(variableInfoUpdate);
+                        variableInfoList.set(updateIndex, oldVarInfo);
+                    }
+                } else {
+                    // This is a new addition - go ahead and add it to the list.
+                    variableInfoList.add(variableInfoUpdate);
+                }
+            }
+        }
+    }
+
+
+
+
 
 }
