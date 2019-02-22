@@ -8,10 +8,18 @@ import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 
 /**
- * Service for handling/building Template objects.
+ * Service for handling/building Template objects and template files (rosetta.template).
  */
 public interface TemplateManager {
 
-    public Template createTemplate(String id) throws RosettaFileException;
+    /**
+     * Retrieves persisted data to create a Template object which is used to
+     * write to a template file and a transaction log.
+     *
+     * @param id    The unique transaction ID associated with this template.
+     * @return  A Template object.
+     * @throws RosettaFileException  If unable to create the template file.
+     */
+    Template createTemplate(String id) throws RosettaFileException;
 
 }
