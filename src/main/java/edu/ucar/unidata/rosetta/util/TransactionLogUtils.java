@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.format.DateTimeFormatter;
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.ServerInfoBean;
@@ -37,11 +37,8 @@ public class TransactionLogUtils {
         // Location in which to write the transaction.log.
         File localFileDir = new File(pathToLocalFileDir);
 
-        // The directory should have been created by now. If it hasn't, something has gone wrong.
-        if (!localFileDir.exists()) {
-            throw new RosettaFileException(
-                        "Unable to create transaction log.  Directory does not exist: " + pathToLocalFileDir);
-        }
+        // make sure the directory has been created.
+        IoUtils.createUserFilesSubDirectory(id);
 
         // Create the transaction.log file.
         File transactionLog = new File(FilenameUtils.concat(pathToLocalFileDir, "transaction.log"));
@@ -59,7 +56,7 @@ public class TransactionLogUtils {
         DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
         String sb = "ROSETTA TRANSACTION LOG" +
                 "\n" +
-                formatter.format(LocalDate.now()) +
+                formatter.format(ZonedDateTime.now()) +
                 "\n" +
                 PropertyUtils.getHostName() +
                 "\n" +
@@ -81,7 +78,7 @@ public class TransactionLogUtils {
         String pathToTransactionLog= FilenameUtils.concat(FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id), "transaction.log");
         File transactionLog = new File(pathToTransactionLog);
 
-        // Throw an exception of the log file doesn't exist.
+        // Throw an exception if the log file doesn't exist.
         if (!transactionLog.exists()) {
             throw new RosettaFileException(
                     "Unable to write to transaction log.  Transaction log file does not exist: " + pathToTransactionLog);
