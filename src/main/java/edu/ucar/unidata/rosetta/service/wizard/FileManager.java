@@ -16,19 +16,6 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 public interface FileManager {
 
     /**
-     * Creates a subdirectory in the Rosetta user_files directory with the name of the provided
-     * unique ID, into which converted data files and Rosetta templates will be stashed and made
-     * available for download by the user.
-     *
-     * @param userFilesDir The path to the Rosetta user files directory.
-     * @param id           The unique ID that will become the name of the subdirectory.
-     * @return The full path name to the created user files subdirectory.
-     * @throws RosettaFileException If unable to create user files subdirectory.
-     */
-    public String createUserFilesSubDirectory(String userFilesDir, String id)
-            throws RosettaFileException;
-
-    /**
      * Opens the given template file on disk and returns the contents as a string.
      *
      * @param userFilesDirPath  The location of the user files directory on disk.
