@@ -7,6 +7,7 @@ package edu.ucar.unidata.rosetta.controller.wizard;
 
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import edu.ucar.unidata.rosetta.util.CookieUtils;
@@ -89,10 +90,11 @@ public class CfTypeController {
      * @param response   HttpServletResponse needed for setting cookie.
      * @return Redirect to next step.
      * @throws RosettaDataException If unable to process the CF type data.
+     * @throws RosettaFileException If unable to create transaction log.
      */
     @RequestMapping(value = "/cfType", method = RequestMethod.POST)
     public ModelAndView processCFType(WizardData wizardData, BindingResult result,
-                                      HttpServletRequest request, HttpServletResponse response) throws RosettaDataException {
+                                      HttpServletRequest request, HttpServletResponse response) throws RosettaDataException, RosettaFileException {
 
         // Have we visited this page before during this session?
         Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
