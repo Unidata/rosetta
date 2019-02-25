@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
 
@@ -126,27 +127,6 @@ public class RosettaAttribute {
      */
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
-
-    /**
-     * Created/returns a nicely formatted string representation of this object
-     * for printing in the transaction log.
-     *
-     * @return  Formatted string representation of this object.
-     */
-    public String transactionLogFormat() {
-        StringBuilder sb = new StringBuilder();
-        if (getName() != null) {
-            sb.append("\tName: ").append(getName()).append("\n");
-        }
-        if (getType() != null) {
-            sb.append("\tType: ").append(getType()).append("\n");
-        }
-        if (getValue() != null) {
-            sb.append("\tValue: ").append(getValue()).append("\n");
-        }
-        return sb.toString();
-    }
-
 }

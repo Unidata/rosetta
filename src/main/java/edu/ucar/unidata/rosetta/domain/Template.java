@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -287,73 +288,13 @@ public class Template {
     }
 
     /**
-     * Created/returns a nicely formatted string representation of this object
-     * for printing in the transaction log.
-     *
-     * @return  Formatted string representation of this object.
-     */
-    public String transactionLogFormat() {
-        StringBuilder sb = new StringBuilder();
-        if (getCfType() != null) {
-            sb.append("\tCF Type: ").append(getCfType()).append("\n");
-        }
-        if (getCommunity() != null) {
-            sb.append("\tCommunity: ").append(getCommunity()).append("\n");
-        }
-        if (getCreationDate() != null) {
-            sb.append("\tCreation Date: ").append(getCreationDate()).append("\n");
-        }
-        if (getDelimiter() != null) {
-            sb.append("\tDelimiter: ").append(getDelimiter()).append("\n");
-        }
-        sb.append("\tFormat: ").append(getFormat()).append("\n");
-        if (getPlatform() != null) {
-            sb.append("\tPlatform: ").append(getPlatform()).append("\n");
-        }
-        if (getRosettaVersion() != null) {
-            sb.append("\tRosetta Version: ").append(getRosettaVersion()).append("\n");
-        }
-        if (getServerId() != null) {
-            sb.append("\tServer ID: ").append(getServerId()).append("\n");
-        }
-        if (getTemplateVersion() != null) {
-            sb.append("\tTemplate Version: ").append(getTemplateVersion()).append("\n");
-        }
-        if (getGlobalMetadata() != null) {
-            if (!getGlobalMetadata().isEmpty()) {
-                sb.append("\tRosettaGlobalAttributes: \n");
-                for (RosettaGlobalAttribute rosettaGlobalAttribute : getGlobalMetadata()) {
-                    sb.append(rosettaGlobalAttribute.transactionLogFormat()).append("\n");
-                }
-            }
-        }
-        if (getVariableInfoList() != null) {
-            if (!getVariableInfoList().isEmpty()) {
-                sb.append("\tVariable Info: \n");
-                for (VariableInfo variableInfo: getVariableInfoList()) {
-                    sb.append(variableInfo.transactionLogFormat()).append("\n");
-                }
-            }
-        }
-        if (getHeaderLineNumbers() != null) {
-            if (!getHeaderLineNumbers().isEmpty()) {
-                sb.append("\tHeader Line Numbers: \n");
-                for (Integer headerLineNumber: getHeaderLineNumbers()) {
-                    sb.append(headerLineNumber.toString()).append("\n");
-                }
-            }
-        }
-        return sb.toString();
-    }
-
-    /**
      * String representation of this object.
      *
      * @return The string representation.
      */
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this, new TransactionLogStyle());
     }
 
     /**

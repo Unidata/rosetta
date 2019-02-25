@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -96,20 +96,5 @@ public class RosettaGlobalAttribute extends RosettaAttribute {
      */
     public void setGroup(String group) {
         this.group = group;
-    }
-
-    /**
-     * Created/returns a nicely formatted string representation of this object
-     * for printing in the transaction log.
-     *
-     * @return  Formatted string representation of this object.
-     */
-    public String transactionLogFormat() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.transactionLogFormat());
-        if (getGroup() != null) {
-            sb.append("\tGroup: ").append(getGroup()).append("\n");
-        }
-        return sb.toString();
     }
 }

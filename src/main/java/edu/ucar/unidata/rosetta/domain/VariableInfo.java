@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 import java.util.Objects;
@@ -129,7 +130,7 @@ public class VariableInfo {
      */
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
     /**
@@ -176,36 +177,5 @@ public class VariableInfo {
             Predicate<RosettaAttribute> emptyValuePredicate = attr -> attr.getValue().equals("");
             this.rosettaControlMetadata.removeIf(emptyValuePredicate);
         }
-    }
-
-    /**
-     * Created/returns a nicely formatted string representation of this object
-     * for printing in the transaction log.
-     *
-     * @return  Formatted string representation of this object.
-     */
-    public String transactionLogFormat() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\tColumn ID: ").append(getColumnId()).append("\n");
-        if (getName() != null) {
-            sb.append("\tName: ").append(getName()).append("\n");
-        }
-        if (getRosettaControlMetadata() != null) {
-            if (!getRosettaControlMetadata().isEmpty()) {
-                sb.append("Rosetta Control Metadata: \n");
-                for (RosettaAttribute rosettaAttribute : getRosettaControlMetadata()) {
-                    sb.append(rosettaAttribute.transactionLogFormat()).append("\n");
-                }
-            }
-        }
-        if (getVariableMetadata() != null) {
-            if (!getVariableMetadata().isEmpty()) {
-                sb.append("Variable Metadata: \n");
-                for (RosettaAttribute rosettaAttribute : getVariableMetadata()) {
-                    sb.append(rosettaAttribute.transactionLogFormat()).append("\n");
-                }
-            }
-        }
-        return sb.toString();
     }
 }

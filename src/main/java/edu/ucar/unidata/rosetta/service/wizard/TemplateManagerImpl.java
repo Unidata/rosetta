@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 package edu.ucar.unidata.rosetta.service.wizard;
@@ -329,7 +329,7 @@ public class TemplateManagerImpl implements TemplateManager {
         }
 
         // Update the transaction log.
-        TransactionLogUtils.writeToLog(id, "Template written:\n" + template.transactionLogFormat());
+        TransactionLogUtils.writeToLog(id, template.toString());
     }
 
 }
