@@ -150,8 +150,6 @@
     <!-- Declaration for resource use -->
     <bean class="edu.ucar.unidata.rosetta.service.batch.BatchFileManagerImpl" id="batchFileManager"/>
     <bean class="edu.ucar.unidata.rosetta.service.wizard.FileManagerImpl" id="fileManager"/>
-    <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.CFTypeValidator"
-          id="cfTypeValidator"/>
     <bean class="edu.ucar.unidata.rosetta.service.validators.wizard.FileValidator"
           id="fileValidator"/>
     <bean class="edu.ucar.unidata.rosetta.service.ServerInfoBean" id="serverInfo"
