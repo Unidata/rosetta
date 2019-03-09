@@ -7,6 +7,7 @@
 package edu.ucar.unidata.rosetta.domain;
 
 import java.util.Objects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Class representing a Rosetta Attribute for Global data
@@ -96,5 +97,15 @@ public class RosettaGlobalAttribute extends RosettaAttribute {
      */
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    /**
+     * String representation of this object.
+     *
+     * @return The string representation.
+     */
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, TransactionLogStyle.EMBEDDED_OBJECT_STYLE);
     }
 }
