@@ -100,7 +100,7 @@ public class WizardManagerImpl implements WizardManager {
      *
      * @param id  The unique ID corresponding to this transaction.
      * @return  The location of the created netCDF file.
-     * @throws RosettaFileException If unable to create the template file from the Data object.
+     * @throws RosettaFileException If unable to create the template file.
      * @throws RosettaDataException If unable to parse data file with delimiter.
      */
     public String convertToNetcdf(String id) throws RosettaFileException, RosettaDataException {

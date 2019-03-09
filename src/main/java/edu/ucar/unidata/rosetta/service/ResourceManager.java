@@ -14,7 +14,8 @@ import edu.ucar.unidata.rosetta.domain.resources.Platform;
 import java.util.List;
 
 /**
- * Service for handling collected resource information.
+ * Service for handling collected resource information.  A resource is defined as
+ * common persisted persisted.
  */
 public interface ResourceManager {
 

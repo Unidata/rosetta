@@ -6,7 +6,7 @@
 package edu.ucar.unidata.rosetta.exceptions;
 
 /**
- * Rosetta Data object exception.
+ * Rosetta data-related exception.
  *
  * @author oxelson@ucar.edu
  */

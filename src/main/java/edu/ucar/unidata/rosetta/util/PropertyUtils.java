@@ -91,7 +91,7 @@ public class PropertyUtils {
     /**
      * Sets the data access object (DAO) for the RosettaProperties object.
      *
-     * @param propertiesDao The service DAO representing a Data object.
+     * @param propertiesDao The service DAO representing a Property object.
      */
     public void setPropertiesDao(PropertiesDao propertiesDao) {
         this.propertiesDao = propertiesDao;
