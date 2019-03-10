@@ -412,6 +412,7 @@ ul#delimiterList li {
 }
 
 #dialog #requiredMetadataAssignment input,
+#dialog #requiredMetadataAssignment select,
 #dialog #additionalMetadataAssignment input,
 #dialog #recommendedMetadataAssignment input {
   float: right;
@@ -439,6 +440,13 @@ ul#delimiterList li {
 #dialog #existingMetadataImporter label {
   padding: 0;
   margin: 5px;
+  width: 95%;
+}
+
+#dialog #unitBuilder span {
+  display: block;
+  float: left;
+  margin-left: 10px;
 }
 
 /* Dialog box unit builder label formatting for show unit builder section */
