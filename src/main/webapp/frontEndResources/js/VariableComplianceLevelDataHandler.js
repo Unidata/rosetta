@@ -125,6 +125,8 @@ var VariableComplianceLevelDataHandler = (function () {
      */
     function createComplianceLevelTagElement(key, metadataItem) {
         // Pull out the relevant data items for the metadataItem object and assign to variables.
+
+        // The tagName = tag displayed in compliance-level data section.
         var tagName = metadataItem.attributeName;
         var displayName = metadataItem.attributeName.replace(/_/g, " ");
         if (metadataItem.displayName) {
@@ -165,54 +167,86 @@ var VariableComplianceLevelDataHandler = (function () {
             "     " + helpTipElement + "\n";
 
         // Assign any matching stored compliance level data to the tagValue.
+        // NOTE: if the variableName inputted by the user exactly matches a standard_name, that
+        // standard_name value & the units are automatically saved to web storage (see DialogDomHandler.bindDialogEvents).
         var tagValue = VariableStorageHandler.getComplianceLevelVariableData(key, tagName, complianceLevel);
-        if (tagValue === undefined) {
+        if (tagValue === undefined) { // No stored value available for the compliance-level tag.
             tagValue = "";
 
-            // If tagValue is "" and the tag being created is the standard_name, we can see if there
-            // are any possible matching standard name to use.
             if (tagName === "standard_name") {
-                // Standard name dropdown
 
-                // Get the variable name inputted by the user from web storage.
-                var variableName = VariableStorageHandler.getVariableData(key, "name");
+                // There may be possible cf standard name matches for the provided variable name value.
+
+                // Get the variable name value inputted by the user from web storage.
+                var variableNameValue = VariableStorageHandler.getVariableData(key, "name");
                 // Get the possible matches from web storage.
-                var cfStandardMatches = VariableStorageHandler.getCfStandardMatches(variableName);
-                tag += "       <select name=\"standard_name\">\n";
-                if (cfStandardMatches !== null) {
-                    // Create a dropdown list fromthe matching standard_name selection.
+                var cfStandardMatches = VariableStorageHandler.getCfStandardMatches(variableNameValue);
+
+                // Create the standard name dropdown.
+                tag += "       <select name=\"standard_name\">";
+
+                if (cfStandardMatches !== null) {  // There are possible matches available in web storage.
+                    // Create dropdown options from the matching standard_name selection.
                     for (var key in cfStandardMatches) {
-                        tag += "  <option value=\"" + key + "\">" + key + "</option>\n";
+                        tag += "  <option value=\"" + key + "\">" + key + "</option>";
                     }
                 } else {
-                    // They need to selected the value from ALL cf standard names.
+                    // No matches were found and stored.  User needs to selected the value from ALL CF standard names.
                     var cfStandards = DialogDomHandler.getCFStandardInfo("*");
+                    // Create dropdown options from ALL the standard_names.  :-(
                     for (var key in cfStandards) {
-                        tag += "  <option value=\"" + cfStandards[key] + "\">" + cfStandards[key] + "</option>\n";
+                        tag += "  <option value=\"" + cfStandards[key] + "\">" + cfStandards[key] + "</option>";
                     }
                 }
-                tag +="      </select>\n";
+                tag = tag + "      </select>";
             } else {
-                // Input tag for everything else.
+                // Input tag for other compliance-level tags.
                 tag +=  "     <input id=\"" + tagName + "\" type=\"text\" name=\"" + tagName + "\" value=\"" + tagValue + "\" /> \n";
             }
 
-        } else {
-            // Value for tag exists.  Add to the tag.
+        } else {  // Stored value for the compliance-level tag exists.  Add to the tag.
+
             if (tagName === "standard_name") {
-                // Standard name dropdown
-                tag += "       <select name=\"standard_name\">\n";
-                var cfStandards = DialogDomHandler.getCFStandardInfo("*");
-                for (var key in cfStandards) {
-                    var selected = "";
-                    if (key === tagValue) {
-                        selected = "selected";
-                    }
-                    tag += "  <option value=\"" + cfStandards[key] + "\" selected>" + cfStandards[key] + "</option>\n";
+                // Get the possible matches held in web storage.
+                var cfStandardMatches = VariableStorageHandler.getCfStandardMatches(tagValue);
+
+                // Okay, we may be restoring values from a template.  In that case, there will be no
+                // corresponding possible matches in session storage, so look them up now:
+                if (cfStandardMatches === null) {
+                    cfStandardMatches = DialogDomHandler.getCFStandardInfo(tagValue);
                 }
-                tag +="      </select>/n";
+
+                // Create the standard name dropdown.
+                tag += "       <select name=\"standard_name\">";
+
+                if (cfStandardMatches !== null) {  // There are possible matches available in web storage.
+                    // Create dropdown options from the matching standard_name selection.
+                    for (var key in cfStandardMatches) {
+                        var selected;
+                        if (cfStandardMatches[key] === tagValue) {
+                            selected = "selected";
+                        } else {
+                            selected = "";
+                        }
+                        tag += "  <option value=\"" + cfStandardMatches[key] + "\" " + selected + ">" + cfStandardMatches[key] + "</option>";
+                    }
+                } else {
+                    // No matches were found and stored.  User needs to selected the value from ALL CF standard names.
+                    var cfStandards = DialogDomHandler.getCFStandardInfo("*");
+                    // Create dropdown options from ALL the standard_names.  :-(
+                    for (var key in cfStandards) {
+                        var selected;
+                        if (key === tagValue) {
+                            selected = "selected";
+                        } else {
+                            selected = "";
+                        }
+                        tag += "  <option value=\"" + cfStandards[key] + "\" " + selected + ">" + cfStandards[key] + "</option>";
+                    }
+                }
+                tag = tag + "      </select>";
             } else {
-                // Input tag for everything else.
+                // Input tag for other compliance-level tags.
                 tag +=  "     <input id=\"" + tagName + "\" type=\"text\" name=\"" + tagName + "\" value=\"" + tagValue + "\" /> \n";
             }
         }
