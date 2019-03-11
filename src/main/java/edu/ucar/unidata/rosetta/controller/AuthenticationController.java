@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -27,6 +27,7 @@ public class AuthenticationController {
      * @param model The Model used by the View.
      * @return The 'login' path for the ViewResolver.
      */
+    /*
     @RequestMapping(value = "/login/{error}", method = RequestMethod.GET)
     public String getLoginPage(@PathVariable String error, Model model) {
         logger.debug("Get login view.");
@@ -36,6 +37,7 @@ public class AuthenticationController {
         }
         return "login";
     }
+    */
 
     /**
      * Accepts a GET request for the login page. View is the login page.
@@ -43,11 +45,13 @@ public class AuthenticationController {
      * @param model The Model used by the View.
      * @return The 'login' path for the ViewResolver.
      */
+    /*
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String getLoginPage(Model model) {
         logger.debug("Get login view.");
         return "login";
     }
+    */
 
     /**
      * Accepts a GET request for the denied page. This is shown whenever a regular user tries to
@@ -55,9 +59,11 @@ public class AuthenticationController {
      *
      * @return The 'denied' path for the ViewResolver.
      */
+    /*
     @RequestMapping(value = "/denied", method = RequestMethod.GET)
     public String getDeniedPage() {
         logger.debug("Access denied.");
         return "denied";
     }
+    */
 }

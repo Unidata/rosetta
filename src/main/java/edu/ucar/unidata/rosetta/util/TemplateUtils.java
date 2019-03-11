@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -19,10 +19,12 @@ import ucar.nc2.Attribute;
 
 public class TemplateUtils {
 
+
+
     /**
      * Extract the global attributes from a template
      *
-     * Attribute are retuned in a map, where group is the key, and the value is a list of
+     * Attribute are returned in a map, where group is the key, and the value is a list of
      * netCDF-Java Attribute objects.
      *
      * @param template The template object which holds RosettaGlobalAttributes

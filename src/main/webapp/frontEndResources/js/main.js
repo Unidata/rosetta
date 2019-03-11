@@ -159,7 +159,7 @@ $(document).ready(function ($) {
    * STEP 5: global metadata.
    * toggle metadata sections
    */
-  $("h5.toggle").click(function () {
+  $(".toggle").click(function () {
     if ($(this).hasClass("expand")) {
       $(this).removeClass("expand");
       $(this).addClass("collapse");
@@ -169,6 +169,7 @@ $(document).ready(function ($) {
     }
 
     var corresponding = $(this).attr("id") + "Section";
+    console.log(corresponding);
     if ($("#" + corresponding).hasClass("hideMe")) {
       $("#" + corresponding).removeClass("hideMe");
     } else {

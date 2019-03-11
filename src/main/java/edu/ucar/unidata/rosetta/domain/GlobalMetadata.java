@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -101,7 +101,7 @@ public class GlobalMetadata {
     }
 
     /**
-     * String representation of this Data object.
+     * String representation of this object.
      *
      * @return The string representation.
      */

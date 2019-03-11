@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -14,7 +14,8 @@ import edu.ucar.unidata.rosetta.domain.resources.Platform;
 import java.util.List;
 
 /**
- * Service for handling collected resource information.
+ * Service for handling collected resource information.  A resource is defined as
+ * common persisted persisted.
  */
 public interface ResourceManager {
 

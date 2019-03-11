@@ -1,12 +1,15 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Random;
 
@@ -16,10 +19,10 @@ import edu.ucar.unidata.rosetta.repository.PropertiesDao;
 
 /**
  * Utils class with methods for accessing rosetta properties.
- *
- * @author oxelson@ucar.edu
  */
 public class PropertyUtils {
+
+    private static final Logger logger = Logger.getLogger(PropertyUtils.class);
 
     private static PropertiesDao propertiesDao;
 
@@ -69,9 +72,26 @@ public class PropertyUtils {
     }
 
     /**
+     * Returns the host name for the server running rosetta.
+     *
+     * @return the host name.
+     */
+    public static String getHostName() {
+        InetAddress ip;
+        String hostname = null;
+        try {
+            ip = InetAddress.getLocalHost();
+            hostname = ip.getHostName();
+        } catch (UnknownHostException e) {
+            logger.error(e);
+        }
+        return hostname;
+    }
+
+    /**
      * Sets the data access object (DAO) for the RosettaProperties object.
      *
-     * @param propertiesDao The service DAO representing a Data object.
+     * @param propertiesDao The service DAO representing a Property object.
      */
     public void setPropertiesDao(PropertiesDao propertiesDao) {
         this.propertiesDao = propertiesDao;

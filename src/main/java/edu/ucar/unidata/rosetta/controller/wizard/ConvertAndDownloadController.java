@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -40,7 +40,7 @@ public class ConvertAndDownloadController {
      * @param redirectAttrs  A specialization of the model to pass along message if redirected back to starting step.
      * @param request The HttpServletRequest used to retrieve the cookie.
      * @return View and the Model for the wizard to process.
-     * @throws RosettaFileException If unable to create the template file from the Data object.
+     * @throws RosettaFileException If unable to create the template file.
      * @throws RosettaDataException If unable to parse data file with delimiter.
      */
     @RequestMapping(value = "/convertAndDownload", method = RequestMethod.GET)

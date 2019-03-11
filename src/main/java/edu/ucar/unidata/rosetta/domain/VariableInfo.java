@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +24,33 @@ public class VariableInfo {
     private List<RosettaAttribute> variableMetadata;
 
     /**
+     * Override equals for VariableInfo.
+     */
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == this) return true;
+        if (!(obj instanceof VariableInfo)) {
+            return false;
+        }
+
+        VariableInfo vi = (VariableInfo) obj;
+
+        return columnId == vi.getColumnId() &&
+                Objects.equals(name, vi.getName()) &&
+                Objects.equals(rosettaControlMetadata, vi.getRosettaControlMetadata()) &&
+                Objects.equals(variableMetadata, vi.getVariableMetadata());
+    }
+
+    /**
+     * Override Object.hashCode() to implement equals.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(columnId, name, rosettaControlMetadata, variableMetadata);
+    }
+
+    /**
      * Returns ID of the column in the CSV file.
      *
      * @return The column ID.
@@ -32,30 +60,12 @@ public class VariableInfo {
     }
 
     /**
-     * Sets ID of the column in the CSV file.
-     *
-     * @param columnId The column ID.
-     */
-    public void setColumnId(int columnId) {
-        this.columnId = columnId;
-    }
-
-    /**
      * Returns the assigned name of the metadata item.
      *
      * @return The metadata name.
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Sets the assigned name of the metadata item.
-     *
-     * @param name The metadata name.
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
@@ -69,21 +79,39 @@ public class VariableInfo {
     }
 
     /**
-     * Sets the rosetta control metadata (used to determine/control the other metadata collected).
-     *
-     * @param rosettaControlMetadata The rosetta control metadata.
-     */
-    public void setRosettaControlMetadata(List<RosettaAttribute> rosettaControlMetadata) {
-        this.rosettaControlMetadata = rosettaControlMetadata;
-    }
-
-    /**
      * Returns the metadata specific to the variable.
      *
      * @return The variable metadata.
      */
     public List<RosettaAttribute> getVariableMetadata() {
         return variableMetadata;
+    }
+
+    /**
+     * Sets ID of the column in the CSV file.
+     *
+     * @param columnId The column ID.
+     */
+    public void setColumnId(int columnId) {
+        this.columnId = columnId;
+    }
+
+    /**
+     * Sets the assigned name of the metadata item.
+     *
+     * @param name The metadata name.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Sets the rosetta control metadata (used to determine/control the other metadata collected).
+     *
+     * @param rosettaControlMetadata The rosetta control metadata.
+     */
+    public void setRosettaControlMetadata(List<RosettaAttribute> rosettaControlMetadata) {
+        this.rosettaControlMetadata = rosettaControlMetadata;
     }
 
     /**
@@ -102,13 +130,13 @@ public class VariableInfo {
      */
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this, TransactionLogStyle.EMBEDDED_OBJECT_STYLE);
     }
 
     /**
      * update this VariableInfo object with new values from another VariableInfo object.
      *
-     * @param updatedVariableInfo
+     * @param updatedVariableInfo The VariableInfo object.
      */
     public void updateVariableInfo(VariableInfo updatedVariableInfo) {
 
@@ -150,32 +178,4 @@ public class VariableInfo {
             this.rosettaControlMetadata.removeIf(emptyValuePredicate);
         }
     }
-
-    /**
-     * Override equals for VariableInfo.
-     */
-    @Override
-    public boolean equals(Object obj) {
-
-        if (obj == this) return true;
-        if (!(obj instanceof VariableInfo)) {
-            return false;
-        }
-
-        VariableInfo vi = (VariableInfo) obj;
-
-        return columnId == vi.getColumnId() &&
-                Objects.equals(name, vi.getName()) &&
-                Objects.equals(rosettaControlMetadata, vi.getRosettaControlMetadata()) &&
-                Objects.equals(variableMetadata, vi.getVariableMetadata());
-    }
-
-    /**
-     * Override Object.hashCode() to implement equals.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(columnId, name, rosettaControlMetadata, variableMetadata);
-    }
-
 }

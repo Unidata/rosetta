@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -23,7 +23,7 @@ public interface WizardManager {
      *
      * @param id  The unique ID corresponding to this transaction.
      * @return  The location of the created netCDF file.
-     * @throws RosettaFileException If unable to create the template file from the Data object.
+     * @throws RosettaFileException If unable to create the template file.
      * @throws RosettaDataException If unable to parse data file with delimiter.
      */
     public String convertToNetcdf(String id) throws RosettaFileException, RosettaDataException;
@@ -62,7 +62,7 @@ public interface WizardManager {
      * @param request    HttpServletRequest used to make unique IDs for new data.
      * @throws RosettaDataException If unable to lookup the metadata profile.
      */
-    public void processCfType(String id, WizardData wizardData, HttpServletRequest request) throws RosettaDataException;
+    public void processCfType(String id, WizardData wizardData, HttpServletRequest request) throws RosettaDataException, RosettaFileException;
 
     /**
      * Processes the data submitted by the user containing custom data file attributes.

@@ -168,11 +168,19 @@ var GlobalMetadata = (function () {
             );
 
             for (const [complianceLevel, tags] of complianceLevelsMap.entries()) {
-                var complianceLevelTitle = complianceLevel.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-                $("#globalMetadataAssignment #" + metadataGroup + " #"+ metadataGroup + "ToggleSection").append("<p><b>" + complianceLevelTitle + " Metadata:</b></p>");
-                $("#globalMetadataAssignment #" + metadataGroup + " #"+ metadataGroup + "ToggleSection").append("<ul id=\"" + complianceLevel + "\"></ul>");
+                var complianceLevelTitle = complianceLevel.replace(/\w\S*/g, function(txt){
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+                var complianceLevelStatus = "collapse";
+                var complianceLevelClass = "";
+                if (complianceLevelTitle !== "Required") {
+                    complianceLevelStatus = "expand";
+                    complianceLevelClass = "hideMe";
+                }
+                $("#globalMetadataAssignment #" + metadataGroup + " #"+ metadataGroup + "ToggleSection").append("<b id=\"" + metadataGroup + complianceLevelTitle + "Toggle\" class=\"toggle " + complianceLevelStatus + "\">" + complianceLevelTitle + " Metadata</b>");
+                $("#globalMetadataAssignment #" + metadataGroup + " #"+ metadataGroup + "ToggleSection").append("<ul id=\"" + metadataGroup + complianceLevelTitle + "ToggleSection\" class=\"" + complianceLevelClass + "\"></ul>");
                  for (var i = 0; i < tags.length; i++) {
-                    $("#globalMetadataAssignment #" + metadataGroup + " ul#" + complianceLevel).append(tags[i]);
+                    $("#globalMetadataAssignment #" + metadataGroup + " ul#" + metadataGroup + complianceLevelTitle + "ToggleSection").append(tags[i]);
                  }
             }
         }

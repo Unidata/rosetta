@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -33,7 +33,7 @@ public class VariableInfoUtils {
             Arrays.asList(relativeTime, timeOnly, dateOnly, fullDateTime);
 
     /**
-     * Check if a VariableiInfo object contains information, or if it is to be ignored.
+     * Check if a VariableInfo object contains information, or if it is to be ignored.
      *
      * @param vi - VariableInfo object to check if used
      * @return <code>true</code> if used; <code>false</code> otherwise

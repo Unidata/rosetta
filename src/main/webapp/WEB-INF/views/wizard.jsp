@@ -14,9 +14,10 @@ The default index page gets redirected to here.
       <%@ include file="/WEB-INF/views/jspf/common/javascript.jspf" %>
       <%@ include file="/WEB-INF/views/jspf/common/css.jspf" %>
       <script type="text/javascript">
-        var platformMetadata = [];
-        var globalMetadata = [];
-        var publisherInfo = [];
+        //var platformMetadata = [];
+        //var globalMetadata = [];
+        //var publisherInfo = [];
+
       </script>
     </head>
     <body>

@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 package edu.ucar.unidata.rosetta.service.wizard;
+
 import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
 import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
@@ -11,7 +12,6 @@ import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.Variable;
 import edu.ucar.unidata.rosetta.domain.VariableInfo;
 import edu.ucar.unidata.rosetta.domain.VariableMetadata;
-import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.repository.wizard.GlobalMetadataDao;
@@ -19,17 +19,16 @@ import edu.ucar.unidata.rosetta.repository.wizard.VariableDao;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.ServerInfoBean;
 
-import edu.ucar.unidata.rosetta.util.JsonUtil;
-
+import edu.ucar.unidata.rosetta.util.JsonUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
+import edu.ucar.unidata.rosetta.util.TransactionLogUtils;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,18 +46,12 @@ import org.apache.log4j.Logger;
  */
 public class TemplateManagerImpl implements TemplateManager {
 
-    private VariableDao variableDao;
     private GlobalMetadataDao globalMetadataDao;
+    private VariableDao variableDao;
 
     private static final String  TEMPLATE_VERSION = "1.0";
 
     private static final Logger logger = Logger.getLogger(TemplateManagerImpl.class);
-
-    @Resource(name = "uploadedFileManager")
-    private UploadedFileManager uploadedFileManager;
-
-    @Resource(name = "wizardManager")
-    private WizardManager wizardManager;
 
     @Resource(name = "metadataManager")
     private MetadataManager metadataManager;
@@ -66,11 +59,21 @@ public class TemplateManagerImpl implements TemplateManager {
     @Resource(name = "resourceManager")
     private ResourceManager resourceManager;
 
+    @Resource(name = "wizardManager")
+    private WizardManager wizardManager;
+
+    /**
+     * Retrieves persisted data to create a Template object which is used to
+     * write to a template file and a transaction log.
+     *
+     * @param id    The unique transaction ID associated with this template.
+     * @return  A Template object.
+     * @throws RosettaFileException  If unable to create the template file.
+     */
     public Template createTemplate(String id) throws RosettaFileException {
 
         // Get the persisted data.
         WizardData wizardData = wizardManager.lookupPersistedWizardDataById(id);
-        UploadedFileCmd uploadedFileCmd = uploadedFileManager.lookupPersistedDataById(id);
 
         // Create the template.
         Template template = new Template();
@@ -134,7 +137,6 @@ public class TemplateManagerImpl implements TemplateManager {
             template.setVariableInfoList(variableInfoList);
         }
 
-
         // RosettaGlobalAttribute
         List<GlobalMetadata> globalMetadata = globalMetadataDao.lookupGlobalMetadata(id);
         List<RosettaGlobalAttribute> rosettaGlobalAttributes = new ArrayList<>();
@@ -147,8 +149,6 @@ public class TemplateManagerImpl implements TemplateManager {
         }
         template.setGlobalMetadata(rosettaGlobalAttributes);
 
-
-
         // Providence data.
         template.setTemplateVersion(TEMPLATE_VERSION);
         template.setRosettaVersion(ServerInfoBean.getVersion());
@@ -158,16 +158,9 @@ public class TemplateManagerImpl implements TemplateManager {
         String date = dateFormat.format(new Date());
         template.setCreationDate(date);
 
-        InetAddress ip;
-        String hostname = null;
-        try {
-            ip = InetAddress.getLocalHost();
-            hostname = ip.getHostName();
-        } catch (UnknownHostException e) {
-            logger.error(e);
-        }
-        template.setServerId(hostname);
+        template.setServerId(PropertyUtils.getHostName());
 
+        // Create the template file or die trying.
         try {
             writeTemplateToFile(template, id);
         } catch (IOException e) {
@@ -180,25 +173,42 @@ public class TemplateManagerImpl implements TemplateManager {
 
     }
 
-    private void writeTemplateToFile(Template template, String id) throws RosettaFileException, IOException {
-        String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
-        File userFilesDir = new File(userFilesDirPath);
-        if (!userFilesDir.exists()) {
-            logger.info("Creating user files directory at " + userFilesDir.getPath());
-            if (!userFilesDir.mkdirs()) {
-                throw new RosettaFileException("Unable to create user files directory for " + id);
+
+    /**
+     * Consults the list of provided MetadataProfile objects to get the
+     * metadata value type (e.g.: data type) of the metadata attribute value
+     * provided in the VariableMetadata object. As per:
+     * https://github.com/Unidata/rosetta/wiki/Metadata-Profile-Schema
+     *
+     * @param metadataProfiles  List of MetadataProfile objects to consult.
+     * @param variableMetadata  The VariableMetadata object containing the variable metadata.
+     * @return  The metadata value type.
+     */
+    private String getMetadataValueType(List<MetadataProfile> metadataProfiles, VariableMetadata variableMetadata) {
+        String metadataValueType = null;
+        for (MetadataProfile metadataProfile : metadataProfiles) {
+            String complianceLevel = variableMetadata.getComplianceLevel();
+            if (complianceLevel.equals("additional")) {
+                complianceLevel = "optional";
+            }
+            if (metadataProfile.getAttributeName().equals(variableMetadata.getMetadataKey())) {
+                if (metadataProfile.getComplianceLevel().equals(complianceLevel)) {
+                    metadataValueType = metadataProfile.getMetadataValueType().toUpperCase();
+                    break;
+                }
             }
         }
-
-        String templateFilePath = FilenameUtils.concat(userFilesDirPath, "rosetta.template");
-        String jsonString = JsonUtil.mapObjectToJson(template);
-
-        try (BufferedWriter bufferedWriter = new BufferedWriter(
-            new FileWriter(new File(templateFilePath)))) {
-            bufferedWriter.write(jsonString);
-        }
+        return metadataValueType;
     }
 
+    /**
+     * Gleans information from the provided Variable object to populate the
+     * "control metadata" in a VariableInfo object (used for Template creation).
+     * As per: https://github.com/Unidata/rosetta/wiki/Rosetta-Template-Attributes
+     *
+     * @param variable  The Variable object.
+     * @return  A list of RosettaAttribute objects containing the control metadata.
+     */
     private List<RosettaAttribute> populateRosettaControlMetadata(Variable variable) {
 
         List<RosettaAttribute> rosettaControlMetadata = new ArrayList<>();
@@ -246,7 +256,15 @@ public class TemplateManagerImpl implements TemplateManager {
         return rosettaControlMetadata;
     }
 
-
+    /**
+     * Gleans information from the provided list of VariableMetadata objects to populate the
+     * "variable data" in a VariableInfo object (used for Template creation), as per:
+     * as per: https://github.com/Unidata/rosetta/wiki/Rosetta-Template-Attributes
+     *
+     * @param requiredMetadata  A list of VariableMetadata objects.
+     * @param metadataProfiles  A list of MetadataProfile objects (for setting the metadata value type).
+     * @return A list of RosettaAttribute objects containing the variable data.
+     */
     private List<RosettaAttribute> populateVariableData(List<VariableMetadata> requiredMetadata, List<MetadataProfile> metadataProfiles) {
         List<RosettaAttribute> rosettaAttributes = new ArrayList<>();
         int i = 0;
@@ -263,21 +281,13 @@ public class TemplateManagerImpl implements TemplateManager {
         return rosettaAttributes;
     }
 
-    private String getMetadataValueType(List<MetadataProfile> metadataProfiles, VariableMetadata variableMetadata) {
-        String metadataValueType = null;
-        for (MetadataProfile metadataProfile : metadataProfiles) {
-            String complianceLevel = variableMetadata.getComplianceLevel();
-            if (complianceLevel.equals("additional")) {
-                complianceLevel = "optional";
-            }
-            if (metadataProfile.getAttributeName().equals(variableMetadata.getMetadataKey())) {
-                if (metadataProfile.getComplianceLevel().equals(complianceLevel)) {
-                     metadataValueType = metadataProfile.getMetadataValueType().toUpperCase();
-                    break;
-                }
-            }
-        }
-        return metadataValueType;
+    /**
+     * Sets the data access object (DAO) for the GlobalMetadata object.
+     *
+     * @param globalMetadataDao The service DAO representing a GlobalMetadata object.
+     */
+    public void setGlobalMetadataDao(GlobalMetadataDao globalMetadataDao) {
+        this.globalMetadataDao = globalMetadataDao;
     }
 
     /**
@@ -290,12 +300,36 @@ public class TemplateManagerImpl implements TemplateManager {
     }
 
     /**
-     * Sets the data access object (DAO) for the GlobalMetadata object.
+     * Creates a template file using the information in the provided Template object.
      *
-     * @param globalMetadataDao The service DAO representing a GlobalMetadata object.
+     * @param template  The Template object.
+     * @param id  The unique transaction ID associated with this Template object.
+     * @throws RosettaFileException  If unable to create the required directory (if needed).
+     * @throws IOException  If unable to create the template file.
      */
-    public void setGlobalMetadataDao(GlobalMetadataDao globalMetadataDao) {
-        this.globalMetadataDao = globalMetadataDao;
+    private void writeTemplateToFile(Template template, String id) throws RosettaFileException, IOException {
+        // Just in case the needed directory hasn't been created.
+        String userFilesDirPath = FilenameUtils.concat(PropertyUtils.getUserFilesDir(), id);
+        File userFilesDir = new File(userFilesDirPath);
+        if (!userFilesDir.exists()) {
+            logger.info("Creating user files directory at " + userFilesDir.getPath());
+            if (!userFilesDir.mkdirs()) {
+                throw new RosettaFileException("Unable to create user files directory for " + id);
+            }
+        }
+
+        // Convert Template object to JSON string.
+        String jsonString = JsonUtils.mapObjectToJson(template);
+
+        // Write the template file.
+        String templateFilePath = FilenameUtils.concat(userFilesDirPath, "rosetta.template");
+        try (BufferedWriter bufferedWriter = new BufferedWriter(
+                new FileWriter(new File(templateFilePath)))) {
+            bufferedWriter.write(jsonString);
+        }
+
+        // Update the transaction log.
+        TransactionLogUtils.writeToLog(id, template.toString());
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -23,10 +23,11 @@ import edu.ucar.unidata.rosetta.repository.wizard.UploadedFileDao;
 import edu.ucar.unidata.rosetta.repository.wizard.VariableDao;
 import edu.ucar.unidata.rosetta.repository.wizard.WizardDataDao;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
-import edu.ucar.unidata.rosetta.util.JsonUtil;
+import edu.ucar.unidata.rosetta.util.JsonUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import edu.ucar.unidata.rosetta.util.TemplateFactory;
 
+import edu.ucar.unidata.rosetta.util.TransactionLogUtils;
 import ucar.ma2.InvalidRangeException;
 
 
@@ -99,7 +100,7 @@ public class WizardManagerImpl implements WizardManager {
      *
      * @param id  The unique ID corresponding to this transaction.
      * @return  The location of the created netCDF file.
-     * @throws RosettaFileException If unable to create the template file from the Data object.
+     * @throws RosettaFileException If unable to create the template file.
      * @throws RosettaDataException If unable to parse data file with delimiter.
      */
     public String convertToNetcdf(String id) throws RosettaFileException, RosettaDataException {
@@ -269,7 +270,7 @@ public class WizardManagerImpl implements WizardManager {
         if (variables.size() > 0) {
             StringBuilder variableMetadata = new StringBuilder("[");
             for (Variable variable : variables) {
-                String jsonVariable = JsonUtil.convertVariableDataToJson(variable);
+                String jsonVariable = JsonUtils.convertVariableDataToJson(variable);
                 variableMetadata.append(jsonVariable).append(",");
             }
             variableMetadata = new StringBuilder(variableMetadata.substring(0, variableMetadata.length() - 1) + "]");
@@ -407,10 +408,13 @@ public class WizardManagerImpl implements WizardManager {
      */
     @Override
     public void processCfType(String id, WizardData wizardData, HttpServletRequest request)
-            throws RosettaDataException {
+            throws RosettaDataException, RosettaFileException {
 
         // If the ID is present, then there is a cookie.  Combine new with previous persisted data.
         if (id != null) {
+
+            // Create the transaction log.
+            TransactionLogUtils.createLog(id);
 
             // Get the persisted CF type data corresponding to this ID.
             WizardData persistedData = lookupPersistedWizardDataById(id);
@@ -448,6 +452,9 @@ public class WizardManagerImpl implements WizardManager {
 
             // Create a unique ID for this object.
             wizardData.setId(PropertyUtils.createUniqueDataId(request));
+
+            // Create the transaction log.
+            TransactionLogUtils.createLog(wizardData.getId());
 
             // Set the community if applicable.
             if (wizardData.getPlatform() != null) {
@@ -500,7 +507,7 @@ public class WizardManagerImpl implements WizardManager {
     @Override
     public void processGlobalMetadata(String id, WizardData wizardData) throws RosettaDataException {
         // Parse the JSON to get GlobalMetadata objects.
-        List<GlobalMetadata> globalMetadata = JsonUtil.convertGlobalDataFromJson(wizardData.getGlobalMetadata());
+        List<GlobalMetadata> globalMetadata = JsonUtils.convertGlobalDataFromJson(wizardData.getGlobalMetadata());
 
         // Look up any persisted data corresponding to the id.
         List<GlobalMetadata> persisted = globalMetadataDao.lookupGlobalMetadata(id);
@@ -569,7 +576,7 @@ public class WizardManagerImpl implements WizardManager {
     @Override
     public void processVariableMetadata(String id, WizardData wizardData) {
         // Parse the JSON to get Variable objects.
-        List<Variable> variables = JsonUtil.convertVariableDataFromJson(wizardData.getVariableMetadata());
+        List<Variable> variables = JsonUtils.convertVariableDataFromJson(wizardData.getVariableMetadata());
         // Look up any persisted data corresponding to the id.
         // (If we are restoring from a template, or using the back button, there will be persisted data.)
         List<Variable> persisted = variableDao.lookupVariables(id);

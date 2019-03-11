@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -20,22 +20,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 
 /**
  * JSON conversion utilities.
  */
-public class JsonUtil {
+public class JsonUtils {
 
-    protected static final Logger logger = Logger.getLogger(JsonUtil.class);
+    protected static final Logger logger = Logger.getLogger(JsonUtils.class);
 
     /**
      * Converts the data held in a list of VariableMetadata objects into a string of JSON data.

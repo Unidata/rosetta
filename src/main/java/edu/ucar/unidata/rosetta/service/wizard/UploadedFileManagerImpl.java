@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.service.wizard;
-import com.google.errorprone.annotations.Var;
 
 import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
-import edu.ucar.unidata.rosetta.domain.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
 import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
 import edu.ucar.unidata.rosetta.domain.Template;
@@ -23,7 +21,7 @@ import edu.ucar.unidata.rosetta.repository.wizard.GlobalMetadataDao;
 import edu.ucar.unidata.rosetta.repository.wizard.UploadedFileDao;
 import edu.ucar.unidata.rosetta.repository.wizard.VariableDao;
 import edu.ucar.unidata.rosetta.repository.wizard.WizardDataDao;
-import edu.ucar.unidata.rosetta.util.JsonUtil;
+import edu.ucar.unidata.rosetta.util.JsonUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 
 import org.apache.commons.io.FilenameUtils;
@@ -146,7 +144,7 @@ public class UploadedFileManagerImpl implements UploadedFileManager {
         String jsonString = this.fileManager.getJsonStringFromTemplateFile(PropertyUtils.getUserFilesDir(), id, templateFile.getFileName());
         try {
             // Get the template data in the form of a Template object.
-            Template templateData = JsonUtil.mapJsonToTemplateObject(jsonString);
+            Template templateData = JsonUtils.mapJsonToTemplateObject(jsonString);
 
             // Get persisted wizard data from the template.
             WizardData wizardData = wizardDataDao.lookupWizardDataById(id);

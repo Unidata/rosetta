@@ -151,9 +151,11 @@ var UnitBuilder = (function () {
             "      <select name=\"unitSelected\">\n" +
             "      </select>\n" +
             "     </label>\n" +
-            "     <img src=\"resources/img/add.png\" id=\"unitBuilderChooser\" alt=\"Add To Units\" class=\"hideMe\" /> \n" +
-            "     <img src=\"resources/img/remove.png\" id=\"unitBuilderChooser\" alt=\"Remove From Units\" class=\"hideMe\"/> \n" +
-            "     <label class=\"error\"></label>";
+            "     <span>" +
+            "      <img src=\"resources/img/add.png\" id=\"unitBuilderChooser\" alt=\"Add To Units\" class=\"hideMe\" /> \n" +
+            "      <img src=\"resources/img/remove.png\" id=\"unitBuilderChooser\" alt=\"Remove From Units\" class=\"hideMe\"/> \n" +
+            "      <label class=\"error\"></label>" +
+            "     </span>";
 
         // Add the additional selection menu tags but hide until activated
         $("#dialog #requiredMetadataAssignment #unitBuilder .error").remove();

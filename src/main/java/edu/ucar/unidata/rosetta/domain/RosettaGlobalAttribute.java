@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -7,36 +7,21 @@
 package edu.ucar.unidata.rosetta.domain;
 
 import java.util.Objects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
+/**
+ * Class representing a Rosetta Attribute for Global data
+ * (as per https://github.com/Unidata/rosetta/wiki/Rosetta-Template-Attributes#variableinfo-object-information)
+ */
 public class RosettaGlobalAttribute extends RosettaAttribute {
 
     private String group;
     private static String DEFAULT_GROUP = "root";
 
     /**
-     * Returns the group to which attribute belongs.
-     *
-     * @return The attribute name.
-     */
-    public String getGroup() {
-        // never return a null group - at least default to "root"
-        return (group != null) ? group : DEFAULT_GROUP;
-    }
-
-    /**
-     * Set the group to which attribute belongs (example: Meta_eTuff/device)
-     *
-     * @param group name of the attribute
-     */
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    /**
      * noop constructor
      */
-    public RosettaGlobalAttribute() {
-    }
+    public RosettaGlobalAttribute() {}
 
     /**
      * Hold information about a global attribute
@@ -68,7 +53,7 @@ public class RosettaGlobalAttribute extends RosettaAttribute {
     }
 
     /**
-     * Override equals() for RosettaAttribute.
+     * Override equals() for RosettaGlobalAttribute.
      */
     @Override
     public boolean equals(Object obj) {
@@ -81,9 +66,9 @@ public class RosettaGlobalAttribute extends RosettaAttribute {
         RosettaGlobalAttribute rga = (RosettaGlobalAttribute) obj;
 
         return Objects.equals(super.getName(), rga.getName()) &&
-               Objects.equals(super.getValue(), rga.getValue()) &&
-               Objects.equals(super.getType(), rga.getType()) &&
-               Objects.equals(this.group, rga.getGroup());
+                Objects.equals(super.getValue(), rga.getValue()) &&
+                Objects.equals(super.getType(), rga.getType()) &&
+                Objects.equals(this.group, rga.getGroup());
     }
 
     /**
@@ -95,4 +80,32 @@ public class RosettaGlobalAttribute extends RosettaAttribute {
         return Objects.hash(superHash, this.group);
     }
 
+    /**
+     * Returns the group to which attribute belongs.
+     *
+     * @return The attribute name.
+     */
+    public String getGroup() {
+        // never return a null group - at least default to "root"
+        return (group != null) ? group : DEFAULT_GROUP;
+    }
+
+    /**
+     * Set the group to which attribute belongs (example: Meta_eTuff/device)
+     *
+     * @param group name of the attribute
+     */
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    /**
+     * String representation of this object.
+     *
+     * @return The string representation.
+     */
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, TransactionLogStyle.EMBEDDED_OBJECT_STYLE);
+    }
 }

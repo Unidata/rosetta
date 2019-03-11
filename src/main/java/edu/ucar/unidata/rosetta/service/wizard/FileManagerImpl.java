@@ -1,12 +1,13 @@
 /*
- * Copyright (c) 2012-2018 University Corporation for Atmospheric Research/Unidata
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-import edu.ucar.unidata.rosetta.util.JsonUtil;
+import edu.ucar.unidata.rosetta.util.IoUtils;
+import edu.ucar.unidata.rosetta.util.JsonUtils;
 import edu.ucar.unidata.rosetta.util.XlsToCsvUtil;
 
 import java.io.BufferedReader;
@@ -21,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -67,33 +67,7 @@ public class FileManagerImpl implements FileManager {
         return csvFileName;
     }
 
-    /**
-     * Creates a subdirectory in the Rosetta user_files directory with the name of the provided
-     * unique ID, into which converted data files and Rosetta templates will be stashed and made
-     * available for download by the user.
-     *
-     * @param userFilesDir The path to the Rosetta user files directory.
-     * @param id           The unique ID that will become the name of the subdirectory.
-     * @return The full path name to the created user files subdirectory.
-     * @throws RosettaFileException If unable to create user files subdirectory.
-     */
-    public String createUserFilesSubDirectory(String userFilesDir, String id)
-            throws RosettaFileException {
-        String filePathUserFilesDir = FilenameUtils.concat(userFilesDir, id);
 
-        // File-ize the download subdirectory.
-        File localFileDir = new File(filePathUserFilesDir);
-
-        // Check to see if the download subdirectory has been created yet; if not, create it.
-        if (!localFileDir.exists()) {
-            if (!localFileDir.mkdirs()) {
-                throw new RosettaFileException(
-                        "Unable to create " + id + " subdirectory in user_files directory.");
-            }
-        }
-
-        return filePathUserFilesDir;
-    }
 
     /**
      * Opens the given template file on disk and returns the contents as a string.
@@ -139,7 +113,7 @@ public class FileManagerImpl implements FileManager {
             while ((currentLine = bufferedReader.readLine()) != null) {
                 fileContents.add(StringEscapeUtils.escapeHtml4(currentLine));
             }
-            jsonFileData = JsonUtil.mapObjectToJson(fileContents);
+            jsonFileData = JsonUtils.mapObjectToJson(fileContents);
         } catch (IOException e) {
             throw new RosettaFileException("Unable to parse file by line: " + e);
         }
@@ -168,7 +142,7 @@ public class FileManagerImpl implements FileManager {
                                           CommonsMultipartFile file) throws RosettaFileException {
 
         // Create full file path to user file subdirectory.
-        String filePathUploadDir = createUserFilesSubDirectory(userFilesDirPath, id);
+        String filePathUploadDir = IoUtils.createUserFilesSubDirectory(id);
 
         logger.info("Writing uploaded file " + fileName + " to disk");
         File uploadedFile = new File(FilenameUtils.concat(filePathUploadDir, fileName));

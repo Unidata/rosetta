@@ -21,13 +21,6 @@
 function gridForVariableSpecification(grid, fileData, columns, rows, LineNumberFormatter,
                                       delimiter) {
 
-    // Load standard names for variable name input.
-    DialogDomHandler.loadCFStandards();
-    // Load the Unit Builder data.
-    UnitBuilder.loadUnitBuilderData();
-    // Load CF standard units (will automatically add units if standard name is inputted by user).
-    DialogDomHandler.loadCFStandardUnits();
-
     // SlickGrid options.
     var options = {
         editable: false,
@@ -253,64 +246,58 @@ function bindHeaderButtonsPluginEvent(headerButtonsPlugin, colNumber, grid) {
         if (args.command === "setVariable") {
             $(function () {
                 // Specify jQuery dialog widget options.
-                $("#dialog").dialog({
-                                        closeOnEscape: false,
-                                        title: "Enter Variable Attributes",
-                                        width: 500,
-                                        modal: true,
-                                        buttons: {
-                                            "done": function () {
-                                                //validateVariableData(variableKey, true);
-                                                // only if we don't have any errors
-                                                if ($("#dialog").find("label.error").text()
-                                                    === "") {
+                $("#dialog")
+                    .dialog({
+                        closeOnEscape: false,
+                        title: "Enter Variable Attributes",
+                        width: 900,
+                        modal: true,
+                        buttons: {
+                            "done": function () {
+                                //validateVariableData(variableKey, true);
+                                // only if we don't have any errors
+                                if ($("#dialog").find("label.error").text() === "") {
 
-                                                    // Get the variable name, assign to the column
-                                                    // and update the header with the value
-                                                    var variableName = VariableStorageHandler.getVariableData(
-                                                        variableKey, "name");
-                                                    grid.updateColumnHeader(id, variableName,
-                                                                            "column " + id + ": "
-                                                                            + variableName);
+                                    // Get the variable name, assign to the column
+                                    // and update the header with the value
+                                    var variableName = VariableStorageHandler.getVariableData(variableKey, "name");
+                                    grid.updateColumnHeader(id, variableName, "column " + id + ": " + variableName);
 
-                                                    // Make sure the column is enabled/disabled
-                                                    // depending on the user's choice.
-                                                    checkIfColumnIsDisabled(colNumber, grid);
+                                    // Make sure the column is enabled/disabled
+                                    // depending on the user's choice.
+                                    checkIfColumnIsDisabled(colNumber, grid);
 
-                                                    // have all the columns been handled?
-                                                    testIfComplete(colNumber);
+                                    // Have all the columns been handled?
+                                    testIfComplete(colNumber);
 
-                                                    $(this).dialog("close");
-                                                }
-                                            },
-                                            "cancel": function () {
-                                                // remove variable info from variableMetadata value
-                                                // field
-                                                VariableStorageHandler.resetVariableData(
-                                                    variableKey);
+                                    $(this).dialog("close");
+                                }
+                            },
+                            "cancel": function () {
 
-                                                // ugh!  Kludge to counter the fact the grid header
-                                                // button resets to previous options if revisiting
-                                                // dialog.
-                                                checkIfColumnIsDisabled(colNumber, grid);
+                                // remove variable info from variableMetadata value field
+                                VariableStorageHandler.resetVariableData(variableKey);
 
-                                                // have all the columns been handled?
-                                                testIfComplete(colNumber);
-                                                $(this).dialog("close");
+                                // Ugh!  Kludge to counter the fact the grid header button resets to
+                                // previous options if revisiting dialog.
+                                checkIfColumnIsDisabled(colNumber, grid);
 
-                                            }
-                                        },
-                                        open: function () {
-                                            $(document).on("keypress", (function (e) {
-                                                if (e.which === 13) {
-                                                    $("button:contains('done')").trigger("click");
-                                                }
-                                            }));
-                                        },
-                                        close: function () {
-                                            $(document).off("keypress");
-                                        }
-                                    });
+                                // Have all the columns been handled?
+                                testIfComplete(colNumber);
+                                $(this).dialog("close");
+                            }
+                        },
+                        open: function () {
+                            $(document).on("keypress", (function (e) {
+                                if (e.which === 13) {
+                                    $("button:contains('done')").trigger("click");
+                                }
+                            }));
+                        },
+                        close: function () {
+                            $(document).off("keypress");
+                        }
+                    });
 
                 // Add content to the dialog widget and bind event handlers.
                 DialogDomHandler.addContentToDialog(variableKey);
@@ -457,5 +444,34 @@ function enableColumn(node) {
     $(node).removeClass("columnDisabled");
 }
 
+/**
+ * Populates the cfStandards array with data from the cf-standard-name-table.xml file.
+ */
+function loadCFStandards() {
+    $.get("resources/cf-standard-name-table.xml",
+          function (data) {
+              var s = [];
+              $(data).find("entry").each(function () {
+                  s.push($(this).attr("id"));
+              });
+              cfStandards = s;
+          },
+          "xml");
+}
+
+/**
+ * Populates the cfStandardsUnits object with data from the cf-standard-name-table.xml file.
+ */
+function loadCFStandardUnits() {
+    $.get("resources/cf-standard-name-table.xml",
+          function (data) {
+              var u = {};
+              $(data).find("entry").each(function () {
+                  u[$(this).attr("id")] = $(this).find("canonical_units").text();
+              });
+              cfStandardUnits = u;
+          },
+          "xml");
+}
 
 
