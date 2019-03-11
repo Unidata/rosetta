@@ -191,10 +191,6 @@ var DialogDomHandler = (function () {
             }
         });
 
-
-        // variable name
-        //$("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").autocomplete({ source: cfStandards, delay: 1});
-
         // Variable name assignment.
         $("#dialog #variableNameTypeAssignment input[name=\"variableName\"]").focusout(function () {
 
@@ -215,6 +211,7 @@ var DialogDomHandler = (function () {
 
                 // If the matching cfStandardInfo array contains only one item, use that item for the standard_name & units.
                 if (cfStandardInfo.length === 1) {
+
                     // Update the stored variable data with the standard name.
                     VariableStorageHandler.storeComplianceLevelVariableData(key, "standard_name", cfStandardInfo[0], "required");
                     // Automatically add any corrsponding units.
@@ -231,6 +228,9 @@ var DialogDomHandler = (function () {
                     
                 } else {  // Multiple options for the CF standard name exist.
 
+                    // Remove any prior match data from web storage.
+                    VariableStorageHandler.removeCfStandardMatches(variableName);
+
                     // If the matching cfStandardInfo array contains exactly the variableName (user inputted the standard name)
                     // use that item for the standard_name & units.
                     if (cfStandardInfo.includes(variableName)) {
@@ -244,19 +244,16 @@ var DialogDomHandler = (function () {
                                 VariableStorageHandler.storeComplianceLevelVariableData(key, "units", units, "required");
                             }
                         }
-
-                        // Remove any prior match data from web storage.
-                        VariableStorageHandler.removeCfStandardMatches(variableName);
-
-                    } else {
-                        // Store the possible values for user selection later.
-                        var standardNameMatches = {};
-                        for (var i = 0; i < cfStandardInfo.length; i++) {
-                            var standardName = cfStandardInfo[i];
-                            standardNameMatches[standardName] = cfStandardUnits[cfStandardInfo[i]];
-                        }
-                        VariableStorageHandler.storeCfStandardMatches(variableName, JSON.stringify(standardNameMatches));
                     }
+
+                    // Store the possible values for user selection later in dropdown menu.
+                    var standardNameMatches = {};
+                    for (var i = 0; i < cfStandardInfo.length; i++) {
+                        var standardName = cfStandardInfo[i];
+                        standardNameMatches[standardName] = cfStandardUnits[cfStandardInfo[i]];
+                    }
+                    VariableStorageHandler.storeCfStandardMatches(variableName, JSON.stringify(standardNameMatches));
+
                 }
             } else {
                 // No matching CF standard information.  Remove any such prior entry from web storage.
@@ -271,7 +268,7 @@ var DialogDomHandler = (function () {
             }
         });
 
-        // existing metadata importer activation: toggle existing metadata importer box
+        // Existing metadata importer activation: toggle existing metadata importer box
         $("#dialog #variableNameTypeAssignment input[type=\"checkbox\"]").bind("click", function () {
             $("#dialog #variableNameTypeAssignment #metadataImporter").toggleClass("hideMe");
             MetadataImporter.create(key);
@@ -485,17 +482,26 @@ var DialogDomHandler = (function () {
      * @return an array containing matching Cf Standard names. (Can be empty if no matches found).
      */
     function getCFStandardInfo(variableName) {
+        // If all are specified, return all the available CF names.
         if (variableName === "*") {
             return cfStandards;
         }
         var cfStandardMatches = [];
 
-        // Split the provided variable name.
+        // Split the provided variable name if it contains more than one word.
         var variableNamePieces = variableName.replace(/_/g, " ").split(" ");
+        // Find any matches for each of the variable name words.
         for (var j = 0; j < variableNamePieces.length; j++) {
             for (var i = 0; i < cfStandards.length; i++) {
+                // Check match of whole word.
                 var cfStandardNamePieces = cfStandards[i].split("_");
                 if (cfStandardNamePieces.includes(variableNamePieces[j])) {
+                    if (!cfStandardMatches.includes(cfStandards[i])) { // No duplicates.
+                        cfStandardMatches.push(cfStandards[i]);
+                    }
+                }
+                // Check for partial match of word (e.g., temp matches temperature)
+                if (cfStandards[i].indexOf(variableNamePieces[j]) >= 0) {
                     if (!cfStandardMatches.includes(cfStandards[i])) { // No duplicates.
                         cfStandardMatches.push(cfStandards[i]);
                     }
