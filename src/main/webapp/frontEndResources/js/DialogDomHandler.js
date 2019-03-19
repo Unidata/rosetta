@@ -200,6 +200,11 @@ var DialogDomHandler = (function () {
             // Assign the variable name (variableName) to the user input.
             var variableName = $(this).val();
 
+            // Validation check.  If they enter nothing, then return.
+            if (variableName === "") {
+                return;
+            }
+
             // Update the stored variable data with the variable name.
             VariableStorageHandler.storeVariableData(key, "name", variableName);
 

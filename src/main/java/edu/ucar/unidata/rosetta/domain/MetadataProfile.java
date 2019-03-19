@@ -6,6 +6,7 @@
 package edu.ucar.unidata.rosetta.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
 
 import java.util.Objects;
 
@@ -14,6 +15,8 @@ import java.util.Objects;
  * https://github.com/Unidata/rosetta/wiki/Metadata-Profile-Schema
  */
 public class MetadataProfile {
+
+    protected static final Logger logger = Logger.getLogger(MetadataProfile.class);
 
     private String attributeName; // required
     private String complianceLevel = "additional";
@@ -41,18 +44,9 @@ public class MetadataProfile {
         }
         if (obj instanceof MetadataProfile) {
             MetadataProfile other = (MetadataProfile) obj;
-            return Objects.equals(getAttributeName(), other.getAttributeName()) &&
-                   Objects.equals(getComplianceLevel(), other.getComplianceLevel()) &&
-                   Objects.equals(getDescription(), other.getDescription()) &&
-                   Objects.equals(getDisplayName(), other.getDisplayName()) &&
-                   Objects.equals(getExampleValues(), other.getExampleValues()) &&
-                   Objects.equals(getId(), other.getId()) &&
-                   Objects.equals(getMetadataGroup(), other.getMetadataGroup()) &&
-                   Objects.equals(getMetadataProfileName(), other.getMetadataProfileName()) &&
-                   Objects.equals(getMetadataProfileVersion(), other.getMetadataProfileVersion()) &&
-                   Objects.equals(getMetadataType(), other.getMetadataType()) &&
-                   Objects.equals(getMetadataTypeStructureName(), other.getMetadataTypeStructureName()) &&
-                   Objects.equals(getMetadataValueType(), other.getMetadataValueType());
+            return Objects.equals(this.getAttributeName(), other.getAttributeName()) &&
+                   Objects.equals(this.getComplianceLevel(), other.getComplianceLevel()) &&
+                   Objects.equals(this.getMetadataTypeStructureName(), other.getMetadataTypeStructureName());
         }
         return false;
     }
@@ -64,18 +58,7 @@ public class MetadataProfile {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(getAttributeName(),
-                getComplianceLevel(),
-                getDescription(),
-                getDisplayName(),
-                getExampleValues(),
-                getId(),
-                getMetadataGroup(),
-                getMetadataProfileName(),
-                getMetadataProfileVersion(),
-                getMetadataType(),
-                getMetadataTypeStructureName(),
-                getMetadataValueType());
+        return Objects.hash(this.getAttributeName(), this.complianceLevel);
     }
 
     /**
