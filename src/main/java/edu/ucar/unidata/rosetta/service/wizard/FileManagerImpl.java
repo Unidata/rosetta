@@ -28,8 +28,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
  * Implements FileManager functionality.
- *
- * @author oxelson@ucar.edu
  */
 public class FileManagerImpl implements FileManager {
 

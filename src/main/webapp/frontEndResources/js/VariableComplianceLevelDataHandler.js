@@ -21,27 +21,30 @@ var VariableComplianceLevelDataHandler = (function () {
      * Uses the array of compliance level metadata attributes gleaned from server-side metadata profiles.
      * Creates a list of form tags for these items corresponding to the metadataType (coordinate or non-coordinate).
      *
-     * @param key  The key used to access the stored variable data.
+     * @param key  The key (column Id) used to access the stored variable data.
      * @param complianceLevel  Whether the attribute is required, recommended or additional.
      */
-    function populateComplianceLevelInputTags(key, complianceLevel) {        
-
+    function populateComplianceLevelInputTags(key, complianceLevel) {
+        // The metadataTypeStructure is the flavor of coordinate variable (e.g., lat, long, time, etc.)
+        // If the variable is designated as non-coordinate, this value === undefined.
         var metadataTypeStructure = VariableStorageHandler.getVariableData(key, "metadataTypeStructure");
-
         // We will stash our created tags here.
         var metadataTags = [];
         // We will stash our required attribute names here.
         var required = [];
         var used = [];
         for (var i = 0; i < metadataProfileVariableData.length; i++) {
+            // metadatProfileData = entries sent from the server-side.
             var metadataProfile = metadataProfileVariableData[i];
-            var typeStructure = metadataTypeStructure;
-            var metadataTypeStructureName = metadataProfile.metadataTypeStructureName;
 
             if (metadataProfile.complianceLevel === "optional") {
                 metadataProfile.complianceLevel = "additional";
             }
+            // Only concern ourselves with the metadataProfiles of the same compliance level.
             if (metadataProfile.complianceLevel === complianceLevel) {
+                var typeStructure = metadataTypeStructure;  // Flavor of coord var.
+                var metadataTypeStructureName = metadataProfile.metadataTypeStructureName;
+
                 if (metadataProfile.metadataType === "CoordinateVariable") {
                    metadataProfile.metadataType = "coordinate";
                 } 
@@ -59,9 +62,9 @@ var VariableComplianceLevelDataHandler = (function () {
                     } else {
                         typeStructure = "time";
                     }
-
+                    // Only interested in the same "coord var flavor".
                     if (typeStructure !== metadataTypeStructureName) {
-                        continue;
+                        continue; // Not the same "coord var flavor".
                     }
                 }
 
@@ -74,6 +77,8 @@ var VariableComplianceLevelDataHandler = (function () {
                         required.push(metadataProfile.attributeName);
                     }
                 }
+            } else {
+                continue;  // Not the compliance level we are looking for,
             }
             
         }
@@ -127,7 +132,7 @@ var VariableComplianceLevelDataHandler = (function () {
         // Pull out the relevant data items for the metadataItem object and assign to variables.
 
         // The tagName = tag displayed in compliance-level data section.
-        var tagName = metadataItem.attributeName;
+        const tagName = metadataItem.attributeName;
         var displayName = metadataItem.attributeName.replace(/_/g, " ");
         if (metadataItem.displayName) {
             displayName = metadataItem.displayName;
@@ -166,10 +171,13 @@ var VariableComplianceLevelDataHandler = (function () {
             "     " + displayName + "\n" +
             "     " + helpTipElement + "\n";
 
+
+
         // Assign any matching stored compliance level data to the tagValue.
         // NOTE: if the variableName inputted by the user exactly matches a standard_name, that
         // standard_name value & the units are automatically saved to web storage (see DialogDomHandler.bindDialogEvents).
         var tagValue = VariableStorageHandler.getComplianceLevelVariableData(key, tagName, complianceLevel);
+
         if (tagValue === undefined) { // No stored value available for the compliance-level tag.
             tagValue = "";
 
@@ -223,12 +231,12 @@ var VariableComplianceLevelDataHandler = (function () {
                     // Create dropdown options from the matching standard_name selection.
                     for (var key in cfStandardMatches) {
                         var selected;
-                        if (cfStandardMatches[key] === tagValue) {
+                        if (key === tagValue) {
                             selected = "selected";
                         } else {
                             selected = "";
                         }
-                        tag += "  <option value=\"" + cfStandardMatches[key] + "\" " + selected + ">" + cfStandardMatches[key] + "</option>";
+                        tag += "  <option value=\"" + key + "\" " + selected + ">" + key + "</option>";
                     }
                 } else {
                     // No matches were found and stored.  User needs to selected the value from ALL CF standard names.
