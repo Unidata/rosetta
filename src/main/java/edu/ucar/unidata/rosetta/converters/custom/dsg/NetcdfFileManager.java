@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import edu.ucar.unidata.rosetta.domain.ParsedFile;
 import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
@@ -77,7 +78,7 @@ public abstract class NetcdfFileManager {
 
     private boolean useNetcdf4 = false;
     private String timeUnits = "seconds since 1970-01-01T00:00:00";
-    private static String colIdAttrName = "_Rosetta_columnId";
+    private static String colIdAttrName = "Rosetta_columnId";
 
     abstract void makeNonElementCoordVars(VariableInfo variableInfo);
 
@@ -582,8 +583,9 @@ public abstract class NetcdfFileManager {
         if (colId > 0) {
             //CoordinateVariable	valid_min, valid_max*
             Array data = arrayData.get(variableInfo.getColumnId());
-            calculatedCoordVarAttrs.addAll(getMaxMinAttrs(data));
-
+            RosettaAttribute missingValueRosettaAttr = VariableInfoUtils.findAttributeByName("missing_value", variableInfo);
+            Optional<Double> missingValue = Optional.of(Double.valueOf(missingValueRosettaAttr.getValue()));
+            calculatedCoordVarAttrs.addAll(getMaxMinAttrs(data, missingValue));
         }
 
         return calculatedCoordVarAttrs;
@@ -607,7 +609,9 @@ public abstract class NetcdfFileManager {
         Array data = arrayData.get(variableInfo.getColumnId());
 
         if (data.getDataType() != DataType.CHAR && data.getDataType() != DataType.STRING) {
-            calculatedDataVarAttrs.addAll(getMaxMinAttrs(data));
+            RosettaAttribute missingValueRosettaAttr = VariableInfoUtils.findAttributeByName("missing_value", variableInfo);
+            Optional<Double> missingValue = Optional.of(Double.valueOf(missingValueRosettaAttr.getValue()));
+            calculatedDataVarAttrs.addAll(getMaxMinAttrs(data, missingValue));
         }
 
         // add columnId if it was initilized in attribute
