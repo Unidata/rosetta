@@ -271,6 +271,11 @@
           "name": "units",
           "value": "degC",
           "type": "STRING"
+        },
+        {
+          "name": "missing_value",
+          "value": "-99.",
+          "type": "FLOAT"
         }
       ]
     },
@@ -314,6 +319,11 @@
           "name": "units",
           "value": "mS cm-1",
           "type": "STRING"
+        },
+        {
+          "name": "missing_value",
+          "value": "-99.",
+          "type": "FLOAT"
         }
       ]
     },
@@ -357,6 +367,11 @@
           "name": "units",
           "value": "1e-3",
           "type": "STRING"
+        },
+        {
+          "name": "missing_value",
+          "value": "-99.",
+          "type": "FLOAT"
         }
       ]
     },
@@ -400,6 +415,11 @@
           "name": "comment",
           "value": "speed of sound as recorded by the ctd.",
           "type": "STRING"
+        },
+        {
+          "name": "missing_value",
+          "value": "-99.",
+          "type": "FLOAT"
         }
       ]
     },
@@ -443,6 +463,11 @@
           "name": "units",
           "value": "kg m-3",
           "type": "STRING"
+        },
+        {
+          "name": "missing_value",
+          "value": "-99.",
+          "type": "FLOAT"
         }
       ]
     },

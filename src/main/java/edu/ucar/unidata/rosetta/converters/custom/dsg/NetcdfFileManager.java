@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import edu.ucar.unidata.rosetta.domain.ParsedFile;
 import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
@@ -77,7 +78,7 @@ public abstract class NetcdfFileManager {
 
     private boolean useNetcdf4 = false;
     private String timeUnits = "seconds since 1970-01-01T00:00:00";
-    private static String colIdAttrName = "_Rosetta_columnId";
+    private static String colIdAttrName = "Rosetta_columnId";
 
     abstract void makeNonElementCoordVars(VariableInfo variableInfo);
 
@@ -514,7 +515,7 @@ public abstract class NetcdfFileManager {
         Group group = null;
         String verticalDimName = "z";
         List<VariableInfo> vertCoordVarInfo = elementCoordVarInfo.get("z");
-        try{
+        try {
             if (!vertCoordVarInfo.isEmpty() && (vertCoordVarInfo.size() == 1)) {
                 // should only be one vertical coordinate variable
                 VariableInfo vertVarInfoSingle = vertCoordVarInfo.get(0);
@@ -582,8 +583,8 @@ public abstract class NetcdfFileManager {
         if (colId > 0) {
             //CoordinateVariable	valid_min, valid_max*
             Array data = arrayData.get(variableInfo.getColumnId());
-            calculatedCoordVarAttrs.addAll(getMaxMinAttrs(data));
-
+            Optional<Double> missingValue = VariableInfoUtils.findMissingValue(variableInfo);
+            calculatedCoordVarAttrs.addAll(getMaxMinAttrs(data, missingValue));
         }
 
         return calculatedCoordVarAttrs;
@@ -607,7 +608,8 @@ public abstract class NetcdfFileManager {
         Array data = arrayData.get(variableInfo.getColumnId());
 
         if (data.getDataType() != DataType.CHAR && data.getDataType() != DataType.STRING) {
-            calculatedDataVarAttrs.addAll(getMaxMinAttrs(data));
+            Optional<Double> missingValue = VariableInfoUtils.findMissingValue(variableInfo);
+            calculatedDataVarAttrs.addAll(getMaxMinAttrs(data, missingValue));
         }
 
         // add columnId if it was initilized in attribute
@@ -668,13 +670,13 @@ public abstract class NetcdfFileManager {
     /**
      * Add new dimension for character data
      *
-     * @param variableInfo variable's variableInfo object created from template
+     * @param variableInfo  variable's variableInfo object created from template
      * @param dimensionList list of dimensions to augment
      * @return new dimension list with new char length dimension
      */
     List<Dimension> augmentCharDimension(VariableInfo variableInfo, List<Dimension> dimensionList) {
         int maxLen = 1;
-        for (String sd: stringData.get(variableInfo.getColumnId())) {
+        for (String sd : stringData.get(variableInfo.getColumnId())) {
             int len = sd.length();
             maxLen = len > maxLen ? len : maxLen;
         }
@@ -688,6 +690,7 @@ public abstract class NetcdfFileManager {
 
     /**
      * Create a data variable
+     *
      * @param variableInfo Variable to create
      */
     void makeDataVars(VariableInfo variableInfo) {
@@ -722,8 +725,8 @@ public abstract class NetcdfFileManager {
      * Create a netCDF file, following CF DSGs, based on the data contained within a data file and
      * the metadata contained within a template
      *
-     * @param dataFile file containing observed data
-     * @param template template associated with dataFile
+     * @param dataFile  file containing observed data
+     * @param template  template associated with dataFile
      * @param delimiter the delimiter used to parse the file.
      * @return location of the created netCDF file
      */
@@ -828,7 +831,7 @@ public abstract class NetcdfFileManager {
             // if profile, detailed time might exist
             if (myDsgType == "profile") {
                 // if profile, detailed time might exist
-                if (timeCoordVarDetailName != null){
+                if (timeCoordVarDetailName != null) {
                     ncf.write(timeCoordVarDetailName, timeCoordVarDetailArr);
                 }
                 // write data for vertical coord variable
@@ -848,7 +851,7 @@ public abstract class NetcdfFileManager {
                     if (colId > 0) {
                         Array thisData = arrayData.get(colId);
                         if ((thisData.getDataType() == DataType.CHAR) ||
-                                (thisData.getDataType() == DataType.STRING && !useNetcdf4)){
+                                (thisData.getDataType() == DataType.STRING && !useNetcdf4)) {
                             // CHAR arrays are backed by a list of strings in the ParsedData object
                             // so need to handle special when writing
                             ncf.writeStringData(var, Array.makeArray(DataType.STRING, stringData.get(colId)));
