@@ -8,6 +8,7 @@ package edu.ucar.unidata.rosetta.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -214,5 +215,21 @@ public class VariableInfoUtils {
             allVarAttrs.add(varAttr);
         }
         return allVarAttrs;
+    }
+
+    /**
+     * Look at a VariableInfo object, if it contains a missing value attribute, and return it
+     *
+     * @param vi the VariableInfo object from which to get the attributes
+     * @return The missing value using Java 8s Optional
+     */
+    public static Optional<Double> findMissingValue(VariableInfo vi) {
+        Optional<Double> missingValue = Optional.empty();
+        Optional<RosettaAttribute> missingValueRosettaAttr = Optional.ofNullable(VariableInfoUtils.findAttributeByName("missing_value", vi));
+        if (missingValueRosettaAttr.isPresent()) {
+            missingValue = Optional.of(Double.valueOf(missingValueRosettaAttr.get().getValue()));
+        }
+
+        return missingValue;
     }
 }
