@@ -3,7 +3,7 @@
 </script>
 
 <!-- jQuery JS-->
-<script type="text/javascript" src="${baseUrl}/resources/js/jQuery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="${baseUrl}/resources/js/jQuery/jquery-3.4.1.min.js"></script>
 <script type="text/javascript"
         src="${baseUrl}/resources/js/jQuery/ui/jquery-ui-1.12.1.min.js"></script>
 
