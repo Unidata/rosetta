@@ -5,7 +5,6 @@ import edu.ucar.unidata.rosetta.init.resources.ResourceLoader;
 import edu.ucar.unidata.rosetta.repository.wizard.WizardDataDao;
 import edu.ucar.unidata.rosetta.repository.wizard.JdbcWizardDataDao;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
-import edu.ucar.unidata.rosetta.service.user.UserManager;
 import edu.ucar.unidata.rosetta.service.wizard.*;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -50,11 +49,6 @@ public class TestContext {
     @Bean
     public UploadedFileManager uploadedFileManager() {
         return Mockito.mock(UploadedFileManager.class);
-    }
-
-    @Bean
-    public UserManager userManager() {
-        return Mockito.mock(UserManager.class);
     }
 
 }
