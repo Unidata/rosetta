@@ -253,7 +253,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
             // Insert the resources into the db.
             insertResources(props);
-
+/*
             String createUsersTable = "CREATE TABLE users" +
                 "(" +
                 "userId INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
@@ -268,9 +268,10 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
                 "dateModified TIMESTAMP not null" +
                 ")";
             createTable(createUsersTable, props);
+            */
 
             // Add default admin user to users table.
-            addDefaultAdminUser(props);
+            //addDefaultAdminUser(props);
 
             // Okay, we're done.  Shut down this particular connection to the database.
             try {
