@@ -39,74 +39,7 @@
     <mvc:resources location="/batch/"
                    mapping="/batch/**"/>
 
-    <!-- Configure Spring-Security  -->
-    <!--
-    <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true"/>
-    <security:http pattern="/resources/**" security="none"/>
-    <security:http auto-config="true" use-expressions="true">
 
-        <security:access-denied-handler error-page="/denied" />
-
-        <security:form-login
-                login-processing-url="/j_spring_security_check"
-                login-page="/login"
-                username-parameter="userName"
-                password-parameter="password"
-                authentication-success-handler-ref="customAuthenticationSuccessHandler"
-                authentication-failure-handler-ref="authenticationFailureHandler"/>
-
-        <security:logout
-                invalidate-session="true"
-                logout-success-url="/login"
-                logout-url="/j_spring_security_logout"/>
-
-
-        <security:intercept-url pattern="/index.jsp" access="permitAll" />
-        <security:intercept-url pattern="/register" access="permitAll" />
-        <security:intercept-url pattern="/login/**" access="permitAll" />
-        <security:intercept-url pattern="/denied" access="permitAll" />
-        <security:intercept-url pattern="/error" access="permitAll" />
-        <security:intercept-url pattern="/cfType" access="permitAll" method="GET"/>
-        <security:intercept-url pattern="/cfType" access="permitAll" method="POST"/>
-        <security:intercept-url pattern="/convertAndDownload/**" access="permitAll" />
-        <security:intercept-url pattern="/customFileTypeAttributes/**" access="permitAll" />
-        <security:intercept-url pattern="/fileUpload/**" access="permitAll" />
-        <security:intercept-url pattern="/globalMetadata/**" access="permitAll" />
-        <security:intercept-url pattern="/variableMetadata/**" access="permitAll" />
-        <security:intercept-url pattern="/**" access="isAuthenticated()" />
-  -->
-    <!-- enable csrf protection -->
-    <!--
-        <security:csrf/>
-    </security:http>
-    -->
-
-    <!-- Declare an authentication-manager to use a custom userDetailsService -->
-    <!--
-    <security:authentication-manager>
-        <security:authentication-provider user-service-ref="userDetailsService">
-            <security:password-encoder ref="passwordEncoder"/>
-        </security:authentication-provider>
-    </security:authentication-manager>
-  -->
-
-    <!-- Use a password encoder since the user's passwords are stored encrypted in the database -->
-    <!--
-    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
-
-    <bean id="customAuthenticationSuccessHandler" class="edu.ucar.unidata.rosetta.service.CustomAuthenticationSuccessHandler"/>
-
-    <bean id="authenticationFailureHandler"
-          class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
-        <property name="exceptionMappings">
-            <props>
-                <prop key="org.springframework.security.authentication.BadCredentialsException">/login/badCredentials</prop>
-                <prop key="org.springframework.security.authentication.LockedException">/login/accountLocked</prop>
-                <prop key="org.springframework.security.authentication.DisabledException">/login/accountDisabled</prop>
-            </props>
-        </property>
-    </bean>
-  -->
     <!-- Taming the pesky derby.log file -->
 
     <bean id="setDerbyLog" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -165,16 +98,6 @@
         <property name="fileTypeResourceDao" ref="fileTypeResourceDao"/>
         <property name="metadataProfileResourceDao" ref="metadataProfileResourceDao"/>
         <property name="platformResourceDao" ref="platformResourceDao"/>
-    </bean>
-
-    <!-- Data Access Object (DAO) injection into user-related service-layer classes. -->
-    <bean class="edu.ucar.unidata.rosetta.service.user.UserDetailsServiceImpl"
-          id="userDetailsService">
-        <property name="userDao" ref="userDao"/>
-    </bean>
-
-    <bean class="edu.ucar.unidata.rosetta.service.user.UserManagerImpl" id="userManager">
-        <property name="userDao" ref="userDao"/>
     </bean>
 
     <!-- Data Access Object (DAO) injection into wizard-related service-layer classes. -->
@@ -269,11 +192,6 @@
 
     <bean class="edu.ucar.unidata.rosetta.repository.wizard.JdbcUploadedFileDao"
           id="uploadedFileDao">
-        <property name="dataSource" ref="dbDataSource"/>
-    </bean>
-
-    <!-- User datasource injection. User-related classes need to access to the persisted data. -->
-    <bean class="edu.ucar.unidata.rosetta.repository.user.JdbcUserDao" id="userDao">
         <property name="dataSource" ref="dbDataSource"/>
     </bean>
 
