@@ -3,7 +3,6 @@ apply plugin: 'maven'
 apply plugin: 'eclipse'
 apply plugin: 'eclipse-wtp'
 apply plugin: 'war'
-apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.jruby-gradle.base'
 apply plugin: "com.diffplug.gradle.spotless"
@@ -161,7 +160,6 @@ buildscript {
 
     dependencies {
         classpath "com.github.jruby-gradle:jruby-gradle-plugin:1.5.0"
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.1"
         classpath "org.gretty:gretty:+"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:3.22.0"
     }
@@ -266,10 +264,6 @@ spotless {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.9'
 }
-
-// run coverage with jacoco before sonarqube analysis so that coverabe report
-// will be ready for sonarqube submission
-project.tasks["sonarqube"].dependsOn jacocoTestReport
 
 // need to run test task before jacocoTestReport
 jacocoTestReport.dependsOn test
