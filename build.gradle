@@ -34,9 +34,10 @@ ext {
     springSecurityVersion = "4.2.13.RELEASE"
     cdmVersion = "5.0.0"
 
+    // needed for Jekyll
     source = file("src/main/jekyll/").absolutePath
-    destination = file("build/_site").absolutePath
-
+    destination = file("build/_site")
+    sourceFiles = fileTree(source)
     commonFlags = [ '--source', source, '--destination', destination ]
 }
 
@@ -129,13 +130,6 @@ war {
     }
 }
 
-ext {
-    source = file("src/main/jekyll/").absolutePath
-    destination = file("build/_site").absolutePath
-
-    commonFlags = [ '--source', source, '--destination', destination ]
-}
-
 test {
     testLogging {
         events "passed", "skipped", "failed", "standardOut", "standardError"
@@ -167,10 +161,11 @@ buildscript {
 }
 
 
-task jekyllBuild(type: JRubyExec, group: 'Jekyll', description: 'Build your site.') {
-    // Enable task to be UP-TO-DATE.
-    inputs.file source
-    outputs.file destination
+task buildUserGuide(type: JRubyExec, group: 'Jekyll', description: 'Build your site.') {
+
+    // sourceFiles, destination defined in ext
+    inputs.files(sourceFiles)
+    outputs.dir(destination)
 
     script "jekyll"
 
@@ -183,7 +178,7 @@ task jekyllBuild(type: JRubyExec, group: 'Jekyll', description: 'Build your site
     // scriptArgs "--incremental"
 }
 
-task jekyllServe(type: JRubyExec, group: 'Jekyll', description: 'Serve your site locally.') {
+task serveUserGuide(type: JRubyExec, group: 'Jekyll', description: 'Serve your site locally.') {
     // This task starts a server; it is never considered UP-TO-DATE.
     outputs.upToDateWhen { false }
 
