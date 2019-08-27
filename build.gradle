@@ -262,10 +262,6 @@ spotless {
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.9'
-}
-
 // need to run test task before jacocoTestReport
 jacocoTestReport.dependsOn test
 
