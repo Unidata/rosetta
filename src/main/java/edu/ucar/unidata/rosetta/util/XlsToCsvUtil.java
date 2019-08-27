@@ -46,7 +46,7 @@ public class XlsToCsvUtil {
    *
    * @param xlsFile Path to xls/xlsx file
    * @param csvFile Path where csv file should be created. If null, csv file will be created in the
-   * same location as @param xlsFile
+   *        same location as @param xlsFile
    * @return True if file conversion was successful; otherwise false.
    * @throws RosettaFileException If unable to convert xls/xlsx file to csv.
    */
@@ -71,7 +71,7 @@ public class XlsToCsvUtil {
           OutputStreamWriter osw = new OutputStreamWriter(os, encoding);
           BufferedWriter bw = new BufferedWriter(osw)) {
 
-        //Excel document to be imported
+        // Excel document to be imported
         WorkbookSettings ws = new WorkbookSettings();
         ws.setLocale(new Locale("en", "EN"));
         Workbook w = Workbook.getWorkbook(new File(xlsFile), ws);

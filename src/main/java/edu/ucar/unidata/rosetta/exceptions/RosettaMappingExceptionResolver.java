@@ -13,30 +13,30 @@ import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
-public class RosettaMappingExceptionResolver extends SimpleMappingExceptionResolver  {
+public class RosettaMappingExceptionResolver extends SimpleMappingExceptionResolver {
 
-    private static final Logger logger = Logger.getLogger(RosettaMappingExceptionResolver.class);
+  private static final Logger logger = Logger.getLogger(RosettaMappingExceptionResolver.class);
 
-    public RosettaMappingExceptionResolver() {
-        super();
-    }
+  public RosettaMappingExceptionResolver() {
+    super();
+  }
 
-    @Override
-    public ModelAndView resolveException(HttpServletRequest request,
-                                         HttpServletResponse response, Object handler, Exception exception) {
-        logger.error(getStackTrace(exception));
-        return super.resolveException(request, response, handler, exception);
-    }
+  @Override
+  public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
+      Exception exception) {
+    logger.error(getStackTrace(exception));
+    return super.resolveException(request, response, handler, exception);
+  }
 
 
-    public String getStackTrace(Throwable t) {
-        StringWriter stringWritter = new StringWriter();
-        PrintWriter printWritter = new PrintWriter(stringWritter, true);
-        t.printStackTrace(printWritter);
-        printWritter.flush();
-        stringWritter.flush();
-        return stringWritter.toString();
-    }
+  public String getStackTrace(Throwable t) {
+    StringWriter stringWritter = new StringWriter();
+    PrintWriter printWritter = new PrintWriter(stringWritter, true);
+    t.printStackTrace(printWritter);
+    printWritter.flush();
+    stringWritter.flush();
+    return stringWritter.toString();
+  }
 
 
 }

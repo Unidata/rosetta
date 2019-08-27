@@ -41,7 +41,6 @@ public interface CommunityResourceDao {
    * @return A List of persisted Communities matching the provided file type.
    * @throws DataRetrievalFailureException If unable to retrieve persisted Communities.
    */
-  public List<Community> lookupCommunitiesByFileType(String fileType)
-      throws DataRetrievalFailureException;
+  public List<Community> lookupCommunitiesByFileType(String fileType) throws DataRetrievalFailureException;
 
 }

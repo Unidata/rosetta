@@ -16,39 +16,40 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TestContext {
 
-    @Bean
-    public WizardManager wizardManager() {
-        return Mockito.mock(WizardManager.class);
-    }
+  @Bean
+  public WizardManager wizardManager() {
+    return Mockito.mock(WizardManager.class);
+  }
 
-    @Bean
-    public ResourceManager resourceManager() {
-        return Mockito.mock(ResourceManager.class);
-    }
+  @Bean
+  public ResourceManager resourceManager() {
+    return Mockito.mock(ResourceManager.class);
+  }
 
-    // todo: DataManager no longer exits - does this need replaced?
-    //@Bean
-    //public DataManager dataManager() {
-    //    return Mockito.mock(DataManager.class);
-    //}
+  // todo: DataManager no longer exits - does this need replaced?
+  // @Bean
+  // public DataManager dataManager() {
+  // return Mockito.mock(DataManager.class);
+  // }
 
-    @Bean
-    public FileManager fileParserManager() {
-        return Mockito.mock(FileManager.class);
-    }
+  @Bean
+  public FileManager fileParserManager() {
+    return Mockito.mock(FileManager.class);
+  }
 
-    @Bean
-    public MetadataManager metadataManager() {
-        return Mockito.mock(MetadataManager.class);
-    }
+  @Bean
+  public MetadataManager metadataManager() {
+    return Mockito.mock(MetadataManager.class);
+  }
 
-    @Bean
-    public ResourceLoader resourceLoader() {
-        return Mockito.mock(ResourceLoader.class);
-    }
-    @Bean
-    public UploadedFileManager uploadedFileManager() {
-        return Mockito.mock(UploadedFileManager.class);
-    }
+  @Bean
+  public ResourceLoader resourceLoader() {
+    return Mockito.mock(ResourceLoader.class);
+  }
+
+  @Bean
+  public UploadedFileManager uploadedFileManager() {
+    return Mockito.mock(UploadedFileManager.class);
+  }
 
 }

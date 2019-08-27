@@ -36,7 +36,7 @@ public interface DbInitManager {
    * 1) database driver 2) database name 3) database username and password 4) etc.
    *
    * @param props RosettaProperties from application.properties that may be used to create the
-   * database.
+   *        database.
    * @throws NonTransientDataAccessResourceException If unable to create or access the database.
    * @throws SQLException If an SQL exceptions occurs during database creation.
    * @throws RosettaDataException If unable to access the rosetta resources to persist.
@@ -45,10 +45,10 @@ public interface DbInitManager {
       throws NonTransientDataAccessResourceException, SQLException, RosettaDataException;
 
   /**
-   * Prepares and shuts down the database.  (E.g., de-registering drivers, etc.)
+   * Prepares and shuts down the database. (E.g., de-registering drivers, etc.)
    *
    * @param props RosettaProperties from application.properties that may be used for database
-   * shutdown.
+   *        shutdown.
    * @throws SQLException If an SQL exceptions occurs during database shutdown.
    */
   public void shutdownDatabase(Properties props) throws SQLException;

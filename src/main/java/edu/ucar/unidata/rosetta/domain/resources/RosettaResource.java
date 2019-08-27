@@ -29,7 +29,7 @@ public abstract class RosettaResource implements Comparable<RosettaResource> {
   /**
    * Sets the name of this resource.
    *
-   * @param name  The name.
+   * @param name The name.
    */
   public void setName(String name) {
     this.name = name;
@@ -40,7 +40,7 @@ public abstract class RosettaResource implements Comparable<RosettaResource> {
    *
    * @param comparisonObject The object to compare this object against.
    * @return Returns a -1, 0, or 1 if this object is less than, equal to, or greater than the
-   * specified object.
+   *         specified object.
    */
   public int compareTo(RosettaResource comparisonObject) {
     return (this.getName().compareTo(comparisonObject.getName()));

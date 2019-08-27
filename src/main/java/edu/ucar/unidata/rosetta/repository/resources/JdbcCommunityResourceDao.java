@@ -28,7 +28,8 @@ public class JdbcCommunityResourceDao extends JdbcDaoSupport implements Communit
    * @throws DataAccessException If unable to retrieve persisted communities.
    */
   public List<Community> getCommunities() throws DataAccessException {
-    String sql = "SELECT communities.id, communities.name, fileTypes.name FROM communities INNER JOIN fileTypes ON communities.fileType = fileTypes.id";
+    String sql =
+        "SELECT communities.id, communities.name, fileTypes.name FROM communities INNER JOIN fileTypes ON communities.fileType = fileTypes.id";
     return getCommunities(sql);
   }
 

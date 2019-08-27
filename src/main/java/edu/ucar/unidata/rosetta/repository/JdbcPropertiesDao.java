@@ -35,8 +35,7 @@ public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
   @Override
   public String lookupUserFilesDirectory() throws DataRetrievalFailureException {
     String sql = "SELECT * FROM properties WHERE propertyKey = 'rosetta.userFilesDir'";
-    List<RosettaProperties> properties = getJdbcTemplate()
-        .query(sql, new JdbcPropertiesDao.DataMapper());
+    List<RosettaProperties> properties = getJdbcTemplate().query(sql, new JdbcPropertiesDao.DataMapper());
     if (properties.isEmpty()) {
       String message = "Unable to find persisted Rosetta properties";
       logger.error(message);

@@ -12,8 +12,7 @@ package edu.ucar.unidata.rosetta.exceptions;
  */
 public class RosettaFileException extends Exception {
 
-  public RosettaFileException() {
-  }
+  public RosettaFileException() {}
 
   public RosettaFileException(String message) {
     super(message);

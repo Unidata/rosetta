@@ -12,7 +12,6 @@ import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,87 +29,89 @@ import org.springframework.web.util.WebUtils;
 @Controller
 public class GlobalMetadataController {
 
-    @Resource(name = "metadataManager")
-    private MetadataManager metadataManager;
+  @Resource(name = "metadataManager")
+  private MetadataManager metadataManager;
 
-    @Resource(name = "wizardManager")
-    private WizardManager wizardManager;
+  @Resource(name = "wizardManager")
+  private WizardManager wizardManager;
 
-    /**
-     * Accepts a GET request for access to global metadata collection step of the wizard.
-     *
-     * @param model The Model object to be populated.
-     * @param redirectAttrs  A specialization of the model to pass along message if redirected back to starting step.
-     * @param request The HttpServletRequest used to retrieve the cookie.
-     * @return View and the Model for the wizard to process.
-     */
-    @RequestMapping(value = "/globalMetadata", method = RequestMethod.GET)
-    public ModelAndView displayGlobalMetadataForm(Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+  /**
+   * Accepts a GET request for access to global metadata collection step of the wizard.
+   *
+   * @param model The Model object to be populated.
+   * @param redirectAttrs A specialization of the model to pass along message if redirected back to starting step.
+   * @param request The HttpServletRequest used to retrieve the cookie.
+   * @return View and the Model for the wizard to process.
+   */
+  @RequestMapping(value = "/globalMetadata", method = RequestMethod.GET)
+  public ModelAndView displayGlobalMetadataForm(Model model, RedirectAttributes redirectAttrs,
+      HttpServletRequest request) {
 
-        // Have we visited this page before during this session?
-        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+    // Have we visited this page before during this session?
+    Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
 
-        if (rosettaCookie == null) {
-            // No cookie.  Take user back to first step.
-            redirectAttrs.addFlashAttribute("message", "session expired");
-            return new ModelAndView(new RedirectView("/cfType", true));
-        }
-
-        WizardData wizardData = wizardManager.lookupPersistedWizardDataById(rosettaCookie.getValue());
-
-        // Add command object to Model.
-        model.addAttribute("command", "WizardData");
-        // Add form-backing object.
-        model.addAttribute("data", wizardData);
-        // Add current step to the Model.
-        model.addAttribute("currentStep", "globalMetadata");
-        // Add whether we need to show the custom file attributes step in the wizard menu.
-        model.addAttribute("customFileAttributesStep", wizardManager.customFileAttributesStep(rosettaCookie.getValue()));
-
-        // Add relevant metadata profile information for global metadata collection.
-        model.addAttribute("metadataProfileGlobalData",
-                metadataManager.getMetadataProfiles(rosettaCookie.getValue(), "global"));
-
-        // The currentStep variable will determine which jsp frag to load in the wizard.
-        return new ModelAndView("wizard");
+    if (rosettaCookie == null) {
+      // No cookie. Take user back to first step.
+      redirectAttrs.addFlashAttribute("message", "session expired");
+      return new ModelAndView(new RedirectView("/cfType", true));
     }
 
-    /**
-     * Accepts a POST request from global metadata collection step of the wizard. Processes the
-     * submitted data and persists it to the database.  Redirects user to next step or previous step
-     * depending on submitted form button (Next or Previous).
-     *
-     * @param wizardData The form-backing object.
-     * @param submit     The value sent via the submit button.
-     * @param result     The BindingResult for error handling.
-     * @param redirectAttrs  A specialization of the model to pass along message if redirected back to starting step.
-     * @param request The HttpServletRequest used to retrieve the cookie.
-     * @return Redirect to next step.
-     * @throws RosettaDataException  If unable to populate the metadata object.
-     */
-    @RequestMapping(value = "/globalMetadata", method = RequestMethod.POST)
-    public ModelAndView processGlobalMetadata(WizardData wizardData, @RequestParam("submit") String submit,
-                                               BindingResult result, RedirectAttributes redirectAttrs, HttpServletRequest request) throws RosettaDataException {
+    WizardData wizardData = wizardManager.lookupPersistedWizardDataById(rosettaCookie.getValue());
 
-        // Get the cookie so we can get the persisted data.
-        Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-        if (rosettaCookie == null) {
-            // No cookie.  Take user back to first step.
-            redirectAttrs.addFlashAttribute("message", "session expired");
-            return new ModelAndView(new RedirectView("/cfType", true));
-        }
+    // Add command object to Model.
+    model.addAttribute("command", "WizardData");
+    // Add form-backing object.
+    model.addAttribute("data", wizardData);
+    // Add current step to the Model.
+    model.addAttribute("currentStep", "globalMetadata");
+    // Add whether we need to show the custom file attributes step in the wizard menu.
+    model.addAttribute("customFileAttributesStep", wizardManager.customFileAttributesStep(rosettaCookie.getValue()));
 
-        // The previous step depends on what the user specified for the data file type.
-        if (submit != null && submit.equals("Previous")) {
-            String previousStep = wizardManager.processPreviousStep(rosettaCookie.getValue());
-            // Take user back to previous step & don't save data submitted to this step. (See dataManager.processPreviousStep).
-            return new ModelAndView(new RedirectView(previousStep, true));
-        }
+    // Add relevant metadata profile information for global metadata collection.
+    model.addAttribute("metadataProfileGlobalData",
+        metadataManager.getMetadataProfiles(rosettaCookie.getValue(), "global"));
 
-        // Persist the global metadata information.
-        wizardManager.processGlobalMetadata(rosettaCookie.getValue(), wizardData);
+    // The currentStep variable will determine which jsp frag to load in the wizard.
+    return new ModelAndView("wizard");
+  }
 
-        // Send user to next step to download the converted file(s).
-        return new ModelAndView(new RedirectView("/convertAndDownload", true));
+  /**
+   * Accepts a POST request from global metadata collection step of the wizard. Processes the
+   * submitted data and persists it to the database. Redirects user to next step or previous step
+   * depending on submitted form button (Next or Previous).
+   *
+   * @param wizardData The form-backing object.
+   * @param submit The value sent via the submit button.
+   * @param result The BindingResult for error handling.
+   * @param redirectAttrs A specialization of the model to pass along message if redirected back to starting step.
+   * @param request The HttpServletRequest used to retrieve the cookie.
+   * @return Redirect to next step.
+   * @throws RosettaDataException If unable to populate the metadata object.
+   */
+  @RequestMapping(value = "/globalMetadata", method = RequestMethod.POST)
+  public ModelAndView processGlobalMetadata(WizardData wizardData, @RequestParam("submit") String submit,
+      BindingResult result, RedirectAttributes redirectAttrs, HttpServletRequest request) throws RosettaDataException {
+
+    // Get the cookie so we can get the persisted data.
+    Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
+    if (rosettaCookie == null) {
+      // No cookie. Take user back to first step.
+      redirectAttrs.addFlashAttribute("message", "session expired");
+      return new ModelAndView(new RedirectView("/cfType", true));
     }
+
+    // The previous step depends on what the user specified for the data file type.
+    if (submit != null && submit.equals("Previous")) {
+      String previousStep = wizardManager.processPreviousStep(rosettaCookie.getValue());
+      // Take user back to previous step & don't save data submitted to this step. (See
+      // dataManager.processPreviousStep).
+      return new ModelAndView(new RedirectView(previousStep, true));
+    }
+
+    // Persist the global metadata information.
+    wizardManager.processGlobalMetadata(rosettaCookie.getValue(), wizardData);
+
+    // Send user to next step to download the converted file(s).
+    return new ModelAndView(new RedirectView("/convertAndDownload", true));
+  }
 }

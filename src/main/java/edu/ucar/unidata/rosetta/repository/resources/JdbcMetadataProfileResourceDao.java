@@ -66,8 +66,7 @@ public class JdbcMetadataProfileResourceDao extends JdbcDaoSupport implements Me
    * @return The MetadataProfile object matching the provided name.
    * @throws DataRetrievalFailureException If unable to retrieve persisted metadata profile.
    */
-  public MetadataProfile lookupMetadataProfileByName(String name)
-      throws DataRetrievalFailureException {
+  public MetadataProfile lookupMetadataProfileByName(String name) throws DataRetrievalFailureException {
     String sql =
         "SELECT metadataProfiles.id, metadataProfiles.name, communities.name FROM metadataProfiles LEFT JOIN communities ON metadataProfiles.fileType = communities.id WHERE metadataProfiles.name = '"
             + name + "'";

@@ -49,8 +49,7 @@ public class JdbcFileTypeResourceDao extends JdbcDaoSupport implements FileTypeR
    */
   public FileType lookupFileTypeById(int id) throws DataRetrievalFailureException {
     String sql = "SELECT * FROM fileTypes WHERE id = ?";
-    List<FileType> fileTypes = getJdbcTemplate()
-        .query(sql, new JdbcFileTypeResourceDao.FileTypeMapper(), id);
+    List<FileType> fileTypes = getJdbcTemplate().query(sql, new JdbcFileTypeResourceDao.FileTypeMapper(), id);
     if (fileTypes.isEmpty()) {
       String message = "Unable to find persisted FileType object corresponding to id " + id;
       logger.error(message);
@@ -68,8 +67,7 @@ public class JdbcFileTypeResourceDao extends JdbcDaoSupport implements FileTypeR
    */
   public FileType lookupFileTypeByName(String name) throws DataRetrievalFailureException {
     String sql = "SELECT * FROM fileTypes WHERE name = ?";
-    List<FileType> fileTypes = getJdbcTemplate()
-        .query(sql, new JdbcFileTypeResourceDao.FileTypeMapper(), name);
+    List<FileType> fileTypes = getJdbcTemplate().query(sql, new JdbcFileTypeResourceDao.FileTypeMapper(), name);
     if (fileTypes.isEmpty()) {
       String message = "Unable to find persisted FileType object corresponding to name " + name;
       logger.error(message);

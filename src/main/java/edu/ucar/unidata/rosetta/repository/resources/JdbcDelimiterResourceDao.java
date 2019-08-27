@@ -31,8 +31,7 @@ public class JdbcDelimiterResourceDao extends JdbcDaoSupport implements Delimite
    */
   public List<Delimiter> getDelimiters() throws DataRetrievalFailureException {
     String sql = "SELECT * FROM delimiters ORDER BY name";
-    List<Delimiter> delimiters = getJdbcTemplate()
-        .query(sql, new JdbcDelimiterResourceDao.DelimiterMapper());
+    List<Delimiter> delimiters = getJdbcTemplate().query(sql, new JdbcDelimiterResourceDao.DelimiterMapper());
     if (delimiters.isEmpty()) {
       String message = "Unable to find persisted Delimiter objects.";
       logger.error(message);
@@ -50,8 +49,7 @@ public class JdbcDelimiterResourceDao extends JdbcDaoSupport implements Delimite
    */
   public Delimiter lookupDelimiterByName(String name) throws DataRetrievalFailureException {
     String sql = "SELECT * FROM delimiters WHERE name = ?";
-    List<Delimiter> delimiters = getJdbcTemplate()
-        .query(sql, new JdbcDelimiterResourceDao.DelimiterMapper(), name);
+    List<Delimiter> delimiters = getJdbcTemplate().query(sql, new JdbcDelimiterResourceDao.DelimiterMapper(), name);
     if (delimiters.isEmpty()) {
       String message = "Unable to find persisted Delimiter object corresponding to name " + name;
       logger.error(message);

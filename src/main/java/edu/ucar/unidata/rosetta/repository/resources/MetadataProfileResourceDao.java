@@ -32,8 +32,7 @@ public interface MetadataProfileResourceDao {
    * @return The MetadataProfile object matching the provided name.
    * @throws DataRetrievalFailureException If unable to retrieve persisted metadata profile.
    */
-  public MetadataProfile lookupMetadataProfileByName(String name)
-      throws DataRetrievalFailureException;
+  public MetadataProfile lookupMetadataProfileByName(String name) throws DataRetrievalFailureException;
 
 
 }

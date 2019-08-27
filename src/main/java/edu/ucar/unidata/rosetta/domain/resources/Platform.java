@@ -24,7 +24,7 @@ public class Platform extends RosettaResource {
   /**
    * Returns the CF type associated with this resource.
    *
-   * @return  The CF type.
+   * @return The CF type.
    */
   public String getCfType() {
     return cfType;
@@ -33,7 +33,7 @@ public class Platform extends RosettaResource {
   /**
    * Returns the community associated with this resource.
    *
-   * @return  The community.
+   * @return The community.
    */
   public String getCommunity() {
     return community;
@@ -69,7 +69,7 @@ public class Platform extends RosettaResource {
   /**
    * Sets the community associated with this resource.
    *
-   * @param community  The community.
+   * @param community The community.
    */
   public void setCommunity(String community) {
     this.community = community;

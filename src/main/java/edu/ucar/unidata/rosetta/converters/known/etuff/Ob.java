@@ -7,20 +7,20 @@ package edu.ucar.unidata.rosetta.converters.known.etuff;
 
 public class Ob {
 
-    private String value;
-    private String unit;
+  private String value;
+  private String unit;
 
-    Ob(String value, String unit) {
-        this.value = value;
-        this.unit = unit;
-    }
+  Ob(String value, String unit) {
+    this.value = value;
+    this.unit = unit;
+  }
 
-    String getValue() {
-        return value;
-    }
+  String getValue() {
+    return value;
+  }
 
-    String getUnit() {
-        return unit;
-    }
+  String getUnit() {
+    return unit;
+  }
 
 }

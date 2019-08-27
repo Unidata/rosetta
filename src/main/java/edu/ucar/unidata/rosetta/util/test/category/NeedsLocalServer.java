@@ -5,4 +5,5 @@
 
 package edu.ucar.unidata.rosetta.util.test.category;
 
-public interface NeedsLocalServer { /* category marker */ }
+public interface NeedsLocalServer {
+  /* category marker */ }
