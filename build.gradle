@@ -6,6 +6,7 @@ apply plugin: 'war'
 apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.jruby-gradle.base'
+apply plugin: "com.diffplug.gradle.spotless"
 
 // Adds 'assemble', 'check', 'build', and 'clean' tasks.
 // See: https://docs.gradle.org/current/userguide/standard_plugins.html#sec:base_plugins
@@ -161,7 +162,8 @@ buildscript {
     dependencies {
         classpath "com.github.jruby-gradle:jruby-gradle-plugin:1.5.0"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.1"
-        classpath 'org.gretty:gretty:+'
+        classpath "org.gretty:gretty:+"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.22.0"
     }
 }
 
@@ -250,6 +252,14 @@ gretty {
         print "Cleaning up test ROSETTA_HOME"
         File folder = new File("$rootDir/src/test/rosetta_home")
         FileUtils.cleanDirectory(folder)
+    }
+}
+
+spotless {
+    java {
+        target '**/*.java'
+        eclipse().configFile 'styles/eclipse-style-guide.xml'
+        encoding 'UTF-8'
     }
 }
 

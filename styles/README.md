@@ -1,18 +1,23 @@
-Code Style
-==========
+# Code Style
 
-Rosetta intends to follow the Google code styles, as
-outlined 
+Rosetta intends to follow the Google Java code styles, as outlined at <https://google.github.io/styleguide/javaguide.html>, with a few exceptions:
 
-https://google.github.io/styleguide/javaguide.html
-https://google.github.io/styleguide/javascriptguide.xml
+1. Column widths are set to 120, not 100
+2. Comment lines will not be joined to try to reach the 120 column width
 
-For users of intellij, both styles can be applied using
-intellij-java-google-style.xml. For users of eclipse,
-the eclipse-java-google-style.xml applies to java files,
-while eclipse-cpp-google-style.xml applies to javascript
-files (as suggested [here](https://google.github.io/styleguide/javascriptguide.xml#Code_formatting)).
+We provide styles for both IntelliJ (intellij-style-guide.xml) and Eclipse (eclipse-style-guide.xml), which are based off of the Google Style files located at <https://github.com/google/styleguide>, with the two modification above.
+This is the same style used by the other Java based THREDDS projects (i.e. netCDF-Java, THREDDS Data Server).
 
-The only modification made to these styles has been that
-indentation rules set to two spances have been increased
-to four spaces.
+For those not using an IDE, we use the [Spotless](https://github.com/diffplug/spotless) gradle plugin in conjunction with the Rosetta Eclipse style file.
+To check the style from the command line, run:
+
+~~~bash
+./gradlew spotlessCheck
+~~~
+
+Spotless will tell you if style issues are found.
+To fix style issues, one can run:
+
+~~~bash
+./gradlew spotlessApply
+~~~
