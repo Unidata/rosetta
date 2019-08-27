@@ -558,7 +558,7 @@ public abstract class NetcdfFileManager {
     List<Attribute> calculateCoordVarAttrs(VariableInfo variableInfo) {
         List<Attribute> calculatedCoordVarAttrs = new ArrayList<>();
 
-        //CoordinateVariable	axis
+        //CoordinateVariable axis
         String type = VariableInfoUtils.getCoordVarType(variableInfo);
 
         if (type.equalsIgnoreCase(VariableInfoUtils.longitude)) {
@@ -573,7 +573,7 @@ public abstract class NetcdfFileManager {
             }
         }
 
-        //CoordinateVariable	coverage_content_type
+        //CoordinateVariable coverage_content_type
         // no good way to guess this - will need to come from the template
 
         int colId = variableInfo.getColumnId();
@@ -581,7 +581,7 @@ public abstract class NetcdfFileManager {
 
         // only for coordinate variables defined in columnar data block (i.e. non-attribute based)
         if (colId > 0) {
-            //CoordinateVariable	valid_min, valid_max*
+            //CoordinateVariable valid_min, valid_max*
             Array data = arrayData.get(variableInfo.getColumnId());
             Optional<Double> missingValue = VariableInfoUtils.findMissingValue(variableInfo);
             calculatedCoordVarAttrs.addAll(getMaxMinAttrs(data, missingValue));
@@ -598,11 +598,11 @@ public abstract class NetcdfFileManager {
      */
     List<Attribute> calculateDataVarAttrs(VariableInfo variableInfo) {
         List<Attribute> calculatedDataVarAttrs = new ArrayList<>();
-        //DataVariable	_FillValue
-        //DataVariable	coordinates
+        //DataVariable _FillValue
+        //DataVariable coordinates
         String coords = String.join(" ", coordAttrValues);
         calculatedDataVarAttrs.add(new Attribute("coordinates", coords));
-        //DataVariable	coverage_content_type
+        //DataVariable coverage_content_type
         // no good way to guess this - will need to come from the template
 
         Array data = arrayData.get(variableInfo.getColumnId());
@@ -628,7 +628,7 @@ public abstract class NetcdfFileManager {
     private void addTuffGlobalAttrs() {
         int end = elementDimension.getLength();
         for (VariableInfo coordVar : nonElementCoordVarInfo) {
-            //CoordinateVariable	axis
+            //CoordinateVariable axis
             String type = VariableInfoUtils.getCoordVarType(coordVar);
             Array data = arrayData.get(coordVar.getColumnId());
 
