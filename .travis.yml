@@ -2,28 +2,19 @@ language: java
 dist: trusty
 
 jdk:
+  - openjdk8
   - oraclejdk8
 
-#deploy:
-#  provider: pages
-#  skip_cleanup: true
-#  github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
-#  local_dir: build/_site/ 
-#  on:
-#    branch: master
+env:
+  - TASK=test-rosetta
+  - TASK=spotless
 
-addons:
-  sonarqube:
-    organization: "unidata_org"
-    token:
-      secure: $SONAR_TOKEN # Set in travis-ci.org dashboard
-    github_token:
-          secure: $GITHUB_TOKEN # Set in travis-ci.org dashboard
-    branches:
-          - master
+matrix:
+  # only need to run spotless check on once
+  # so exclude one of the two JDKs
+  exclude:
+    - jdk: oraclejdk8
+      env: TASK=spotless
 
 script:
-  - ./gradlew clean test integrationTests sonarqube
-
-#after_script:
-#  - touch build/_site/.nojekyll
+  - bash $TRAVIS_BUILD_DIR/travis/script.sh
