@@ -7,7 +7,6 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
-
 import java.util.Properties;
 
 /**
@@ -17,26 +16,26 @@ import java.util.Properties;
 @ImportResource("classpath:applicationContext-test.xml")
 public class WebAppContext {
 
-    @Bean
-    public SimpleMappingExceptionResolver exceptionResolver() {
-        SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
-        Properties exceptionMappings = new Properties();
-        exceptionMappings.put("org.springframework.dao.DataRetrievalFailureException", "fatalError");
+  @Bean
+  public SimpleMappingExceptionResolver exceptionResolver() {
+    SimpleMappingExceptionResolver exceptionResolver = new SimpleMappingExceptionResolver();
+    Properties exceptionMappings = new Properties();
+    exceptionMappings.put("org.springframework.dao.DataRetrievalFailureException", "fatalError");
 
-        exceptionResolver.setExceptionMappings(exceptionMappings);
-        exceptionResolver.setDefaultErrorView("error");
-        return exceptionResolver;
-    }
+    exceptionResolver.setExceptionMappings(exceptionMappings);
+    exceptionResolver.setDefaultErrorView("error");
+    return exceptionResolver;
+  }
 
-    @Bean
-    public ViewResolver jspViewResolver() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+  @Bean
+  public ViewResolver jspViewResolver() {
+    InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
 
-        viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix("/WEB-INF/views/");
-        viewResolver.setSuffix(".jsp");
-        return viewResolver;
-    }
+    viewResolver.setViewClass(JstlView.class);
+    viewResolver.setPrefix("/WEB-INF/views/");
+    viewResolver.setSuffix(".jsp");
+    return viewResolver;
+  }
 }
 
 

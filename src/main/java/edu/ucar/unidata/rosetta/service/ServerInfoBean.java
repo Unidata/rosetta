@@ -15,8 +15,7 @@ public class ServerInfoBean implements ServletContextAware {
   private static ServerInfo serverInfo;
   private ServletContext servletContext = null;
 
-  public ServerInfoBean() {
-  }
+  public ServerInfoBean() {}
 
   public static String getVersion() {
     return serverInfo.getVersion();
@@ -56,8 +55,7 @@ public class ServerInfoBean implements ServletContextAware {
         props.load(servletContext.getResourceAsStream(name));
         this.version = (String) props.get("Implementation-Version");
         this.buildDate = (String) props.get("Built-On");
-        System.out
-            .println("Initilizing Rosetta version " + this.version + " built on " + this.buildDate);
+        System.out.println("Initilizing Rosetta version " + this.version + " built on " + this.buildDate);
       } catch (IOException e) {
         // not running from war file, so cannot get from /META-INF
         e.printStackTrace();

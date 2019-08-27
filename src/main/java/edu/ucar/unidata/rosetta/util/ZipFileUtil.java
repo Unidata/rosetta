@@ -6,7 +6,6 @@
 package edu.ucar.unidata.rosetta.util;
 
 import static java.util.stream.Collectors.toCollection;
-
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -77,8 +76,8 @@ public class ZipFileUtil {
       for (String inputFile : dirContents) {
         inStream = new FileInputStream(FilenameUtils.concat(pathToDir, inputFile));
         String filenameInZip = FilenameUtils.getName(inputFile);
-        //if (!pathToDir.equals(""))
-        //    filenameInZip = pathToDir + "/" + filenameInZip;
+        // if (!pathToDir.equals(""))
+        // filenameInZip = pathToDir + "/" + filenameInZip;
 
         // Add a zip entry to the output stream.
         outStream.putNextEntry(new ZipEntry(filenameInZip));
@@ -105,13 +104,13 @@ public class ZipFileUtil {
    */
   private static List<String> cleanInventory(List<String> inventory) {
     // first pass based on typical .gitignore for OS generated files
-    Stream<String> cleanInventory = inventory.stream()
-        .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, ".Spotlight-V100"))
-        .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, ".Trashes"))
-        .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, "ehthumbs.db"))
-        .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, "Thumbs.db"))
-        .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, "/__MACOSX/"))
-        .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, ".DS_STORE"));
+    Stream<String> cleanInventory =
+        inventory.stream().filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, ".Spotlight-V100"))
+            .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, ".Trashes"))
+            .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, "ehthumbs.db"))
+            .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, "Thumbs.db"))
+            .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, "/__MACOSX/"))
+            .filter(inventoryFile -> !StringUtils.containsIgnoreCase(inventoryFile, ".DS_STORE"));
 
     return cleanInventory.collect(toCollection(ArrayList::new));
   }
@@ -123,8 +122,7 @@ public class ZipFileUtil {
    * @param filePath The path to where the inventory file will be written.
    * @throws RosettaFileException If unable to write inventory file to disk.
    */
-  private static void createInventory(List<String> inventory, String filePath)
-      throws RosettaFileException {
+  private static void createInventory(List<String> inventory, String filePath) throws RosettaFileException {
     File inventoryFile = new File(FilenameUtils.concat(filePath, "rosetta.inventory"));
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(inventoryFile, true))) {
@@ -161,8 +159,7 @@ public class ZipFileUtil {
    * @return The file data
    * @throws RosettaFileException If unable to read file from zip file.
    */
-  public static String readFileFromZip(String fileNameToFind, String zipFileName)
-      throws RosettaFileException {
+  public static String readFileFromZip(String fileNameToFind, String zipFileName) throws RosettaFileException {
     zipFileName = zipFileName.replace("file://", "");
     StringBuilder data = new StringBuilder();
     String line;
@@ -192,8 +189,7 @@ public class ZipFileUtil {
    * @param uncompressed_dir The directory in which the zip file will be unzipped.
    * @throws RosettaFileException Unable to unzip file and take inventory.
    */
-  public static void unZip(String zipFileName, String uncompressed_dir)
-      throws RosettaFileException {
+  public static void unZip(String zipFileName, String uncompressed_dir) throws RosettaFileException {
     zipFileName = zipFileName.replace("file://", "");
     // The full path to our zip file to uncompress.
     String zipFilePath = FilenameUtils.concat(uncompressed_dir, zipFileName);
@@ -215,16 +211,14 @@ public class ZipFileUtil {
           if (file.mkdirs()) {
             continue;
           } else {
-            throw new RosettaFileException(
-                "Unable to create unzipped directory during zip file expansion.");
+            throw new RosettaFileException("Unable to create unzipped directory during zip file expansion.");
           }
         }
         // Parent.
         File parent = file.getParentFile();
         if (parent != null) {
           if (parent.mkdirs()) {
-            throw new RosettaFileException(
-                "Unable to create unzipped parent directory during zip file expansion.");
+            throw new RosettaFileException("Unable to create unzipped parent directory during zip file expansion.");
           }
         }
 
@@ -247,7 +241,7 @@ public class ZipFileUtil {
     } catch (IOException e) {
       throw new RosettaFileException("Unable to unzip file: " + e);
     }
-    inventory = cleanInventory(inventory);  // Clean up inventory.
+    inventory = cleanInventory(inventory); // Clean up inventory.
     createInventory(inventory, uncompressed_dir);
   }
 }

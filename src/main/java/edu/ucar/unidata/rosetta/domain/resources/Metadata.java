@@ -60,7 +60,7 @@ public abstract class Metadata implements Comparable<Metadata> {
    *
    * @param comparisonObject The GenericMetadata object to compare this object against.
    * @return Returns a -1, 0, or 1 if this object is less than, equal to, or greater than the
-   * specified object.
+   *         specified object.
    */
   public int compareTo(Metadata comparisonObject) {
     // Required metadata has precedence over non-required metadata.

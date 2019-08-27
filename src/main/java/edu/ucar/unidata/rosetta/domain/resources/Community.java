@@ -25,7 +25,7 @@ public class Community extends RosettaResource {
   /**
    * Adds a file type to the list of file types.
    *
-   * @param fileType  The file type to add.
+   * @param fileType The file type to add.
    */
   public void addToFileType(String fileType) {
     this.fileType.add(fileType);
@@ -34,7 +34,7 @@ public class Community extends RosettaResource {
   /**
    * Returns the list of file types associated with this resource.
    *
-   * @return  The file types.
+   * @return The file types.
    */
   public List<String> getFileType() {
     return fileType;
@@ -52,7 +52,7 @@ public class Community extends RosettaResource {
   /**
    * Returns a list of platforms associated with this resource.
    *
-   * @return  The platforms.
+   * @return The platforms.
    */
   public List<Platform> getPlatforms() {
     return platforms;
@@ -61,7 +61,7 @@ public class Community extends RosettaResource {
   /**
    * Sets the list of file types associated with this resource;
    *
-   * @param fileType  The file types.
+   * @param fileType The file types.
    */
   public void setFileType(List<String> fileType) {
     this.fileType = fileType;
@@ -71,7 +71,7 @@ public class Community extends RosettaResource {
    * Adds a file type to the list of file types.
    * (This method is used during resource persistence during start up).
    *
-   * @param fileType  The file type to add.
+   * @param fileType The file type to add.
    */
   public void setFileType(String fileType) {
     this.fileType.add(fileType);
@@ -89,7 +89,7 @@ public class Community extends RosettaResource {
   /**
    * Sets a list of platforms associated with this resource;
    *
-   * @param platforms  The platforms.
+   * @param platforms The platforms.
    */
   public void setPlatforms(List<Platform> platforms) {
     this.platforms = platforms;

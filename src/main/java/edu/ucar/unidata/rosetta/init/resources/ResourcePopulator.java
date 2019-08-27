@@ -50,9 +50,9 @@ public class ResourcePopulator<T extends RosettaResource> {
    * @param resourceMap The data gleaned from the resource XML files.
    * @return A list of populated RosettaResource objects.
    * @throws IllegalAccessException If unable to invoke the setter method on the RosettaResource
-   * object.
+   *         object.
    * @throws NoSuchMethodException If the RosettaResource object doesn't contain the required setter
-   * method.
+   *         method.
    * @throws InvocationTargetException If unable to locate the target method to invoke.
    */
   public List<RosettaResource> populate(Map<String, List<String>> resourceMap)

@@ -12,14 +12,14 @@ import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
  */
 public interface TemplateManager {
 
-    /**
-     * Retrieves persisted data to create a Template object which is used to
-     * write to a template file and a transaction log.
-     *
-     * @param id    The unique transaction ID associated with this template.
-     * @return  A Template object.
-     * @throws RosettaFileException  If unable to create the template file.
-     */
-    Template createTemplate(String id) throws RosettaFileException;
+  /**
+   * Retrieves persisted data to create a Template object which is used to
+   * write to a template file and a transaction log.
+   *
+   * @param id The unique transaction ID associated with this template.
+   * @return A Template object.
+   * @throws RosettaFileException If unable to create the template file.
+   */
+  Template createTemplate(String id) throws RosettaFileException;
 
 }

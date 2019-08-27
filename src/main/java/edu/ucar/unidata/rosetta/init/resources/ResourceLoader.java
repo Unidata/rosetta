@@ -82,10 +82,8 @@ public class ResourceLoader {
 
           // Figure out which type of RosettaResource object we are going to populate.
           String classToInstantiate =
-              "edu.ucar.unidata.rosetta.domain.resources." + type.substring(0, 1).toUpperCase()
-                  + type.substring(1);
-          Object rosettaResource = Class.forName(classToInstantiate).getDeclaredConstructor()
-              .newInstance();
+              "edu.ucar.unidata.rosetta.domain.resources." + type.substring(0, 1).toUpperCase() + type.substring(1);
+          Object rosettaResource = Class.forName(classToInstantiate).getDeclaredConstructor().newInstance();
           // Populate the RosettaResource object using generics.
           ResourcePopulator<RosettaResource> populator = new ResourcePopulator<>();
           populator.setRosettaResource((RosettaResource) rosettaResource);
@@ -93,7 +91,8 @@ public class ResourceLoader {
         }
       }
 
-    } catch (IOException | IllegalAccessException | NoSuchMethodException | InstantiationException | ClassNotFoundException | InvocationTargetException e) {
+    } catch (IOException | IllegalAccessException | NoSuchMethodException | InstantiationException
+        | ClassNotFoundException | InvocationTargetException e) {
       throw new RosettaDataException("Unable to load resources: " + e);
     }
     return resources;
@@ -172,8 +171,8 @@ public class ResourceLoader {
   /**
    * Parses the resource XML file and returns the resources.
    *
-   * @param file  The file from which to fetch the resources.
-   * @return  The resources loaded from the file.
+   * @param file The file from which to fetch the resources.
+   * @return The resources loaded from the file.
    */
   private List<Map<String, String>> fetchAvailableResources(File file) {
     List<Map<String, String>> resources = new ArrayList<>();

@@ -15,10 +15,9 @@ import org.springframework.validation.Errors;
  */
 public abstract class CommonValidator {
 
-  protected static final String[] NAUGHTY_STRINGS = {"<script>", "../", "svg", "javascript", "::",
-      "&quot;", "fromcharCode", "%3", "$#", "alert(", ".js", ".source", "\\", "scriptlet", ".css",
-      "binding:", ".htc", "vbscript", "mocha:", "livescript:", "base64", "\00", "xss:", "%77", "0x",
-      "IS NULL;", "1;", "; --", "1=1"};
+  protected static final String[] NAUGHTY_STRINGS = {"<script>", "../", "svg", "javascript", "::", "&quot;",
+      "fromcharCode", "%3", "$#", "alert(", ".js", ".source", "\\", "scriptlet", ".css", "binding:", ".htc", "vbscript",
+      "mocha:", "livescript:", "base64", "\00", "xss:", "%77", "0x", "IS NULL;", "1;", "; --", "1=1"};
   protected static final String[] NAUGHTY_CHARS = {"<", ">", "`", "^", "|", "}", "{"};
 
   /**
