@@ -249,6 +249,12 @@ gretty {
     }
 }
 
+wrapper {
+    // to upgrade gradle, bump the version here and then run
+    // ./gradlew wrapper
+    gradleVersion = '5.6'
+}
+
 spotless {
     java {
         target '**/*.java'
