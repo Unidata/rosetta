@@ -110,9 +110,10 @@ dependencies {
     testCompile "org.mockito:mockito-all:1.10.19"
     testCompile "org.mockito:mockito-core:2.18.3"
 
-    jrubyExec 'rubygems:jekyll:3.4.0'
+    // Doc build
+    jrubyExec 'rubygems:jekyll:3.8.6'
     // Without this, we get: LoadError: no such file to load -- bundler
-    jrubyExec 'rubygems:bundler:1.14.4'
+    jrubyExec 'rubygems:bundler:2.0.2'
 }
 
 war {
@@ -159,7 +160,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.github.jruby-gradle:jruby-gradle-plugin:1.5.0"
+        classpath "com.github.jruby-gradle:jruby-gradle-plugin:1.7.0"
         classpath "org.gretty:gretty:+"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:3.22.0"
     }
