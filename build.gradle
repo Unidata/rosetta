@@ -70,9 +70,9 @@ dependencies {
     compile "org.slf4j:jcl-over-slf4j:1.7.25"
 
     // JSON / xml processing
-    compile "com.fasterxml.jackson.core:jackson-databind:2.9.9.2"
-    compile "com.fasterxml.jackson.core:jackson-core:2.9.9";
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.9"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.10.0"
+    compile "com.fasterxml.jackson.core:jackson-core:2.10.0";
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.10.0"
     compile "com.googlecode.json-simple:json-simple:1.1.1"
     
     // takes the place of javax.activation package
