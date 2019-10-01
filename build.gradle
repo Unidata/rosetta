@@ -30,9 +30,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-    springVersion = "4.3.21.RELEASE"
+    springVersion = "4.3.25.RELEASE"
     springSecurityVersion = "4.2.13.RELEASE"
-    cdmVersion = "5.0.0"
+    cdmVersion = "5.1.0"
 
     // needed for Jekyll
     source = file("src/main/jekyll/").absolutePath
