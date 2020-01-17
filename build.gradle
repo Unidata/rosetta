@@ -236,7 +236,7 @@ gretty {
     integrationTestTask = 'integrationTests'
 
     configurations {
-        grettyRunnerTomcat8 {
+        grettyRunnerTomcat85 {
             exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
         }
     }
