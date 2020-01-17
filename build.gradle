@@ -222,7 +222,7 @@ task integrationTests(type: Test) {
 }
 
 gretty {
-    servletContainer = 'tomcat8'
+    servletContainer = 'tomcat85'
     httpPort = 8888
 
     // make sure to run as a war, otherwise WEB-INF/classes won't be picked up
