@@ -8,7 +8,8 @@ package edu.ucar.unidata.rosetta.repository.wizard;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFileCmd;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class JdbcUploadedFileDao extends JdbcDaoSupport implements UploadedFileDao {
 
-  private static Logger logger = Logger.getLogger(JdbcUploadedFileDao.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private SimpleJdbcInsert insertActor;
 

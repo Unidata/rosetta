@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -20,7 +20,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.DOMException;
@@ -38,7 +39,7 @@ import org.xml.sax.SAXException;
  */
 public class ResourceLoader {
 
-  private static final Logger logger = Logger.getLogger(ResourceLoader.class);
+  private static final Logger logger = LogManager.getLogger();
 
   /**
    * Accesses the resources index file on disk and loads

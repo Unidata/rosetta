@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
@@ -29,7 +30,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
  */
 public class FileManagerImpl implements FileManager {
 
-  private static final Logger logger = Logger.getLogger(FileManagerImpl.class);
+  private static final Logger logger = LogManager.getLogger();
 
   /**
    * Converts .xls and .xlsx files to .csv files.

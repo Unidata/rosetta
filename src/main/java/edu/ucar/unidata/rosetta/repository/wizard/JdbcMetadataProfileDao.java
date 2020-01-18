@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -10,7 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,7 +19,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 public class JdbcMetadataProfileDao extends JdbcDaoSupport implements MetadataProfileDao {
 
-  private static final Logger logger = Logger.getLogger(JdbcMetadataProfileDao.class);
+  private static final Logger logger = LogManager.getLogger();
 
   /**
    * Retrieves the compliance level for the give attribute.

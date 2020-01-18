@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -29,7 +29,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Utility class for zip file manipulation. Method code taken from the following and modified:
@@ -41,7 +42,7 @@ import org.apache.log4j.Logger;
 
 public class ZipFileUtil {
 
-  private static final Logger logger = Logger.getLogger(ZipFileUtil.class);
+  private static final Logger logger = LogManager.getLogger();
 
 
   /**

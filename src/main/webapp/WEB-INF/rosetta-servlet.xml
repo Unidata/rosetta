@@ -48,7 +48,7 @@
         <property name="arguments">
             <list>
                 <value>derby.stream.error.file</value>
-                <value>${catalina.home}/logs/derby.log</value>
+                <value>${rosetta.content.root.path}/logs/derby.log</value>
             </list>
         </property>
     </bean>

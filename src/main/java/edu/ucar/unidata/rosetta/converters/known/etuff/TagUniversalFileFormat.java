@@ -1,12 +1,17 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.converters.known.etuff;
 
+import static edu.ucar.unidata.rosetta.converters.utils.VariableAttributeUtils.getMaxMinAttrs;
+import edu.ucar.unidata.rosetta.domain.MetadataProfile;
+import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
+import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.repository.wizard.XmlMetadataProfileDao;
-import org.apache.log4j.Logger;
+import edu.ucar.unidata.rosetta.util.PathUtils;
+import edu.ucar.unidata.rosetta.util.RosettaGlobalAttributeUtils;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,11 +32,8 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
-import edu.ucar.unidata.rosetta.domain.MetadataProfile;
-import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
-import edu.ucar.unidata.rosetta.domain.Template;
-import edu.ucar.unidata.rosetta.util.PathUtils;
-import edu.ucar.unidata.rosetta.util.RosettaGlobalAttributeUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayFloat;
@@ -47,7 +49,6 @@ import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
 import ucar.nc2.jni.netcdf.Nc4Iosp;
 import ucar.nc2.time.CalendarDate;
-import static edu.ucar.unidata.rosetta.converters.utils.VariableAttributeUtils.getMaxMinAttrs;
 
 /**
  * Tag Base Archival Tags (flat file) following the OIIP Tag Universal File Format (TUFF)
@@ -57,7 +58,7 @@ import static edu.ucar.unidata.rosetta.converters.utils.VariableAttributeUtils.g
 
 public class TagUniversalFileFormat {
 
-  private static Logger log = Logger.getLogger(TagUniversalFileFormat.class.getName());
+  private static final Logger logger = LogManager.getLogger();
 
   private static String etagGroup = "Meta_eTag";
 
@@ -116,7 +117,7 @@ public class TagUniversalFileFormat {
     if ((useNetcdf4) && (Nc4Iosp.isClibraryPresent())) {
       this.useNetcdf4 = useNetcdf4;
     } else if (useNetcdf4) {
-      log.error("Cannot enable netCDF-4 writing - c library is not loaded.");
+      logger.error("Cannot enable netCDF-4 writing - c library is not loaded.");
     } else {
       this.useNetcdf4 = false;
     }
@@ -217,7 +218,7 @@ public class TagUniversalFileFormat {
         // skip if the line is the column definition line, but without quotes
         if (!line.contains("VariableID")) {
           // missed something
-          log.error("Global Attr line " + line + " not parsed correctly");
+          logger.error("Global Attr line " + line + " not parsed correctly");
         }
       }
     }
@@ -272,7 +273,7 @@ public class TagUniversalFileFormat {
         updateBinInfo(binInfoMax, binName, binNumber, histBin);
       }
     } else {
-      log.error("No idea how to get bin number from: " + line);
+      logger.error("No idea how to get bin number from: " + line);
     }
   }
 
@@ -301,13 +302,13 @@ public class TagUniversalFileFormat {
         addData(name, secSinceEpoch, thisOb);
       } else {
         // cannot identify data line
-        log.error("No idea what this is: " + line);
+        logger.error("No idea what this is: " + line);
       }
     }
   }
 
   public void parse(String etuffFile) {
-    log.debug("start conversion!");
+    logger.debug("start conversion!");
     String line;
 
     Path tbFilePath = Paths.get(etuffFile);
@@ -322,10 +323,10 @@ public class TagUniversalFileFormat {
         br = Files.newBufferedReader(tbFilePath, StandardCharsets.ISO_8859_1);
       }
 
-      log.debug("opened the etuff file!");
+      logger.debug("opened the etuff file!");
       line = br.readLine();
       line = line.trim();
-      log.debug("reading etuff file!");
+      logger.debug("reading etuff file!");
       while (br.ready()) {
         // Read the header (delimited by the : character or //, but ignore // as these are
         // just comments)
@@ -345,22 +346,22 @@ public class TagUniversalFileFormat {
       // closes BufferedReader as well as InputStream(s)
       br.close();
     } catch (IOException ioe) {
-      log.error("Error reading eTuff file", ioe);
+      logger.error("Error reading eTuff file", ioe);
     }
 
-    log.debug("done!");
+    logger.debug("done!");
     printInventory();
   }
 
   private void printInventory() {
-    log.debug("Inventory:");
+    logger.debug("Inventory:");
     List<String> sortedKeys = new ArrayList<>(data.keySet());
     Collections.sort(sortedKeys);
 
     for (Object name : sortedKeys) {
       String strName = name.toString();
       int len = data.get(strName).size();
-      log.debug("   " + name + " (" + len + ")");
+      logger.debug("   " + name + " (" + len + ")");
     }
   }
 
@@ -443,7 +444,7 @@ public class TagUniversalFileFormat {
       theNewVar.addAttribute(new Attribute("positive", "down"));
       theNewVar.addAttribute(new Attribute("axis", "Z"));
     } else {
-      log.error("unhandled coordinate variable: " + name.toString());
+      logger.error("unhandled coordinate variable: " + name.toString());
     }
   }
 
@@ -557,7 +558,7 @@ public class TagUniversalFileFormat {
             theNewVar.addAll(maxMinAttrs);
           }
         } else {
-          log.warn("Skipping non time series variable " + name.toString());
+          logger.warn("Skipping non time series variable " + name.toString());
         }
       }
     }
@@ -614,7 +615,7 @@ public class TagUniversalFileFormat {
           } else if (after != null) {
             value = varTM.get(after);
           } else {
-            log.error("no time match found!");
+            logger.error("no time match found!");
           }
           varValues.add(value.getValue());
         }
@@ -632,7 +633,7 @@ public class TagUniversalFileFormat {
           if (before != null) {
             value = varTM.get(before);
           } else {
-            log.error("no time match found!");
+            logger.error("no time match found!");
           }
           varValues.add(value.getValue());
           if (name.equals(latDimName)) {

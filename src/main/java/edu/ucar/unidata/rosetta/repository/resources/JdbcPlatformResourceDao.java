@@ -1,18 +1,19 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.repository.resources;
 
 import edu.ucar.unidata.rosetta.domain.resources.Platform;
-import org.apache.log4j.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of a platform DAO.
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class JdbcPlatformResourceDao extends JdbcDaoSupport implements PlatformResourceDao {
 
-  protected static Logger logger = Logger.getLogger(JdbcPlatformResourceDao.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private SimpleJdbcInsert insertActor;
 

@@ -1,25 +1,26 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.util;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import edu.ucar.unidata.rosetta.repository.PropertiesDao;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
-import edu.ucar.unidata.rosetta.repository.PropertiesDao;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Utils class with methods for accessing rosetta properties.
  */
 public class PropertyUtils {
 
-  private static final Logger logger = Logger.getLogger(PropertyUtils.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private static PropertiesDao propertiesDao;
 

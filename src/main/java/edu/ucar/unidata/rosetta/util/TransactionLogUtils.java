@@ -1,26 +1,27 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
+
 package edu.ucar.unidata.rosetta.util;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.time.format.DateTimeFormatter;
 import java.time.ZonedDateTime;
-import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
-import edu.ucar.unidata.rosetta.service.ServerInfoBean;
+import java.time.format.DateTimeFormatter;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Utilities for handling the transaction logging.
  */
 public class TransactionLogUtils {
 
-  private static final Logger logger = Logger.getLogger(TransactionLogUtils.class);
+  private static final Logger logger = LogManager.getLogger();
 
   /**
    * Creates the transaction.log file using the provided unique ID.

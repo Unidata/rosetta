@@ -1,19 +1,36 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.init.resources;
 
-import edu.ucar.unidata.rosetta.domain.resources.*;
+import edu.ucar.unidata.rosetta.domain.resources.CfType;
+import edu.ucar.unidata.rosetta.domain.resources.Community;
+import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
+import edu.ucar.unidata.rosetta.domain.resources.FileType;
+import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
+import edu.ucar.unidata.rosetta.domain.resources.Platform;
+import edu.ucar.unidata.rosetta.domain.resources.RosettaResource;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.NonTransientDataAccessResourceException;
-import java.io.File;
-import java.sql.*;
-import java.util.*;
 
 /**
  * An implementation of the DbInitManager that creates the default embedded derby database for the rosetta application.
@@ -22,7 +39,7 @@ import java.util.*;
  */
 public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
-  private static final Logger logger = Logger.getLogger(EmbeddedDerbyDbInitManager.class);
+  private static final Logger logger = LogManager.getLogger();
 
 
   /**

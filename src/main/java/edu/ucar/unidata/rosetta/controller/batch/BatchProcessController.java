@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -7,17 +7,14 @@ package edu.ucar.unidata.rosetta.controller.batch;
 
 import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.batch.BatchFileManager;
-import edu.ucar.unidata.rosetta.service.batch.BatchFileManagerImpl;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import java.io.File;
 import java.io.IOException;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
@@ -31,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class BatchProcessController {
 
-  protected static Logger logger = Logger.getLogger(BatchProcessController.class);
+  private static final Logger logger = LogManager.getLogger();
 
   @javax.annotation.Resource(name = "batchFileManager")
   private BatchFileManager batchFileManager;
