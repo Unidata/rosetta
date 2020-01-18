@@ -14,8 +14,9 @@ apply plugin: 'base'
 apply plugin: 'com.github.jruby-gradle.base'
 apply plugin: 'org.gretty'
 
-import org.apache.commons.io.FileUtils
+
 import com.github.jrubygradle.JRubyExec
+import org.apache.commons.io.FileUtils
 
 compileJava {
     options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
@@ -33,48 +34,52 @@ ext {
     springVersion = "4.3.25.RELEASE"
     springSecurityVersion = "4.2.13.RELEASE"
     cdmVersion = "5.1.0"
+    log4j2Version = "2.13.0"
+    jacksonVersion = "2.10.0"
 
     // needed for Jekyll
     source = file("src/main/jekyll/").absolutePath
     destination = file("build/_site")
     sourceFiles = fileTree(source)
-    commonFlags = [ '--source', source, '--destination', destination ]
+    commonFlags = ['--source', source, '--destination', destination]
 }
 
 dependencies {
     // format -> configurationName "group:name:version:classifier@extension"
     // Spring Framework
-    compile "org.springframework:spring-beans:$springVersion"
-    compile "org.springframework:spring-context:$springVersion"
-    compile "org.springframework:spring-core:$springVersion"
-    compile "org.springframework:spring-expression:$springVersion"
-    compile "org.springframework:spring-web:$springVersion"
-    compile "org.springframework:spring-webmvc:$springVersion"
+    compile "org.springframework:spring-beans:${springVersion}"
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-core:${springVersion}"
+    compile "org.springframework:spring-expression:${springVersion}"
+    compile "org.springframework:spring-web:${springVersion}"
+    compile "org.springframework:spring-webmvc:${springVersion}"
 
     // Spring Security
-    compile "org.springframework.security:spring-security-web:$springSecurityVersion"
-    compile "org.springframework.security:spring-security-config:$springSecurityVersion"
-    compile "org.springframework.security:spring-security-taglibs:$springSecurityVersion"
+    compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
+    compile "org.springframework.security:spring-security-config:${springSecurityVersion}"
+    compile "org.springframework.security:spring-security-taglibs:${springSecurityVersion}"
 
     // Spring Test
-    testCompile "org.springframework:spring-test:$springVersion"
-    testCompile "org.springframework.security:spring-security-test:$springSecurityVersion"
+    testCompile "org.springframework:spring-test:${springVersion}"
+    testCompile "org.springframework.security:spring-security-test:${springSecurityVersion}"
 
     // netCDF-Java/CDM deps
     compile "edu.ucar:cdm:${cdmVersion}"
     compile "edu.ucar:netcdf4:${cdmVersion}"
 
-    // others
-    compile "org.slf4j:slf4j-log4j12:1.7.25"
-    compile "org.slf4j:slf4j-api:1.7.25"
-    compile "org.slf4j:jcl-over-slf4j:1.7.25"
+    // logging
+    compile "org.apache.logging.log4j:log4j-api:${log4j2Version}"
+    runtime "org.apache.logging.log4j:log4j-core:${log4j2Version}"
+    runtime "org.apache.logging.log4j:log4j-web:${log4j2Version}"
+    // spring 4.x, edu.ucar:httpservices uses uses Apache Commons Logging 1.x, so add the JCL bridge
+    runtime "org.apache.logging.log4j:log4j-jcl:${log4j2Version}"
 
     // JSON / xml processing
-    compile "com.fasterxml.jackson.core:jackson-databind:2.10.0"
-    compile "com.fasterxml.jackson.core:jackson-core:2.10.0";
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.10.0"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
     compile "com.googlecode.json-simple:json-simple:1.1.1"
-    
+
     // takes the place of javax.activation package
     compile 'com.sun.activation:javax.activation:1.2.0'
 
@@ -90,8 +95,6 @@ dependencies {
     compile "org.apache.derby:derby:10.14.2.0"
 
     compile "org.apache.taglibs:taglibs-standard-jstlel:1.2.5"
-
-    compile "log4j:log4j:1.2.17"
 
     compile "javax.servlet:javax.servlet-api:3.1.0"
 
@@ -117,9 +120,21 @@ dependencies {
     jrubyExec 'rubygems:bundler:2.0.2'
 }
 
+configurations.all {
+    // exclude jboss-logging, as hibernate will find it and not use log4j2
+    /*
+     ./gradlew -q dependencyInsight --configuration compile --dependency jboss-logging
+
+    org.jboss.logging:jboss-logging:3.3.2.Final
+    \--- org.hibernate.validator:hibernate-validator:6.0.9.Final
+         \--- org.hibernate:hibernate-validator:6.0.9.Final
+              \--- compile
+    */
+    //exclude group: 'org.jboss.logging', module: 'jboss-logging'
+}
+
 war {
-    extension = "war"
-    archiveName = 'rosetta.war'
+    archiveFileName = 'rosetta.war'
     manifest {
         attributes 'Implementation-Version': project.version,
                 'Implementation-Title': project.name,
@@ -230,8 +245,7 @@ gretty {
 
     contextPath = '/rosetta'
 
-    jvmArgs = ["-Drosetta.content.root.path=$rootDir/src/test/rosetta_home",
-               "-Dlog4j.configuration=$rootDir/src/main/webapp/WEB-INF/classes/log4j.xml"]
+    jvmArgs = ["-Drosetta.content.root.path=$rootDir/src/test/rosetta_home"]
 
     integrationTestTask = 'integrationTests'
 
@@ -244,7 +258,7 @@ gretty {
     onStop {
         // cleans up ROSETTA_HOME, which is populated during the integration test process
         print "Cleaning up test ROSETTA_HOME"
-        File folder = new File("$rootDir/src/test/rosetta_home")
+        File folder = new File("$rootDir/src/test/rosetta_home" as String)
         FileUtils.cleanDirectory(folder)
     }
 }

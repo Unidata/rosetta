@@ -1,10 +1,13 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
 import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
 import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
@@ -12,9 +15,6 @@ import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.Variable;
 import edu.ucar.unidata.rosetta.domain.VariableInfo;
 import edu.ucar.unidata.rosetta.domain.VariableMetadata;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,14 +22,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * JSON conversion utilities.
  */
 public class JsonUtils {
 
-  protected static final Logger logger = Logger.getLogger(JsonUtils.class);
+  private static final Logger logger = LogManager.getLogger();
 
   /**
    * Converts the data held in a list of VariableMetadata objects into a string of JSON data.

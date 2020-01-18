@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -9,7 +9,8 @@ import edu.ucar.unidata.rosetta.domain.RosettaProperties;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -22,7 +23,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  */
 public class JdbcPropertiesDao extends JdbcDaoSupport implements PropertiesDao {
 
-  protected static Logger logger = Logger.getLogger(JdbcPropertiesDao.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private SimpleJdbcInsert insertActor;
 

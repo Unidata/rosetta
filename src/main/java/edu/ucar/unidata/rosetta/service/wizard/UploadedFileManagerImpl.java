@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -23,9 +23,6 @@ import edu.ucar.unidata.rosetta.repository.wizard.VariableDao;
 import edu.ucar.unidata.rosetta.repository.wizard.WizardDataDao;
 import edu.ucar.unidata.rosetta.util.JsonUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,13 +30,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Implements uploaded file manager functionality.
  */
 public class UploadedFileManagerImpl implements UploadedFileManager {
 
-  private static final Logger logger = Logger.getLogger(UploadedFileManagerImpl.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private GlobalMetadataDao globalMetadataDao;
   private UploadedFileDao uploadedFileDao;

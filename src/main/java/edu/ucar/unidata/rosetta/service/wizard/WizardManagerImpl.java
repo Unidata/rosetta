@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -7,11 +7,11 @@ package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.converters.custom.dsg.NetcdfFileManager;
 import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
-import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
-import edu.ucar.unidata.rosetta.domain.Variable;
-import edu.ucar.unidata.rosetta.domain.Template;
 import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
+import edu.ucar.unidata.rosetta.domain.Template;
+import edu.ucar.unidata.rosetta.domain.Variable;
 import edu.ucar.unidata.rosetta.domain.resources.Community;
+import edu.ucar.unidata.rosetta.domain.resources.Delimiter;
 import edu.ucar.unidata.rosetta.domain.resources.MetadataProfile;
 import edu.ucar.unidata.rosetta.domain.wizard.UploadedFile;
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
@@ -27,28 +27,29 @@ import edu.ucar.unidata.rosetta.util.JsonUtils;
 import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import edu.ucar.unidata.rosetta.util.TemplateFactory;
 import edu.ucar.unidata.rosetta.util.TransactionLogUtils;
-import ucar.ma2.InvalidRangeException;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-import org.springframework.dao.DataRetrievalFailureException;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataRetrievalFailureException;
+import ucar.ma2.InvalidRangeException;
 
 /**
  * Implements wizard manager functionality.
  */
 public class WizardManagerImpl implements WizardManager {
 
-  private static final Logger logger = Logger.getLogger(WizardManagerImpl.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private DelimiterResourceDao delimiterResourceDao;
   private GlobalMetadataDao globalMetadataDao;

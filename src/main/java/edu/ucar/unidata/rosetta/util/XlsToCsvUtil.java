@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -24,7 +24,8 @@ import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -35,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public class XlsToCsvUtil {
 
-  private final static Logger logger = Logger.getLogger(XlsToCsvUtil.class);
+  private static final Logger logger = LogManager.getLogger();
 
 
   // If a cell is empty, set the value in the CSV file to -999

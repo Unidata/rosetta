@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -28,7 +28,8 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 /**
@@ -37,7 +38,7 @@ import org.springframework.dao.NonTransientDataAccessResourceException;
  */
 public class ApplicationInitialization implements ServletContextListener {
 
-  private static final Logger logger = Logger.getLogger(ApplicationInitialization.class);
+  private static final Logger logger = LogManager.getLogger(ApplicationInitialization.class);
 
   private static final String ROSETTA_HOME = System.getProperty("rosetta.content.root.path"); // set in $JAVA_OPTS
   private static final String CONFIG_FILE = "application.properties";

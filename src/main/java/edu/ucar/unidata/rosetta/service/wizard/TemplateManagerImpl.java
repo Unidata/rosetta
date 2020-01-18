@@ -1,7 +1,8 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
+
 package edu.ucar.unidata.rosetta.service.wizard;
 
 import edu.ucar.unidata.rosetta.domain.GlobalMetadata;
@@ -23,10 +24,10 @@ import edu.ucar.unidata.rosetta.util.PropertyUtils;
 import edu.ucar.unidata.rosetta.util.TransactionLogUtils;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,7 +37,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Implements template manager functionality.
@@ -48,7 +50,7 @@ public class TemplateManagerImpl implements TemplateManager {
 
   private static final String TEMPLATE_VERSION = "1.0";
 
-  private static final Logger logger = Logger.getLogger(TemplateManagerImpl.class);
+  private static final Logger logger = LogManager.getLogger();
 
   @Resource(name = "metadataManager")
   private MetadataManager metadataManager;

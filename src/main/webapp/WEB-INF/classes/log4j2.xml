@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="Rosetta" packages="">
+  <Properties>
+    <Property name="rosetta_log_dir">${sys:rosetta.content.root.path}/logs</Property>
+    <Property name="rosetta_log_archive_dir">${sys:rosetta.content.root.path}/logs/archive</Property>
+  </Properties>
+  <Appenders>
+    <!--
+      Log files that are not archived
+      Replaced on startup, live in ${rosetta.content.root.path}/logs
+      -->
+    <!-- configure serverStartup.log -->
+    <File name="serverStartup"
+      append="false"
+      fileName="${rosetta_log_dir}/serverStartup.log">
+      <PatternLayout>
+        <Pattern>[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n</Pattern>
+      </PatternLayout>
+    </File>
+
+    <!--
+      Rolling log files
+      Rotated daily, archived in ${rosetta.content.root.path}/logs/archive
+      Archived logs are gz compressed
+      -->
+    <!-- configure rosetta.log -->
+    <RollingFile name="rosettaLogger"
+      fileName="${rosetta_log_dir}/rosetta.log"
+      filePattern="${rosetta_log_archive_dir}/rosetta-%d{MM-dd-yyyy}.log.gz">
+      <PatternLayout>
+        <Pattern>[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+      <DefaultRolloverStrategy fileIndex="nomax"/>
+    </RollingFile>
+
+    <!-- configure converter.log -->
+    <RollingFile name="converterLogger"
+      fileName="${rosetta_log_dir}/converter.log"
+      filePattern="${rosetta_log_archive_dir}/converter-%d{MM-dd-yyyy}.log.gz">
+      <PatternLayout>
+        <Pattern>[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+      <DefaultRolloverStrategy fileIndex="nomax"/>
+    </RollingFile>
+
+    <!--
+      Console
+      -->
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="[%d{yyyy-MM-dd' 'HH:mm:ss Z}] %-5p [%c:%L] - %m%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <!--
+      Special rosetta Logging
+      The Root logger will send messages to rosetta.log. Here, we specify special cases.
+    -->
+
+    <!-- log server initialization messages to serverStartup.log -->
+    <Logger name="edu.ucar.unidata.rosetta.init.ApplicationInitialization"
+      additivity="false"
+      level="info">
+      <AppenderRef ref="serverStartup"/>
+    </Logger>
+
+    <Logger name="edu.ucar.unidata.rosetta.init.resources.EmbeddedDerbyDbInitManager"
+      additivity="false"
+      level="info">
+      <AppenderRef ref="serverStartup"/>
+    </Logger>
+
+    <Logger name="org.hibernate.validator.internal.util.Version"
+      additivity="false"
+      level="info">
+      <AppenderRef ref="serverStartup"/>
+    </Logger>
+
+    <!-- converters get their own log -->
+    <Logger name="edu.ucar.unidata.rosetta.converters"
+      additivity="false"
+      level="info">
+      <AppenderRef ref="converterLogger"/>
+    </Logger>
+
+    <!--
+      Spring Logging
+      Based on the TDS approach
+      -->
+    <Logger name="org.springframework"
+      additivity="false"
+      level="info">
+      <AppenderRef ref="serverStartup"/>
+    </Logger>
+
+    <Logger name="org.springframework.http"
+      additivity="false"
+      level="info">
+      <AppenderRef ref="rosettaLogger"/>
+    </Logger>
+
+    <!-- All normal logging messages go to rosetta.log -->
+    <Root level="info"
+      additivity="false">
+      <AppenderRef ref="rosettaLogger"/>
+    </Root>
+  </Loggers>
+</Configuration>

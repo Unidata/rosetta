@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.log4j.Logger;
 import java.util.Objects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Object representing a metadata profile schema as outlined in
@@ -15,7 +16,7 @@ import java.util.Objects;
  */
 public class MetadataProfile {
 
-  protected static final Logger logger = Logger.getLogger(MetadataProfile.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private String attributeName; // required
   private String complianceLevel = "additional";

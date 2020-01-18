@@ -1,14 +1,20 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.service.batch;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.dao.DataRetrievalFailureException;
+import edu.ucar.unidata.rosetta.converters.custom.dsg.NetcdfFileManager;
+import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
+import edu.ucar.unidata.rosetta.domain.Template;
+import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
+import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.service.ResourceManager;
+import edu.ucar.unidata.rosetta.util.PathUtils;
+import edu.ucar.unidata.rosetta.util.PropertyUtils;
+import edu.ucar.unidata.rosetta.util.TemplateFactory;
+import edu.ucar.unidata.rosetta.util.TemplateUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,29 +26,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import javax.annotation.Resource;
-import edu.ucar.unidata.rosetta.converters.known.etuff.TagUniversalFileFormat;
-import edu.ucar.unidata.rosetta.converters.custom.dsg.NetcdfFileManager;
-import edu.ucar.unidata.rosetta.domain.Template;
-import edu.ucar.unidata.rosetta.domain.batch.BatchProcessZip;
-import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
-import edu.ucar.unidata.rosetta.service.ResourceManager;
-import edu.ucar.unidata.rosetta.util.PathUtils;
-import edu.ucar.unidata.rosetta.util.PropertyUtils;
-import edu.ucar.unidata.rosetta.util.TemplateFactory;
-import edu.ucar.unidata.rosetta.util.TemplateUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataRetrievalFailureException;
 import ucar.ma2.InvalidRangeException;
 
 public class BatchFileManagerImpl implements BatchFileManager {
 
-  private static final Logger logger = Logger.getLogger(BatchFileManagerImpl.class);
+  private static final Logger logger = LogManager.getLogger();
 
   @Resource(name = "resourceManager")
   private ResourceManager resourceManager;

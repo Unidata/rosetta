@@ -1,19 +1,14 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.converters.custom.dsg;
 
-import org.apache.log4j.Logger;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import static edu.ucar.unidata.rosetta.converters.utils.VariableAttributeUtils.getMaxMinAttrs;
+import static java.lang.Math.toIntExact;
+import static ucar.nc2.time.CalendarDate.parseISOformat;
+import static ucar.nc2.time.CalendarDate.parseUdunits;
 import edu.ucar.unidata.rosetta.domain.ParsedFile;
 import edu.ucar.unidata.rosetta.domain.RosettaAttribute;
 import edu.ucar.unidata.rosetta.domain.RosettaGlobalAttribute;
@@ -24,6 +19,16 @@ import edu.ucar.unidata.rosetta.util.PathUtils;
 import edu.ucar.unidata.rosetta.util.RosettaGlobalAttributeUtils;
 import edu.ucar.unidata.rosetta.util.TemplateUtils;
 import edu.ucar.unidata.rosetta.util.VariableInfoUtils;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayFloat;
@@ -37,14 +42,10 @@ import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateFormatter;
-import static edu.ucar.unidata.rosetta.converters.utils.VariableAttributeUtils.getMaxMinAttrs;
-import static java.lang.Math.toIntExact;
-import static ucar.nc2.time.CalendarDate.parseISOformat;
-import static ucar.nc2.time.CalendarDate.parseUdunits;
 
 public abstract class NetcdfFileManager {
 
-  protected static Logger logger = Logger.getLogger(NetcdfFileManager.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private List<VariableInfo> nonElementCoordVarInfo = new ArrayList<>();
   private List<VariableInfo> dataVarInfo = new ArrayList<>();

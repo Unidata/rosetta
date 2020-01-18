@@ -1,11 +1,10 @@
 /*
- * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
 package edu.ucar.unidata.rosetta.converters.known;
 
-import org.apache.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +14,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayFloat;
@@ -55,7 +56,7 @@ public class EolSoundingComp {
   private static final String AXIS_ATTR_NAME = "axis";
   private static final String POSITIVE_ATTR_NAME = "positive";
   private static final String STD_NAME_ATTR_NAME = "standard_name";
-  static Logger log = Logger.getLogger(EolSoundingComp.class.getName());
+  private static final Logger logger = LogManager.getLogger();
   private HashMap<String, List<String>> data;
   private List<String> variableNames;
   private List<String> variableUnits;
@@ -71,7 +72,7 @@ public class EolSoundingComp {
     escFile = "/Users/lesserwhirls/Downloads/nc/ELLIS_20150610.cls";
     EolSoundingComp escConvertor = new EolSoundingComp();
     if (!escConvertor.convert(escFile).isEmpty()) {
-      log.debug("Conversion successful");
+      logger.debug("Conversion successful");
     }
   }
 
@@ -96,7 +97,7 @@ public class EolSoundingComp {
     SimpleUnit unitObj = SimpleUnit.factory(unitStr);
 
     if (unitObj.isUnknownUnit()) {
-      log.debug("Unknown unit: " + unitObj.toString());
+      logger.debug("Unknown unit: " + unitObj.toString());
     }
 
     return unitStr;
@@ -288,7 +289,7 @@ public class EolSoundingComp {
       ncfw.close();
       success = true;
     } catch (IOException | InvalidRangeException ioe) {
-      log.debug(ioe.getMessage());
+      logger.debug(ioe.getMessage());
     }
 
     return success;
@@ -326,7 +327,7 @@ public class EolSoundingComp {
         this.initNewDataBlock();
         // this assumes data file starts with a launch header
         // stop when the "/" character is reached
-        log.debug("Processing Launch Header");
+        logger.debug("Processing Launch Header");
         while (!line.equals("/")) {
           processLaunchHeaderLine(line);
           line = br.readLine();
@@ -340,7 +341,7 @@ public class EolSoundingComp {
         // Now we read the data header lines
         // Stop at the line with "------" as this splits the data header
         // from the actual data
-        log.debug("Processing Data Header");
+        logger.debug("Processing Data Header");
         dataHeaderLineNum = 1;
         while (!line.contains("------")) {
           processDataHeaderLine(line, dataHeaderLineNum);
@@ -355,7 +356,7 @@ public class EolSoundingComp {
         line = br.readLine();
 
         boolean readData = true;
-        log.debug("Processing Data Block");
+        logger.debug("Processing Data Block");
         while (readData) {
           try {
             // if this is a data line then the first value from a split on " " should be convertible to
@@ -386,7 +387,7 @@ public class EolSoundingComp {
       }
     } catch (IOException ioe) {
       readSuccess = false;
-      log.debug(ioe.getMessage());
+      logger.debug(ioe.getMessage());
     }
 
     return convertedFiles;
