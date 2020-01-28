@@ -6,6 +6,7 @@
 package edu.ucar.unidata.rosetta.init;
 
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
+import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.init.resources.DbInitManager;
 import edu.ucar.unidata.rosetta.init.resources.EmbeddedDerbyDbInitManager;
 import edu.ucar.unidata.rosetta.service.ServerInfoBean;
@@ -21,6 +22,7 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Stream;
 import javax.servlet.ServletContextEvent;
@@ -44,32 +46,30 @@ public class ApplicationInitialization implements ServletContextListener {
   private static final String CONFIG_FILE = "application.properties";
   private static final String USER_FILES_DIR = "user_files";
   private static final int DEFAULT_MAX_UPLOAD_SIZE = 52430000;
+  private static final String DEFAULT_DATABASE = "derby";
 
   /**
    * Compares the configuration information in the user's application.properties file in
-   * ROSETTA_HOME with the default configuration settings of this version of Rosetta to see if there
-   * are any new configs to be added. Missing configuration properties are noted in the logs and
-   * handed over to another method to be written out to the user's application.properties file.
+   * ROSETTA_HOME with the default configuration settings that come with this version of Rosetta
+   * to see if there if are any new configs to be added. Missing configuration properties are
+   * noted in the logs and handed over to another method to be written out to the user's
+   * application.properties file.
    * TODO: In future, notify admin of these differences via interface and let him/her sort it out.
    *
    * @param props The configuration properties as per the application.properties file in
    *        ROSETTA_HOME.
-   * @return Updated properties including any new default properties added in more recent versions
-   *         of Rosetta.
-   * @throws IOException If unable to compare the configuration properties to the default
-   *         properties.
    */
-  private Properties comparePropertiesBetweenVersions(Properties props) throws IOException, SQLException {
+  private void comparePropertiesBetweenVersions(Properties props) {
 
     try {
       // Get the default properties.
       Properties defaultProps = getDefaultProperties();
 
       logger.info("Comparing default configuration settings of this version of Rosetta (" + ServerInfoBean.getVersion()
-          + ") with prior configurations in application.properties");
+          + ") with prior configurations in user's application.properties in " + ROSETTA_HOME);
 
       Properties missingProperties = new Properties();
-      Enumeration propertyNames = (Enumeration) defaultProps.propertyNames();
+      Enumeration propertyNames = defaultProps.propertyNames();
       while (propertyNames.hasMoreElements()) {
         String key = (String) propertyNames.nextElement();
         // If the application.properties file in ROSETTA_HOME doesn't contain the default prop.
@@ -80,7 +80,7 @@ public class ApplicationInitialization implements ServletContextListener {
           props.setProperty(key, value); // Add to user's collection of properties.
         }
       }
-      // Write any missing default properties to the user's application.properties file in ROSETTA_HOME.
+      // Write missing default properties to the user's application.properties file in ROSETTA_HOME.
       if (!missingProperties.isEmpty()) {
         writeNewPropertiesToConfigFile(missingProperties);
       }
@@ -89,7 +89,6 @@ public class ApplicationInitialization implements ServletContextListener {
       e.printStackTrace(new PrintWriter(errors));
       logger.error(errors);
     }
-    return props;
   }
 
   /**
@@ -132,20 +131,28 @@ public class ApplicationInitialization implements ServletContextListener {
       // Create directory where user files are stashed.
       props.setProperty("rosetta.userFilesDir", createUserFilesDirectory());
 
-      // Compare properties between
-      Properties missingProperties = comparePropertiesBetweenVersions(props);
+      // Compare properties between user's application.properties file in ROSETTA_HOME
+      // with the default configuration settings that come with this version of Rosetta.
+      // (Any new props will be added to the properties database table via the DbInitManager.)
+      comparePropertiesBetweenVersions(props);
 
-      // Initialize the database init manager.
+      // If type of database is not specified, use the default.
+      if (props.getProperty("rosetta.db") == null) {
+        props.setProperty("rosetta.db", DEFAULT_DATABASE);
+      }
+
+      // Initialize the dbInitManager.
       DbInitManager dbInitManager = new EmbeddedDerbyDbInitManager();
       // Create the database and populate with the relevant prop values if it doesn't already exist.
       dbInitManager.createDatabase(props);
 
     } catch (SecurityException | IOException | SQLException | NonTransientDataAccessResourceException
-        | RosettaDataException e) {
+        | RosettaDataException | RosettaFileException e) {
       StringWriter errors = new StringWriter();
       e.printStackTrace(new PrintWriter(errors));
       logger.error(errors);
-      // Can't continue if important directories and properties do not exist or if we have database issues, so die.
+      // Can't continue if important directories and properties do not exist;
+      // or if we have database issues, so die.
       contextDestroyed(servletContextEvent);
     }
   }
@@ -170,7 +177,7 @@ public class ApplicationInitialization implements ServletContextListener {
 
       EmbeddedDerbyDbInitManager dbInitManager = new EmbeddedDerbyDbInitManager();
       dbInitManager.shutdownDatabase(props);
-    } catch (IOException | SQLException e) {
+    } catch (SQLException | RosettaFileException e) {
       StringWriter errors = new StringWriter();
       e.printStackTrace(new PrintWriter(errors));
       logger.error(errors);
@@ -182,16 +189,22 @@ public class ApplicationInitialization implements ServletContextListener {
    * Makes a copy of the default configuration file in ROSETTA_HOME.
    *
    * @param destination The file to be created in ROSETTA_HOME.
-   * @throws IOException If unable to make a copy of the configuration file in ROSETTA_HOME.
+   * @throws RosettaFileException If unable to make a copy of the configuration file in ROSETTA_HOME.
    */
-  private void copyDefaultConfigFile(File destination) throws IOException {
+  private void copyDefaultConfigFile(File destination) throws RosettaFileException {
     logger.info("Copying default configuration application.properties file...");
     // Get the default configuration file.
     ClassLoader classLoader = getClass().getClassLoader();
-    File sourceFile = new File(classLoader.getResource(CONFIG_FILE).getFile());
+    try {
+      File sourceFile = new File(Objects.requireNonNull(classLoader.getResource(CONFIG_FILE)).getFile());
 
-    // Make a copy of the configuration file in ROSETTA_HOME.
-    FileUtils.copyFile(sourceFile, destination);
+      // Make a copy of the configuration file in ROSETTA_HOME.
+      FileUtils.copyFile(sourceFile, destination);
+
+    } catch (NullPointerException | IOException e) {
+      throw new RosettaFileException("Unable to make a copy of the default configuration file in " +
+              ROSETTA_HOME);
+    }
   }
 
   /**
@@ -232,6 +245,7 @@ public class ApplicationInitialization implements ServletContextListener {
   }
 
 
+
   /**
    * Loads and returns all the properties listed in the DEFAULT application.properties configuration
    * file. These property values come bundled with the Rosetta application and are found under
@@ -250,7 +264,7 @@ public class ApplicationInitialization implements ServletContextListener {
     logger.info("Reading default application.properties configuration file...");
 
     // Load the default configuration data, filtering out the unwanted lines.
-    File configFile = new File(classLoader.getResource(CONFIG_FILE).getFile());
+    File configFile = new File(Objects.requireNonNull(classLoader.getResource(CONFIG_FILE)).getFile());
 
     try (Stream<String> stream = Files.lines(Paths.get(configFile.getAbsolutePath()))) {
       stream.filter(StringUtils::isNotBlank) // Filter out blank lines.
@@ -265,12 +279,13 @@ public class ApplicationInitialization implements ServletContextListener {
   }
 
   /**
-   * Loads and returns all the properties listed in the application.properties configuration file.
+   * Loads and returns all the properties listed in the application.properties configuration file
+   * from ROSETTA_HOME.
    *
    * @return All of the properties listed the application.properties configuration file.
-   * @throws IOException If unable to load properties from configuration file.
+   * @throws RosettaFileException If unable to load properties from configuration file.
    */
-  private Properties getPropertiesFromConfigFile() throws IOException {
+  private Properties getPropertiesFromConfigFile() throws RosettaFileException {
     Properties props = new Properties();
     File configFile = new File(FilenameUtils.concat(ROSETTA_HOME, CONFIG_FILE));
 
@@ -281,8 +296,11 @@ public class ApplicationInitialization implements ServletContextListener {
 
     // Load configuration file properties.
     logger.info("Reading " + configFile + " configuration file...");
-    try (FileInputStream configFileIS = new FileInputStream(configFile)) {
+    try {
+      FileInputStream configFileIS = new FileInputStream(configFile);
       props.load(configFileIS);
+    } catch (IOException e) {
+      throw new RosettaFileException("Unable to load properties from configuration file.");
     }
 
     return props;
@@ -300,7 +318,7 @@ public class ApplicationInitialization implements ServletContextListener {
     File configFile = new File(FilenameUtils.concat(ROSETTA_HOME, CONFIG_FILE));
 
     try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(configFile.getAbsoluteFile(), true))) {
-      Enumeration propertyNames = (Enumeration) propsToAdd.propertyNames();
+      Enumeration propertyNames = propsToAdd.propertyNames();
       Date now = new Date(System.currentTimeMillis());
       bufferedWriter.write("\n\n# ADDING DEFAULT PROPERTIES VALUES " + now.toString());
 
