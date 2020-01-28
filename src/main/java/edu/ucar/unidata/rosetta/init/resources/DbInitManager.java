@@ -19,8 +19,6 @@ import org.springframework.dao.NonTransientDataAccessResourceException;
  * Those who do not want to use the default embedded database that comes with rosetta will need to
  * implement this interface to utilize their own database. Please see the database schema and specs
  * outlined in the rosetta documentation for more information.
- *
- * @author oxelson@ucar.edu
  */
 public interface DbInitManager {
 
@@ -41,7 +39,7 @@ public interface DbInitManager {
    * @throws SQLException If an SQL exceptions occurs during database creation.
    * @throws RosettaDataException If unable to access the rosetta resources to persist.
    */
-  public void createDatabase(Properties props)
+  void createDatabase(Properties props)
       throws NonTransientDataAccessResourceException, SQLException, RosettaDataException;
 
   /**
@@ -51,6 +49,6 @@ public interface DbInitManager {
    *        shutdown.
    * @throws SQLException If an SQL exceptions occurs during database shutdown.
    */
-  public void shutdownDatabase(Properties props) throws SQLException;
+  void shutdownDatabase(Properties props) throws SQLException;
 
 }
