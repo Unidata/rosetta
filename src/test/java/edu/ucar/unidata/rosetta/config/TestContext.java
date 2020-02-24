@@ -8,6 +8,7 @@ import edu.ucar.unidata.rosetta.init.resources.ResourceLoader;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.batch.BatchFileManager;
 import edu.ucar.unidata.rosetta.service.wizard.*;
+import java.util.Properties;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class TestContext {
+
+
+  @Bean
+  public BatchFileManager batchFileManager() {
+    return Mockito.mock(BatchFileManager.class);
+  }
 
   @Bean
   public BatchFileManager batchFileManager() {
