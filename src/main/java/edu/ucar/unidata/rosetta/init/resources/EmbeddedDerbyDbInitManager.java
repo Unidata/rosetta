@@ -34,24 +34,21 @@ import org.springframework.dao.NonTransientDataAccessResourceException;
 
 /**
  * An implementation of the DbInitManager that creates the default embedded derby database for the rosetta application.
- *
- * @author oxelson@ucar.edu
  */
 @SuppressWarnings("SpellCheckingInspection")
 public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
   private static final Logger logger = LogManager.getLogger();
 
-
   /**
    * Adds default admin user during database creation.
    *
    * @param props RosettaProperties from which the database username and password are glean.
-   * @throws NonTransientDataAccessResourceException If unable to create instance of the database
-   *         driver.
-   * @throws SQLException If an SQL exceptions occurs during insert transaction.
+   * @throws NonTransientDataAccessResourceException If unable to create instance of the database driver.
+   * @throws SQLException                            If an SQL exceptions occurs during insert transaction.
    */
   private void addDefaultAdminUser(Properties props) throws NonTransientDataAccessResourceException, SQLException {
+
     // Create database connection
     Connection connection = createDatabaseConnection(props);
     PreparedStatement insertAdminUserPS;
@@ -81,8 +78,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
    *
    * @param props RosettaProperties used to create the database.
    * @throws NonTransientDataAccessResourceException If unable to create or access the database.
-   * @throws SQLException If an SQL exceptions occurs during database creation.
-   * @throws RosettaDataException If unable to access the rosetta resources to persist.
+   * @throws SQLException                            If an SQL exceptions occurs during database creation.
+   * @throws RosettaDataException                    If unable to access the rosetta resources to persist.
    */
   @Override
   public void createDatabase(Properties props)
@@ -96,10 +93,9 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
     // Create derby database file.
     File dbFile = new File(FilenameUtils.concat(rosettaHome, databaseName));
 
-    Connection connection;
-    if (!dbFile.exists()) {
+    if (!dbFile.exists()) { // Create the database tables;
       logger.info("Database does not exist yet.  Creating...");
-      // Create the database tables;
+
       String createPropertiesTable = "CREATE TABLE properties " + "("
           + "id INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
           + "propertyKey VARCHAR(255) not null, " + "propertyValue VARCHAR(255) not null, "
@@ -126,7 +122,6 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
           + "metadataType VARCHAR(14), " + "metadataTypeStructure VARCHAR(20), " + "verticalDirection VARCHAR(4), "
           + "metadataValueType VARCHAR(10)" + ")";
       createTable(createVariablesTable, props);
-
 
       String createVariableMetadataTable = "CREATE TABLE variableMetadata " + "(" + "variableId INT, "
           + "complianceLevel VARCHAR(255), " + "metadataKey VARCHAR(255), " + "metadataValue VARCHAR(255)" + ")";
@@ -184,90 +179,37 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
       // Insert the resources into the db.
       insertResources(props);
-      /*
-       * String createUsersTable = "CREATE TABLE users" +
-       * "(" +
-       * "userId INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
-       * +
-       * "userName VARCHAR(50) not null, " +
-       * "password VARCHAR(80) not null, " +
-       * "accessLevel INTEGER not null, " +
-       * "accountStatus INTEGER not null, " +
-       * "emailAddress VARCHAR(75) not null, " +
-       * "fullName VARCHAR(100) not null, " +
-       * "dateCreated TIMESTAMP not null, " +
-       * "dateModified TIMESTAMP not null" +
-       * ")";
-       * createTable(createUsersTable, props);
-       */
 
-       // Add default admin user to users table.
-       addDefaultAdminUser(props);
+      String createUsersTable = "CREATE TABLE users" + "("
+          + "userId INTEGER primary key not null GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+          + "userName VARCHAR(50) not null, " + "password VARCHAR(80) not null, " + "accessLevel INTEGER not null, "
+          + "accountStatus INTEGER not null, " + "emailAddress VARCHAR(75) not null, "
+          + "fullName VARCHAR(100) not null, " + "dateCreated TIMESTAMP not null, " + "dateModified TIMESTAMP not null"
+          + ")";
+      createTable(createUsersTable, props);
 
-      // Okay, we're done. Shut down this particular connection to the database.
-      try {
-        connection = DriverManager.getConnection(url + ";shutdown=true");
-        if (connection != null) {
-          connection.close();
-        }
-      } catch (SQLException e) {
-        // As per the Derby docs, the shutdown commands always raise SQLExceptions. (lame!)
-        logger.info("Finished creating database. Shutting down database...");
-      }
-
-
-    } else {
-
-      // Update existing properties table.
+      // Add default admin user to users table.
+      addDefaultAdminUser(props);
+    } else { // Update existing properties table.
       populatePropertiesTable(props);
-
       logger.info("Nothing to do here... Database already exists.");
     }
-  }
-
-  /**
-   * Creates a database connection.
-   *
-   * @param props RosettaProperties from which the database username and password are glean.
-   * @throws SQLException If an SQL exceptions occurs during create table transaction.
-   */
-  private Connection createDatabaseConnection(Properties props) throws SQLException {
-    Connection connection;
-
-    try {
-      Class.forName(props.getProperty("jdbc.driverClassName"));
-    } catch (ClassNotFoundException e) {
-      throw new NonTransientDataAccessResourceException("Unable to find database drive class: " + e);
-    }
-
-    String username = StringUtils.stripToNull(props.getProperty("jdbc.username"));
-    String password = StringUtils.stripToNull(props.getProperty("jdbc.password"));
-    String url = props.getProperty("jdbc.url");
-    if (username != null && password != null) {
-      connection = DriverManager.getConnection(url, username, password);
-    } else {
-      connection = DriverManager.getConnection(url);
-    }
-    return connection;
   }
 
   /**
    * Creates a table in the derby database.
    *
    * @param statement The create SQL statement.
-   * @param props RosettaProperties from which the database username and password are glean.
-   * @throws NonTransientDataAccessResourceException If unable to create instance of the database
-   *         driver.
-   * @throws SQLException If an SQL exceptions occurs during create table transaction.
+   * @param props     RosettaProperties from which the database username and password are glean.
+   * @throws NonTransientDataAccessResourceException If unable to create instance of the database driver.
+   * @throws SQLException                            If an SQL exceptions occurs during create table transaction.
    */
   private void createTable(String statement, Properties props)
       throws NonTransientDataAccessResourceException, SQLException {
 
     // Create database connection
     Connection connection = createDatabaseConnection(props);
-    PreparedStatement createTablePS;
-
-    createTablePS = connection.prepareStatement(statement);
+    PreparedStatement createTablePS = connection.prepareStatement(statement);
     createTablePS.executeUpdate();
 
     // Clean up.
@@ -276,10 +218,61 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
   }
 
   /**
-   * Inserts the metadata profile data  glean from xml files into the database.
+   * Creates a database connection.
    *
-   * @param props  RosettaProperties from which the database username and password are glean.
-   * @throws SQLException If an SQL exceptions occurs during insert transaction.
+   * @param props RosettaProperties from which the database username and password are glean.
+   */
+  private Connection createDatabaseConnection(Properties props) {
+    return createDatabaseConnection(props, false);
+  }
+
+  /**
+   * Creates a database connection.
+   *
+   * @param props    RosettaProperties from which the database username and password are glean.
+   * @param shutdown Action the database connection will take (create or shutdown).
+   */
+  private Connection createDatabaseConnection(Properties props, boolean shutdown) {
+    try {
+      Class.forName(props.getProperty("jdbc.driverClassName"));
+    } catch (ClassNotFoundException e) {
+      throw new NonTransientDataAccessResourceException("Unable to find database driver class: " + e);
+    }
+    // Database attributes stored as Properties.
+    Properties connectionProperties = new Properties();
+
+    // Action property for the data connection.
+    if (shutdown) {
+      connectionProperties.put("shutdown", "true");
+    } else {
+      connectionProperties.put("create", "true");
+    }
+
+    String username = StringUtils.stripToNull(props.getProperty("jdbc.username"));
+    String password = StringUtils.stripToNull(props.getProperty("jdbc.password"));
+    if (username != null && password != null) {
+      connectionProperties.put("username", username);
+      connectionProperties.put("password", password);
+    }
+
+    String url = props.getProperty("jdbc.url");
+
+    // Connect to the database.
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, connectionProperties);
+    } catch (SQLException e) {
+      // As per the Derby docs, the shutdown commands always raise SQLExceptions. (lame!)
+      logger.info("Shutting down database...");
+    }
+    return connection;
+  }
+
+  /**
+   * Inserts the metadata profile data glean from xml files into the database.
+   *
+   * @param props RosettaProperties from which the database username and password are glean.
+   * @throws SQLException         If an SQL exceptions occurs during insert transaction.
    * @throws RosettaDataException If unable to access the metadata profiles to persist.
    */
   private void insertMetadataProfiles(Properties props) throws SQLException, RosettaDataException {
@@ -305,9 +298,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
       insertMetadataProfilesPS.setString(8, metadataProfile.getMetadataType());
       insertMetadataProfilesPS.setString(9, metadataProfile.getMetadataTypeStructureName());
       insertMetadataProfilesPS.setString(10, metadataProfile.getMetadataValueType());
-
       insertMetadataProfilesPS.executeUpdate();
-
       // Clean up.
       insertMetadataProfilesPS.close();
     }
@@ -327,45 +318,37 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
       insertIgnoreListPS.setString(1, ignore[0]);
       insertIgnoreListPS.setString(2, ignore[1]);
       insertIgnoreListPS.executeUpdate();
-
       // Clean up.
       insertIgnoreListPS.close();
     }
-
-    // Clean up.
-    connection.close();
   }
 
   /**
    * Inserts the rosetta-specific resources glean from xml files into the database.
    *
    * @param props RosettaProperties from which the database username and password are glean.
-   * @throws NonTransientDataAccessResourceException If unable to create instance of database
-   *         driver.
-   * @throws SQLException If an SQL exceptions occurs during insert transaction.
-   * @throws RosettaDataException If unable to access the resource to persist.
+   * @throws NonTransientDataAccessResourceException If unable to create instance of database driver.
+   * @throws SQLException                            If an SQL exceptions occurs during insert transaction.
+   * @throws RosettaDataException                    If unable to access the resource to persist.
    */
   private void insertResources(Properties props)
       throws NonTransientDataAccessResourceException, SQLException, RosettaDataException {
 
     // Create database connection
     Connection connection = createDatabaseConnection(props);
-
     ResourceLoader resourceManager = new ResourceLoader();
     List<RosettaResource> resources = resourceManager.loadResources();
     for (RosettaResource resource : resources) {
       // Set the resources depending on the type.
-      if (resource instanceof CfType) {
-        // CF type resource.
+      if (resource instanceof CfType) {  // CF type resource.
         String insertStatement = "INSERT INTO cfTypes (name) VALUES (?)";
-        PreparedStatement insertCFTypeResourcesPS= connection.prepareStatement(insertStatement);
+        PreparedStatement insertCFTypeResourcesPS = connection.prepareStatement(insertStatement);
         insertCFTypeResourcesPS.setString(1, resource.getName());
         insertCFTypeResourcesPS.executeUpdate();
         // Clean up.
         insertCFTypeResourcesPS.close();
 
-      } else if (resource instanceof Delimiter) {
-        // Delimiter resource.
+      } else if (resource instanceof Delimiter) { // Delimiter resource.
         String insertStatement = "INSERT INTO delimiters (name, characterSymbol) VALUES (?, ?)";
         PreparedStatement insertDelimiterResourcesPS = connection.prepareStatement(insertStatement);
         insertDelimiterResourcesPS.setString(1, resource.getName());
@@ -374,8 +357,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         // Clean up.
         insertDelimiterResourcesPS.close();
 
-      } else if (resource instanceof FileType) {
-        // File type resource.
+      } else if (resource instanceof FileType) { // File type resource.
         String insertStatement = "INSERT INTO fileTypes (name) VALUES (?)";
         PreparedStatement insertFileTypeResourcesPS = connection.prepareStatement(insertStatement);
         insertFileTypeResourcesPS.setString(1, resource.getName());
@@ -383,9 +365,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         // Clean up.
         insertFileTypeResourcesPS.close();
 
-      } else if (resource instanceof Platform) {
-        // Platform resource.
-
+      } else if (resource instanceof Platform) {  // Platform resource.
         // Get the primary key values for the cfTypes and stash them in a map for quick access.
         Map<String, Integer> cfTypeMap = new HashMap<>();
         String selectStatement = "SELECT * FROM cfTypes";
@@ -419,13 +399,11 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
         // Clean up.
         insertPlatformResourcesPS.close();
 
-      } else if (resource instanceof Community) {
-        // Community resource.
-
+      } else if (resource instanceof Community) { // Community resource.
         // Get the primary key values for the file types and stash them in a map for quick access.
         Map<String, Integer> fileTypeMap = new HashMap<>();
         String selectStatement = "SELECT * FROM fileTypes";
-        ResultSet rs =  connection.prepareStatement(selectStatement).executeQuery();
+        ResultSet rs = connection.prepareStatement(selectStatement).executeQuery();
         while (rs.next()) {
           int id = rs.getInt("id");
           String name = rs.getString("name");
@@ -444,9 +422,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
           insertCommunityResourcesPS.close();
         }
 
-      } else {
-        // Metadata profile resource.
-
+      } else { // Metadata profile resource.
         // Get the primary key values for the communities and stash them in a map for quick access.
         Map<String, Integer> communityMap = new HashMap<>();
         String selectStatement = "SELECT DISTINCT id, name FROM communities";
@@ -482,11 +458,11 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
    * Populates a table with configuration properties data.
    *
    * @param props RosettaProperties from which the database username and password are glean.
-   * @throws NonTransientDataAccessResourceException If unable to create instance of the database
-   *         driver.
-   * @throws SQLException If an SQL exceptions occurs during insert transaction.
+   * @throws NonTransientDataAccessResourceException If unable to create instance of the database driver.
+   * @throws SQLException                            If an SQL exceptions occurs during insert transaction.
    */
   private void populatePropertiesTable(Properties props) throws NonTransientDataAccessResourceException, SQLException {
+
     // Create database connection
     Connection connection = createDatabaseConnection(props);
 
@@ -526,7 +502,6 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
           // Clean up.
           updatePropertiesPS.close();
         }
-
       } else {
         // Property has NOT been persisted before. Add it.
         String insertStatement = "INSERT INTO properties(propertyKey, propertyValue, dateCreated) " + "VALUES (?,?,?)";
@@ -547,37 +522,22 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
   /**
    * Shuts down the embedded derby database by de-registering the driver.
    *
-   * @param props RosettaProperties from application.properties that may be used for database
-   *        shutdown.
+   * @param props RosettaProperties from application.properties that may be used for database shutdown.
    * @throws SQLException If an SQL exceptions occurs during database shutdown.
    */
   public void shutdownDatabase(Properties props) throws SQLException {
-    // Create database connection
-    Connection connection ;
 
-    String username = StringUtils.stripToNull(props.getProperty("jdbc.username"));
-    String password = StringUtils.stripToNull(props.getProperty("jdbc.password"));
-    String url = props.getProperty("jdbc.url") + ";create=true";
+    logger.info("Shutting down database...");
 
-    // Okay, we're done. Shut down this particular connection to the database.
-    try {
-      if (username != null && password != null) {
-        connection = DriverManager.getConnection(url + ";shutdown=true", username, password);
-      } else {
-        connection = DriverManager.getConnection(url + ";shutdown=true");
-      }
-      if (connection != null) {
-        connection.close();
-      }
-    } catch (SQLException e) {
-      // As per the Derby docs, the shutdown commands always raise SQLExceptions. (lame!)
-      logger.info("Shutting down database...");
-    }
+    // Create the connection and tell the database to shut down.
+    Connection connection = createDatabaseConnection(props, true);
+    // Clean up.
+    connection.close();
 
+    // De-register database driver.
+    String url = props.getProperty("jdbc.url");
     Driver driver = DriverManager.getDriver(url);
     logger.info("De-registering jdbc driver.");
     DriverManager.deregisterDriver(driver);
   }
 }
-
-
