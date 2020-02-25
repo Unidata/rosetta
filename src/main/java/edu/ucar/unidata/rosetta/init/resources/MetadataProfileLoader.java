@@ -40,17 +40,23 @@ public class MetadataProfileLoader {
     PROFILE_DIRS.add("resources/MpsProfilesRosetta/");
   }
 
-  public List<MetadataProfile> loadMetadataProfiles() throws RosettaDataException {
+  /**
+   * Loads metadata profile information form the files located in the resource directory,
+   *
+   * @return  A list of MetadataProfile objects corresponding to the data gleaned from the resource files.
+   * @throws RosettaDataException  If unable to load the metadata profile data resources from files.
+   */
+  List<MetadataProfile> loadMetadataProfiles() throws RosettaDataException {
     List<MetadataProfile> metadataProfiles = new ArrayList<>();
     try {
-
       List<String> profileFiles = new ArrayList<>();
 
       // Access the available metadata profiles by directories.
       for (String resourceDir : PROFILE_DIRS) {
-        Resource r = new ClassPathResource(resourceDir);
-        File profiles = r.getFile();
+        Resource resource = new ClassPathResource(resourceDir);
+        File profiles = resource.getFile();
         String[] files = profiles.list();
+        assert files != null;
         for (String f : files) {
           if (resourceDir.contains("Mps")) {
             // Ignore any files that are not metadata profile files (e.g., SQL files).
@@ -67,7 +73,7 @@ public class MetadataProfileLoader {
         metadataProfiles.addAll(loadMetadataProfiles(profileFile));
       }
     } catch (IOException | NullPointerException e) {
-      throw new RosettaDataException("Unable to load resources: " + e);
+      throw new RosettaDataException("Unable to load metadata profile resources: " + e);
     }
     return metadataProfiles;
   }
@@ -123,7 +129,6 @@ public class MetadataProfileLoader {
             setter.invoke(metadataProfile, attributeValue);
           } catch (NoSuchMethodException e) {
             // Don't add that the attribute to the MetadataProfile object.
-            continue;
           }
         }
         // Add our MetadataProfile object to the list.
