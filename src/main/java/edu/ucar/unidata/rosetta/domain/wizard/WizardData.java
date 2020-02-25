@@ -87,7 +87,6 @@ public class WizardData {
     return delimiter;
   }
 
-
   /**
    * Sets the custom data file delimiter.
    *
@@ -156,7 +155,7 @@ public class WizardData {
    *
    * @return true if no header lines; otherwise false.
    */
-  public boolean isNoHeaderLines() {
+  public boolean hasNoHeaderLines() {
     return noHeaderLines;
   }
 
@@ -205,10 +204,20 @@ public class WizardData {
     this.variableMetadata = variableMetadata;
   }
 
+  /**
+   * Returns the globalMetadata selected by the user.
+   *
+   * @return The globalMetadata.
+   */
   public String getGlobalMetadata() {
     return globalMetadata;
   }
 
+  /**
+   * Sets the globalMetadata selected by the user.
+   *
+   * @param globalMetadata The variableMetadata.
+   */
   public void setGlobalMetadata(String globalMetadata) {
     this.globalMetadata = globalMetadata;
   }
