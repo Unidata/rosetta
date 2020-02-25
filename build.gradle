@@ -14,6 +14,9 @@ apply plugin: 'base'
 apply plugin: 'com.github.jruby-gradle.base'
 apply plugin: 'org.gretty'
 
+import com.github.jrubygradle.JRubyExec
+import org.apache.commons.io.FileUtils
+
 compileJava {
     options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
 }
