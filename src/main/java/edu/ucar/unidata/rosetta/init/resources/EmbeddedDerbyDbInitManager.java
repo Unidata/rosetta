@@ -56,7 +56,6 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
     // Create database connection
     try (Connection connection = createDatabaseConnection(props);
       PreparedStatement insertAdminUserPS = connection.prepareStatement(insertStatement)) {
-
       insertAdminUserPS.setString(1, "admin");
       insertAdminUserPS.setString(2, "$2a$10$gJ4ITtIMNpxsU0xmx6qoE.0MGZ2fv8HpoaL1IlgNdhBlUgmcVwRDO");
       insertAdminUserPS.setInt(3, 2);
@@ -66,10 +65,6 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
       insertAdminUserPS.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
       insertAdminUserPS.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
       insertAdminUserPS.executeUpdate();
-
-      // Clean up.
-      insertAdminUserPS.close();
-      connection.close();
     }
   }
 
@@ -208,19 +203,16 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
       throws NonTransientDataAccessResourceException, SQLException {
 
     // Create database connection
-    Connection connection = createDatabaseConnection(props);
-    PreparedStatement createTablePS = connection.prepareStatement(statement);
-    createTablePS.executeUpdate();
-
-    // Clean up.
-    createTablePS.close();
-    connection.close();
+    try (Connection connection = createDatabaseConnection(props);
+    PreparedStatement createTablePS = connection.prepareStatement(statement)) {
+      createTablePS.executeUpdate();
+    }
   }
 
   /**
    * Creates a database connection.
    *
-   * @param props RosettaProperties from which the database username and password are glean.
+   * @param props RosettaProperties from which the database username and password are gleaned.
    */
   private Connection createDatabaseConnection(Properties props) {
     return createDatabaseConnection(props, false);
@@ -229,7 +221,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
   /**
    * Creates a database connection.
    *
-   * @param props    RosettaProperties from which the database username and password are glean.
+   * @param props    RosettaProperties from which the database username and password are gleaned.
    * @param shutdown Action the database connection will take (create or shutdown).
    */
   private Connection createDatabaseConnection(Properties props, boolean shutdown) {
@@ -276,50 +268,50 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
    * @throws RosettaDataException If unable to access the metadata profiles to persist.
    */
   private void insertMetadataProfiles(Properties props) throws SQLException, RosettaDataException {
-    // Create database connection
-    Connection connection = createDatabaseConnection(props);
     String insertStatement =
         "INSERT INTO metadataProfileData (" + "attributeName, complianceLevel, description, exampleValues, "
             + "metadataGroup, metadataProfileName, metadataProfileVersion, "
             + "metadataType, metadataTypeStructureName, metadataValueType) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    MetadataProfileLoader metadataProfileLoader = new MetadataProfileLoader();
-    List<edu.ucar.unidata.rosetta.domain.MetadataProfile> metadataProfiles =
-        metadataProfileLoader.loadMetadataProfiles();
-    for (edu.ucar.unidata.rosetta.domain.MetadataProfile metadataProfile : metadataProfiles) {
-      PreparedStatement insertMetadataProfilesPS = connection.prepareStatement(insertStatement);
-      insertMetadataProfilesPS.setString(1, metadataProfile.getAttributeName());
-      insertMetadataProfilesPS.setString(2, metadataProfile.getComplianceLevel());
-      insertMetadataProfilesPS.setString(3, metadataProfile.getDescription());
-      insertMetadataProfilesPS.setString(4, metadataProfile.getExampleValues());
-      insertMetadataProfilesPS.setString(5, metadataProfile.getMetadataGroup());
-      insertMetadataProfilesPS.setString(6, metadataProfile.getMetadataProfileName());
-      insertMetadataProfilesPS.setString(7, metadataProfile.getMetadataProfileVersion());
-      insertMetadataProfilesPS.setString(8, metadataProfile.getMetadataType());
-      insertMetadataProfilesPS.setString(9, metadataProfile.getMetadataTypeStructureName());
-      insertMetadataProfilesPS.setString(10, metadataProfile.getMetadataValueType());
-      insertMetadataProfilesPS.executeUpdate();
-      // Clean up.
-      insertMetadataProfilesPS.close();
-    }
+    // Create database connection
+    try (Connection connection = createDatabaseConnection(props)) {
+      MetadataProfileLoader metadataProfileLoader = new MetadataProfileLoader();
+      List<edu.ucar.unidata.rosetta.domain.MetadataProfile> metadataProfiles =
+          metadataProfileLoader.loadMetadataProfiles();
+      for (edu.ucar.unidata.rosetta.domain.MetadataProfile metadataProfile : metadataProfiles) {
+        try(PreparedStatement insertMetadataProfilesPS = connection.prepareStatement(insertStatement)) {
+          insertMetadataProfilesPS.setString(1, metadataProfile.getAttributeName());
+          insertMetadataProfilesPS.setString(2, metadataProfile.getComplianceLevel());
+          insertMetadataProfilesPS.setString(3, metadataProfile.getDescription());
+          insertMetadataProfilesPS.setString(4, metadataProfile.getExampleValues());
+          insertMetadataProfilesPS.setString(5, metadataProfile.getMetadataGroup());
+          insertMetadataProfilesPS.setString(6, metadataProfile.getMetadataProfileName());
+          insertMetadataProfilesPS.setString(7, metadataProfile.getMetadataProfileVersion());
+          insertMetadataProfilesPS.setString(8, metadataProfile.getMetadataType());
+          insertMetadataProfilesPS.setString(9, metadataProfile.getMetadataTypeStructureName());
+          insertMetadataProfilesPS.setString(10, metadataProfile.getMetadataValueType());
+          insertMetadataProfilesPS.executeUpdate();
+        }
+      }
 
-    String[] ignoreListValues = {"CoordinateVariable=axis", "CoordinateVariable=coverage_content_type",
-        "CoordinateVariable=_FillValue", "CoordinateVariable=valid_min", "CoordinateVariable=valid_min",
-        "CoordinateVariable=valid_max", "DataVariable=_FillValue", "DataVariable=coordinates",
-        "DataVariable=coverage_content_type", "DataVariable=valid_min", "DataVariable=valid_max", "Global=featureType",
-        "Global=conventions", "MetadataGroup=geospatial_lat_start", "MetadataGroup=geospatial_lon_start",
-        "MetadataGroup=time_coverage_start", "MetadataGroup=geospatial_lat_end", "MetadataGroup=geospatial_lon_end",
-        "MetadataGroup=time_coverage_end"};
+      String[] ignoreListValues = {"CoordinateVariable=axis", "CoordinateVariable=coverage_content_type",
+          "CoordinateVariable=_FillValue", "CoordinateVariable=valid_min", "CoordinateVariable=valid_min",
+          "CoordinateVariable=valid_max", "DataVariable=_FillValue", "DataVariable=coordinates",
+          "DataVariable=coverage_content_type", "DataVariable=valid_min", "DataVariable=valid_max",
+          "Global=featureType",
+          "Global=conventions", "MetadataGroup=geospatial_lat_start", "MetadataGroup=geospatial_lon_start",
+          "MetadataGroup=time_coverage_start", "MetadataGroup=geospatial_lat_end", "MetadataGroup=geospatial_lon_end",
+          "MetadataGroup=time_coverage_end"};
 
-    insertStatement = "INSERT INTO ignoreList (metadataType, attributeName) VALUES (?, ?)";
-    for (String ignoreListValue : ignoreListValues) {
-      PreparedStatement insertIgnoreListPS = connection.prepareStatement(insertStatement);
-      String[] ignore = ignoreListValue.split("=");
-      insertIgnoreListPS.setString(1, ignore[0]);
-      insertIgnoreListPS.setString(2, ignore[1]);
-      insertIgnoreListPS.executeUpdate();
-      // Clean up.
-      insertIgnoreListPS.close();
+      insertStatement = "INSERT INTO ignoreList (metadataType, attributeName) VALUES (?, ?)";
+      for (String ignoreListValue : ignoreListValues) {
+        try(PreparedStatement insertIgnoreListPS = connection.prepareStatement(insertStatement) {
+          String[] ignore = ignoreListValue.split("=");
+          insertIgnoreListPS.setString(1, ignore[0]);
+          insertIgnoreListPS.setString(2, ignore[1]);
+          insertIgnoreListPS.executeUpdate();
+        }
+      }
     }
   }
 
@@ -335,123 +327,108 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
       throws NonTransientDataAccessResourceException, SQLException, RosettaDataException {
 
     // Create database connection
-    Connection connection = createDatabaseConnection(props);
-    ResourceLoader resourceManager = new ResourceLoader();
-    List<RosettaResource> resources = resourceManager.loadResources();
-    for (RosettaResource resource : resources) {
-      // Set the resources depending on the type.
-      if (resource instanceof CfType) {  // CF type resource.
-        String insertStatement = "INSERT INTO cfTypes (name) VALUES (?)";
-        PreparedStatement insertCFTypeResourcesPS = connection.prepareStatement(insertStatement);
-        insertCFTypeResourcesPS.setString(1, resource.getName());
-        insertCFTypeResourcesPS.executeUpdate();
-        // Clean up.
-        insertCFTypeResourcesPS.close();
+    try (Connection connection = createDatabaseConnection(props)) {
+      ResourceLoader resourceManager = new ResourceLoader();
+      List<RosettaResource> resources = resourceManager.loadResources();
+      for (RosettaResource resource : resources) {
+        // Set the resources depending on the type.
+        if (resource instanceof CfType) {  // CF type resource.
+          String insertStatement = "INSERT INTO cfTypes (name) VALUES (?)";
+          try(PreparedStatement insertCFTypeResourcesPS = connection.prepareStatement(insertStatement)) {
+            insertCFTypeResourcesPS.setString(1, resource.getName());
+            insertCFTypeResourcesPS.executeUpdate();
+          }
+        } else if (resource instanceof Delimiter) { // Delimiter resource.
+          String insertStatement = "INSERT INTO delimiters (name, characterSymbol) VALUES (?, ?)";
+          try (PreparedStatement insertDelimiterResourcesPS = connection.prepareStatement(insertStatement)) {
+            insertDelimiterResourcesPS.setString(1, resource.getName());
+            insertDelimiterResourcesPS.setString(2, ((Delimiter) resource).getCharacterSymbol());
+            insertDelimiterResourcesPS.executeUpdate();
+          }
+        } else if (resource instanceof FileType) { // File type resource.
+          String insertStatement = "INSERT INTO fileTypes (name) VALUES (?)";
+          try (PreparedStatement insertFileTypeResourcesPS = connection.prepareStatement(insertStatement)) {
+            insertFileTypeResourcesPS.setString(1, resource.getName());
+            insertFileTypeResourcesPS.executeUpdate();
+          }
+        } else if (resource instanceof Platform) {  // Platform resource.
+          // Get the primary key values for the cfTypes and stash them in a map for quick access.
+          Map<String, Integer> cfTypeMap = new HashMap<>();
+          String selectStatement = "SELECT * FROM cfTypes";
+          ResultSet rs = connection.prepareStatement(selectStatement).executeQuery();
+          while (rs.next()) {
+            int id = rs.getInt("id");
+            String name = rs.getString("name");
+            cfTypeMap.put(name, id);
+          }
 
-      } else if (resource instanceof Delimiter) { // Delimiter resource.
-        String insertStatement = "INSERT INTO delimiters (name, characterSymbol) VALUES (?, ?)";
-        PreparedStatement insertDelimiterResourcesPS = connection.prepareStatement(insertStatement);
-        insertDelimiterResourcesPS.setString(1, resource.getName());
-        insertDelimiterResourcesPS.setString(2, ((Delimiter) resource).getCharacterSymbol());
-        insertDelimiterResourcesPS.executeUpdate();
-        // Clean up.
-        insertDelimiterResourcesPS.close();
+          // Get the primary key values for the communities and stash them in a map for quick access.
+          Map<String, Integer> communityMap = new HashMap<>();
+          selectStatement = "SELECT DISTINCT id, name FROM communities";
+          try (PreparedStatement selectCommunitiesPS = connection.prepareStatement(selectStatement)) {
+            rs = selectCommunitiesPS.executeQuery();
+            while (rs.next()) {
+              int id = rs.getInt("id");
+              String name = rs.getString("name");
+              communityMap.put(name, id);
+            }
+          }
+          String insertStatement = "INSERT INTO platforms (name, imgPath, cfType, community) VALUES (?, ?, ?, ?)";
+          try (PreparedStatement insertPlatformResourcesPS = connection.prepareStatement(insertStatement)) {
+            insertPlatformResourcesPS.setString(1, resource.getName());
+            insertPlatformResourcesPS.setString(2, ((Platform) resource).getImgPath());
+            insertPlatformResourcesPS.setInt(3, cfTypeMap.get(((Platform) resource).getCfType()));
+            insertPlatformResourcesPS.setInt(4, communityMap.get(((Platform) resource).getCommunity()));
+            insertPlatformResourcesPS.executeUpdate();
+          }
+        } else if (resource instanceof Community) { // Community resource.
+          // Get the primary key values for the file types and stash them in a map for quick access.
+          Map<String, Integer> fileTypeMap = new HashMap<>();
+          String selectStatement = "SELECT * FROM fileTypes";
+          ResultSet rs = connection.prepareStatement(selectStatement).executeQuery();
+          while (rs.next()) {
+            int id = rs.getInt("id");
+            String name = rs.getString("name");
+            fileTypeMap.put(name, id);
+          }
 
-      } else if (resource instanceof FileType) { // File type resource.
-        String insertStatement = "INSERT INTO fileTypes (name) VALUES (?)";
-        PreparedStatement insertFileTypeResourcesPS = connection.prepareStatement(insertStatement);
-        insertFileTypeResourcesPS.setString(1, resource.getName());
-        insertFileTypeResourcesPS.executeUpdate();
-        // Clean up.
-        insertFileTypeResourcesPS.close();
+          // Create an entry in the communities table for all of the file types.
+          List<String> fileTypes = ((Community) resource).getFileType();
+          String insertStatement = "INSERT INTO communities (name, fileType) VALUES (?, ?)";
+          for (String fileType : fileTypes) {
+            try (PreparedStatement insertCommunityResourcesPS = connection.prepareStatement(insertStatement)) {
+              insertCommunityResourcesPS.setString(1, resource.getName());
+              insertCommunityResourcesPS.setInt(2, fileTypeMap.get(fileType));
+              insertCommunityResourcesPS.executeUpdate();
+            }
+          }
 
-      } else if (resource instanceof Platform) {  // Platform resource.
-        // Get the primary key values for the cfTypes and stash them in a map for quick access.
-        Map<String, Integer> cfTypeMap = new HashMap<>();
-        String selectStatement = "SELECT * FROM cfTypes";
-        ResultSet rs = connection.prepareStatement(selectStatement).executeQuery();
-        while (rs.next()) {
-          int id = rs.getInt("id");
-          String name = rs.getString("name");
-          cfTypeMap.put(name, id);
-        }
+        } else { // Metadata profile resource.
+          // Get the primary key values for the communities and stash them in a map for quick access.
+          Map<String, Integer> communityMap = new HashMap<>();
+          String selectStatement = "SELECT DISTINCT id, name FROM communities";
+          try (PreparedStatement selectCommunitiesPS = connection.prepareStatement(selectStatement);
+          ResultSet rs = selectCommunitiesPS.executeQuery() ) {
+            while (rs.next()) {
+              int id = rs.getInt("id");
+              String name = rs.getString("name");
+              communityMap.put(name, id);
+            }
+          }
 
-        // Get the primary key values for the communities and stash them in a map for quick access.
-        Map<String, Integer> communityMap = new HashMap<>();
-        selectStatement = "SELECT DISTINCT id, name FROM communities";
-        PreparedStatement selectCommunitiesPS = connection.prepareStatement(selectStatement);
-        rs = selectCommunitiesPS.executeQuery();
-        while (rs.next()) {
-          int id = rs.getInt("id");
-          String name = rs.getString("name");
-          communityMap.put(name, id);
-        }
-        // Clean up.
-        selectCommunitiesPS.close();
-
-        String insertStatement = "INSERT INTO platforms (name, imgPath, cfType, community) VALUES (?, ?, ?, ?)";
-        PreparedStatement insertPlatformResourcesPS = connection.prepareStatement(insertStatement);
-        insertPlatformResourcesPS.setString(1, resource.getName());
-        insertPlatformResourcesPS.setString(2, ((Platform) resource).getImgPath());
-        insertPlatformResourcesPS.setInt(3, cfTypeMap.get(((Platform) resource).getCfType()));
-        insertPlatformResourcesPS.setInt(4, communityMap.get(((Platform) resource).getCommunity()));
-        insertPlatformResourcesPS.executeUpdate();
-        // Clean up.
-        insertPlatformResourcesPS.close();
-
-      } else if (resource instanceof Community) { // Community resource.
-        // Get the primary key values for the file types and stash them in a map for quick access.
-        Map<String, Integer> fileTypeMap = new HashMap<>();
-        String selectStatement = "SELECT * FROM fileTypes";
-        ResultSet rs = connection.prepareStatement(selectStatement).executeQuery();
-        while (rs.next()) {
-          int id = rs.getInt("id");
-          String name = rs.getString("name");
-          fileTypeMap.put(name, id);
-        }
-
-        // Create an entry in the communities table for all of the file types.
-        List<String> fileTypes = ((Community) resource).getFileType();
-        String insertStatement = "INSERT INTO communities (name, fileType) VALUES (?, ?)";
-        for (String fileType : fileTypes) {
-          PreparedStatement insertCommunityResourcesPS = connection.prepareStatement(insertStatement);
-          insertCommunityResourcesPS.setString(1, resource.getName());
-          insertCommunityResourcesPS.setInt(2, fileTypeMap.get(fileType));
-          insertCommunityResourcesPS.executeUpdate();
-          // Clean up.
-          insertCommunityResourcesPS.close();
-        }
-
-      } else { // Metadata profile resource.
-        // Get the primary key values for the communities and stash them in a map for quick access.
-        Map<String, Integer> communityMap = new HashMap<>();
-        String selectStatement = "SELECT DISTINCT id, name FROM communities";
-        PreparedStatement selectCommunitiesPS = connection.prepareStatement(selectStatement);
-        ResultSet rs = selectCommunitiesPS.executeQuery();
-        while (rs.next()) {
-          int id = rs.getInt("id");
-          String name = rs.getString("name");
-          communityMap.put(name, id);
-        }
-        // Clean up.
-        selectCommunitiesPS.close();
-
-        // Create an entry in the metadata profiles table for all of the communities.
-        List<Community> communities = ((MetadataProfile) resource).getCommunities();
-        String metadataProfileStatement = "INSERT INTO metadataProfiles (name, community) VALUES (?, ?)";
-        for (Community community : communities) {
-          PreparedStatement insertCommunityResourcesPS = connection.prepareStatement(metadataProfileStatement);
-          insertCommunityResourcesPS.setString(1, resource.getName());
-          insertCommunityResourcesPS.setInt(2, communityMap.get(community.getName()));
-          insertCommunityResourcesPS.executeUpdate();
-          // Clean up.
-          insertCommunityResourcesPS.close();
+          // Create an entry in the metadata profiles table for all of the communities.
+          List<Community> communities = ((MetadataProfile) resource).getCommunities();
+          String metadataProfileStatement = "INSERT INTO metadataProfiles (name, community) VALUES (?, ?)";
+          for (Community community : communities) {
+            try (PreparedStatement insertCommunityResourcesPS = connection.prepareStatement(metadataProfileStatement)) {
+              insertCommunityResourcesPS.setString(1, resource.getName());
+              insertCommunityResourcesPS.setInt(2, communityMap.get(community.getName()));
+              insertCommunityResourcesPS.executeUpdate();
+            }
+          }
         }
       }
     }
-
-    // Clean up.
-    connection.close();
   }
 
   /**
@@ -464,59 +441,58 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
   private void populatePropertiesTable(Properties props) throws NonTransientDataAccessResourceException, SQLException {
 
     // Create database connection
-    Connection connection = createDatabaseConnection(props);
+    try (Connection connection = createDatabaseConnection(props)) {
 
-    // See if properties have already been persisted prior to this time.
-    String selectStatement = "SELECT * FROM properties";
-    PreparedStatement selectPropertiesPS = connection.prepareStatement(selectStatement);
-    ResultSet rs = selectPropertiesPS.executeQuery();
-    Map<String, String> propertiesMap = new HashMap<>();
-    while (rs.next()) {
-      propertiesMap.put(rs.getString("propertyKey"), rs.getString("propertyValue"));
-    }
-    // Clean up.
-    selectPropertiesPS.close();
+      // See if properties have already been persisted prior to this time.
+      String selectStatement = "SELECT * FROM properties";
+      PreparedStatement selectPropertiesPS = connection.prepareStatement(selectStatement);
+      ResultSet rs = selectPropertiesPS.executeQuery();
+      Map<String, String> propertiesMap = new HashMap<>();
+      while (rs.next()) {
+        propertiesMap.put(rs.getString("propertyKey"), rs.getString("propertyValue"));
+      }
+      // Clean up.
+      selectPropertiesPS.close();
 
-    // Create prepared statements to persist the property data. If the data is already persisted, compare the
-    // value to what is stored in the database. Log and differences and update the persisted value if necessary.
-    // TODO: In future, notify admin of first these differences via interface and let him/her sort it out.
-    Enumeration propertyNames = props.propertyNames();
-    while (propertyNames.hasMoreElements()) {
-      String key = (String) propertyNames.nextElement();
-      String value = props.getProperty(key);
+      // Create prepared statements to persist the property data. If the data is already persisted, compare the
+      // value to what is stored in the database. Log and differences and update the persisted value if necessary.
+      // TODO: In future, notify admin of first these differences via interface and let him/her sort it out.
+      Enumeration propertyNames = props.propertyNames();
+      while (propertyNames.hasMoreElements()) {
+        String key = (String) propertyNames.nextElement();
+        String value = props.getProperty(key);
 
-      if (propertiesMap.containsKey(key)) {
-        // Property has been already been persisted. See if persisted value matches what is in the properties.
+        if (propertiesMap.containsKey(key)) {
+          // Property has been already been persisted. See if persisted value matches what is in the properties.
 
-        if (!propertiesMap.get(key).equals(value)) {
-          // Persisted data has different value than what is in the properties file. Update persisted data.
-          logger.info("Persisted " + key + " to be changed from " + propertiesMap.get(key) + " to " + value);
-          String updateStatement =
-              "UPDATE properties SET propertyKey = ?, propertyValue = ? AND dateCreated =? WHERE propertyKey = ?";
-          PreparedStatement updatePropertiesPS = connection.prepareStatement(updateStatement);
-          updatePropertiesPS.setString(1, key);
-          updatePropertiesPS.setString(2, value);
-          updatePropertiesPS.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-          updatePropertiesPS.setString(4, key);
-          updatePropertiesPS.executeUpdate();
+          if (!propertiesMap.get(key).equals(value)) {
+            // Persisted data has different value than what is in the properties file. Update persisted data.
+            logger.info("Persisted " + key + " to be changed from " + propertiesMap.get(key) + " to " + value);
+            String updateStatement =
+                "UPDATE properties SET propertyKey = ?, propertyValue = ? AND dateCreated =? WHERE propertyKey = ?";
+            PreparedStatement updatePropertiesPS = connection.prepareStatement(updateStatement);
+            updatePropertiesPS.setString(1, key);
+            updatePropertiesPS.setString(2, value);
+            updatePropertiesPS.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+            updatePropertiesPS.setString(4, key);
+            updatePropertiesPS.executeUpdate();
+            // Clean up.
+            updatePropertiesPS.close();
+          }
+        } else {
+          // Property has NOT been persisted before. Add it.
+          String insertStatement =
+              "INSERT INTO properties(propertyKey, propertyValue, dateCreated) " + "VALUES (?,?,?)";
+          PreparedStatement insertPropertiesPS = connection.prepareStatement(insertStatement);
+          insertPropertiesPS.setString(1, key);
+          insertPropertiesPS.setString(2, value);
+          insertPropertiesPS.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+          insertPropertiesPS.executeUpdate();
           // Clean up.
-          updatePropertiesPS.close();
+          insertPropertiesPS.close();
         }
-      } else {
-        // Property has NOT been persisted before. Add it.
-        String insertStatement = "INSERT INTO properties(propertyKey, propertyValue, dateCreated) " + "VALUES (?,?,?)";
-        PreparedStatement insertPropertiesPS = connection.prepareStatement(insertStatement);
-        insertPropertiesPS.setString(1, key);
-        insertPropertiesPS.setString(2, value);
-        insertPropertiesPS.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-        insertPropertiesPS.executeUpdate();
-        // Clean up.
-        insertPropertiesPS.close();
       }
     }
-
-    // Clean up.
-    connection.close();
   }
 
   /**
