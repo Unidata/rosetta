@@ -355,18 +355,19 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
           // Get the primary key values for the cfTypes and stash them in a map for quick access.
           Map<String, Integer> cfTypeMap = new HashMap<>();
           String selectStatement = "SELECT * FROM cfTypes";
-          ResultSet rs = connection.prepareStatement(selectStatement).executeQuery();
-          while (rs.next()) {
-            int id = rs.getInt("id");
-            String name = rs.getString("name");
-            cfTypeMap.put(name, id);
+          try(ResultSet rs = connection.prepareStatement(selectStatement).executeQuery()) {
+            while (rs.next()) {
+              int id = rs.getInt("id");
+              String name = rs.getString("name");
+              cfTypeMap.put(name, id);
+            }
           }
 
           // Get the primary key values for the communities and stash them in a map for quick access.
           Map<String, Integer> communityMap = new HashMap<>();
           selectStatement = "SELECT DISTINCT id, name FROM communities";
           try (PreparedStatement selectCommunitiesPS = connection.prepareStatement(selectStatement)) {
-            rs = selectCommunitiesPS.executeQuery();
+            ResultSet rs = selectCommunitiesPS.executeQuery();
             while (rs.next()) {
               int id = rs.getInt("id");
               String name = rs.getString("name");
@@ -445,15 +446,13 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
       // See if properties have already been persisted prior to this time.
       String selectStatement = "SELECT * FROM properties";
-      PreparedStatement selectPropertiesPS = connection.prepareStatement(selectStatement);
-      ResultSet rs = selectPropertiesPS.executeQuery();
       Map<String, String> propertiesMap = new HashMap<>();
-      while (rs.next()) {
-        propertiesMap.put(rs.getString("propertyKey"), rs.getString("propertyValue"));
+      try(PreparedStatement selectPropertiesPS = connection.prepareStatement(selectStatement);
+      ResultSet rs = selectPropertiesPS.executeQuery()) {
+        while (rs.next()) {
+          propertiesMap.put(rs.getString("propertyKey"), rs.getString("propertyValue"));
+        }
       }
-      // Clean up.
-      selectPropertiesPS.close();
-
       // Create prepared statements to persist the property data. If the data is already persisted, compare the
       // value to what is stored in the database. Log and differences and update the persisted value if necessary.
       // TODO: In future, notify admin of first these differences via interface and let him/her sort it out.
