@@ -10,30 +10,45 @@ import org.springframework.validation.Errors;
 
 /**
  * Common validation methods all validators will use.
- *
- * @author oxelson@ucar.edu
  */
+@SuppressWarnings("SpellCheckingInspection")
 public abstract class CommonValidator {
 
-  protected static final String[] NAUGHTY_STRINGS = {"<script>", "../", "svg", "javascript", "::", "&quot;",
+  private static final String[] NAUGHTY_STRINGS = {"<script>", "../", "svg", "javascript", "::", "&quot;",
       "fromcharCode", "%3", "$#", "alert(", ".js", ".source", "\\", "scriptlet", ".css", "binding:", ".htc", "vbscript",
       "mocha:", "livescript:", "base64", "\00", "xss:", "%77", "0x", "IS NULL;", "1;", "; --", "1=1"};
-  protected static final String[] NAUGHTY_CHARS = {"<", ">", "`", "^", "|", "}", "{"};
+  private static final String[] NAUGHTY_CHARS = {"<", ">", "`", "^", "|", "}", "{"};
 
   /**
    * Checks if the provided string contains any known, dubious strings or chars.
    *
-   * @param input The user input item to check.
-   * @param errors Object in which to store any validation errors.
+   * @param field  The form field to be validated.
+   * @param input   The user input for the form form field.
+   * @param errors  Object to store validation errors.
    */
-  protected void validateInput(String input, Errors errors) {
+  protected void validateInput(String field, String input, Errors errors) {
     String badChar = checkForNaughtyChars(input);
     if (badChar != null) {
-      errors.reject(null, "Bad value submitted: " + badChar);
+      errors.rejectValue(field, "bad input data", "Bad value submitted: " + badChar);
     }
-    String badString = checkForNaughtyStrings(input);
-    if (badString != null) {
-      errors.reject(null, "Bad value submitted: " + badString);
+    if (errors.getFieldErrorCount(field) > 0 ) {
+      String badString = checkForNaughtyStrings(input);
+      if (badString != null) {
+        errors.rejectValue(field, "bad input data", "Bad value submitted: " + badString);
+      }
+    }
+  }
+
+  /**
+   * Checks if provided string is empty (""), null or whitespace only.
+   *
+   * @param field  The form field to be validated.
+   * @param input   The user input for the form form field.
+   * @param errors  Object to store validation errors.
+   */
+  protected void validateNotEmpty(String field, String input, Errors errors) {
+    if (StringUtils.isBlank(input)) {
+      errors.rejectValue(field, "emptyInput", "Nothing submitted for " + field);
     }
   }
 
