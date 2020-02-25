@@ -305,7 +305,7 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
 
       insertStatement = "INSERT INTO ignoreList (metadataType, attributeName) VALUES (?, ?)";
       for (String ignoreListValue : ignoreListValues) {
-        try(PreparedStatement insertIgnoreListPS = connection.prepareStatement(insertStatement) {
+        try(PreparedStatement insertIgnoreListPS = connection.prepareStatement(insertStatement)) {
           String[] ignore = ignoreListValue.split("=");
           insertIgnoreListPS.setString(1, ignore[0]);
           insertIgnoreListPS.setString(2, ignore[1]);
