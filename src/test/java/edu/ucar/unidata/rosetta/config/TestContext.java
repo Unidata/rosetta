@@ -4,14 +4,10 @@
  */
 package edu.ucar.unidata.rosetta.config;
 
-import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.init.resources.ResourceLoader;
-import edu.ucar.unidata.rosetta.repository.wizard.WizardDataDao;
-import edu.ucar.unidata.rosetta.repository.wizard.JdbcWizardDataDao;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.batch.BatchFileManager;
 import edu.ucar.unidata.rosetta.service.wizard.*;
-import java.util.Properties;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class TestContext {
-
 
   @Bean
   public BatchFileManager batchFileManager() {
@@ -37,12 +32,6 @@ public class TestContext {
   public ResourceManager resourceManager() {
     return Mockito.mock(ResourceManager.class);
   }
-
-  // todo: DataManager no longer exits - does this need replaced?
-  // @Bean
-  // public DataManager dataManager() {
-  // return Mockito.mock(DataManager.class);
-  // }
 
   @Bean
   public FileManager fileParserManager() {
@@ -63,5 +52,4 @@ public class TestContext {
   public UploadedFileManager uploadedFileManager() {
     return Mockito.mock(UploadedFileManager.class);
   }
-
 }
