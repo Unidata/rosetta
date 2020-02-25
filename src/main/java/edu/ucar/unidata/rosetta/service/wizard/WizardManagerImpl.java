@@ -471,7 +471,7 @@ public class WizardManagerImpl implements WizardManager {
     WizardData persistedData = lookupPersistedWizardDataById(id);
 
     // Handle the no header lines value.
-    if (wizardData.isNoHeaderLines()) {
+    if (wizardData.hasNoHeaderLines()) {
       persistedData.setHeaderLineNumbers(null);
     } else {
       persistedData.setHeaderLineNumbers(wizardData.getHeaderLineNumbers());
