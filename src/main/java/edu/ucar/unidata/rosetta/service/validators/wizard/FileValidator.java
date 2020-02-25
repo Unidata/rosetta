@@ -49,7 +49,7 @@ public class FileValidator extends CommonValidator implements Validator {
 
   private void validateList(List<String> list, Errors errors) {
     for (String input : list) {
-      validateInput(input, errors);
+      validateInput("", input, errors);
     }
   }
 
