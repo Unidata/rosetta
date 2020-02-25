@@ -49,28 +49,28 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
    */
   private void addDefaultAdminUser(Properties props) throws NonTransientDataAccessResourceException, SQLException {
 
-    // Create database connection
-    Connection connection = createDatabaseConnection(props);
-    PreparedStatement insertAdminUserPS;
-
     String insertStatement = "INSERT INTO users "
         + "(userName, password, accessLevel, accountStatus, emailAddress, fullName, dateCreated, dateModified) VALUES "
         + "(?,?,?,?,?,?,?,?)";
 
-    insertAdminUserPS = connection.prepareStatement(insertStatement);
-    insertAdminUserPS.setString(1, "admin");
-    insertAdminUserPS.setString(2, "$2a$10$gJ4ITtIMNpxsU0xmx6qoE.0MGZ2fv8HpoaL1IlgNdhBlUgmcVwRDO");
-    insertAdminUserPS.setInt(3, 2);
-    insertAdminUserPS.setInt(4, 1);
-    insertAdminUserPS.setString(5, "admin@foo.bar.baz");
-    insertAdminUserPS.setString(6, "Rosetta Administrator");
-    insertAdminUserPS.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
-    insertAdminUserPS.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
-    insertAdminUserPS.executeUpdate();
+    // Create database connection
+    try (Connection connection = createDatabaseConnection(props);
+      PreparedStatement insertAdminUserPS = connection.prepareStatement(insertStatement)) {
 
-    // Clean up.
-    insertAdminUserPS.close();
-    connection.close();
+      insertAdminUserPS.setString(1, "admin");
+      insertAdminUserPS.setString(2, "$2a$10$gJ4ITtIMNpxsU0xmx6qoE.0MGZ2fv8HpoaL1IlgNdhBlUgmcVwRDO");
+      insertAdminUserPS.setInt(3, 2);
+      insertAdminUserPS.setInt(4, 1);
+      insertAdminUserPS.setString(5, "admin@foo.bar.baz");
+      insertAdminUserPS.setString(6, "Rosetta Administrator");
+      insertAdminUserPS.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+      insertAdminUserPS.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
+      insertAdminUserPS.executeUpdate();
+
+      // Clean up.
+      insertAdminUserPS.close();
+      connection.close();
+    }
   }
 
   /**
