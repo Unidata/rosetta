@@ -75,6 +75,10 @@ dependencies {
     // edu.ucar:httpservices uses uses Apache Commons Logging 1.x, so add the JCL bridge
     runtime "org.apache.logging.log4j:log4j-jcl:${log4j2Version}"
 
+    // handle intellij annotation warnings
+    compile group: 'com.intellij', name: 'annotations', version: '12.0'
+
+
     // JSON / xml processing
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
@@ -100,6 +104,7 @@ dependencies {
     compile "javax.servlet:javax.servlet-api:3.1.0"
 
     compile 'javax.annotation:javax.annotation-api:1.3.2'
+
 
     // input validation
     compile "org.hibernate:hibernate-validator:6.0.9.Final"
