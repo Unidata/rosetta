@@ -43,8 +43,8 @@ public class MetadataProfileLoader {
   /**
    * Loads metadata profile information form the files located in the resource directory,
    *
-   * @return  A list of MetadataProfile objects corresponding to the data gleaned from the resource files.
-   * @throws RosettaDataException  If unable to load the metadata profile data resources from files.
+   * @return A list of MetadataProfile objects corresponding to the data gleaned from the resource files.
+   * @throws RosettaDataException If unable to load the metadata profile data resources from files.
    */
   List<MetadataProfile> loadMetadataProfiles() throws RosettaDataException {
     List<MetadataProfile> metadataProfiles = new ArrayList<>();

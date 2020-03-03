@@ -22,7 +22,7 @@ public class WizardDataValidator extends CommonValidator implements Validator {
   /**
    * Checks to see if Object class can be validated.
    *
-   * @param clazz  The Object class to validate
+   * @param clazz The Object class to validate
    * @return true if class can be validated
    */
   public boolean supports(Class clazz) {
@@ -32,31 +32,40 @@ public class WizardDataValidator extends CommonValidator implements Validator {
   /**
    * Validates the user input contained in the WizardData object.
    *
-   * @param target  The target object to validate.
-   * @param errors  Object in which to store any validation errors.
+   * @param obj The object to validate.
+   * @param errors Object in which to store any validation errors.
    */
   @Override
-  public void validate(Object target, Errors errors) {
-    WizardData wizardData = (WizardData) target;
-    validateCfType(wizardData.getCfType(), errors);
-//    validateCommunity(wizardData.getCommunity(), errors);
-//    validateDataFileType(wizardData.getDataFileType(), errors);
-//    validateDelimiter(wizardData.getDelimiter(), errors);
-//    validateHeaderLineNumbers(wizardData.getHeaderLineNumbers(), errors);
-//    validateId(wizardData.getId(), errors);
-//    validateMetadataProfile(wizardData.getMetadataProfile(), errors);
-//    validateNoHeaderLines(wizardData.hasNoHeaderLines(), errors);
-//    validatePlatform(wizardData.getPlatform(), errors);
-//    validateVariableMetadata(wizardData.getVariableMetadata(), errors);
-//    validateGlobalMetadata(wizardData.getGlobalMetadata(), errors);
+  public void validate(Object obj, Errors errors) {
+    WizardData wizardData = (WizardData) obj;
+    validateCfType(wizardData.getCfType(), errors); // required
+    // validateCommunity(wizardData.getCommunity(), errors); // optional
+    // validateDataFileType(wizardData.getDataFileType(), errors);
+    // validateDelimiter(wizardData.getDelimiter(), errors);
+    // validateHeaderLineNumbers(wizardData.getHeaderLineNumbers(), errors);
+    // validateId(wizardData.getId(), errors); // required
+    // validateMetadataProfile(wizardData.getMetadataProfile(), errors); // required
+    // validateNoHeaderLines(wizardData.hasNoHeaderLines(), errors);
+    // validatePlatform(wizardData.getPlatform(), errors); // optional
+    // validateVariableMetadata(wizardData.getVariableMetadata(), errors);
+    // validateGlobalMetadata(wizardData.getGlobalMetadata(), errors);
   }
 
+  /**
+   * Validates the CF type data the user selected/inputted.
+   * CF type data is required and must be present.
+   *
+   * @param cfType The CF type data to validate.
+   * @param errors Object in which to store any validation errors.
+   */
   private void validateCfType(String cfType, Errors errors) {
-    // Check for dubious input.
-    validateInput("cfType", cfType, errors);
-    if (errors.getFieldErrorCount("cfType") > 0 ) {
-      validateNotEmpty("cfType", cfType, errors);
+    // Cannot by empty or null.
+    // validateNotEmpty("cfType", cfType, errors);
+    if (errors.getFieldErrorCount("cfType") > 0) {
+      // Check for dubious input.
+      validateInput("cfType", cfType, errors);
     }
+
   }
 
 

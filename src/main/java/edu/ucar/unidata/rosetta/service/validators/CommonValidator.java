@@ -22,16 +22,16 @@ public abstract class CommonValidator {
   /**
    * Checks if the provided string contains any known, dubious strings or chars.
    *
-   * @param field  The form field to be validated.
-   * @param input   The user input for the form form field.
-   * @param errors  Object to store validation errors.
+   * @param field The form field to be validated.
+   * @param input The user input for the form form field.
+   * @param errors Object to store validation errors.
    */
   protected void validateInput(String field, String input, Errors errors) {
     String badChar = checkForNaughtyChars(input);
     if (badChar != null) {
       errors.rejectValue(field, "bad input data", "Bad value submitted: " + badChar);
     }
-    if (errors.getFieldErrorCount(field) > 0 ) {
+    if (errors.getFieldErrorCount(field) > 0) {
       String badString = checkForNaughtyStrings(input);
       if (badString != null) {
         errors.rejectValue(field, "bad input data", "Bad value submitted: " + badString);
@@ -42,14 +42,10 @@ public abstract class CommonValidator {
   /**
    * Checks if provided string is empty (""), null or whitespace only.
    *
-   * @param field  The form field to be validated.
-   * @param input   The user input for the form form field.
-   * @param errors  Object to store validation errors.
+   * @param input The user input for the form form field.
    */
-  protected void validateNotEmpty(String field, String input, Errors errors) {
-    if (StringUtils.isBlank(input)) {
-      errors.rejectValue(field, "emptyInput", "Nothing submitted for " + field);
-    }
+  protected boolean validateNotEmpty(String input) {
+    return StringUtils.isBlank(input);
   }
 
   /**

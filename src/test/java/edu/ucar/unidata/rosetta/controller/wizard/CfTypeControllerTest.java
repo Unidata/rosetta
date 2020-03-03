@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
 import edu.ucar.unidata.rosetta.config.WebAppContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,26 +37,20 @@ public class CfTypeControllerTest {
 
   @Before
   public void setUp() {
-    mockMvc = MockMvcBuilders
-        .webAppContextSetup(context)
-        .build();
+    mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
   }
 
   @Test
   public void displayCFTypeSelectionFormTest() throws Exception {
-    mockMvc.perform(get("/cfType"))
-        .andExpect(status().isOk())
-        .andExpect(model().attribute("currentStep", equalTo("cfType")))
-        .andExpect(view().name("wizard"))
+    mockMvc.perform(get("/cfType")).andExpect(status().isOk())
+        .andExpect(model().attribute("currentStep", equalTo("cfType"))).andExpect(view().name("wizard"))
         .andExpect(forwardedUrl("/WEB-INF/views/wizard.jsp"));
-    //.andDo(print());
+    // .andDo(print());
   }
 
   @Test
   public void processCFTypeTest() throws Exception {
-    mockMvc.perform(post("/cfType"))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/fileUpload"));
-    //.andDo(print());
+    mockMvc.perform(post("/cfType")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/fileUpload"));
+    // .andDo(print());
   }
 }
