@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -17,6 +17,7 @@ import edu.ucar.unidata.rosetta.repository.resources.DelimiterResourceDao;
 import edu.ucar.unidata.rosetta.repository.resources.FileTypeResourceDao;
 import edu.ucar.unidata.rosetta.repository.resources.MetadataProfileResourceDao;
 import edu.ucar.unidata.rosetta.repository.resources.PlatformResourceDao;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,6 +79,20 @@ public class ResourceManagerImpl implements ResourceManager {
   }
 
   /**
+   * Retrieves a list of all the names from the persisted CfType objects.
+   *
+   * @return A list of CF type names.
+   */
+  @Override
+  public List<String> getCfTypeNames() {
+    List<String> cfTypeNames = new ArrayList<>();
+    for(CfType cfType: getCfTypes()) {
+      cfTypeNames.add(cfType.getName());
+    }
+    return cfTypeNames;
+  }
+
+  /**
    * Retrieves a list of all the persisted communities.
    *
    * @return A list of Community objects.
@@ -127,6 +142,20 @@ public class ResourceManagerImpl implements ResourceManager {
   }
 
   /**
+   * Retrieves a list of all the names gleaned from the persisted MetadataProfile objects.
+   *
+   * @return A list of metadata profile names.
+   */
+  @Override
+  public List<String> getMetadataProfileNames() {
+    List <String> metadataProfileNames = new ArrayList<>();
+    for (MetadataProfile metadataProfile : getMetadataProfiles()) {
+      metadataProfileNames.add(metadataProfile.getName());
+    }
+    return metadataProfileNames;
+  }
+
+  /**
    * Lookups and returns a Platform using the provided name.
    *
    * @param name The name of the platform to retrieve.
@@ -140,11 +169,25 @@ public class ResourceManagerImpl implements ResourceManager {
   /**
    * Retrieves a list of all the persisted Platform objects.
    *
-   * @return A list of Platform objects.
+   * @return A list of platform names.
    */
   @Override
   public List<Platform> getPlatforms() {
     return platformResourceDao.getPlatforms();
+  }
+
+  /**
+   * Retrieves a list of all the names gleaned from the persisted Platform objects.
+   *
+   * @return A list of Platform objects.
+   */
+  @Override
+  public List<String> getPlatformNames() {
+    List<String> platformNames = new ArrayList<>();
+    for(Platform platform : getPlatforms()) {
+      platformNames.add(platform.getName());
+    }
+    return platformNames;
   }
 
   /**
