@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -373,11 +374,13 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
           // Get the primary key values for the file types and stash them in a map for quick access.
           Map<String, Integer> fileTypeMap = new HashMap<>();
           String selectStatement = "SELECT * FROM fileTypes";
-          ResultSet rs = connection.prepareStatement(selectStatement).executeQuery();
-          while (rs.next()) {
-            int id = rs.getInt("id");
-            String name = rs.getString("name");
-            fileTypeMap.put(name, id);
+          try (PreparedStatement selectCommunitiesPS = connection.prepareStatement(selectStatement);
+              ResultSet rs = selectCommunitiesPS.executeQuery()) {
+            while (rs.next()) {
+              int id = rs.getInt("id");
+              String name = rs.getString("name");
+              fileTypeMap.put(name, id);
+            }
           }
 
           // Create an entry in the communities table for all of the file types.
@@ -428,8 +431,8 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
   private Map<String, Integer> getPrimaryKeysForPlatformResource(Connection connection, String selectStatement)
       throws SQLException {
     Map<String, Integer> keysMap = new HashMap<>();
-    try (PreparedStatement selectPS = connection.prepareStatement(selectStatement)) {
-      ResultSet rs = selectPS.executeQuery();
+    try (PreparedStatement selectPS = connection.prepareStatement(selectStatement);
+        ResultSet rs = selectPS.executeQuery()) {
       while (rs.next()) {
         int id = rs.getInt("id");
         String name = rs.getString("name");
@@ -485,13 +488,12 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
           // Property has NOT been persisted before. Add it.
           String insertStatement =
               "INSERT INTO properties(propertyKey, propertyValue, dateCreated) " + "VALUES (?,?,?)";
-          PreparedStatement insertPropertiesPS = connection.prepareStatement(insertStatement);
-          insertPropertiesPS.setString(1, key);
-          insertPropertiesPS.setString(2, value);
-          insertPropertiesPS.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-          insertPropertiesPS.executeUpdate();
-          // Clean up.
-          insertPropertiesPS.close();
+          try (PreparedStatement insertPropertiesPS = connection.prepareStatement(insertStatement)) {
+            insertPropertiesPS.setString(1, key);
+            insertPropertiesPS.setString(2, value);
+            insertPropertiesPS.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+            insertPropertiesPS.executeUpdate();
+          }
         }
       }
     }
@@ -507,8 +509,11 @@ public class EmbeddedDerbyDbInitManager implements DbInitManager {
     logger.info("Shutting down database...");
     // Create the connection and tell the database to shut down.
     Connection connection = createDatabaseConnection(props, true);
+
     // Clean up.
-    connection.close();
+    if (Objects.nonNull(connection)) {
+      connection.close();
+    }
     // De-register database driver.
     String url = props.getProperty("jdbc.url");
     Driver driver = DriverManager.getDriver(url);
