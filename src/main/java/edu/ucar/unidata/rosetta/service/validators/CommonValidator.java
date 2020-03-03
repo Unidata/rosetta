@@ -29,12 +29,12 @@ public abstract class CommonValidator {
   protected void validateInput(String field, String input, Errors errors) {
     String badChar = checkForNaughtyChars(input);
     if (badChar != null) {
-      errors.rejectValue(field, "bad input data", "Bad value submitted: " + badChar);
+      errors.rejectValue(field, "badInputData", "Bad value submitted: " + badChar);
     }
     if (errors.getFieldErrorCount(field) > 0) {
       String badString = checkForNaughtyStrings(input);
       if (badString != null) {
-        errors.rejectValue(field, "bad input data", "Bad value submitted: " + badString);
+        errors.rejectValue(field, "badInputData", "Bad value submitted: " + badString);
       }
     }
   }
