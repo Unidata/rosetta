@@ -9,15 +9,24 @@ import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
+
+import edu.ucar.unidata.rosetta.service.validators.wizard.CfTypeValidator;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import edu.ucar.unidata.rosetta.util.CookieUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -30,11 +39,24 @@ import org.springframework.web.util.WebUtils;
 @Controller
 public class CfTypeController {
 
+  private static final Logger logger = LogManager.getLogger(CfTypeController.class);
+  private final CfTypeValidator cfTypeValidator;
+
   @Resource(name = "wizardManager")
   private WizardManager wizardManager;
 
   @Resource(name = "resourceManager")
   private ResourceManager resourceManager;
+
+  /**
+   * Creates this controller class.
+   *
+   * @param cfTypeValidator The validator used to validate the user input data collected via this controller class.
+   */
+  @Autowired
+  public CfTypeController(CfTypeValidator cfTypeValidator) {
+    this.cfTypeValidator = cfTypeValidator;
+  }
 
   /**
    * Accepts a GET request for access to CF type selection step of the wizard.
@@ -80,6 +102,18 @@ public class CfTypeController {
   }
 
   /**
+   * Initialize the WebDataBinder used for populating command and form object arguments.
+   *
+   * @param binder The WebDataBinder.
+   */
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    StringTrimmerEditor stringTrimmer = new StringTrimmerEditor(true);
+    binder.registerCustomEditor(String.class, stringTrimmer);
+    binder.setValidator(cfTypeValidator);
+  }
+
+  /**
    * Accepts a POST request from CF type selection step of the wizard. Processes the submitted data
    * and persists it to the database. Redirects user to next step or previous step depending on
    * submitted form button (Next or Previous).
@@ -93,17 +127,22 @@ public class CfTypeController {
    * @throws RosettaFileException If unable to create transaction log.
    */
   @RequestMapping(value = "/cfType", method = RequestMethod.POST)
-  public ModelAndView processCFType(WizardData wizardData, BindingResult result, HttpServletRequest request,
+  public ModelAndView processCFType(@Valid WizardData wizardData, BindingResult result, HttpServletRequest request,
       HttpServletResponse response) throws RosettaDataException, RosettaFileException {
+
+    // Check for validation errors.
+    if (result.hasErrors()) {
+      logger.info( "Validation errors detected in create user form data. Returning user to form view.");
+    }
 
     // Have we visited this page before during this session?
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
     if (rosettaCookie != null) {
       // We've been here before, combine new with previous persisted CF type data.
-      wizardManager.processCfType(rosettaCookie.getValue(), wizardData, null);
+      wizardManager.processCfType(rosettaCookie.getValue(), wizardData);
     } else {
       // Haven't been before, so proceed with persisting the CF type data.
-      wizardManager.processCfType(null, wizardData, request);
+      wizardManager.processCfType(wizardData, request);
       // First time posting to this page in this session; create the cookie.
       response.addCookie(CookieUtils.createCookie(wizardData.getId(), request));
     }
