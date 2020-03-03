@@ -155,13 +155,11 @@ public class WizardManagerImpl implements WizardManager {
       }
 
 
-
     } catch (IOException | InvalidRangeException e) {
       StringWriter errors = new StringWriter();
       e.printStackTrace(new PrintWriter(errors));
       throw new RosettaFileException("Unable to create template file " + errors);
     }
-
 
     return netcdfFile;
   }
@@ -183,9 +181,9 @@ public class WizardManagerImpl implements WizardManager {
   }
 
   /**
-   * Determines the metadata profile to use based on the data contained in the
-   * provided WizardData object. The user may have explicitly specified the
-   * profile(s) to use, or we may have to determine them from the community info.
+   * Determines the metadata profile (and the CF type) based on the data contained in the provided WizardData object.
+   * The user may have explicitly specified the profile(s) to use, or we may have to determine them from the
+   * community info.
    *
    * @param wizardData The wizardData object containing the user input data.
    * @return The name of the metadata profile.
@@ -195,8 +193,9 @@ public class WizardManagerImpl implements WizardManager {
     // Assign metadata profile to value specified in WizardData object (can be null).
     String metadataProfile = wizardData.getMetadataProfile();
 
-    // If community value isn't null, determine the metadata profile(s).
-    if (wizardData.getCommunity() != null) {
+    // Determine if the user explicitly specified the metadata profiles in the advanced section of the wizard interface.
+    // If not, then use the community value to determine what metadata profiles to use.
+    if (wizardData.getCommunity() != null) { // Community isn't null. Use to determine the metadata profile(s).
 
       // Use the provided community/platform to figure out metadata profile.
       String userSelectedCommunityName = wizardData.getCommunity();
@@ -209,7 +208,6 @@ public class WizardManagerImpl implements WizardManager {
             sb.append(",");
           }
         }
-
         metadataProfile = sb.toString();
         if (metadataProfile.substring(metadataProfile.length() - 1).equals(",")) {
           metadataProfile = metadataProfile.substring(0, metadataProfile.length() - 1);
@@ -220,8 +218,7 @@ public class WizardManagerImpl implements WizardManager {
         throw new RosettaDataException(
             "Neither metadata profile or community values present: " + wizardData.toString());
       }
-    } else {
-
+    } else { // No community provided.
       // Everybody gets the CF metadata type profile. Make sure it's there.
       if (metadataProfile == null) {
         metadataProfile = "CF";
@@ -232,24 +229,27 @@ public class WizardManagerImpl implements WizardManager {
       }
     }
 
-    // Get CF type to determine if the appropriate DSG metadata profiles need to be added.
+    // Determine if the user explicitly specified the CF type in the advanced section of the wizard interface.
+    // If not, then use the platform value to determine the CF type.
     String cfType = wizardData.getCfType();
-    if (cfType.equals("") || cfType == null) {
+    if (cfType.equals("")) { // No CF type was inputted. Use the platform to determine CF type.
       cfType = resourceManager.getCFTypeFromPlatform(wizardData.getPlatform()).replaceAll("_", " ");
     }
-    if (cfType.equals("Profile")) {
+    // Get the user specified CF type to determine if the appropriate DSG metadata profiles need to be added.
+    if (cfType.equals("Profile")) { // CF type is profile
       metadataProfile = metadataProfile + ",RosettaProfileDsg";
     }
-    if (cfType.equals("Time Series")) {
+    if (cfType.equals("Time Series")) { // CF type is time series
       metadataProfile = metadataProfile + ",RosettaTimeSeriesDsg";
     }
+
     return metadataProfile;
   }
 
   /**
    * Looks up and retrieves persisted wizard data using the given ID.
    *
-   * @param id The ID corresponding to the data to retemperaturetrieve.
+   * @param id The ID corresponding to the data to retrieve.
    * @return The persisted wizard data.
    */
   @Override
@@ -271,7 +271,7 @@ public class WizardManagerImpl implements WizardManager {
     // Get persisted global metadata if it exists.
     List<GlobalMetadata> persisted = globalMetadataDao.lookupGlobalMetadata(id);
 
-    // Get any global metadata that may exist in the data file.
+    // Get any global metadata that may exist in the data file (this assumes the data file has already been uploaded).
     HashMap<String, String> fileGlobals = null;
     if (wizardData.getDataFileType() != null) {
       if (wizardData.getDataFileType().equals("eTUFF")) {
@@ -280,15 +280,12 @@ public class WizardManagerImpl implements WizardManager {
     }
     // Build the json string to the global metadata to the client.
     StringBuilder globalMetadata = new StringBuilder();
-    if (persisted.size() > 0) {
-      // We have persisted global metadata.
+    if (persisted.size() > 0) { // We have persisted global metadata.
       for (GlobalMetadata item : persisted) {
         String jsonGlobalMetadataString = convertGlobalDataToJson(item, fileGlobals);
         globalMetadata.append(jsonGlobalMetadataString).append(",");
       }
-    } else {
-      // No persisted global metadata.
-
+    } else { // No persisted global metadata.
       if (fileGlobals != null) {
         // Kludge to get the corresponding metadata group from the eTuff profile (as it is not included
         // in the global metadata we glean from the data file.
@@ -321,7 +318,6 @@ public class WizardManagerImpl implements WizardManager {
     wizardData.setGlobalMetadata(jsonString);
     return wizardData;
   }
-
 
 
   /**
@@ -369,10 +365,9 @@ public class WizardManagerImpl implements WizardManager {
   }
 
 
-
   /**
-   * Retrieves the data file from disk and parses it by line, converting it into a JSON string.
-   * Used in the wizard for header line selection.
+   * Retrieves the data file from disk and parses it by line, converting it into a JSON string. Used in the wizard for
+   * header line selection.
    *
    * @param id The unique id associated with the file (a sub directory in the user_files directory).
    * @return A JSON string of the file data parsed by line.
@@ -387,76 +382,76 @@ public class WizardManagerImpl implements WizardManager {
   }
 
   /**
-   * Processes the data collected from the wizard for the CF type step. If an ID already
-   * exists, the persisted data corresponding to that ID is collected and updated with the newly
-   * submitted data. If no ID exists (is null), the data is persisted for the first time.
+   * Processes the data collected from the wizard for the CF type step.
+   * Persisted data corresponding to the ID ALREADY EXISTS.
+   * This prior persisted data is collected and updated with the new data contained WizardData object.
    *
    * @param id The unique ID corresponding to already persisted data (may be null).
    * @param wizardData The WizardData object containing user-submitted CF type information.
-   * @param request HttpServletRequest used to make unique IDs for new data.
-   * @throws RosettaDataException If unable to lookup the metadata profile.
+   * @throws RosettaDataException If unable to lookup/persist wizard data.
    */
   @Override
-  public void processCfType(String id, WizardData wizardData, HttpServletRequest request)
-      throws RosettaDataException, RosettaFileException {
+  public void processCfType(String id, WizardData wizardData) throws RosettaDataException, RosettaFileException {
+    // Create the transaction log.
+    TransactionLogUtils.createLog(id);
 
-    // If the ID is present, then there is a cookie. Combine new with previous persisted data.
-    if (id != null) {
+    // Get the persisted CF type data corresponding to this ID.
+    WizardData persistedData = lookupPersistedWizardDataById(id);
 
-      // Create the transaction log.
-      TransactionLogUtils.createLog(id);
+    // Update platform value (can be null).
+    persistedData.setPlatform(wizardData.getPlatform());
 
-      // Get the persisted CF type data corresponding to this ID.
-      WizardData persistedData = lookupPersistedWizardDataById(id);
+    // Update community if needed.
+    if (wizardData.getPlatform() != null) {
+      // Set community.
+      String community = resourceManager.getCommunityFromPlatform(wizardData.getPlatform());
+      persistedData.setCommunity(community);
 
-      // Update platform value (can be null).
-      persistedData.setPlatform(wizardData.getPlatform());
-
-      // Update community if needed.
-      if (wizardData.getPlatform() != null) {
-        // Set community.
-        String community = resourceManager.getCommunityFromPlatform(wizardData.getPlatform());
-        persistedData.setCommunity(community);
-
-        // Update this object too, as we need it to get the metadata profile info.
-        wizardData.setCommunity(community);
-
-        // Set metadata profile.
-        persistedData.setMetadataProfile(determineMetadataProfile(wizardData));
-      } else {
-
-        // No platform provided so set community to null.
-        persistedData.setCommunity(null);
-
-        // Set the metadata profile to user-selected values.
-        persistedData.setMetadataProfile(wizardData.getMetadataProfile());
-      }
-
-      // Set the CF type.
-      persistedData.setCfType(wizardData.getCfType());
-
-      // Update persisted CF type data.
-      updatePersistedWizardData(persistedData);
-
-    } else { // No ID yet. First time persisting CF type data.
-
-      // Create a unique ID for this object.
-      wizardData.setId(PropertyUtils.createUniqueDataId(request));
-
-      // Create the transaction log.
-      TransactionLogUtils.createLog(wizardData.getId());
-
-      // Set the community if applicable.
-      if (wizardData.getPlatform() != null) {
-        wizardData.setCommunity(resourceManager.getCommunityFromPlatform(wizardData.getPlatform()));
-      }
+      // Update this object too, as we need it to get the metadata profile info.
+      wizardData.setCommunity(community);
 
       // Set metadata profile.
-      wizardData.setMetadataProfile(determineMetadataProfile(wizardData));
+      persistedData.setMetadataProfile(determineMetadataProfile(wizardData));
+    } else {
+      // No platform provided so set community to null.
+      persistedData.setCommunity(null);
 
-      // Persist the Cf type data.
-      wizardDataDao.persistWizardData(wizardData);
+      // Set the metadata profile to user-selected values.
+      persistedData.setMetadataProfile(wizardData.getMetadataProfile());
     }
+    // Set the CF type.
+    persistedData.setCfType(wizardData.getCfType());
+
+    // Update persisted CF type data.
+    updatePersistedWizardData(persistedData);
+  }
+
+  /**
+   * Processes the data collected from the wizard for the CF type step for the FIRST TIME.
+   *
+   * @param wizardData The WizardData object containing user-submitted CF type information.
+   * @param request HttpServletRequest used to make unique IDs for new data.
+   * @throws RosettaDataException If unable to lookup/persist wizard data.
+   */
+  @Override
+  public void processCfType(WizardData wizardData, HttpServletRequest request)
+      throws RosettaDataException, RosettaFileException {
+    // Create a unique ID for this object.
+    wizardData.setId(PropertyUtils.createUniqueDataId(request));
+
+    // Create the transaction log.
+    TransactionLogUtils.createLog(wizardData.getId());
+
+    // Set the community if applicable.
+    if (wizardData.getPlatform() != null) {
+      wizardData.setCommunity(resourceManager.getCommunityFromPlatform(wizardData.getPlatform()));
+    }
+
+    // Set metadata profile.
+    wizardData.setMetadataProfile(determineMetadataProfile(wizardData));
+
+    // Persist the Cf type data.
+    wizardDataDao.persistWizardData(wizardData);
   }
 
   /**
@@ -486,16 +481,15 @@ public class WizardManagerImpl implements WizardManager {
   }
 
   /**
-   * Processes the data submitted by the user containing global metadata information. Since this
-   * is the final step of collecting data in the wizard, the uploaded data file is converted to
-   * netCDF format in preparation for user download.
+   * Processes the data submitted by the user containing global metadata information. Since this is the final step of
+   * collecting data in the wizard, the uploaded data file is converted to netCDF format in preparation for user
+   * download.
    *
    * @param id The unique ID corresponding to already persisted data.
    * @param wizardData The WizardData containing the global metadata.
-   * @throws RosettaDataException If unable to populate the metadata object.
    */
   @Override
-  public void processGlobalMetadata(String id, WizardData wizardData) throws RosettaDataException {
+  public void processGlobalMetadata(String id, WizardData wizardData) {
     // Parse the JSON to get GlobalMetadata objects.
     List<GlobalMetadata> globalMetadata = JsonUtils.convertGlobalDataFromJson(wizardData.getGlobalMetadata());
 
@@ -512,8 +506,8 @@ public class WizardManagerImpl implements WizardManager {
   }
 
   /**
-   * Determines the next step in the wizard based the user specified data file type.
-   * This method is called when there is a divergence of possible routes through the wizard.
+   * Determines the next step in the wizard based the user specified data file type. This method is called when there is
+   * a divergence of possible routes through the wizard.
    *
    * @param id The unique ID corresponding to already persisted data.
    * @return The next step to redirect the user to in the wizard.
@@ -534,8 +528,8 @@ public class WizardManagerImpl implements WizardManager {
   }
 
   /**
-   * Determines the previous step in the wizard based the user specified data file type.
-   * This method is called when there is a divergence of possible routes through the wizard.
+   * Determines the previous step in the wizard based the user specified data file type. This method is called when
+   * there is a divergence of possible routes through the wizard.
    *
    * @param id The unique ID corresponding to already persisted data.
    * @return The previous step to redirect the user to in the wizard.
@@ -611,7 +605,6 @@ public class WizardManagerImpl implements WizardManager {
       variableDao.persistVariables(id, variables);
     }
   }
-
 
 
   /**
