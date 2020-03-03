@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2020 University Corporation for Atmospheric Research/Unidata.
+ * Copyright (c) 2012-2019 University Corporation for Atmospheric Research/Unidata.
  * See LICENSE for license information.
  */
 
@@ -33,6 +33,13 @@ public interface ResourceManager {
    * @return A list of CfType objects.
    */
   public List<CfType> getCfTypes();
+
+  /**
+   * Retrieves a list of all the names from the persisted CfType objects.
+   *
+   * @return A list of CF type names.
+   */
+  public List<String> getCfTypeNames();
 
   /**
    * Retrieves a list of all the persisted communities.
@@ -79,6 +86,13 @@ public interface ResourceManager {
   public List<MetadataProfile> getMetadataProfiles();
 
   /**
+   * Retrieves a list of all the persisted names of gleaned from MetadataProfile objects.
+   *
+   * @return A list of metadata profile names.
+   */
+  public List<String> getMetadataProfileNames();
+
+  /**
    * Lookups and returns a Platform using the provided name.
    *
    * @param name The name of the platform to retrieve.
@@ -92,5 +106,12 @@ public interface ResourceManager {
    * @return A list of Platform objects.
    */
   public List<Platform> getPlatforms();
+
+  /**
+   * Retrieves a list of all the names gleaned from the persisted Platform objects.
+   *
+   * @return A list of Platform objects.
+   */
+  public List<String> getPlatformNames();
 
 }
