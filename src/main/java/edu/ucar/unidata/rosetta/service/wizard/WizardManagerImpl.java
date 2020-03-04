@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
@@ -232,7 +233,13 @@ public class WizardManagerImpl implements WizardManager {
     // Determine if the user explicitly specified the CF type in the advanced section of the wizard interface.
     // If not, then use the platform value to determine the CF type.
     String cfType = wizardData.getCfType();
-    if (cfType.equals("")) { // No CF type was inputted. Use the platform to determine CF type.
+    if (Objects.isNull(cfType)) { // No CF type was inputted. Use the platform to determine CF type.
+      if (Objects.isNull(wizardData.getPlatform())) {
+        // This shouldn't happen! Something has gone very wrong.
+        // Either the platform/community or the the CF type/metadata profile must exist.
+        throw new RosettaDataException(
+            "Neither metadata profile or community values present: " + wizardData.toString());
+      }
       cfType = resourceManager.getCFTypeFromPlatform(wizardData.getPlatform()).replaceAll("_", " ");
     }
     // Get the user specified CF type to determine if the appropriate DSG metadata profiles need to be added.
