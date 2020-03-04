@@ -13,6 +13,7 @@ import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.validators.wizard.CfTypeValidator;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import edu.ucar.unidata.rosetta.util.CookieUtils;
+import java.util.Objects;
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,7 @@ public class CfTypeController {
 
   private static final Logger logger = LogManager.getLogger(CfTypeController.class);
   private final CfTypeValidator cfTypeValidator;
+
 
   @Resource(name = "wizardManager")
   private WizardManager wizardManager;
@@ -74,7 +76,7 @@ public class CfTypeController {
     // Create the form-backing object.
     WizardData wizardData;
     boolean customFileAttributesStep = false;
-    if (rosettaCookie != null) {
+    if (Objects.nonNull(rosettaCookie)) {
       // User-provided CF type data already exists. Populate WizardData object.
       wizardData = wizardManager.lookupPersistedWizardDataById(rosettaCookie.getValue());
       customFileAttributesStep = wizardManager.customFileAttributesStep(rosettaCookie.getValue());
@@ -108,6 +110,7 @@ public class CfTypeController {
    */
   @InitBinder
   public void initBinder(WebDataBinder binder) {
+    // Transform an empty string in submitted data into a null.
     StringTrimmerEditor stringTrimmer = new StringTrimmerEditor(true);
     binder.registerCustomEditor(String.class, stringTrimmer);
     binder.setValidator(cfTypeValidator);
@@ -130,14 +133,17 @@ public class CfTypeController {
   public ModelAndView processCFType(@Valid WizardData wizardData, BindingResult result, HttpServletRequest request,
       HttpServletResponse response) throws RosettaDataException, RosettaFileException {
 
+    logger.info(wizardData.toString());
+
     // Check for validation errors.
     if (result.hasErrors()) {
       logger.info( "Validation errors detected in create user form data. Returning user to form view.");
+      return new ModelAndView(new RedirectView("/cfType", true));
     }
 
     // Have we visited this page before during this session?
     Cookie rosettaCookie = WebUtils.getCookie(request, "rosetta");
-    if (rosettaCookie != null) {
+    if (Objects.nonNull(rosettaCookie)) {
       // We've been here before, combine new with previous persisted CF type data.
       wizardManager.processCfType(rosettaCookie.getValue(), wizardData);
     } else {
