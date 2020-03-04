@@ -100,7 +100,7 @@ public class CfTypeValidator extends CommonValidator implements Validator {
     // Get the list of persisted & blessed CF types names.
     List<String> blessedCfTypeNames = resourceManager.getCfTypeNames();
     if (!blessedCfTypeNames.contains(cfType)) {
-      logger.info("VALIDATION ERROR: Invalid CF type value submitted: " + cfType);
+      logger.info("  VALIDATION ERROR  Invalid CF type value submitted: " + cfType);
       errors.reject("cfType.invalid");
     }
   }
@@ -120,7 +120,7 @@ public class CfTypeValidator extends CommonValidator implements Validator {
     for (String name : userProvidedMetadataProfiles) {
       // Check if the user-provided metadata profile name is one of the approved profile names.
       if (!blessedMetadataProfileNames.contains(name)) {
-        logger.info("VALIDATION ERROR: Invalid metadata profile value submitted: " + name);
+        logger.info("  VALIDATION ERROR  Invalid metadata profile value submitted: " + name);
         errors.reject("metadataProfile.invalid");
         return;
       }
@@ -138,7 +138,7 @@ public class CfTypeValidator extends CommonValidator implements Validator {
     // Get the list of persisted & blessed platform names.
     List<String> blessedPlatformNames = resourceManager.getPlatformNames();
     if (!blessedPlatformNames.contains(platform)) {
-      logger.info("VALIDATION ERROR: Invalid platform value submitted: " + platform);
+      logger.info("  VALIDATION ERROR  Invalid platform value submitted: " + platform);
       errors.reject("platform.invalid");
     }
   }
@@ -154,7 +154,7 @@ public class CfTypeValidator extends CommonValidator implements Validator {
    */
   private void validateRequiredData(String cfType, String platform, Errors errors) {
     if (StringUtils.isBlank(cfType) && StringUtils.isBlank(platform)) {
-      logger.info("VALIDATION ERROR: required data CF type or platform not provided.");
+      logger.info("  VALIDATION ERROR   required data CF type or platform not provided.");
       errors.reject("cfType.missingData");
     }
   }
