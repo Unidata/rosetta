@@ -86,7 +86,7 @@ public class ResourceManagerImpl implements ResourceManager {
   @Override
   public List<String> getCfTypeNames() {
     List<String> cfTypeNames = new ArrayList<>();
-    for(CfType cfType: getCfTypes()) {
+    for (CfType cfType : getCfTypes()) {
       cfTypeNames.add(cfType.getName());
     }
     return cfTypeNames;
@@ -148,7 +148,7 @@ public class ResourceManagerImpl implements ResourceManager {
    */
   @Override
   public List<String> getMetadataProfileNames() {
-    List <String> metadataProfileNames = new ArrayList<>();
+    List<String> metadataProfileNames = new ArrayList<>();
     for (MetadataProfile metadataProfile : getMetadataProfiles()) {
       metadataProfileNames.add(metadataProfile.getName());
     }
@@ -184,7 +184,7 @@ public class ResourceManagerImpl implements ResourceManager {
   @Override
   public List<String> getPlatformNames() {
     List<String> platformNames = new ArrayList<>();
-    for(Platform platform : getPlatforms()) {
+    for (Platform platform : getPlatforms()) {
       platformNames.add(platform.getName());
     }
     return platformNames;
