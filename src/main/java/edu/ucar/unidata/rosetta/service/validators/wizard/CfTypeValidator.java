@@ -20,7 +20,7 @@ import org.springframework.validation.Validator;
 
 /**
  * Validator class that corresponds to the data collected via the CfTypeController. ID is not set yet.
- * The user must provide either the platform or CF type value.  Required and non-required user input data that is
+ * The user must provide either the platform or CF type value. Required and non-required user input data that is
  * not empty is evaluated for naughty strings and chars (see CommonValidator), and passing that is confirmed to be
  * legitimate by comparing with the persisted approved resources. Populates the Errors object if validation fails.
  */
@@ -46,7 +46,7 @@ public class CfTypeValidator extends CommonValidator implements Validator {
   /**
    * Validates the CF type data the user selected/inputted.
    *
-   * @param obj    The object to validate.
+   * @param obj The object to validate.
    * @param errors Object in which to store any validation errors.
    */
   @Override
@@ -76,7 +76,7 @@ public class CfTypeValidator extends CommonValidator implements Validator {
         if (errors.getFieldErrorCount("metadataProfile") > 0) {
           validateMetadataProfile(metadataProfile, errors);
         }
-      } else {  // Platform provided.
+      } else { // Platform provided.
         // Check for dubious input.
         validateInput("platform", platform, errors);
 
@@ -111,7 +111,7 @@ public class CfTypeValidator extends CommonValidator implements Validator {
    * object if validation fails.
    *
    * @param metadataProfile The user-provided metadata profile.
-   * @param errors          Object to hold validation errors.
+   * @param errors Object to hold validation errors.
    */
   private void validateMetadataProfile(String metadataProfile, Errors errors) {
     String[] userProvidedMetadataProfiles = StringUtils.split(metadataProfile, ",");
@@ -132,7 +132,7 @@ public class CfTypeValidator extends CommonValidator implements Validator {
    * validation fails.
    *
    * @param platform The user-provided platform.
-   * @param errors   Object to hold validation errors.
+   * @param errors Object to hold validation errors.
    */
   private void validatePlatform(String platform, Errors errors) {
     // Get the list of persisted & blessed platform names.
@@ -148,9 +148,9 @@ public class CfTypeValidator extends CommonValidator implements Validator {
    * is associated with a CF type and will be used to determine the CF type value at a later stage in the program.
    * Populates the Errors object if validation fails.
    *
-   * @param cfType   The user-provided CF type.
-   * @param platform The user-provided  platform.
-   * @param errors   Object to hold validation errors.
+   * @param cfType The user-provided CF type.
+   * @param platform The user-provided platform.
+   * @param errors Object to hold validation errors.
    */
   private void validateRequiredData(String cfType, String platform, Errors errors) {
     if (StringUtils.isBlank(cfType) && StringUtils.isBlank(platform)) {

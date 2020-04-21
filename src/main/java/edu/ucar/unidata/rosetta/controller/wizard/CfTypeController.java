@@ -9,7 +9,6 @@ import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.exceptions.RosettaDataException;
 import edu.ucar.unidata.rosetta.exceptions.RosettaFileException;
 import edu.ucar.unidata.rosetta.service.ResourceManager;
-
 import edu.ucar.unidata.rosetta.service.validators.wizard.CfTypeValidator;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import edu.ucar.unidata.rosetta.util.CookieUtils;
@@ -137,7 +136,7 @@ public class CfTypeController {
 
     // Check for validation errors.
     if (result.hasErrors()) {
-      logger.info( "Validation errors detected in create user form data. Returning user to form view.");
+      logger.info("Validation errors detected in create user form data. Returning user to form view.");
       return new ModelAndView(new RedirectView("/cfType", true));
     }
 
