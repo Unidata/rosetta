@@ -50,7 +50,7 @@ public class CfTypeControllerTest {
 
   @Test
   public void processCFTypeTest() throws Exception {
-    mockMvc.perform(post("/cfType")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/fileUpload"));
+    mockMvc.perform(post("/cfType")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/cfType"));
     // .andDo(print());
   }
 }
