@@ -27,6 +27,7 @@ The default index page gets redirected to here.
         <c:when test="${not empty currentStep}">
           <form:form id ="FORM" action="${baseUrl}/${currentStep}" modelAttribute="${command}"
                     method="POST" enctype="multipart/form-data">
+            <sec:csrfInput />
             <nav>
               <ul id="steps">
                 <li id="${currentStep}"
