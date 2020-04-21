@@ -18,13 +18,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class TestContext {
-
-
-  @Bean
-  public BatchFileManager batchFileManager() {
-    return Mockito.mock(BatchFileManager.class);
-  }
-
+  
   @Bean
   public BatchFileManager batchFileManager() {
     return Mockito.mock(BatchFileManager.class);
