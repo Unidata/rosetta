@@ -30,8 +30,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-    springVersion = "5.2.5.RELEASE"
-    springSecurityVersion = "5.3.1.RELEASE"
+    springVersion = "5.2.7.RELEASE"
+    springSecurityVersion = "5.3.3.RELEASE"
     cdmVersion = "5.1.0"
     log4j2Version = "2.13.1"
     jacksonVersion = "2.10.3"
