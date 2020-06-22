@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.Errors;
 
 /**
- * Common validation methods all validators will use.
+ * Common validation methods used by all validators.
  */
 @SuppressWarnings("SpellCheckingInspection")
 public abstract class CommonValidator {
@@ -18,35 +18,7 @@ public abstract class CommonValidator {
       "fromcharCode", "%3", "$#", "alert(", ".js", ".source", "\\", "scriptlet", ".css", "binding:", ".htc", "vbscript",
       "mocha:", "livescript:", "base64", "\00", "xss:", "%77", "0x", "IS NULL;", "1;", "; --", "1=1"};
   private static final String[] NAUGHTY_CHARS = {"<", ">", "`", "^", "|", "}", "{"};
-
-  /**
-   * Checks if the provided string contains any known, dubious strings or chars.
-   *
-   * @param field The form field to be validated.
-   * @param input The user input for the form form field.
-   * @param errors Object to store validation errors.
-   */
-  protected void validateInput(String field, String input, Errors errors) {
-    String badChar = checkForNaughtyChars(input);
-    if (badChar != null) {
-      errors.rejectValue(field, "badInputData", "Bad value submitted: " + badChar);
-    }
-    if (errors.getFieldErrorCount(field) > 0) {
-      String badString = checkForNaughtyStrings(input);
-      if (badString != null) {
-        errors.rejectValue(field, "badInputData", "Bad value submitted: " + badString);
-      }
-    }
-  }
-
-  /**
-   * Checks if provided string is empty (""), null or whitespace only.
-   *
-   * @param input The user input for the form form field.
-   */
-  protected boolean validateNotEmpty(String input) {
-    return StringUtils.isBlank(input);
-  }
+  private String ipAddress;
 
   /**
    * Checks if the provided string contains anything the NAUGHTY_STRINGS list.
@@ -76,5 +48,59 @@ public abstract class CommonValidator {
       }
     }
     return null;
+  }
+
+  /**
+   * Returns the IP address of the remote user.
+   * (Used for logging purposes.)
+   *
+   * @return the IP address.
+   */
+  public String getIpAddress() {
+    return ipAddress;
+  }
+
+  /**
+   * Sets the IP address of the remote user.
+   * (Used for logging purposes.)
+   *
+   * @param ipAddress The IP address.
+   */
+  public void setIpAddress (String ipAddress) {
+    this.ipAddress = ipAddress;
+  }
+
+  /**
+   * Checks if the provided string contains any known, dubious strings or chars.
+   *
+   * @param field The form field to be validated.
+   * @param input The user input for the form form field.
+   * @param errors Object to store validation errors.
+   */
+  protected void validateInput(String field, String input, Errors errors) {
+    String badChar = checkForNaughtyChars(input);
+    if (badChar != null) {
+      errors.rejectValue(field, "badInputData", "Bad value submitted: " + badChar);
+    }
+    if (errors.getFieldErrorCount(field) > 0) {
+      String badString = checkForNaughtyStrings(input);
+      if (badString != null) {
+        errors.rejectValue(field, "badInputData", "Bad value submitted: " + badString);
+      }
+    }
+  }
+
+  /**
+   * Checks if provided string is empty (""), null or whitespace only.
+   * <p>
+   * The StringTrimmerEditor property editor is registered with the DataBinder in the controllers, which trims strings
+   * in input data and converts empty strings to null.  HOWEVER, we are still using a method to check for empty strings,
+   * blank string, and null values in case something happens on the controller-side of things and this trim to null
+   * behavior is removed.
+   *
+   * @param input The user input for the form form field.
+   */
+  protected boolean validateNotEmpty(String input) {
+    return StringUtils.isBlank(input);
   }
 }
