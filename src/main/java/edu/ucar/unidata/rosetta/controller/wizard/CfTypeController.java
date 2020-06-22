@@ -12,7 +12,10 @@ import edu.ucar.unidata.rosetta.service.ResourceManager;
 import edu.ucar.unidata.rosetta.service.validators.wizard.CfTypeValidator;
 import edu.ucar.unidata.rosetta.service.wizard.WizardManager;
 import edu.ucar.unidata.rosetta.util.CookieUtils;
+
+import java.util.Enumeration;
 import java.util.Objects;
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -108,10 +111,12 @@ public class CfTypeController {
    * @param binder The WebDataBinder.
    */
   @InitBinder
-  public void initBinder(WebDataBinder binder) {
+  public void initBinder(WebDataBinder binder, HttpServletRequest request) {
     // Transform an empty string in submitted data into a null.
     StringTrimmerEditor stringTrimmer = new StringTrimmerEditor(true);
     binder.registerCustomEditor(String.class, stringTrimmer);
+    // Give the User's IP to the validator.
+    cfTypeValidator.setIpAddress(request.getRemoteAddr());
     binder.setValidator(cfTypeValidator);
   }
 
@@ -124,7 +129,7 @@ public class CfTypeController {
    * @param result The BindingResult for error handling.
    * @param request HttpServletRequest needed to pass to the resourceManager to get client IP.
    * @param response HttpServletResponse needed for setting cookie.
-   * @return Redirect to next step.
+   * @return RedirectView to next step.
    * @throws RosettaDataException If unable to process the CF type data.
    * @throws RosettaFileException If unable to create transaction log.
    */
@@ -132,11 +137,9 @@ public class CfTypeController {
   public ModelAndView processCFType(@Valid WizardData wizardData, BindingResult result, HttpServletRequest request,
       HttpServletResponse response) throws RosettaDataException, RosettaFileException {
 
-    logger.info(wizardData.toString());
-
     // Check for validation errors.
     if (result.hasErrors()) {
-      logger.info("Validation errors detected in create user form data. Returning user to form view.");
+      logger.info("Validation errors detected in create user form data for " + request.getRemoteAddr() + " Returning user to form view.");
       return new ModelAndView(new RedirectView("/cfType", true));
     }
 
