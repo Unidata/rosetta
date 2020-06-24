@@ -40,6 +40,10 @@ public class CfTypeControllerTest {
     mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
   }
 
+  /**
+   *
+   * @throws Exception
+   */
   @Test
   public void displayCFTypeSelectionFormTest() throws Exception {
     mockMvc.perform(get("/cfType")).andExpect(status().isOk())
@@ -48,6 +52,10 @@ public class CfTypeControllerTest {
     // .andDo(print());
   }
 
+  /**
+   *
+   * @throws Exception
+   */
   @Test
   public void processCFTypeTest() throws Exception {
     mockMvc.perform(post("/cfType")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/cfType"));

@@ -7,7 +7,6 @@ package edu.ucar.unidata.rosetta.service.validators.wizard;
 
 import edu.ucar.unidata.rosetta.domain.wizard.WizardData;
 import edu.ucar.unidata.rosetta.service.validators.CommonValidator;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -63,7 +62,7 @@ public class WizardDataValidator extends CommonValidator implements Validator {
     // validateNotEmpty("cfType", cfType, errors);
     if (errors.getFieldErrorCount("cfType") > 0) {
       // Check for dubious input.
-      validateInput("cfType", cfType, errors);
+      findDubiousInput(cfType, errors);
     }
 
   }
