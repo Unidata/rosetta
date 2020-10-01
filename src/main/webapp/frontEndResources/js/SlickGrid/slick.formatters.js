@@ -1,9 +1,9 @@
 /***
  * Contains basic SlickGrid formatters.
- *
+ * 
  * NOTE:  These are merely examples.  You will most likely need to implement something more
  *        robust/extensible/localizable/etc. for your use!
- *
+ * 
  * @module Formatters
  * @namespace Slick
  */
@@ -33,8 +33,7 @@
     }
   }
 
-  function PercentCompleteBarFormatter(row, cell, value, columnDef,
-      dataContext) {
+  function PercentCompleteBarFormatter(row, cell, value, columnDef, dataContext) {
     if (value == null || value === "") {
       return "";
     }
@@ -49,8 +48,7 @@
       color = "green";
     }
 
-    return "<span class='percent-complete-bar' style='background:" + color
-        + ";width:" + value + "%'></span>";
+    return "<span class='percent-complete-bar' style='background:" + color + ";width:" + value + "%'></span>";
   }
 
   function YesNoFormatter(row, cell, value, columnDef, dataContext) {
@@ -58,8 +56,7 @@
   }
 
   function CheckboxFormatter(row, cell, value, columnDef, dataContext) {
-    return '<img class="slick-edit-preclick" src="../images/' + (value
-        ? "CheckboxY" : "CheckboxN") + '.png">';
+    return '<img class="slick-edit-preclick" src="../images/' + (value ? "CheckboxY" : "CheckboxN") + '.png">';
   }
 
   function CheckmarkFormatter(row, cell, value, columnDef, dataContext) {

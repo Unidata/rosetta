@@ -82,10 +82,7 @@
 
     function setSelectedRanges(ranges) {
       // simple check for: empty selection didn't change, prevent firing onSelectedRangesChanged
-      if ((!_ranges || _ranges.length === 0) && (!ranges || ranges.length
-              === 0)) {
-        return;
-      }
+      if ((!_ranges || _ranges.length === 0) && (!ranges || ranges.length === 0)) { return; }
       _ranges = ranges;
       _self.onSelectedRangesChanged.notify(_ranges);
     }
@@ -96,20 +93,18 @@
 
     function handleActiveCellChange(e, data) {
       if (_options.selectActiveRow && data.row != null) {
-        setSelectedRanges(
-            [new Slick.Range(data.row, 0, data.row, _grid.getColumns().length
-                - 1)]);
+        setSelectedRanges([new Slick.Range(data.row, 0, data.row, _grid.getColumns().length - 1)]);
       }
     }
 
     function handleKeyDown(e) {
       var activeRow = _grid.getActiveCell();
-      if (_grid.getOptions().multiSelect && activeRow
-          && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey
-          && (e.which == Slick.keyCode.UP || e.which == Slick.keyCode.DOWN)) {
+      if (_grid.getOptions().multiSelect && activeRow 
+      && e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey 
+      && (e.which == Slick.keyCode.UP || e.which == Slick.keyCode.DOWN)) {
         var selectedRows = getSelectedRows();
         selectedRows.sort(function (x, y) {
-          return x - y
+          return x - y;
         });
 
         if (!selectedRows.length) {
@@ -144,7 +139,7 @@
       }
 
       if (!_grid.getOptions().multiSelect || (
-              !e.ctrlKey && !e.shiftKey && !e.metaKey)) {
+          !e.ctrlKey && !e.shiftKey && !e.metaKey)) {
         return false;
       }
 
@@ -189,6 +184,7 @@
 
       "init": init,
       "destroy": destroy,
+      "pluginName": "RowSelectionModel",
 
       "onSelectedRangesChanged": new Slick.Event()
     });
