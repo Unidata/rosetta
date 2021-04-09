@@ -163,7 +163,7 @@ buildscript {
 
     dependencies {
         classpath "com.github.jruby-gradle:jruby-gradle-plugin:1.7.0"
-        classpath "org.gretty:gretty:+"
+        classpath "org.gretty:gretty:3.0.4"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:3.22.0"
     }
 }
@@ -259,7 +259,8 @@ gretty {
 wrapper {
     // to upgrade gradle, bump the version here and then run
     // ./gradlew wrapper
-    gradleVersion = '5.6'
+    distributionType = Wrapper.DistributionType.ALL
+    gradleVersion = '6.8.3'
 }
 
 spotless {
