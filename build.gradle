@@ -1,20 +1,11 @@
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'eclipse'
-apply plugin: 'eclipse-wtp'
-apply plugin: 'war'
-apply plugin: 'jacoco'
-apply plugin: 'com.github.jruby-gradle.base'
-apply plugin: "com.diffplug.gradle.spotless"
+plugins {
+    id 'war'
+    id 'jacoco'
+    id "org.gretty" version "3.0.4"
+    id "com.diffplug.spotless" version "5.11.1"
+    id 'edu.ucar.unidata.site.jekyll' version '0.0.3'
+}
 
-// Adds 'assemble', 'check', 'build', and 'clean' tasks.
-// See: https://docs.gradle.org/current/userguide/standard_plugins.html#sec:base_plugins
-apply plugin: 'base'
-
-apply plugin: 'com.github.jruby-gradle.base'
-apply plugin: 'org.gretty'
-
-import com.github.jrubygradle.JRubyExec
 import org.apache.commons.io.FileUtils
 
 compileJava {
@@ -121,9 +112,9 @@ dependencies {
     testCompile "org.mockito:mockito-core:2.18.3"
 
     // Doc build
-    jrubyExec 'rubygems:jekyll:3.8.6'
+    //jrubyExec 'rubygems:jekyll:3.8.6'
     // Without this, we get: LoadError: no such file to load -- bundler
-    jrubyExec 'rubygems:bundler:2.0.2'
+    //jrubyExec 'rubygems:bundler:2.0.2'
 }
 
 war {
@@ -154,46 +145,6 @@ repositories {
     maven {
         url "https://artifacts.unidata.ucar.edu/repository/unidata-all/"
     }
-}
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath "com.github.jruby-gradle:jruby-gradle-plugin:1.7.0"
-        classpath "org.gretty:gretty:3.0.4"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.22.0"
-    }
-}
-
-
-task buildUserGuide(type: JRubyExec, group: 'Jekyll', description: 'Build your site.') {
-
-    // sourceFiles, destination defined in ext
-    inputs.files(sourceFiles)
-    outputs.dir(destination)
-
-    script "jekyll"
-
-    scriptArgs "build"
-    scriptArgs commonFlags
-
-    // Consider enabling this to help us determine when pages need to be pushed to Nexus.
-    // A copy of .jekyll-metadata could be stored in the repo and then compared to the local file.
-    // See https://jekyllrb.com/docs/configuration/#incremental-regeneration
-    // scriptArgs "--incremental"
-}
-
-task serveUserGuide(type: JRubyExec, group: 'Jekyll', description: 'Serve your site locally.') {
-    // This task starts a server; it is never considered UP-TO-DATE.
-    outputs.upToDateWhen { false }
-
-    script "jekyll"
-
-    scriptArgs "serve"
-    scriptArgs commonFlags
 }
 
 sourceSets {
@@ -229,8 +180,16 @@ task integrationTests(type: Test) {
     outputs.upToDateWhen { false }
 }
 
+
+// allow servlet container to be configured by setting a system property
+// default to tomcat 8.5.x
+def servletContainerName = System.getProperty('tds.test.gretty.container')
+if (servletContainerName == null || servletContainerName.isEmpty()) {
+    servletContainerName = 'tomcat9'
+}
+
 gretty {
-    servletContainer = 'tomcat85'
+    servletContainer "$servletContainerName"
     httpPort = 8888
 
     // make sure to run as a war, otherwise WEB-INF/classes won't be picked up
