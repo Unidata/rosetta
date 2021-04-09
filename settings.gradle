@@ -1,18 +1,19 @@
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        // limits the use of the unidata repository to the unidata jekyll plugin
-        exclusiveContent {
-            forRepository {
-                maven {
-                    url "https://artifacts.unidata.ucar.edu/repository/unidata-all/"
-                }
-            }
-            filter {
-                includeModule 'edu.ucar.unidata.site.jekyll', 'edu.ucar.unidata.site.jekyll.gradle.plugin'
-            }
+  repositories {
+    gradlePluginPortal()
+    // limits the use of the unidata repository to the unidata jekyll plugin
+    exclusiveContent {
+      forRepository {
+        maven {
+          url "https://artifacts.unidata.ucar.edu/repository/unidata-all/"
         }
+      }
+      filter {
+        includeModule 'edu.ucar.unidata.site.jekyll', 'edu.ucar.unidata.site.jekyll.gradle.plugin'
+        includeModule 'edu.ucar.unidata.nexus', 'edu.ucar.unidata.nexus.gradle.plugin'
+      }
     }
+  }
 }
 
 rootProject.name = 'rosetta'
