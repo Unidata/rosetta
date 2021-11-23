@@ -30,7 +30,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-  log4j2Version = '2.13.1'
+  log4j2Version = '2.14.1'
 
   // needed for Jekyll
   // It makes sense to publish major.minor versions of the docs, as
