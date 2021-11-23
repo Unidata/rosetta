@@ -66,3 +66,9 @@ src/test/rosetta_home/uploads
 src/test/rosetta_home/user_files
 src/test/rosetta_home/application.properties
 rosettaDb
+
+#############
+# NVD files #
+#############
+project-files/owasp-dependency-check/nvd/
+
