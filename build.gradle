@@ -107,7 +107,7 @@ dependencies {
 
 
   // input validation
-  implementation 'org.hibernate:hibernate-validator:6.0.9.Final'
+  implementation 'org.hibernate:hibernate-validator:6.0.22.Final'
   implementation 'javax.validation:validation-api:2.0.1.Final'
 
   implementation 'net.sourceforge.jexcelapi:jxl:2.6.12'
