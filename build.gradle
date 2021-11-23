@@ -110,7 +110,12 @@ dependencies {
   implementation 'org.hibernate:hibernate-validator:6.0.22.Final'
   implementation 'javax.validation:validation-api:2.0.1.Final'
 
-  implementation 'net.sourceforge.jexcelapi:jxl:2.6.12'
+  implementation('net.sourceforge.jexcelapi:jxl:2.6.12') {
+    exclude group: 'log4j', module: 'log4j'
+  }
+
+  // replace log4j 1.x with the log4j 1.2 bridge
+  runtimeOnly"org.apache.logging.log4j:log4j-1.2-api:${log4j2Version}"
 
   // logging
   implementation "org.apache.logging.log4j:log4j-api:${log4j2Version}"
