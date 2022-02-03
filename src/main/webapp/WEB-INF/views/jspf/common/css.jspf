@@ -1,6 +1,6 @@
 <!-- jQuery CSS -->
 <link type="text/css" rel="stylesheet"
-      href="${baseUrl}/resources/css/jQuery/jquery-ui-1.12.1.min.css"/>
+      href="${baseUrl}/resources/css/jQuery/jquery-ui-1.13.1.min.css"/>
 <link type="text/css" rel="stylesheet"
       href="${baseUrl}/resources/css/jQuery/jquery-ui.theme.min.css"/>
 
