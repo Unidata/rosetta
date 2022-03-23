@@ -80,9 +80,9 @@ dependencies {
 
 
   // JSON / xml processing
-  implementation 'com.fasterxml.jackson.core:jackson-databind'
-  implementation 'com.fasterxml.jackson.core:jackson-core'
-  implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
+  implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
+  implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.2'
   implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
   // takes the place of javax.activation package
