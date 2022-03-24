@@ -54,7 +54,7 @@ dependencies {
   implementation enforcedPlatform('edu.ucar:netcdf-java-platform:5.4.2')
   implementation enforcedPlatform('org.springframework:spring-framework-bom:5.3.13')
   implementation enforcedPlatform('org.springframework.security:spring-security-bom:5.5.3')
-  implementation enforcedPlatform('com.fasterxml.jackson:jackson-bom:2.12.5')
+  implementation enforcedPlatform('com.fasterxml.jackson:jackson-bom:2.13.2')
 
   // Spring Framework
   implementation 'org.springframework:spring-beans'
