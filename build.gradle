@@ -29,8 +29,8 @@ version = '0.3.0-SNAPSHOT'
 
 description = """rosetta"""
 
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 ext {
   // needed for Jekyll
