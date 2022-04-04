@@ -53,10 +53,10 @@ ext {
 dependencies {
   implementation enforcedPlatform('edu.ucar:netcdf-java-bom:5.5.3-SNAPSHOT')
   implementation enforcedPlatform('edu.ucar:netcdf-java-platform:5.5.3-SNAPSHOT')
-  implementation enforcedPlatform('org.springframework:spring-framework-bom:5.3.15')
-  implementation enforcedPlatform('org.springframework.security:spring-security-bom:5.6.1')
-  implementation enforcedPlatform('com.fasterxml.jackson:jackson-bom:2.12.5')
-  implementation enforcedPlatform('org.apache.logging.log4j:log4j-bom:2.17.1')
+  implementation enforcedPlatform('org.springframework:spring-framework-bom:5.3.18')
+  implementation enforcedPlatform('org.springframework.security:spring-security-bom:5.6.2')
+  implementation enforcedPlatform('com.fasterxml.jackson:jackson-bom:2.13.2')
+  implementation enforcedPlatform('org.apache.logging.log4j:log4j-bom:2.17.2')
 
   // Spring Framework
   implementation 'org.springframework:spring-beans'
