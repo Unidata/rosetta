@@ -127,8 +127,8 @@ dependencies {
   runtimeOnly "org.apache.logging.log4j:log4j-jcl"
 
   // Testing
-  testImplementation 'de.bechte.junit:junit-hierarchicalcontextrunner:4.12.1'
-  testImplementation 'junit:junit:4.13.1'
+  testImplementation 'de.bechte.junit:junit-hierarchicalcontextrunner:4.12.2'
+  testImplementation 'junit:junit:4.13.2'
   testImplementation 'org.hamcrest:hamcrest-library:1.3'
   testImplementation 'org.hamcrest:hamcrest-core:1.3'
   testImplementation 'org.mockito:mockito-all:1.10.19'
