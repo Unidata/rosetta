@@ -53,9 +53,9 @@ ext {
 dependencies {
   implementation enforcedPlatform('edu.ucar:netcdf-java-bom:5.5.3-SNAPSHOT')
   implementation enforcedPlatform('edu.ucar:netcdf-java-platform:5.5.3-SNAPSHOT')
-  implementation enforcedPlatform('org.springframework:spring-framework-bom:5.3.18')
-  implementation enforcedPlatform('org.springframework.security:spring-security-bom:5.6.2')
-  implementation enforcedPlatform('com.fasterxml.jackson:jackson-bom:2.13.2')
+  implementation enforcedPlatform('org.springframework:spring-framework-bom:5.3.19')
+  implementation enforcedPlatform('org.springframework.security:spring-security-bom:5.6.3')
+  implementation enforcedPlatform('com.fasterxml.jackson:jackson-bom:2.13.2.1')
   implementation enforcedPlatform('org.apache.logging.log4j:log4j-bom:2.17.2')
 
   // Spring Framework
@@ -82,34 +82,34 @@ dependencies {
 
 
   // JSON / xml processing
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
-  implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
-  implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.2'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.1'
+  implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2.1'
+  implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.2.1'
   implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
   // takes the place of javax.activation package
   implementation 'com.sun.activation:javax.activation:1.2.0'
 
-  implementation 'commons-codec:commons-codec:1.11'
-  implementation 'commons-dbcp:commons-dbcp:1.4'
-  implementation 'commons-fileupload:commons-fileupload:1.3.3'
+  implementation 'commons-codec:commons-codec:1.15'
+  implementation 'commons-dbcp:commons-dbcp:2.9.0'
+  implementation 'commons-fileupload:commons-fileupload:1.4'
   implementation 'commons-io:commons-io:2.11.0'
 
-  implementation 'org.apache.commons:commons-lang3:3.4'
-  implementation 'org.apache.commons:commons-text:1.3'
+  implementation 'org.apache.commons:commons-lang3:3.12.0'
+  implementation 'org.apache.commons:commons-text:1.9'
 
   implementation 'org.apache.httpcomponents:httpclient'
-  implementation 'org.apache.derby:derby:10.14.2.0'
+  implementation 'org.apache.derby:derby:10.15.2.0'
 
   implementation 'org.apache.taglibs:taglibs-standard-jstlel:1.2.5'
 
-  implementation 'javax.servlet:javax.servlet-api:3.1.0'
+  implementation 'javax.servlet:javax.servlet-api:4.0.1'
 
   implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
 
   // input validation
-  implementation 'org.hibernate:hibernate-validator:6.0.22.Final'
+  implementation 'org.hibernate:hibernate-validator:7.0.4.Final'
   implementation 'javax.validation:validation-api:2.0.1.Final'
 
   implementation('net.sourceforge.jexcelapi:jxl:2.6.12') {
@@ -129,10 +129,10 @@ dependencies {
   // Testing
   testImplementation 'de.bechte.junit:junit-hierarchicalcontextrunner:4.12.2'
   testImplementation 'junit:junit:4.13.2'
-  testImplementation 'org.hamcrest:hamcrest-library:1.3'
-  testImplementation 'org.hamcrest:hamcrest-core:1.3'
+  testImplementation 'org.hamcrest:hamcrest-library:2.2'
+  testImplementation 'org.hamcrest:hamcrest-core:2.2'
   testImplementation 'org.mockito:mockito-all:1.10.19'
-  testImplementation 'org.mockito:mockito-core:2.18.3'
+  testImplementation 'org.mockito:mockito-core:4.5.1'
   testImplementation 'org.apache.httpcomponents:httpmime'
 
   // Spring Test
