@@ -1,8 +1,6 @@
 
 <img src="http://www.unidata.ucar.edu/images/logos/rosetta-150x150.png">
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f80ccf60a33c4ed7a1b5e29695de6021)](https://app.codacy.com/app/Unidata/rosetta?utm_source=github.com&utm_medium=referral&utm_content=Unidata/rosetta&utm_campaign=Badge_Grade_Dashboard)
-
 [![Build Status](https://travis-ci.org/Unidata/rosetta.svg?branch=master)](https://travis-ci.org/Unidata/rosetta)
 
 [![license](https://img.shields.io/github/license/unidata/rosetta.svg)](https://opensource.org/licenses/BSD-3-Clause)
